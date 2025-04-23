@@ -9,6 +9,9 @@
 *.user
 *.userosscache
 *.sln.docstates
+!External Libraries/fmod/core/lib/
+!External Libraries/fmod/studio/lib/
+!External Libraries/fmod/fsbank/lib/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

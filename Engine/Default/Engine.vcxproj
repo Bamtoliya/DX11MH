@@ -125,9 +125,10 @@
     </Link>
     <PostBuildEvent>
       <Command>CD "$(SolutionDir)"
+
 CALL "$(SolutionDir)\UpdateLib.bat"
-CALL "$(SolutionDir)\UpdateEditorLib.bat"
-CALL "$(SolutionDir)\UpdateFMODLib.bat"</Command>
+
+CALL "$(SolutionDir)\UpdateEditorLib.bat"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -151,9 +152,10 @@ CALL "$(SolutionDir)\UpdateFMODLib.bat"</Command>
     </Link>
     <PostBuildEvent>
       <Command>CD "$(SolutionDir)"
+
 CALL "$(SolutionDir)\UpdateLib.bat"
-CALL "$(SolutionDir)\UpdateEditorLib.bat"
-CALL "$(SolutionDir)\UpdateFMODLib.bat"</Command>
+
+CALL "$(SolutionDir)\UpdateEditorLib.bat"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
