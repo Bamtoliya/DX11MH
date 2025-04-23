@@ -1,4 +1,4 @@
-#include "GameInstance.h"
+ï»¿#include "GameInstance.h"
 
 //#include "Picking.h"
 //#include "Renderer.h"
@@ -81,12 +81,12 @@ HRESULT CGameInstance::Draw()
 
 void CGameInstance::Clear(_uint iLevelIndex)
 {
-	///* Æ¯Á¤ ·¹º§ÀÇ ÀÚ¿øÀ» »èÁ¦ÇÑ´Ù. */
+	///* íŠ¹ì • ë ˆë²¨ì˜ ìžì›ì„ ì‚­ì œí•œë‹¤. */
 	//
-	///* Æ¯Á¤ ·¹º§ÀÇ °´Ã¼À» »èÁ¦ÇÑ´Ù. */
+	///* íŠ¹ì • ë ˆë²¨ì˜ ê°ì²´ì„ ì‚­ì œí•œë‹¤. */
 	//m_pObject_Manager->Clear(iLevelIndex);
 
-	///* Æ¯Á¤ ·¹º§ÀÇ ¿øÇü°´À» »èÁ¦ÇÑ´Ù. */
+	///* íŠ¹ì • ë ˆë²¨ì˜ ì›í˜•ê°ì„ ì‚­ì œí•œë‹¤. */
 	//m_pPrototype_Manager->Clear(iLevelIndex);
 }
 

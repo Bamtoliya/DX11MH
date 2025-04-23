@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #pragma warning (disable : 4251)
 
@@ -11,6 +11,7 @@ using namespace DirectX;
 #include <map>
 #include <list>
 #include <vector>
+#include <unordered_map>
 using namespace std;
 
 #include "Engine_Struct.h"
