@@ -1,4 +1,4 @@
-#include "Level_Loading.h"
+ï»¿#include "Level_Loading.h"
 
 
 #include "Level_GamePlay.h"
@@ -17,11 +17,11 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 {
 	m_eNextLevelID = eNextLevelID;
 
-	/* ·Îµù·¹º§ ÀÚÃ¼¿¡ ÇÊ¿äÇÑ °´Ã¼¸¦ »ı¼ºÇÑ´Ù. */
-	/* ¹è°æ, ·Îµù¹Ù, ¹öÆ°, font */
+	/* ë¡œë”©ë ˆë²¨ ìì²´ì— í•„ìš”í•œ ê°ì²´ë¥¼ ìƒì„±í•œë‹¤. */
+	/* ë°°ê²½, ë¡œë”©ë°”, ë²„íŠ¼, font */
 
-	/* ·ÎµùÀÇ ¿ªÇÒ(´ÙÀ½·¹º§¿¡ ÇÊ¿äÇÑ ÀÚ¿ø(Resource)(ÅØ½ºÃÄ, ¸ğµ¨, »ç¿îµå µîµîµî )À» »ı¼ºÇÏ´Â)À» 
-	¼öÇàÇÒ ·Î´õ°´Ã¼¸¦ »ı¼ºÇÑ´Ù. */
+	/* ë¡œë”©ì˜ ì—­í• (ë‹¤ìŒë ˆë²¨ì— í•„ìš”í•œ ìì›(Resource)(í…ìŠ¤ì³, ëª¨ë¸, ì‚¬ìš´ë“œ ë“±ë“±ë“± )ì„ ìƒì„±í•˜ëŠ”)ì„ 
+	ìˆ˜í–‰í•  ë¡œë”ê°ì²´ë¥¼ ìƒì„±í•œë‹¤. */
 	m_pLoader = CLoader::Create(m_pDevice, m_pContext, m_eNextLevelID);
 	if (nullptr == m_pLoader)
 		return E_FAIL;

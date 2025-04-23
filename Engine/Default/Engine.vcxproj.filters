@@ -40,6 +40,24 @@
     <ClInclude Include="..\Public\Base.h">
       <Filter>01.Utility\99.SuperClass</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UI_Element.h">
+      <Filter>01.Utility\98.UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameObject.h">
+      <Filter>01.Utility\97.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Panel.h">
+      <Filter>01.Utility\98.UI\Button</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Component.h">
+      <Filter>01.Utility\96.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RectTransform.h">
+      <Filter>01.Utility\96.Components\00.RectTransform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_Manager.h">
+      <Filter>01.Utility\98.UI\Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -62,6 +80,24 @@
     </ClCompile>
     <ClCompile Include="..\Private\Base.cpp">
       <Filter>01.Utility\99.SuperClass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Element.cpp">
+      <Filter>01.Utility\98.UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameObject.cpp">
+      <Filter>01.Utility\97.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Panel.cpp">
+      <Filter>01.Utility\98.UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Component.cpp">
+      <Filter>01.Utility\96.Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RectTransform.cpp">
+      <Filter>01.Utility\96.Components\00.RectTransform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_Manager.cpp">
+      <Filter>01.Utility\98.UI\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -94,6 +130,30 @@
     </Filter>
     <Filter Include="01.Utility\99.SuperClass">
       <UniqueIdentifier>{c5c38433-b538-4e7b-891b-4809c69188f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\98.UI">
+      <UniqueIdentifier>{3ff0624f-172b-4660-a22d-d5bf6eaa78d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\98.UI\Base">
+      <UniqueIdentifier>{ee9d5549-7e60-406e-82a5-40e9815c7551}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\98.UI\Button">
+      <UniqueIdentifier>{c005707d-c584-4f24-9c53-3117be69c52f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\98.UI\Panel">
+      <UniqueIdentifier>{64d88d8c-3a59-40cd-aee4-b8dd3ee351a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\96.Components">
+      <UniqueIdentifier>{17a4b293-2095-4cc6-898b-986a1ba4c3d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\98.UI\Manager">
+      <UniqueIdentifier>{eda79895-570f-4340-be3e-6b319a44113b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\97.GameObject">
+      <UniqueIdentifier>{d6da27b4-df85-401d-8362-f4a5edf89307}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\96.Components\00.RectTransform">
+      <UniqueIdentifier>{03b38e67-f5f7-4a34-9a1b-bdb2252db7e6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

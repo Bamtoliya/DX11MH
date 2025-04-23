@@ -1,4 +1,4 @@
-#include "Level_Logo.h"
+ï»¿#include "Level_Logo.h"
 
 #include "GameInstance.h"
 #include "Level_Loading.h"
@@ -29,7 +29,7 @@ void CLevel_Logo::Update(_float fTimeDelta)
 
 HRESULT CLevel_Logo::Render()
 {
-	SetWindowText(g_hWnd, TEXT("·Î°í·¹º§ÀÔ´Ï´Ù."));
+	SetWindowText(g_hWnd, TEXT("ë¡œê³ ë ˆë²¨ìž…ë‹ˆë‹¤."));
 
 	return S_OK;
 }
