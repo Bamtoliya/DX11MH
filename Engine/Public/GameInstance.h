@@ -19,8 +19,11 @@ private:
 public:
 	HRESULT Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut);
 	void Update_Engine(_float fTimeDelta);
-	HRESULT Draw();	
 	void Clear(_uint iLevelIndex);
+	HRESULT Begin_Draw();
+	HRESULT Draw();
+	HRESULT End_Draw();
+
 	_float Compute_Random_Normal();
 	_float Compute_Random(_float fMin, _float fMax);
 

@@ -52,11 +52,11 @@ HRESULT CLoader::Loading()
 
 	switch (m_eNextLevelID)
 	{
-	case LEVEL_LOGO:
+	case LEVEL::LEVEL_LOGO:
 		hr = Loading_For_Logo();
 		break;
 
-	case LEVEL_GAMEPLAY:
+	case LEVEL::LEVEL_GAMEPLAY:
 		hr = Loading_For_GamePlay();
 		break;
 	}

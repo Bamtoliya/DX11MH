@@ -64,7 +64,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pLevel_Manager->Update(fTimeDelta);
 }
 
-HRESULT CGameInstance::Draw()
+HRESULT CGameInstance::Begin_Draw()
 {
 	if (nullptr == m_pGraphic_Device)
 		return E_FAIL;
@@ -72,8 +72,21 @@ HRESULT CGameInstance::Draw()
 	m_pGraphic_Device->Clear_BackBuffer_View(_float4(0.f, 0.f, 1.f, 1.f));
 	m_pGraphic_Device->Clear_DepthStencil_View();
 
+	return S_OK;
+}
+
+HRESULT CGameInstance::Draw()
+{
+	if (nullptr == m_pGraphic_Device)
+		return E_FAIL;
+
 	m_pLevel_Manager->Render();
 
+	return S_OK;
+}
+
+HRESULT CGameInstance::End_Draw()
+{
 	m_pGraphic_Device->Present();
 
 	return S_OK;
@@ -89,6 +102,7 @@ void CGameInstance::Clear(_uint iLevelIndex)
 	///* 특정 레벨의 원형객을 삭제한다. */
 	//m_pPrototype_Manager->Clear(iLevelIndex);
 }
+
 
 _float CGameInstance::Compute_Random_Normal()
 {

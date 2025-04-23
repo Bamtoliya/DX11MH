@@ -40,10 +40,10 @@ void CLevel_Loading::Update(_float fTimeDelta)
 
 			switch (m_eNextLevelID)
 			{
-			case LEVEL_LOGO:
+			case LEVEL::LEVEL_LOGO:
 				pLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
 				break;
-			case LEVEL_GAMEPLAY:
+			case LEVEL::LEVEL_GAMEPLAY:
 				pLevel = CLevel_GamePlay::Create(m_pDevice, m_pContext);
 				break;
 			}
@@ -51,7 +51,7 @@ void CLevel_Loading::Update(_float fTimeDelta)
 			if (nullptr == pLevel)
 				return;
 
-			if (FAILED(m_pGameInstance->Change_Level(m_eNextLevelID, pLevel)))
+			if (FAILED(m_pGameInstance->Change_Level(static_cast<_uint>(m_eNextLevelID), pLevel)))
 				return;
 							
 		}
