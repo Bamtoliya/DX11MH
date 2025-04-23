@@ -10,7 +10,6 @@
 *.userosscache
 *.sln.docstates
 
-
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -32,6 +31,10 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+
+!External Libraries/fmod/core/lib/x64/
+!External Libraries/fmod/studio/lib/x64/
+!External Libraries/fmod/fsbank/lib/x64/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -400,9 +403,3 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 EngineSDK
-!External Libraries/
-!External Libraries/fmod/
-!External Libraries/fmod/core/
-!External Libraries/fmod/core/lib/
-!External Libraries/fmod/studio/lib/
-!External Libraries/fmod/fsbank/lib/
