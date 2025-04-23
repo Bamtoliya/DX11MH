@@ -16,6 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "README", "README", "{C8D527
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Editor", "Editor\Default\Editor.vcxproj", "{10313FD5-AD30-4E9E-BDC2-BD3A8A9CD12B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E6549A29-7A97-4C29-AF47-47CAC692EFB5} = {E6549A29-7A97-4C29-AF47-47CAC692EFB5}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
