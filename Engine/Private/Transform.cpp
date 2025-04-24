@@ -35,7 +35,6 @@ CComponent* CTransform::Clone(void* pArg)
 	}
 
 	return pInstance;
-
 }
 
 void CTransform::Free()
@@ -44,7 +43,8 @@ void CTransform::Free()
 
 }
 #pragma endregion
-#pragma region Initialize
+
+#pragma region Initalize
 HRESULT CTransform::Initialize_Prototype()
 {
 	return S_OK;
@@ -55,7 +55,3 @@ HRESULT CTransform::Initialize(void* pArg)
 	return S_OK;
 }
 #pragma endregion
-
-
-
-

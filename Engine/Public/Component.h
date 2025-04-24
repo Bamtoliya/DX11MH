@@ -14,12 +14,13 @@ public:
 public:
 	virtual CComponent* Clone(void* pArg) = 0;
 	virtual void Free();
-#pragma region Foundation Variables
+#pragma endregion
+
+#pragma region Variables
 protected:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
 	class CGameInstance* m_pGameInstance = { nullptr };
-#pragma endregion
 #pragma endregion
 protected:
 	_bool m_bIsCloned = { false };

@@ -43,14 +43,8 @@
     <ClInclude Include="..\public\UI_Element.h">
       <Filter>01.Utility\98.UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Panel.h">
-      <Filter>01.Utility\98.UI\Button</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Component.h">
-      <Filter>01.Utility\96.Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\RectTransform.h">
-      <Filter>01.Utility\96.Components\00.RectTransform</Filter>
+      <Filter>01.Utility\03.Components\00.RectTransform</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_Manager.h">
       <Filter>01.Utility\98.UI\Manager</Filter>
@@ -124,6 +118,21 @@
     <ClInclude Include="..\..\External Libraries\ImGuizmo\ImZoomSlider.h">
       <Filter>External Libraries\ImGuizmo</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Component.h">
+      <Filter>01.Utility\03.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Panel.h">
+      <Filter>01.Utility\98.UI\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer.h">
+      <Filter>01.Utility\03.Components\VIBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Rect.h">
+      <Filter>01.Utility\03.Components\VIBuffer\Rect%28Plane%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MyImGui.h">
+      <Filter>98.Imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -150,14 +159,8 @@
     <ClCompile Include="..\private\UI_Element.cpp">
       <Filter>01.Utility\98.UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Panel.cpp">
-      <Filter>01.Utility\98.UI\Button</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Component.cpp">
-      <Filter>01.Utility\96.Components</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\RectTransform.cpp">
-      <Filter>01.Utility\96.Components\00.RectTransform</Filter>
+      <Filter>01.Utility\03.Components\00.RectTransform</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UI_Manager.cpp">
       <Filter>01.Utility\98.UI\Manager</Filter>
@@ -225,6 +228,21 @@
     <ClCompile Include="..\..\External Libraries\ImGuizmo\ImSequencer.cpp">
       <Filter>External Libraries\ImGuizmo</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Component.cpp">
+      <Filter>01.Utility\03.Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Panel.cpp">
+      <Filter>01.Utility\98.UI\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer.cpp">
+      <Filter>01.Utility\03.Components\VIBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Rect.cpp">
+      <Filter>01.Utility\03.Components\VIBuffer\Rect%28Plane%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MyImGui.cpp">
+      <Filter>98.Imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -269,14 +287,8 @@
     <Filter Include="01.Utility\98.UI\Panel">
       <UniqueIdentifier>{64d88d8c-3a59-40cd-aee4-b8dd3ee351a9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\96.Components">
-      <UniqueIdentifier>{17a4b293-2095-4cc6-898b-986a1ba4c3d8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\98.UI\Manager">
       <UniqueIdentifier>{eda79895-570f-4340-be3e-6b319a44113b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\96.Components\00.RectTransform">
-      <UniqueIdentifier>{03b38e67-f5f7-4a34-9a1b-bdb2252db7e6}</UniqueIdentifier>
     </Filter>
     <Filter Include="00.System\99.Sound">
       <UniqueIdentifier>{7e212fef-ae3b-47fa-bffb-088de0355c57}</UniqueIdentifier>
@@ -307,6 +319,30 @@
     </Filter>
     <Filter Include="External Libraries\Imgui\backends">
       <UniqueIdentifier>{5fa6b593-132c-40cc-ae9f-ed0e6f39a763}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\00.RectTransform">
+      <UniqueIdentifier>{03b38e67-f5f7-4a34-9a1b-bdb2252db7e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\VIBuffer">
+      <UniqueIdentifier>{84ae86b9-1ee2-4537-8d87-48986535553e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\VIBuffer\Sphere">
+      <UniqueIdentifier>{953e81b8-f6ff-46f2-8f84-5159aafc44fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\VIBuffer\Triangle">
+      <UniqueIdentifier>{31c7b775-3bb1-405d-8be9-26a5f2b77769}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\VIBuffer\Cube%28Box%29">
+      <UniqueIdentifier>{3c1c977e-ad9b-4a50-839c-b7a156d1e8c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Components\VIBuffer\Rect%28Plane%29">
+      <UniqueIdentifier>{12dd2e2f-8eac-43b5-bb05-bd2f2ff4858b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Imgui">
+      <UniqueIdentifier>{9728f8ff-a65a-41c5-82c0-cfc8e5b76706}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Imgui\Components">
+      <UniqueIdentifier>{6c7812af-df91-452b-9b77-9faf5d044c6f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -65,6 +65,7 @@ private:
 	class CObject_Manager*		m_pObject_Manager = { nullptr };
 	class CRenderer*			m_pRenderer = { nullptr };*/
 	class CTimer_Manager*		m_pTimer_Manager = { nullptr };
+	class CMyImGui*				m_pMyImGui = { nullptr };
 	// class CPicking*				m_pPicking = { nullptr };
 
 public:

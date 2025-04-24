@@ -29,11 +29,6 @@ public:
 private:
 	_float4x4				m_WorldMatrix = {};
 #pragma endregion
-
-
-
-
-
 };
 
 END

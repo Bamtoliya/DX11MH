@@ -7,10 +7,16 @@
     <Filter Include="99.Defines">
       <UniqueIdentifier>{0a6442cf-5942-43aa-8a69-b10596ffb26b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="00.MainApp">
+      <UniqueIdentifier>{70949eb7-b6f6-4d8d-a7d3-2a018cb056e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
       <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MainApp.cpp">
+      <Filter>00.MainApp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -25,6 +31,12 @@
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MainApp.h">
+      <Filter>00.MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Editor_Defines.h">
+      <Filter>99.Defines</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
