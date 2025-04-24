@@ -84,8 +84,10 @@ HRESULT CGameInstance::Draw()
 {
 	if (nullptr == m_pGraphic_Device)
 		return E_FAIL;
-
-	m_pLevel_Manager->Render();
+	if(m_pMyImGui)
+		m_pMyImGui->Render();
+	if(m_pLevel_Manager)
+		m_pLevel_Manager->Render();
 
 	return S_OK;
 }
@@ -201,7 +203,7 @@ void CGameInstance::Update_Timer(const _wstring& strTimerTag)
 void CGameInstance::Release_Engine()
 {
 	//Safe_Release(m_pPicking);
-
+	Safe_Release(m_pMyImGui);
 	Safe_Release(m_pTimer_Manager);
 
 	/*Safe_Release(m_pRenderer);

@@ -19,11 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Private\Level_Loading.cpp" />
+    <ClCompile Include="..\Private\Level_Logo.cpp" />
+    <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="Editor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Editor_Defines.h" />
+    <ClInclude Include="..\Public\Editor_Enum.h" />
+    <ClInclude Include="..\Public\Level_Loading.h" />
+    <ClInclude Include="..\Public\Level_Logo.h" />
+    <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="framework.h" />

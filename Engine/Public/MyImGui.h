@@ -8,7 +8,7 @@ protected:
 	CMyImGui(ID3D11Device*, ID3D11DeviceContext*);
 	virtual ~CMyImGui() = default;
 public:
-	virtual HRESULT Initialize(HWND, ID3D11Device*, ID3D11DeviceContext*);
+	virtual HRESULT Initialize(HWND);
 	virtual void Update(_float fTimeDelta);
 	virtual HRESULT Render();
 public:

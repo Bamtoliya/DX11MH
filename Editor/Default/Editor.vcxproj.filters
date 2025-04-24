@@ -10,6 +10,27 @@
     <Filter Include="00.MainApp">
       <UniqueIdentifier>{70949eb7-b6f6-4d8d-a7d3-2a018cb056e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="00.Levels">
+      <UniqueIdentifier>{2f8bc321-5b6a-44ed-ab29-d4b5bdb1104c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Levels\UI">
+      <UniqueIdentifier>{c2f9cde9-8323-43f6-acc9-b438751e6ca3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Levels\Map">
+      <UniqueIdentifier>{d002fb2f-de85-4cd4-abad-d7dae1b321e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Levels\Effect">
+      <UniqueIdentifier>{6c459c0d-c48f-4b19-a344-6e4426d46692}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Levels\Loading">
+      <UniqueIdentifier>{7da59f6a-d011-4ef2-85e2-a302a39fe76e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Levels\Logo">
+      <UniqueIdentifier>{eb8eb094-9b10-478d-98fa-6022bc74c9a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.Levels\Loading\Loader">
+      <UniqueIdentifier>{740ad3bf-c4c9-4704-85ba-f8e3c865829d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -17,6 +38,15 @@
     </ClCompile>
     <ClCompile Include="..\private\MainApp.cpp">
       <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Loading.cpp">
+      <Filter>00.Levels\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Loader.cpp">
+      <Filter>00.Levels\Loading\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Logo.cpp">
+      <Filter>00.Levels\Logo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -36,6 +66,18 @@
       <Filter>00.MainApp</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Editor_Defines.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Loading.h">
+      <Filter>00.Levels\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Loader.h">
+      <Filter>00.Levels\Loading\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Logo.h">
+      <Filter>00.Levels\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Editor_Enum.h">
       <Filter>99.Defines</Filter>
     </ClInclude>
   </ItemGroup>
