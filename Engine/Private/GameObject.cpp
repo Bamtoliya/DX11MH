@@ -1,14 +1,19 @@
 ﻿#include "GameObject.h"
 
 CGameObject::CGameObject(ID3D11Device* m_pDevice, ID3D11DeviceContext* m_pContext)
+	: m_pDevice 	{ pDevice }
+	, m_pContext	 { pContext }
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
 }
 
 CGameObject::CGameObject(const CGameObject& Prototype)
+	: m_pDevice 	{ Prototype.m_pDevice }
+	, m_pContext 	{ Prototype.m_pContext }
 {
-
+	Safe_AddRef(m_pContext);
+	Safe_AddRef(m_pDevice);
 }
 
 HRESULT CGameObject::Initialize_Prototype()

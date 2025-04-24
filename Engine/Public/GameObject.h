@@ -46,6 +46,7 @@ protected:
 
 #pragma region Variables
 protected:
+	class CTransform*			m_pTransformCom = { nullptr };
 	map<const _wstring, class CComponent*>	m_Components;
 	_wstring m_strLayerTag;
 	_wstring m_strName;
