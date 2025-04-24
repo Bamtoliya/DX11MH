@@ -35,6 +35,7 @@ bld/
 !External Libraries/fmod/core/lib/x64/
 !External Libraries/fmod/studio/lib/x64/
 !External Libraries/fmod/fsbank/lib/x64/
+!External Libraries/wwise/x64/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
