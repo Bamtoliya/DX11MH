@@ -43,3 +43,5 @@ unsigned int ClassName::Destroy_Instance()				\
 	}													\
 	return iRefCnt;										\
 }
+
+#define BANKPATH L""

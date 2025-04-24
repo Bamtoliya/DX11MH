@@ -22,6 +22,22 @@ using namespace std;
 
 using namespace Engine;
 
+#pragma region FMOD
+#include "fmod.h"
+#include "fmod_studio.hpp"
+using namespace FMOD;
+#pragma endregion
+
+#pragma region WWISE
+#include <AK/SoundEngine/Common/AkMemoryMgr.h>
+#include <AK/SoundEngine/Common/AkSoundEngine.h>
+#include <AK/MusicEngine/Common/AkMusicEngine.h>
+#include <AK/SoundEngine/Common/AkStreamMgrModule.h>
+#ifdef _DEBUG
+#include <AK/Comm/AkCommunication.h> // Debug/Profile 빌드용
+#endif
+#pragma endregion
+
 
 #ifdef _DEBUG
 

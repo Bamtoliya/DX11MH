@@ -20,6 +20,8 @@ CALL "$(SolutionDir)\UpdateFMODLib.bat"
 ### Unity 빌드 사용시
 한글 디렉토리를 포함하면 작동 못함.
 
+fmod 사용,
+
 imGui 사용,
 imGizmo 사용,
 유니티 빌드 사용,

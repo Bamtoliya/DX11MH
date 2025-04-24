@@ -58,6 +58,21 @@
     <ClInclude Include="..\public\UI_Manager.h">
       <Filter>01.Utility\98.UI\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Sound_Event.h">
+      <Filter>00.System\99.Sound\00.FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sound_Listener.h">
+      <Filter>00.System\99.Sound\00.FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sound_Manager.h">
+      <Filter>00.System\99.Sound\00.FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sound_Source.h">
+      <Filter>00.System\99.Sound\00.FMOD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Audio_Manager.h">
+      <Filter>00.System\99.Sound\01.WWISE</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -98,6 +113,21 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_Manager.cpp">
       <Filter>01.Utility\98.UI\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sound_Event.cpp">
+      <Filter>00.System\99.Sound\00.FMOD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sound_Listener.cpp">
+      <Filter>00.System\99.Sound\00.FMOD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sound_Manager.cpp">
+      <Filter>00.System\99.Sound\00.FMOD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sound_Source.cpp">
+      <Filter>00.System\99.Sound\00.FMOD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Audio_Manager.cpp">
+      <Filter>00.System\99.Sound\01.WWISE</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +184,15 @@
     </Filter>
     <Filter Include="01.Utility\96.Components\00.RectTransform">
       <UniqueIdentifier>{03b38e67-f5f7-4a34-9a1b-bdb2252db7e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\99.Sound">
+      <UniqueIdentifier>{7e212fef-ae3b-47fa-bffb-088de0355c57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\99.Sound\00.FMOD">
+      <UniqueIdentifier>{34f03118-65a7-4d05-a019-b290d881aa89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\99.Sound\01.WWISE">
+      <UniqueIdentifier>{01b3c031-9189-466b-b7ce-bf35bbf530fa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
