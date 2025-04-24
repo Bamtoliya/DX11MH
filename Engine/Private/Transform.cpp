@@ -1,23 +1,13 @@
 ﻿#include "Transform.h"
-
+#pragma region Constructor/Destructor
 CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CComponent { pDevice, pContext }
+	: CComponent{ pDevice, pContext }
 {
 }
 
 CTransform::CTransform(const CTransform& Prototype)
 	: CComponent{ Prototype }
 {
-}
-
-HRESULT CTransform::Initialize_Prototype()
-{
-	return S_OK;
-}
-
-HRESULT CTransform::Initialize(void* pArg)
-{
-	return S_OK;
 }
 
 CTransform* CTransform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -53,3 +43,19 @@ void CTransform::Free()
 	__super::Free();
 
 }
+#pragma endregion
+#pragma region Initialize
+HRESULT CTransform::Initialize_Prototype()
+{
+	return S_OK;
+}
+
+HRESULT CTransform::Initialize(void* pArg)
+{
+	return S_OK;
+}
+#pragma endregion
+
+
+
+

@@ -119,7 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../public/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\wwise\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../public/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\wwise\include\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\imgui\backends;$(SolutionDir)External Libraries\imGuizmo\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -150,7 +150,7 @@ CALL "$(SolutionDir)\UpdateWwiseLib.bat"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../public/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\wwise\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../public/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\wwise\include\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\imgui\backends;$(SolutionDir)External Libraries\imGuizmo\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -176,6 +176,20 @@ CALL "$(SolutionDir)\UpdateWwiseLib.bat"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\GraphEditor.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImGradient.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImGuizmo.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImSequencer.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImZoomSlider.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\imconfig.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\imgui.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\imgui_internal.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_truetype.h" />
     <ClInclude Include="..\public\Audio_Manager.h" />
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\public\Component.h" />
@@ -186,7 +200,7 @@ CALL "$(SolutionDir)\UpdateWwiseLib.bat"</Command>
     <ClInclude Include="..\Public\Engine_Struct.h" />
     <ClInclude Include="..\Public\Engine_Typedef.h" />
     <ClInclude Include="..\Public\GameInstance.h" />
-    <ClInclude Include="..\public\GameObject.h" />
+    <ClInclude Include="..\Public\GameObject.h" />
     <ClInclude Include="..\Public\Graphic_Device.h" />
     <ClInclude Include="..\Public\Level.h" />
     <ClInclude Include="..\Public\Level_Manager.h" />
@@ -215,12 +229,23 @@ CALL "$(SolutionDir)\UpdateWwiseLib.bat"</Command>
     <ClInclude Include="..\public\Transform.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\GraphEditor.cpp" />
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImGradient.cpp" />
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImSequencer.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\private\Audio_Manager.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
     <ClCompile Include="..\private\Component.cpp" />
     <ClCompile Include="..\Private\GameInstance.cpp" />
-    <ClCompile Include="..\private\GameObject.cpp" />
-    <ClCompile Include="..\private\GameObject.cpp" />
+    <ClCompile Include="..\Private\GameObject.cpp" />
     <ClCompile Include="..\Private\Graphic_Device.cpp" />
     <ClCompile Include="..\Private\Level.cpp" />
     <ClCompile Include="..\Private\Level_Manager.cpp" />

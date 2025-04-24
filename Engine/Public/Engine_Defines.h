@@ -38,6 +38,15 @@ using namespace FMOD;
 #endif
 #pragma endregion
 
+#pragma region imgui
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+#pragma endregion
+#pragma region imGuizmo
+#include "ImGuizmo.h"
+#pragma endregion
+
 
 #ifdef _DEBUG
 

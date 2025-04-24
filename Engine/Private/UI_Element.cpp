@@ -1,5 +1,5 @@
 ﻿#include "UI_Element.h"
-
+#pragma region Constructor/Destructor
 CUI_Element::CUI_Element(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
@@ -28,6 +28,13 @@ HRESULT CUI_Element::Ready_Components()
 	return S_OK;
 }
 
+void CUI_Element::Free()
+{
+	__super::Free();
+}
+
+#pragma endregion
+#pragma region Update
 void CUI_Element::Priority_Update(_float fTimeDelta)
 {
 	for (auto& i : m_Children)
@@ -45,7 +52,8 @@ void CUI_Element::Late_Update(_float fTimeDelta)
 	for (auto& i : m_Children)
 		i.second->Late_Update(fTimeDelta);
 }
-
+#pragma endregion
+#pragma region Render
 HRESULT CUI_Element::Pre_Render()
 {
 	return S_OK;
@@ -55,7 +63,7 @@ HRESULT CUI_Element::Render()
 {
 	if (FAILED(Pre_Render())) return E_FAIL;
 	for (auto& i : m_Children)
-		if(FAILED(i.second->Render())) return E_FAIL;
+		if (FAILED(i.second->Render())) return E_FAIL;
 	if (FAILED(Post_Render())) return E_FAIL;
 	return S_OK;
 }
@@ -65,9 +73,4 @@ HRESULT CUI_Element::Post_Render()
 	return S_OK;
 }
 
-
-void CUI_Element::Free()
-{
-	__super::Free();
-}
-
+#pragma endregion

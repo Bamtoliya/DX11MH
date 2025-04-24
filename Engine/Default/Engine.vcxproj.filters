@@ -43,9 +43,6 @@
     <ClInclude Include="..\public\UI_Element.h">
       <Filter>01.Utility\98.UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\GameObject.h">
-      <Filter>01.Utility\97.GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Panel.h">
       <Filter>01.Utility\98.UI\Button</Filter>
     </ClInclude>
@@ -82,6 +79,51 @@
     <ClInclude Include="..\public\Transform.h">
       <Filter>01.Utility\03.Components\Transform</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\GameObject.h">
+      <Filter>01.Utility\02.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imconfig.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imgui.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imgui_internal.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_rectpack.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_textedit.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_truetype.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\backends\imgui_impl_dx11.h">
+      <Filter>External Libraries\Imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\backends\imgui_impl_win32.h">
+      <Filter>External Libraries\Imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\GraphEditor.h">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.h">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImGradient.h">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImGuizmo.h">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImSequencer.h">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImZoomSlider.h">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -107,9 +149,6 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_Element.cpp">
       <Filter>01.Utility\98.UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\GameObject.cpp">
-      <Filter>01.Utility\97.GameObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Panel.cpp">
       <Filter>01.Utility\98.UI\Button</Filter>
@@ -146,6 +185,45 @@
     </ClCompile>
     <ClCompile Include="..\private\Transform.cpp">
       <Filter>01.Utility\03.Components\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GameObject.cpp">
+      <Filter>01.Utility\02.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_demo.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_draw.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_tables.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_widgets.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\backends\imgui_impl_dx11.cpp">
+      <Filter>External Libraries\Imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\backends\imgui_impl_win32.cpp">
+      <Filter>External Libraries\Imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\GraphEditor.cpp">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.cpp">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImGradient.cpp">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImGuizmo.cpp">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImSequencer.cpp">
+      <Filter>External Libraries\ImGuizmo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,9 +275,6 @@
     <Filter Include="01.Utility\98.UI\Manager">
       <UniqueIdentifier>{eda79895-570f-4340-be3e-6b319a44113b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\97.GameObject">
-      <UniqueIdentifier>{d6da27b4-df85-401d-8362-f4a5edf89307}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\96.Components\00.RectTransform">
       <UniqueIdentifier>{03b38e67-f5f7-4a34-9a1b-bdb2252db7e6}</UniqueIdentifier>
     </Filter>
@@ -220,6 +295,18 @@
     </Filter>
     <Filter Include="01.Utility\03.Components\Transform">
       <UniqueIdentifier>{6b3d22a0-5c82-4ff4-a7fe-543e619d38f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External Libraries">
+      <UniqueIdentifier>{7446748f-2d95-4c34-9fd0-405104c7d7d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External Libraries\ImGuizmo">
+      <UniqueIdentifier>{4a888d6c-6d41-43e6-97af-75dc1731f6f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External Libraries\Imgui">
+      <UniqueIdentifier>{61de33f9-ace5-4d17-912a-4f3e05d84345}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External Libraries\Imgui\backends">
+      <UniqueIdentifier>{5fa6b593-132c-40cc-ae9f-ed0e6f39a763}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

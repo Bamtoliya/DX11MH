@@ -1,8 +1,8 @@
 ﻿#include "GameObject.h"
 
-CGameObject::CGameObject(ID3D11Device* m_pDevice, ID3D11DeviceContext* m_pContext)
+CGameObject::CGameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice 	{ pDevice }
-	, m_pContext	 { pContext }
+	, m_pContext	{ pContext }
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
