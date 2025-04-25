@@ -3,10 +3,12 @@
 #include "Component.h"
 BEGIN(Engine)
 class ENGINE_DLL CTransform final : public CComponent
-{
+{	
 public:
 	typedef struct tagTrasformDesc : public tagComponentDesc {
-		_float4x4				WorldMatrix = {};
+		_float4x4		WorldMatrix 	= {};
+		_float			fSpeedPerSec 	= {};
+		_float			fRotationPerSec = {};
 	}TRANSFORM_DESC;
 	enum State { RIGHT, UP, LOOK, POS, T_END };
 #pragma region Constructor/Destructor

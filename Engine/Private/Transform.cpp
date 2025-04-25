@@ -9,7 +9,6 @@ CTransform::CTransform(const CTransform& Prototype)
 	: CComponent{ Prototype }
 {
 }
-
 CTransform* CTransform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CTransform* pInstance = new CTransform(pDevice, pContext);
@@ -52,6 +51,14 @@ HRESULT CTransform::Initialize_Prototype()
 
 HRESULT CTransform::Initialize(void* pArg)
 {
+	if (nullptr == pArg)
+		return S_OK;
+
+	TRANSFORM_DESC* pDesc = static_cast<TRANSFORM_DESC*>(pArg);
+
+	m_tDesc.fSpeedPerSec = pDesc->fSpeedPerSec;
+	m_tDesc.fRotationPerSec = pDesc->fRotationPerSec;
+
 	return S_OK;
 }
 #pragma endregion

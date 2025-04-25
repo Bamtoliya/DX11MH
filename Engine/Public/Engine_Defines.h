@@ -21,6 +21,11 @@ using namespace std;
 #include "Engine_Typedef.h"
 #include "Engine_Macro.h"
 
+namespace Engine
+{
+	const _wstring	g_strTransformTag = TEXT("Com_Transform");
+}
+
 using namespace Engine;
 
 #pragma region FMOD
@@ -47,6 +52,8 @@ using namespace FMOD;
 #pragma region imGuizmo
 #include "ImGuizmo.h"
 #pragma endregion
+
+
 
 
 #ifdef _DEBUG

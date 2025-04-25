@@ -43,9 +43,6 @@
     <ClInclude Include="..\public\UI_Element.h">
       <Filter>01.Utility\98.UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\RectTransform.h">
-      <Filter>01.Utility\03.Components\00.RectTransform</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\UI_Manager.h">
       <Filter>01.Utility\98.UI\Manager</Filter>
     </ClInclude>
@@ -64,14 +61,74 @@
     <ClInclude Include="..\public\Audio_Manager.h">
       <Filter>00.System\99.Sound\01.WWISE</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\GameObject.h">
-      <Filter>01.Utility\02.GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Component.h">
-      <Filter>01.Utility\03.Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Transform.h">
-      <Filter>01.Utility\03.Components\Transform</Filter>
+      <Filter>01.Utility\04.Components\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UIObject.h">
+      <Filter>01.Utility\03.GameObject\Manager\Layer\UIObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Prototype_Manager.h">
+      <Filter>01.Utility\02.Prototypes\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Object_Manager.h">
+      <Filter>01.Utility\03.GameObject\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Layer.h">
+      <Filter>01.Utility\03.GameObject\Manager\Layer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Renderer.h">
+      <Filter>01.Utility\05.Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imconfig.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imgui.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imgui_internal.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_rectpack.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_textedit.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_truetype.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\backends\imgui_impl_dx11.h">
+      <Filter>External Libraries\Imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\backends\imgui_impl_win32.h">
+      <Filter>External Libraries\Imgui\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\GraphEditor.h">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.h">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImGradient.h">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImGuizmo.h">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImSequencer.h">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImZoomSlider.h">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Panel.h">
+      <Filter>01.Utility\98.UI\Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MyImGui.h">
+      <Filter>98.Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Transform_Imgui.h">
+      <Filter>98.Imgui\Components\Transform</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GameObject.h">
       <Filter>01.Utility\02.GameObject</Filter>
@@ -124,9 +181,6 @@
     <ClInclude Include="..\public\Panel.h">
       <Filter>01.Utility\98.UI\Panel</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\VIBuffer.h">
-      <Filter>01.Utility\03.Components\VIBuffer</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\VIBuffer_Rect.h">
       <Filter>01.Utility\03.Components\VIBuffer\Rect%28Plane%29</Filter>
     </ClInclude>
@@ -135,6 +189,24 @@
     </ClInclude>
     <ClInclude Include="..\public\Transform_Imgui.h">
       <Filter>98.Imgui\Components\Transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Component.h">
+      <Filter>01.Utility\04.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GameObject.h">
+      <Filter>01.Utility\03.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RectTransform.h">
+      <Filter>01.Utility\04.Components\Transform\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer.h">
+      <Filter>01.Utility\04.Components\VIBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Component.h" />
+    <ClInclude Include="..\Public\GameObject.h" />
+    <ClInclude Include="..\public\VIBuffer.h" />
+    <ClInclude Include="..\Public\VIBuffer_Rect.h">
+      <Filter>01.Utility\04.Components\VIBuffer\Rect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -162,9 +234,6 @@
     <ClCompile Include="..\private\UI_Element.cpp">
       <Filter>01.Utility\98.UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\RectTransform.cpp">
-      <Filter>01.Utility\03.Components\00.RectTransform</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_Manager.cpp">
       <Filter>01.Utility\98.UI\Manager</Filter>
     </ClCompile>
@@ -183,14 +252,68 @@
     <ClCompile Include="..\private\Audio_Manager.cpp">
       <Filter>00.System\99.Sound\01.WWISE</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\GameObject.cpp">
-      <Filter>01.Utility\02.GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Component.cpp">
-      <Filter>01.Utility\03.Components</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Transform.cpp">
-      <Filter>01.Utility\03.Components\Transform</Filter>
+      <Filter>01.Utility\04.Components\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UIObject.cpp">
+      <Filter>01.Utility\03.GameObject\Manager\Layer\UIObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Prototype_Manager.cpp">
+      <Filter>01.Utility\02.Prototypes\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Object_Manager.cpp">
+      <Filter>01.Utility\03.GameObject\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Layer.cpp">
+      <Filter>01.Utility\03.GameObject\Manager\Layer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Renderer.cpp">
+      <Filter>01.Utility\05.Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_demo.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_draw.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_tables.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_widgets.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\backends\imgui_impl_dx11.cpp">
+      <Filter>External Libraries\Imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\backends\imgui_impl_win32.cpp">
+      <Filter>External Libraries\Imgui\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\GraphEditor.cpp">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.cpp">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImGradient.cpp">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImGuizmo.cpp">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImSequencer.cpp">
+      <Filter>External Libraries\ImGuizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Panel.cpp">
+      <Filter>01.Utility\98.UI\Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MyImGui.cpp">
+      <Filter>98.Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Transform_Imgui.cpp">
+      <Filter>98.Imgui\Components\Transform</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GameObject.cpp">
       <Filter>01.Utility\02.GameObject</Filter>
@@ -237,9 +360,6 @@
     <ClCompile Include="..\private\Panel.cpp">
       <Filter>01.Utility\98.UI\Panel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\VIBuffer.cpp">
-      <Filter>01.Utility\03.Components\VIBuffer</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Rect.cpp">
       <Filter>01.Utility\03.Components\VIBuffer\Rect%28Plane%29</Filter>
     </ClCompile>
@@ -248,6 +368,24 @@
     </ClCompile>
     <ClCompile Include="..\private\Transform_Imgui.cpp">
       <Filter>98.Imgui\Components\Transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Component.cpp">
+      <Filter>01.Utility\04.Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GameObject.cpp">
+      <Filter>01.Utility\03.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RectTransform.cpp">
+      <Filter>01.Utility\04.Components\Transform\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer.cpp">
+      <Filter>01.Utility\04.Components\VIBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Component.cpp" />
+    <ClCompile Include="..\Private\GameObject.cpp" />
+    <ClCompile Include="..\private\VIBuffer.cpp" />
+    <ClCompile Include="..\Private\VIBuffer_Rect.cpp">
+      <Filter>01.Utility\04.Components\VIBuffer\Rect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -305,13 +443,19 @@
     <Filter Include="00.System\99.Sound\01.WWISE">
       <UniqueIdentifier>{01b3c031-9189-466b-b7ce-bf35bbf530fa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\02.GameObject">
+    <Filter Include="01.Utility\02.Prototypes">
+      <UniqueIdentifier>{d2429872-c1dd-4c52-8409-10ceab500df6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject">
       <UniqueIdentifier>{8542546c-1517-43a4-a3ed-c7e1ed5245ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Components">
+    <Filter Include="01.Utility\03.GameObject\Manager">
+      <UniqueIdentifier>{313d83d4-8a4a-4091-8d72-bed83bc58376}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components">
       <UniqueIdentifier>{c8ff5966-2bbf-4633-88d4-dec210ad2207}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Components\Transform">
+    <Filter Include="01.Utility\04.Components\Transform">
       <UniqueIdentifier>{6b3d22a0-5c82-4ff4-a7fe-543e619d38f6}</UniqueIdentifier>
     </Filter>
     <Filter Include="External Libraries">
@@ -326,24 +470,6 @@
     <Filter Include="External Libraries\Imgui\backends">
       <UniqueIdentifier>{5fa6b593-132c-40cc-ae9f-ed0e6f39a763}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Components\00.RectTransform">
-      <UniqueIdentifier>{03b38e67-f5f7-4a34-9a1b-bdb2252db7e6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\VIBuffer">
-      <UniqueIdentifier>{84ae86b9-1ee2-4537-8d87-48986535553e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\VIBuffer\Sphere">
-      <UniqueIdentifier>{953e81b8-f6ff-46f2-8f84-5159aafc44fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\VIBuffer\Triangle">
-      <UniqueIdentifier>{31c7b775-3bb1-405d-8be9-26a5f2b77769}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\VIBuffer\Cube%28Box%29">
-      <UniqueIdentifier>{3c1c977e-ad9b-4a50-839c-b7a156d1e8c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Components\VIBuffer\Rect%28Plane%29">
-      <UniqueIdentifier>{12dd2e2f-8eac-43b5-bb05-bd2f2ff4858b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="98.Imgui">
       <UniqueIdentifier>{9728f8ff-a65a-41c5-82c0-cfc8e5b76706}</UniqueIdentifier>
     </Filter>
@@ -355,6 +481,39 @@
     </Filter>
     <Filter Include="98.Imgui\Inspector">
       <UniqueIdentifier>{e57158f4-9369-490d-8591-bd6f2bbb1318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\02.Prototypes\Manager">
+      <UniqueIdentifier>{4689e40f-5977-4a2b-9f9c-62be8b7df8df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Manager\Layer">
+      <UniqueIdentifier>{93c98eaf-40e7-4a00-931e-326aee0dbe94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Manager\Layer\AlphaObject">
+      <UniqueIdentifier>{ef57a2eb-e00e-4060-9ac7-b37657577e39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Manager\Layer\ContainerObject">
+      <UniqueIdentifier>{0cd9f2b4-9f44-40c6-aae6-17dcdf0a1551}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Manager\Layer\LandObject">
+      <UniqueIdentifier>{d8865f37-fbd9-481c-b923-62d1ea007274}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Manager\Layer\PartObject">
+      <UniqueIdentifier>{555d19d9-169e-4fc4-9d50-96e03f3e281c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Manager\Layer\UIObject">
+      <UniqueIdentifier>{514e7d77-7e75-4725-9b62-8b73f0a15645}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\05.Renderer">
+      <UniqueIdentifier>{da92f69a-6467-48a6-8b8e-a6742f918351}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Transform\Rect">
+      <UniqueIdentifier>{4d4430c6-bb40-4e64-b3c8-956804504b66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\VIBuffer">
+      <UniqueIdentifier>{f5daf914-4d63-4722-a5c5-778c215221c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\VIBuffer\Rect">
+      <UniqueIdentifier>{f052cbaa-2b34-4086-9970-243268b78627}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
