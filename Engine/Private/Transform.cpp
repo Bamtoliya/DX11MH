@@ -55,3 +55,8 @@ HRESULT CTransform::Initialize(void* pArg)
 	return S_OK;
 }
 #pragma endregion
+
+void* CTransform::Dump()
+{
+	return &m_tDesc;
+}

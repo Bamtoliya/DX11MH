@@ -1,5 +1,8 @@
 ﻿#include "MyImGui.h"
 #include "GameInstance.h"
+#include "Transform_Imgui.h"
+
+using ImGuiCallBack = function<void()>;
 
 #pragma region HelperFuntions
 #pragma endregion

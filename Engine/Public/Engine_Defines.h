@@ -12,6 +12,7 @@ using namespace DirectX;
 #include <list>
 #include <vector>
 #include <unordered_map>
+#include <functional>
 using namespace std;
 
 #include "Engine_Struct.h"

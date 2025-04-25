@@ -1,12 +1,13 @@
 ﻿#pragma once
 
 #include "Component.h"
-
 BEGIN(Engine)
-
 class ENGINE_DLL CTransform final : public CComponent
 {
 public:
+	typedef struct tagTrasformDesc : public tagComponentDesc {
+		_float4x4				WorldMatrix = {};
+	}TRANSFORM_DESC;
 	enum State { RIGHT, UP, LOOK, POS, T_END };
 #pragma region Constructor/Destructor
 protected:
@@ -24,10 +25,11 @@ public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
 #pragma endregion
-
+public:
+	virtual void* Dump() override;
 #pragma region Variables
 private:
-	_float4x4				m_WorldMatrix = {};
+	TRANSFORM_DESC		m_tDesc;
 #pragma endregion
 };
 

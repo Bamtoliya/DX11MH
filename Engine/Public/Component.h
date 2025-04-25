@@ -3,6 +3,9 @@
 BEGIN(Engine)
 class ENGINE_DLL CComponent abstract : public CBase
 {
+public:
+	typedef struct tagComponentDesc {
+	} COMPONENT_DESC;
 #pragma region Constructor/Destructor
 protected:
 	CComponent(ID3D11Device * pDevice, ID3D11DeviceContext * pContext);
@@ -15,7 +18,8 @@ public:
 	virtual CComponent* Clone(void* pArg) = 0;
 	virtual void Free();
 #pragma endregion
-
+public:
+	virtual void* Dump() { return nullptr; }
 #pragma region Variables
 protected:
 	ID3D11Device* m_pDevice = { nullptr };

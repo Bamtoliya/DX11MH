@@ -11,18 +11,19 @@ protected:
 	CGameObject(const CGameObject& Prototype);
 	virtual ~CGameObject() = default;
 public:
-	virtual HRESULT Initialize_Prototype();
-	virtual HRESULT Initialize(void* pArg);
-public:
 	virtual CGameObject* Clone(void* pArg) = 0;
 	virtual void Free();
-#pragma region Foundation Variables
 protected:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
 	CGameInstance* m_pGameInstance = { nullptr };
 #pragma endregion
+#pragma region Initialize
+public:
+	virtual HRESULT Initialize_Prototype();
+	virtual HRESULT Initialize(void* pArg);
 #pragma endregion
+
 #pragma region Loops
 public:
 	virtual void Priority_Update(_float fTimeDelta);
@@ -46,10 +47,15 @@ protected:
 
 #pragma region Variables
 protected:
-	class CTransform*			m_pTransformCom = { nullptr };
-	map<const _wstring, class CComponent*>	m_Components;
-	_wstring m_strLayerTag;
 	_wstring m_strName;
+
+	class CTransform*			m_pTransformCom = { nullptr };
+	map<const _wstring, class CComponent*>	m_Components = {};
+
+	CGameObject* m_pParent = { nullptr };
+	map<const _wstring, class CGameObject*> m_Childs = {};
+	_wstring m_strLayerTag;
+	
 #pragma endregion;
 };
 END
