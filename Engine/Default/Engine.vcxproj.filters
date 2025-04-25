@@ -353,5 +353,8 @@
     <Filter Include="98.Imgui\Components\Transform">
       <UniqueIdentifier>{80c28ab3-2197-40f6-94f6-843afe306d4e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="98.Imgui\Inspector">
+      <UniqueIdentifier>{e57158f4-9369-490d-8591-bd6f2bbb1318}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

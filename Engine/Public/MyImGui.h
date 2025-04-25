@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Base.h"
+
 BEGIN(Engine)
 class CGameInstance;
 class ENGINE_DLL CMyImGui : public CBase
