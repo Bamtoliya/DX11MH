@@ -19,5 +19,7 @@ protected:
 	CGameInstance*			m_pGameInstance = { nullptr };
 	ID3D11Device*			m_pDevice		= { nullptr };
 	ID3D11DeviceContext*	m_pContext		= { nullptr };
+protected:
+	_bool					m_bShow = { false };
 };
 END

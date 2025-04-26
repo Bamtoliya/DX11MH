@@ -130,9 +130,6 @@
     <ClInclude Include="..\public\Transform_Imgui.h">
       <Filter>98.Imgui\Components\Transform</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\GameObject.h">
-      <Filter>01.Utility\02.GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\External Libraries\imgui\imconfig.h">
       <Filter>External Libraries\Imgui</Filter>
     </ClInclude>
@@ -175,14 +172,8 @@
     <ClInclude Include="..\..\External Libraries\ImGuizmo\ImZoomSlider.h">
       <Filter>External Libraries\ImGuizmo</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Component.h">
-      <Filter>01.Utility\03.Components</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Panel.h">
       <Filter>01.Utility\98.UI\Panel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\VIBuffer_Rect.h">
-      <Filter>01.Utility\03.Components\VIBuffer\Rect%28Plane%29</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MyImGui.h">
       <Filter>98.Imgui</Filter>
@@ -199,14 +190,27 @@
     <ClInclude Include="..\public\RectTransform.h">
       <Filter>01.Utility\04.Components\Transform\Rect</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\VIBuffer.h">
-      <Filter>01.Utility\04.Components\VIBuffer</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Component.h" />
     <ClInclude Include="..\Public\GameObject.h" />
     <ClInclude Include="..\public\VIBuffer.h" />
     <ClInclude Include="..\Public\VIBuffer_Rect.h">
       <Filter>01.Utility\04.Components\VIBuffer\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer_Rect.h" />
+    <ClInclude Include="..\Public\Component.h">
+      <Filter>01.Utility\04.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GameObject.h">
+      <Filter>01.Utility\03.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer.h">
+      <Filter>01.Utility\04.Components\VIBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MyImGui_Manager.h">
+      <Filter>98.Imgui\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Input_Device.h">
+      <Filter>00.System\InputDevice</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -315,9 +319,6 @@
     <ClCompile Include="..\private\Transform_Imgui.cpp">
       <Filter>98.Imgui\Components\Transform</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\GameObject.cpp">
-      <Filter>01.Utility\02.GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\External Libraries\imgui\imgui.cpp">
       <Filter>External Libraries\Imgui</Filter>
     </ClCompile>
@@ -354,14 +355,8 @@
     <ClCompile Include="..\..\External Libraries\ImGuizmo\ImSequencer.cpp">
       <Filter>External Libraries\ImGuizmo</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Component.cpp">
-      <Filter>01.Utility\03.Components</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Panel.cpp">
       <Filter>01.Utility\98.UI\Panel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\VIBuffer_Rect.cpp">
-      <Filter>01.Utility\03.Components\VIBuffer\Rect%28Plane%29</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MyImGui.cpp">
       <Filter>98.Imgui</Filter>
@@ -378,14 +373,27 @@
     <ClCompile Include="..\private\RectTransform.cpp">
       <Filter>01.Utility\04.Components\Transform\Rect</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\VIBuffer.cpp">
-      <Filter>01.Utility\04.Components\VIBuffer</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\GameObject.cpp" />
     <ClCompile Include="..\private\VIBuffer.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Rect.cpp">
       <Filter>01.Utility\04.Components\VIBuffer\Rect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer_Rect.cpp" />
+    <ClCompile Include="..\Private\Component.cpp">
+      <Filter>01.Utility\04.Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GameObject.cpp">
+      <Filter>01.Utility\03.GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer.cpp">
+      <Filter>01.Utility\04.Components\VIBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MyImGui_Manager.cpp">
+      <Filter>98.Imgui\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Input_Device.cpp">
+      <Filter>00.System\InputDevice</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -514,6 +522,15 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\VIBuffer\Rect">
       <UniqueIdentifier>{f052cbaa-2b34-4086-9970-243268b78627}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Camera">
+      <UniqueIdentifier>{398abecb-6bed-4a00-9951-f115422da176}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Imgui\Manager">
+      <UniqueIdentifier>{07f227a3-2c83-431d-90d4-bed4393f1549}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\InputDevice">
+      <UniqueIdentifier>{483bebfb-0ef8-4774-85ae-68eb6638aa4c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

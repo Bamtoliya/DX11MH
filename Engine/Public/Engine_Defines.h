@@ -53,7 +53,9 @@ using namespace FMOD;
 #include "ImGuizmo.h"
 #pragma endregion
 
-
+#pragma region Input
+#include <GameInput.h>
+#pragma endregion
 
 
 #ifdef _DEBUG

@@ -5,9 +5,11 @@
 #include "Level_Manager.h"
 #include "Timer_Manager.h"
 #include "Graphic_Device.h"
+#include "Input_Device.h"
 #include "Object_Manager.h"
 #include "Prototype_Manager.h"
 #include "MyImGui.h"
+#include "MyImGui_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
@@ -19,6 +21,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 {
 	m_pGraphic_Device = CGraphic_Device::Create(EngineDesc.hWnd, EngineDesc.isWindowed, EngineDesc.iWinSizeX, EngineDesc.iWinSizeY, ppDeviceOut, ppContextOut);
 	if (nullptr == m_pGraphic_Device)
+		return E_FAIL;
+
+	m_pInput_Device = CInput_Device::Create();
+	if (nullptr == m_pInput_Device)
 		return E_FAIL;
 
 	m_pMyImGui = CMyImGui::Create(EngineDesc.hWnd, *ppDeviceOut, *ppContextOut);
@@ -60,7 +66,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pObject_Manager->Priority_Update(fTimeDelta);
 
 	//m_pPicking->Update();
-
+	m_pInput_Device->Update(fTimeDelta);
 	m_pObject_Manager->Update(fTimeDelta);	
 
 	m_pObject_Manager->Late_Update(fTimeDelta);
@@ -214,6 +220,7 @@ void CGameInstance::Release_Engine()
 
 	Safe_Release(m_pLevel_Manager);
 
+	Safe_Release(m_pInput_Device);
 	Safe_Release(m_pGraphic_Device);
 
 	Destroy_Instance();

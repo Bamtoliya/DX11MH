@@ -65,6 +65,7 @@ public:
 
 private:
 	class CGraphic_Device*		m_pGraphic_Device = { nullptr };
+	class CInput_Device*		m_pInput_Device = { nullptr };
 	class CLevel_Manager*		m_pLevel_Manager = { nullptr };
 	class CPrototype_Manager*	m_pPrototype_Manager = { nullptr };
 	class CObject_Manager*		m_pObject_Manager = { nullptr };
