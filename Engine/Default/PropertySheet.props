@@ -12,10 +12,11 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>$(ExtLib)\physx\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>gameinput.lib;dinput8.lib;dxguid.lib;DirectXTK_Debug.lib;DirectXTK_Release.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ExtLib)\fmod\core\lib\$(Platform)\;$(ExtLib)\fmod\fsbank\lib\$(Platform)\;$(ExtLib)\fmod\studio\lib\$(Platform)\;$(ExtLib)\wwise\$(Platform)\$(Configuration)\;$(ExtLib)\tk\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ExtLib)\fmod\core\lib\$(Platform)\;$(ExtLib)\fmod\fsbank\lib\$(Platform)\;$(ExtLib)\fmod\studio\lib\$(Platform)\;$(ExtLib)\wwise\$(Platform)\$(Configuration)\;$(ExtLib)\tk\lib\;$(ExtLib)\physx\bin\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

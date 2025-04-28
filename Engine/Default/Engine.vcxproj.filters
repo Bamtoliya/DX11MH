@@ -218,6 +218,12 @@
     <ClInclude Include="..\public\Texture.h">
       <Filter>01.Utility\04.Components\Texture</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Camera.h">
+      <Filter>01.Utility\03.GameObject\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Physics_System.h">
+      <Filter>00.System\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -407,6 +413,12 @@
     <ClCompile Include="..\private\Texture.cpp">
       <Filter>01.Utility\04.Components\Texture</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Camera.cpp">
+      <Filter>01.Utility\03.GameObject\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Physics_System.cpp">
+      <Filter>00.System\Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -546,6 +558,9 @@
     </Filter>
     <Filter Include="00.System\GameInput">
       <UniqueIdentifier>{483bebfb-0ef8-4774-85ae-68eb6638aa4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\Physics">
+      <UniqueIdentifier>{d07a345f-87a8-4c38-ae92-ea75feb2ffd0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

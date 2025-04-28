@@ -36,6 +36,11 @@ bld/
 !External Libraries/fmod/studio/lib/x64/
 !External Libraries/fmod/fsbank/lib/x64/
 !External Libraries/wwise/x64/
+External Libraries/physx/
+!External Libraries/physx/
+!External Libraries/physx/bin/
+!External Libraries/physx/bin/debug
+!External Libraries/physx/bin/release
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

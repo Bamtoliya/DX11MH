@@ -186,6 +186,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\..\External Libraries\imgui\imstb_truetype.h" />
     <ClInclude Include="..\public\Audio_Manager.h" />
     <ClInclude Include="..\Public\Base.h" />
+    <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\Public\Component.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
@@ -207,6 +208,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\MyImGui.h" />
     <ClInclude Include="..\public\MyImGui_Manager.h" />
     <ClInclude Include="..\public\Panel.h" />
+    <ClInclude Include="..\public\Physics_System.h" />
     <ClInclude Include="..\public\RectTransform.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -256,6 +258,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\..\External Libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="..\private\Audio_Manager.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
+    <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\GameInstance.cpp" />
     <ClCompile Include="..\Private\GameObject.cpp" />
@@ -271,6 +274,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\MyImGui.cpp" />
     <ClCompile Include="..\private\MyImGui_Manager.cpp" />
     <ClCompile Include="..\private\Panel.cpp" />
+    <ClCompile Include="..\private\Physics_System.cpp" />
     <ClCompile Include="..\private\RectTransform.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

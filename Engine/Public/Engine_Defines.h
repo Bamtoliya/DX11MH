@@ -2,12 +2,15 @@
 
 #pragma warning (disable : 4251)
 
+#pragma region DirectX
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include "DirectXTK/DDSTextureLoader.h"
-#include "DirectXTK/WICTextureLoader.h"
+#include "DDSTextureLoader.h"
+#include "WICTextureLoader.h"
 using namespace DirectX;
+#pragma endregion
 
+#pragma region C++
 #include <string>
 #include <map>
 #include <list>
@@ -15,9 +18,9 @@ using namespace DirectX;
 #include <unordered_map>
 #include <functional>
 using namespace std;
+#pragma endregion
 
-
-
+#pragma region Engine
 #include "Engine_Struct.h"
 #include "Engine_Enum.h"
 #include "Engine_Function.h"
@@ -28,8 +31,8 @@ namespace Engine
 {
 	const _wstring	g_strTransformTag = TEXT("Com_Transform");
 }
-
 using namespace Engine;
+#pragma endregion
 
 #pragma region FMOD
 #include "fmod.h"
@@ -56,7 +59,6 @@ using namespace FMOD;
 #include "ImGuizmo.h"
 #pragma endregion
 
-
 #pragma region DirectInput
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
@@ -70,6 +72,10 @@ enum DIMM { DIMM_X, DIMM_Y, DIMM_WHEEL, DIMM_END };
 #define GAMEINPUT_API_VERSION 1
 using namespace GameInput;
 using namespace v1;
+#pragma endregion
+
+#pragma region PhysX
+//#include <phys>
 #pragma endregion
 
 
