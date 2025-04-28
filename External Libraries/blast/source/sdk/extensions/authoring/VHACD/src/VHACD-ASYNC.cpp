@@ -1,4 +1,4 @@
-#include "../public/VHACD.h"
+﻿#include "../public/VHACD.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>

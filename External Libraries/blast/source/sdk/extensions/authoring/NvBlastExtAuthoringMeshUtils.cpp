@@ -1,4 +1,4 @@
-#include "NvBlastExtAuthoringMeshUtils.h"
+﻿#include "NvBlastExtAuthoringMeshUtils.h"
 #include "NvBlastExtAuthoringMeshImpl.h"
 #include "NvBlastExtAuthoringPerlinNoise.h"
 #include "NvBlastExtAuthoringFractureTool.h"

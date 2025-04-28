@@ -118,13 +118,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../public/;../../EngineSDK/Inc/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\imgui\backends\;$(SolutionDir)External Libraries\ImGuizmo\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../public/;../../EngineSDK/Inc/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\imgui\backends\;$(SolutionDir)External Libraries\ImGuizmo\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../EngineSDK/Lib/;$(SolutionDir)External Libraries\fmod\core\lib\x64;$(SolutionDir)External Libraries\fmod\studio\lib\x64;$(SolutionDir)External Libraries\fmod\fsbank\lib\x64;$(SolutionDir)External Libraries\wwise\x64\$(Configuration)\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../EngineSDK/Lib/;$(SolutionDir)External Libraries\fmod\core\lib\x64;$(SolutionDir)External Libraries\fmod\studio\lib\x64;$(SolutionDir)External Libraries\fmod\fsbank\lib\x64;$(SolutionDir)External Libraries\wwise\x64\$(Configuration)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

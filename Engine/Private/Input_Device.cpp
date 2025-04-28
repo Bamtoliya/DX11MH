@@ -1,4 +1,4 @@
-#include "Input_Device.h"
+﻿#include "Input_Device.h"
 #pragma region Constructor/Destructor
 
 CInput_Device::CInput_Device()

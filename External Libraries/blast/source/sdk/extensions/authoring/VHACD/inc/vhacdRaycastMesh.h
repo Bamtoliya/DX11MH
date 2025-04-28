@@ -1,4 +1,4 @@
-#ifndef RAYCAST_MESH_H
+﻿#ifndef RAYCAST_MESH_H
 
 #define RAYCAST_MESH_H
 

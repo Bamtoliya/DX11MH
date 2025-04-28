@@ -75,7 +75,8 @@ using namespace v1;
 #pragma endregion
 
 #pragma region PhysX
-//#include <phys>
+#include "PxPhysicsAPI.h"
+using namespace physx;
 #pragma endregion
 
 

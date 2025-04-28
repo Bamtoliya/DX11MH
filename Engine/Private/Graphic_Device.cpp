@@ -37,7 +37,7 @@ HRESULT CGraphic_Device::Initialize(HWND hWnd, _bool isWindowed, _uint iWinSizeX
 
 	if (FAILED(Ready_DepthStencilView(iWinSizeX, iWinSizeY)))
 		return E_FAIL;
-
+	
 	/* 장치에 바인드해놓을 렌더 타겟들과 뎁스스텐실뷰를 세팅한다. */
 	/* 장치는 동시에 최대 8개의 렌더타겟을 들고 있을 수 있다. */
 	ID3D11RenderTargetView*		pRTVs[] = {

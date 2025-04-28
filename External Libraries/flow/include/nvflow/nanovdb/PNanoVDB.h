@@ -1,4 +1,4 @@
-/*!
+﻿/*!
     \file   nanovdb/PNanoVDB.h
 
     \author Andrew Reidmeyer
