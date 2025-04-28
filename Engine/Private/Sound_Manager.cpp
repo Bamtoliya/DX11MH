@@ -1,13 +1,6 @@
 ﻿#include "Sound_Manager.h"
 #include "Sound_Event.h"
-//#include "Transform.h"
-
-inline FMOD_VECTOR VecToFMOD(const _float3& in)
-{
-    // +x = 오른쪽 +y는 윗쪽 , +z 는 전방
-    // FMOD (+z 전방, +x 오른쪽, +y 위쪽) 좌표로 변환
-    return FMOD_VECTOR{ in.x, in.y, in.z };
-}
+#include "Transform.h"
 
 inline bool EndsWith(const wstring& str, const wstring& suffix) {
     if (str.length() < suffix.length()) {
@@ -24,51 +17,18 @@ CSound_Manager::CSound_Manager()
 
 HRESULT CSound_Manager::Initialize(_int iNumChannels, FMOD_STUDIO_INITFLAGS studioFlags, FMOD_INITFLAGS flags, void* pArg)
 {
-    // 1. 메모리 설정 (필요시 커스텀 설정)
-    AkMemSettings memSettings{};
-    AK::MemoryMgr::GetDefaultSettings(memSettings);
-    // memSettings 값 수정...
-
-    // 2. 스트리밍 장치 및 관리자 설정 (기본값 사용 또는 커스텀)
-    AkDeviceSettings deviceSettings;
-    AK::StreamMgr::GetDefaultDeviceSettings(deviceSettings);
-    // deviceSettings 값 수정...
-
-    AkStreamMgrSettings stmSettings;
-    AK::StreamMgr::GetDefaultSettings(stmSettings);
-    // stmSettings 값 수정...
-
-    // 3. 사운드 엔진 초기화 설정
-    AkInitSettings initSettings;
-    AK::SoundEngine::GetDefaultInitSettings(initSettings);
-    // initSettings 값 수정...
-
-    AkPlatformInitSettings platformInitSettings;
-    AK::SoundEngine::GetDefaultPlatformInitSettings(platformInitSettings);
-    // platformInitSettings 값 수정...
-
-    // --- 이제 설정들을 사용하여 초기화 ---
-
-    // 메모리 관리자 초기화 (내부적으로 처리되거나, 명시적 호출 방식이 다를 수 있음 - 문서 확인 필요)
-    // 예: if (AK::MemoryMgr::Init(&memSettings) != AK_Success) return false; // 이전 방식, 현재는 다를 수 있음!
-    AKRESULT
-    // 스트리밍 관리자/장치 생성 (여전히 명시적 생성이 필요할 수 있음 - 문서 확인 필요)
-    if (!AK::StreamMgr::Create(stmSettings)) return E_FAIL;
-    if (AK::StreamMgr::CreateDevice(deviceSettings) == AK_FAIL) return E_FAIL; // 저수준 IO 구현 필요할 수 있음
-
-    // 코어 사운드 엔진 초기화 (이 함수가 많은 것을 처리)
-    if (AK::SoundEngine::Init(&initSettings, &platformInitSettings) != AK_Success) {
-        return false;
+    if (FAILED(Studio::System::create(&m_pStudioSystem)))
+    {
+        MSG_BOX("Failed to Created : m_pStudioSystem");
+        return E_FAIL;
     }
+    m_pStudioSystem->getCoreSystem(&m_pCoreSystem);
+    m_pCoreSystem->setDSPBufferSize(256, 4);
+    m_pStudioSystem->initialize(iNumChannels, studioFlags, flags, pArg);
 
-    // 음악 엔진, 공간 음향 등 다른 모듈 초기화 (필요시)
-    // AkMusicSettings musicSettings; ... AK::MusicEngine::Init(&musicSettings);
-    // AkSpatialAudioInitSettings spatialSettings; ... AK::SpatialAudio::Init(spatialSettings);
+    Load_Bank(L"Master");
 
-    // 통신 초기화 (프로파일링 시)
-    // AkCommSettings commSettings; ... AK::Comm::Init(commSettings);
-
-	return S_OK;
+    return S_OK;
 }
 
 void CSound_Manager::Load_Bank(const _wstring& strKeyword)
@@ -354,11 +314,11 @@ void CSound_Manager::Set_Listner(const CTransform& worldTrans)
     //worldTrans.
     FMOD_3D_ATTRIBUTES listener = {};
     // 리스너의 위치와 전방 벡터, 상향 벡터를 설정
-    //listener.position = VecToFMOD(worldTrans.Get_State(CTransform::STATE_POSITION));
+    listener.position = VecToFMOD(worldTrans.Get_State(CTransform::POS));
     //// 뷰 행렬의 역행렬에서 세 번째 행은 전방 벡터
-    //listener.forward = VecToFMOD(worldTrans.Get_State(CTransform::STATE_LOOK));
+    listener.forward = VecToFMOD(worldTrans.Get_State(CTransform::LOOK));
     //// 뷰 행렬의 역행렬에서 두 번째 행은 상향 벡터
-    //listener.up = VecToFMOD(worldTrans.Get_State(CTransform::STATE_UP));
+    listener.up = VecToFMOD(worldTrans.Get_State(CTransform::UP));
     // 속도를 0으로 설정 (도플러 효과를 사용할 시 수정)
     listener.velocity = { 0.0f, 0.0f, 0.0f };
     // FMOD로 보낸다 (0 = 리스너는 하나)

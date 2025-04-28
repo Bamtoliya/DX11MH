@@ -20,6 +20,12 @@ using namespace DirectX;
 using namespace std;
 #pragma endregion
 
+#pragma region FMOD
+#include "fmod.h"
+#include "fmod_studio.hpp"
+using namespace FMOD;
+#pragma endregion
+
 #pragma region Engine
 #include "Engine_Struct.h"
 #include "Engine_Enum.h"
@@ -32,12 +38,6 @@ namespace Engine
 	const _wstring	g_strTransformTag = TEXT("Com_Transform");
 }
 using namespace Engine;
-#pragma endregion
-
-#pragma region FMOD
-#include "fmod.h"
-#include "fmod_studio.hpp"
-using namespace FMOD;
 #pragma endregion
 
 #pragma region WWISE

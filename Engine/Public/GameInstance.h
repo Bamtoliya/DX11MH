@@ -64,14 +64,27 @@ public:
 
 
 private:
-	class CGraphic_Device*		m_pGraphic_Device = { nullptr };
-	class CInput_Device*		m_pInput_Device = { nullptr };
-	class CLevel_Manager*		m_pLevel_Manager = { nullptr };
-	class CPrototype_Manager*	m_pPrototype_Manager = { nullptr };
-	class CObject_Manager*		m_pObject_Manager = { nullptr };
-	class CRenderer*			m_pRenderer = { nullptr };
+
+#pragma region Device
+	class CInput_Device*	m_pInput_Device = { nullptr };
+	class CGraphic_Device*	m_pGraphic_Device = { nullptr };
+#pragma endregion
+
+#pragma region Manager
 	class CTimer_Manager*		m_pTimer_Manager = { nullptr };
-	class CMyImGui*				m_pMyImGui = { nullptr };
+	class CLevel_Manager*		m_pLevel_Manager = { nullptr };
+	class CObject_Manager*		m_pObject_Manager = { nullptr };
+	class CMyImGui_Manager*		m_pMyImGui_Manager = { nullptr };
+	class CPrototype_Manager*	m_pPrototype_Manager = { nullptr };
+	
+#pragma endregion
+
+#pragma region 
+	class CRenderer*	m_pRenderer = { nullptr };
+	class CPipeLine*	m_pPipeLine = { nullptr };
+#pragma endregion
+
+	
 	// class CPicking*				m_pPicking = { nullptr };
 
 public:

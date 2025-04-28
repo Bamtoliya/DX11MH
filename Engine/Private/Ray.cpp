@@ -1,4 +1,4 @@
-#include "Ray.h"
+ï»¿#include "Ray.h"
 
 CRay::CRay()
 {
@@ -46,7 +46,7 @@ _vector CRay::Get_Point(const _float fDistance) const
     _vector vDirection = XMLoadFloat4(&m_tDesc.vDirection);
 
     // return vOrigin + vDirection * fDistance;
-    return XMVectorMultiplyAdd(vDirection, XMVectorReplicate(fDistance), vOrigin); // FMA (Fused Multiply-Add) »ç¿ë °¡´É ½Ã ´õ È¿À²Àû
+    return XMVectorMultiplyAdd(vDirection, XMVectorReplicate(fDistance), vOrigin); // FMA (Fused Multiply-Add) ì‚¬ìš© ê°€ëŠ¥ ì‹œ ë” íš¨ìœ¨ì 
 }
 
 void CRay::Set_Origin(FXMVECTOR vOrigin)

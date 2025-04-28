@@ -70,4 +70,14 @@ namespace Engine
 
 		return wstrTo;
 	}
+
+
+	inline FMOD_VECTOR VecToFMOD(const XMVECTOR& in)
+	{
+		// +x = 오른쪽 +y는 윗쪽 , +z 는 전방
+		// FMOD (+z 전방, +x 오른쪽, +y 위쪽) 좌표로 변환
+		XMFLOAT3 tmp = {};
+		XMStoreFloat3(&tmp, in);
+		return FMOD_VECTOR{ tmp.x, tmp.y, tmp.z };
+	}
 }

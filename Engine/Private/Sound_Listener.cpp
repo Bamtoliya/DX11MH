@@ -1,6 +1,6 @@
 ﻿#include "Sound_Listener.h"
 #include "Sound_Manager.h"
-//#include "Transform.h"
+#include "Transform.h"
 
 CSound_Listener::CSound_Listener(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CSound_Manager* pSound_Manager)
     : CComponent{ pDevice, pContext }

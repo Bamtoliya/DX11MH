@@ -1,4 +1,4 @@
-#include "Camera.h"
+﻿#include "Camera.h"
 
 CCamera::CCamera(ID3D11Device* m_pDevice, ID3D11DeviceContext* m_pContext)
 	: CGameObject { m_pDevice, m_pContext }

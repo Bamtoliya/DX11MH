@@ -207,7 +207,7 @@
       <Filter>98.Imgui\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\GameInput_Device.h">
-      <Filter>00.System\GameInput</Filter>
+      <Filter>00.System\Input\GameInput</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Rect.h">
       <Filter>01.Utility\04.Components\VIBuffer\Rect</Filter>
@@ -226,6 +226,18 @@
     </ClInclude>
     <ClInclude Include="..\public\Ray.h">
       <Filter>01.Utility\Ray</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PipeLine.h">
+      <Filter>01.Utility\06. Pipeline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Managers.h">
+      <Filter>00.System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Devices.h">
+      <Filter>00.System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Systems.h">
+      <Filter>00.System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -405,7 +417,7 @@
       <Filter>98.Imgui\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GameInput_Device.cpp">
-      <Filter>00.System\GameInput</Filter>
+      <Filter>00.System\Input\GameInput</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Rect.cpp">
       <Filter>01.Utility\04.Components\VIBuffer\Rect</Filter>
@@ -424,6 +436,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Ray.cpp">
       <Filter>01.Utility\Ray</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PipeLine.cpp">
+      <Filter>01.Utility\06. Pipeline</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -562,14 +577,23 @@
     <Filter Include="00.System\Input">
       <UniqueIdentifier>{c6b21f28-5396-4762-b029-16f112c94f54}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00.System\GameInput">
-      <UniqueIdentifier>{483bebfb-0ef8-4774-85ae-68eb6638aa4c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="00.System\Physics">
       <UniqueIdentifier>{d07a345f-87a8-4c38-ae92-ea75feb2ffd0}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\Ray">
       <UniqueIdentifier>{06d15356-ef44-4d8b-8790-ca678c36a44b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\06. Pipeline">
+      <UniqueIdentifier>{512360c6-5658-48b2-9791-19a48ad2c0c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\07.Light">
+      <UniqueIdentifier>{1603318a-1545-498c-87e6-9996514cb97e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\07.Light\Manager">
+      <UniqueIdentifier>{022a3968-4843-4491-8936-4a6de20ac4db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\Input\GameInput">
+      <UniqueIdentifier>{483bebfb-0ef8-4774-85ae-68eb6638aa4c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

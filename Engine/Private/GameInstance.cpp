@@ -1,16 +1,11 @@
 ﻿#include "GameInstance.h"
 
 //#include "Picking.h"
+
+#include "Devices.h"
+#include "Managers.h"
 #include "Renderer.h"
-#include "Level_Manager.h"
-#include "Timer_Manager.h"
-#include "Graphic_Device.h"
-//#include "GameInput_Device.h"
-#include "Input_Device.h"
-#include "Object_Manager.h"
-#include "Prototype_Manager.h"
-#include "MyImGui.h"
-#include "MyImGui_Manager.h"
+#include "PipeLine.h"
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
@@ -20,15 +15,18 @@ CGameInstance::CGameInstance()
 
 HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut)
 {
+#pragma region Devices
 	m_pGraphic_Device = CGraphic_Device::Create(EngineDesc.hWnd, EngineDesc.isWindowed, EngineDesc.iWinSizeX, EngineDesc.iWinSizeY, ppDeviceOut, ppContextOut);
 	if (nullptr == m_pGraphic_Device)
 		return E_FAIL;
-
 	m_pInput_Device = CInput_Device::Create(EngineDesc.hInstance, EngineDesc.hWnd);
 	if (nullptr == m_pInput_Device)
 		return E_FAIL;
 
-	m_pMyImGui = CMyImGui::Create(EngineDesc.hWnd, *ppDeviceOut, *ppContextOut);
+#pragma endregion
+
+#pragma region Managers
+	m_pMyImGui_Manager = CMyImGui_Manager::Create(EngineDesc.hWnd, *ppDeviceOut, *ppContextOut);
 	if (nullptr == m_pGraphic_Device)
 		return E_FAIL;
 
@@ -47,9 +45,13 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	m_pObject_Manager = CObject_Manager::Create(EngineDesc.iNumLevels);
 	if (nullptr == m_pObject_Manager)
 		return E_FAIL;
+#pragma endregion
 
 	m_pRenderer = CRenderer::Create(*ppDeviceOut, *ppContextOut);
 	if (nullptr == m_pRenderer)
+		return E_FAIL;
+	m_pPipeLine = CPipeLine::Create();
+	if (nullptr == m_pPipeLine)
 		return E_FAIL;
 
 	//m_pPicking = CPicking::Create(*ppOut, EngineDesc.hWnd, EngineDesc.iWinSizeX, EngineDesc.iWinSizeY);
@@ -92,7 +94,7 @@ HRESULT CGameInstance::Draw()
 		return E_FAIL;
 
 	m_pRenderer->Draw();
-	m_pMyImGui->Render();
+	m_pMyImGui_Manager->Render();
 
 	m_pLevel_Manager->Render();
 
@@ -210,7 +212,8 @@ void CGameInstance::Update_Timer(const _wstring& strTimerTag)
 void CGameInstance::Release_Engine()
 {
 	//Safe_Release(m_pPicking);
-	Safe_Release(m_pMyImGui);
+	Safe_Release(m_pMyImGui_Manager);
+
 	Safe_Release(m_pTimer_Manager);
 
 	Safe_Release(m_pRenderer);

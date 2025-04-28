@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Base.h"
 BEGIN(Engine)
 class ENGINE_DLL CRay : public CBase
@@ -30,19 +30,19 @@ public:
 #pragma endregion
 
 #pragma region Get/Set
-	// RayÀÇ ½ÃÀÛÁ¡
+	// Rayì˜ ì‹œì‘ì 
 	_float3 Get_Origin() const { return *(_float3*)(&m_tDesc.vOrigin); }
-	// RayÀÇ ½ÃÀÛÁ¡ (SIMD ¿¬»ê¿ë)
+	// Rayì˜ ì‹œì‘ì  (SIMD ì—°ì‚°ìš©)
 	_vector Get_Origin_Vector() const { return XMLoadFloat4(&m_tDesc.vOrigin); }
-	// RayÀÇ ¹æÇâ (Á¤±ÔÈ­µÊ)
+	// Rayì˜ ë°©í–¥ (ì •ê·œí™”ë¨)
 	_float3 Get_Direction_Float3() const { return *(_float3*)(&m_tDesc.vDirection);; }
-	// RayÀÇ ¹æÇâ (Á¤±ÔÈ­µÊ, SIMD ¿¬»ê¿ë)
+	// Rayì˜ ë°©í–¥ (ì •ê·œí™”ë¨, SIMD ì—°ì‚°ìš©)
 	_vector Get_Direction_Vector() const { return XMLoadFloat4(&m_tDesc.vDirection); }
 	_vector Get_Point(const _float fDistance) const;
 
-	// ¸â¹ö º¯¼ö ¼³Á¤ ÇÔ¼öµé
+	// ë©¤ë²„ ë³€ìˆ˜ ì„¤ì • í•¨ìˆ˜ë“¤
 	void Set_Origin(FXMVECTOR vOrigin);
-	void Set_Direction(FXMVECTOR vDirection); // ÀÔ·ÂµÈ ¹æÇâÀ» Á¤±ÔÈ­ÇÏ¿© ÀúÀå
+	void Set_Direction(FXMVECTOR vDirection); // ì…ë ¥ëœ ë°©í–¥ì„ ì •ê·œí™”í•˜ì—¬ ì €ì¥
 #pragma endregion
 
 
