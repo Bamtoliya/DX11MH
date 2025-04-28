@@ -7,8 +7,8 @@ class CInput_Device final : public CBase
 #pragma region Structs
 public:
 	typedef struct tagInputStates {
-		GameInputKeyState* keyboardState = {};
-		GameInputMouseState* mouseState = {};
+		GameInputKeyState keyboardState = {};
+		GameInputMouseState mouseState = {};
 		std::map<uint64_t, GameInputGamepadState> controllerStates;
 		// Device ID별 컨트롤러 상태 저장
 		// 필요하다면 이전 상태도 저장하여 버튼 누름/뗌 감지
@@ -50,6 +50,8 @@ public:
 
 private:
 	IGameInput*			m_GameInput = { nullptr };
+	GameInputKeyState*	m_preKeyState = { nullptr };
+	GameInputKeyState*	m_curKeyState = { nullptr };
 	INPUT_STATE			m_curStates = {};
 	INPUT_STATE			m_preStates = {};
 };

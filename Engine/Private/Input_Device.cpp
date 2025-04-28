@@ -15,7 +15,10 @@ HRESULT CInput_Device::Initialize()
 
 void CInput_Device::Update(_float fTimeDelta)
 {
-    m_preStates = m_curStates;
+    //memcpy(m_preKeyState, m_curKeyState, sizeof(m_curKeyState));
+    m_preKeyState = m_curKeyState;
+    m_curStates = {};
+    //m_preStates = m_curStates;
     if (!m_GameInput) return;
     IGameInputReading* reading = nullptr;
     HRESULT hr = m_GameInput->GetCurrentReading(GameInputKindKeyboard | GameInputKindMouse | GameInputKindGamepad, nullptr, &reading);
@@ -29,27 +32,26 @@ void CInput_Device::Update(_float fTimeDelta)
 
     // 키보드 상태 읽기
     int b = reading->GetKeyCount();
-    reading->GetKeyState(b, m_curStates.keyboardState);
+    GetKeyboardState();
+    reading->GetKeyState(b, m_curKeyState);
     //m_curStates.keyboardState++;\
 
-    if (b == 2)
+    //m_curKeyState.
+    
+    if (b > 0)
     {
-        int c = 10;
-    }
-        
+        if (b == 2)
+        {
+            int c = 10;
 
-    if (m_curStates.keyboardState->virtualKey == VK_TAB)
-    {
-        int a = 10;
+        }
+        if (m_curKeyState->virtualKey == VK_TAB)
+        {
+                int a = 10;
+        }       
     }
-
-    if (m_curStates.keyboardState->scanCode == 'a')
-    {
-        int a = 10;
-    }
-
     // 마우스 상태 읽기
-    reading->GetMouseState(m_curStates.mouseState);
+    reading->GetMouseState(&m_curStates.mouseState);
 
     //for (uint32_t i = 0; i < actualCount; ++i) {
     //    IGameInputDevice* gamepadDevice = nullptr;
