@@ -53,8 +53,18 @@ using namespace FMOD;
 #include "ImGuizmo.h"
 #pragma endregion
 
-#pragma region Input
+
+#pragma region DirectInput
+#include <dinput.h>
+#include <functional>
+#pragma endregion
+
+
+#pragma region GameInput
 #include <GameInput.h>
+#define GAMEINPUT_API_VERSION 1
+using namespace GameInput;
+using namespace v1;
 #pragma endregion
 
 

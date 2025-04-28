@@ -14,7 +14,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gameinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gameinput.lib;dinput8.lib;dxguid;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

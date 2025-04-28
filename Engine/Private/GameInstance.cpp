@@ -5,7 +5,7 @@
 #include "Level_Manager.h"
 #include "Timer_Manager.h"
 #include "Graphic_Device.h"
-#include "Input_Device.h"
+#include "GameInput_Device.h"
 #include "Object_Manager.h"
 #include "Prototype_Manager.h"
 #include "MyImGui.h"
@@ -23,7 +23,7 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	if (nullptr == m_pGraphic_Device)
 		return E_FAIL;
 
-	m_pInput_Device = CInput_Device::Create();
+	m_pInput_Device = CGameInput_Device::Create();
 	if (nullptr == m_pInput_Device)
 		return E_FAIL;
 

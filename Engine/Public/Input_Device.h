@@ -1,26 +1,8 @@
-#pragma once
+癤�#pragma once
 #include "Base.h"
-
 BEGIN(Engine)
-class CInput_Device final : public CBase
+class CInput_Device : public CBase
 {
-#pragma region Structs
-public:
-	typedef struct tagInputStates {
-		GameInputKeyState keyboardState = {};
-		GameInputMouseState mouseState = {};
-		std::map<uint64_t, GameInputGamepadState> controllerStates;
-		// Device ID별 컨트롤러 상태 저장
-		// 필요하다면 이전 상태도 저장하여 버튼 누름/뗌 감지
-	} INPUT_STATE;
-	typedef struct tagDragDesc {
-		GameInputMouseButtons button;
-		float startX;
-		float startY;
-		float currentX; // 필요하다면 현재 위치도 저장
-		float currentY;
-	} DRAG_DESC;
-#pragma endregion
 #pragma region Constructor/Destructor
 private:
 	CInput_Device();
@@ -49,10 +31,9 @@ public:
 
 
 private:
-	IGameInput*			m_GameInput = { nullptr };
-	GameInputKeyState*	m_preKeyState = { nullptr };
-	GameInputKeyState*	m_curKeyState = { nullptr };
-	INPUT_STATE			m_curStates = {};
-	INPUT_STATE			m_preStates = {};
+	LPDIRECTINPUT8				m_pInputSDK = nullptr;
+	LPDIRECTINPUTDEVICE8		m_pKeyboard = nullptr;
+	LPDIRECTINPUTDEVICE8		m_pMouse = nullptr;
 };
-END
+
+END;

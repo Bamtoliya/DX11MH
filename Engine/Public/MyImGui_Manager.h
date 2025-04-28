@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Base.h"
 BEGIN(Engine)
 class CGameInstance;
@@ -14,8 +14,8 @@ public:
 	typedef struct tagRegisteredCallbackInfo {
 		ImGuiDrawCallbackHandle handle = InvalidCallbackHandle;
 		ImGuiDrawCallBack       callback;
-		std::string             name; // µğ¹ö±ë¿ë ÀÌ¸§
-		// ÇÊ¿ä½Ã ¿ì¼±¼øÀ§(priority) µîÀÇ ¸ŞÅ¸µ¥ÀÌÅÍ Ãß°¡ °¡´É
+		std::string             name; // ë””ë²„ê¹…ìš© ì´ë¦„
+		// í•„ìš”ì‹œ ìš°ì„ ìˆœìœ„(priority) ë“±ì˜ ë©”íƒ€ë°ì´í„° ì¶”ê°€ ê°€ëŠ¥
 	} CALLBACK_DESC;
 private:
 	CMyImGui_Manager(ID3D11Device*, ID3D11DeviceContext*);

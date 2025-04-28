@@ -106,4 +106,7 @@
       <Filter>01.GameObjects\00.BackGround</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
 </Project>

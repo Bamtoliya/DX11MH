@@ -10,7 +10,7 @@ public:
 		_float			fSpeedPerSec 	= {};
 		_float			fRotationPerSec = {};
 	}TRANSFORM_DESC;
-	enum State { RIGHT, UP, LOOK, POS, T_END };
+	enum STATE { RIGHT, UP, LOOK, POS, T_END };
 #pragma region Constructor/Destructor
 protected:
 	CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -28,6 +28,8 @@ public:
 	virtual HRESULT Initialize(void* pArg);
 #pragma endregion
 public:
+	_float3 Get_State(STATE eState) const { return *reinterpret_cast<const _float3*>(&m_tDesc.WorldMatrix.m[eState][0]); }
+	void Set_State(STATE eState, const _float3& vState) { memcpy(&m_tDesc.WorldMatrix.m[eState][0], &vState, sizeof vState); }
 	virtual void* Dump() override;
 #pragma region Variables
 private:

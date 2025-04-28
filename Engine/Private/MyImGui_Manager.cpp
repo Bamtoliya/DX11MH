@@ -1,4 +1,4 @@
-#include "MyImGui_Manager.h"
+ï»¿#include "MyImGui_Manager.h"
 #include "GameInstance.h"
 #include "Transform_Imgui.h"
 
@@ -139,13 +139,13 @@ void CMyImGui_Manager::Free()
 #pragma region CallBack Settings
 ImGuiDrawCallbackHandle CMyImGui_Manager::RegisterDrawCallback(ImGuiDrawCallBack callback, const std::string& debugName)
 {
-    if (!callback) { // À¯È¿ÇÏÁö ¾ÊÀº Äİ¹éÀº µî·ÏÇÏÁö ¾ÊÀ½
+    if (!callback) { // ìœ íš¨í•˜ì§€ ì•Šì€ ì½œë°±ì€ ë“±ë¡í•˜ì§€ ì•ŠìŒ
         return InvalidCallbackHandle;
     }
 
     ImGuiDrawCallbackHandle currentHandle = m_nextHandle++;
     m_registeredCallbacks.push_back({ currentHandle, std::move(callback), debugName });
-    // ÇÊ¿äÇÏ´Ù¸é ¿ì¼±¼øÀ§ µî¿¡ µû¶ó Á¤·ÄÇÒ ¼ö ÀÖÀ½
+    // í•„ìš”í•˜ë‹¤ë©´ ìš°ì„ ìˆœìœ„ ë“±ì— ë”°ë¼ ì •ë ¬í•  ìˆ˜ ìˆìŒ
     return currentHandle;
 }
 
@@ -165,7 +165,7 @@ bool CMyImGui_Manager::UnregisterDrawCallback(ImGuiDrawCallbackHandle handle)
         return true;
     }
 
-    return false; // ÇØ´ç ÇÚµéÀ» Ã£Áö ¸øÇÔ
+    return false; // í•´ë‹¹ í•¸ë“¤ì„ ì°¾ì§€ ëª»í•¨
 }
 
 void CMyImGui_Manager::ClearAllCallbacks()
