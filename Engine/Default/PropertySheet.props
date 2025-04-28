@@ -5,16 +5,17 @@
     <ExtLib>$(SolutionDir)\External Libraries\</ExtLib>
   </PropertyGroup>
   <PropertyGroup>
-    <ExternalIncludePath>$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\ImGuizmo\;$(ExtLib)wwise\include;$(SolutionDir)External Libraries\imgui\backends;$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\ImGuizmo\;$(ExtLib)wwise\include;$(SolutionDir)External Libraries\imgui\backends;$(SolutionDir)External Libraries\tk\inc\;$(ExternalIncludePath)</ExternalIncludePath>
     <OutDir>../Bin</OutDir>
-    <LibraryPath>$(SolutionDir)External Libraries\wwise\x64\$(Configuration)\lib\;$(SolutionDir)External Libraries\fmod\core\lib\x64\;$(SolutionDir)External Libraries\fmod\fsbank\lib\x64\;$(SolutionDir)External Libraries\fmod\studio\lib\x64\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)External Libraries\wwise\x64\$(Configuration)\lib\;$(SolutionDir)External Libraries\fmod\core\lib\x64\;$(SolutionDir)External Libraries\fmod\fsbank\lib\x64\;$(SolutionDir)External Libraries\fmod\studio\lib\x64\;$(SolutionDir)External Libraries\tk\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>gameinput.lib;dinput8.lib;dxguid;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>gameinput.lib;dinput8.lib;dxguid.lib;DirectXTK_Debug.lib;DirectXTK_Release.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ExtLib)\fmod\core\lib\$(Platform)\;$(ExtLib)\fmod\fsbank\lib\$(Platform)\;$(ExtLib)\fmod\studio\lib\$(Platform)\;$(ExtLib)\wwise\$(Platform)\$(Configuration)\;$(ExtLib)\tk\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

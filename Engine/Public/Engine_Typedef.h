@@ -2,6 +2,7 @@
 namespace Engine
 {
 	typedef unsigned char				_ubyte;
+	typedef unsigned char				_uchar;
 	typedef signed char					_byte;
 	typedef char						_char;
 

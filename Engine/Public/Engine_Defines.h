@@ -4,7 +4,8 @@
 
 #include <d3d11.h>
 #include <DirectXMath.h>
-
+#include "DirectXTK/DDSTextureLoader.h"
+#include "DirectXTK/WICTextureLoader.h"
 using namespace DirectX;
 
 #include <string>
@@ -14,6 +15,8 @@ using namespace DirectX;
 #include <unordered_map>
 #include <functional>
 using namespace std;
+
+
 
 #include "Engine_Struct.h"
 #include "Engine_Enum.h"
@@ -55,10 +58,12 @@ using namespace FMOD;
 
 
 #pragma region DirectInput
+#define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
 #include <functional>
+enum DIMK { DIMK_LBUTTON, DIMK_RBUTTON, DIMK_WHEEL, DIMK_END };
+enum DIMM { DIMM_X, DIMM_Y, DIMM_WHEEL, DIMM_END };
 #pragma endregion
-
 
 #pragma region GameInput
 #include <GameInput.h>
