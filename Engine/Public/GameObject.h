@@ -52,7 +52,6 @@ protected:
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr);
 #pragma endregion
 
-	
 #pragma region Variables
 	_wstring	m_strName;
 	CTransform*								m_pTransformCom = { nullptr };

@@ -210,6 +210,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\public\MyImGui_Manager.h" />
     <ClInclude Include="..\public\Panel.h" />
     <ClInclude Include="..\public\Physics_System.h" />
+    <ClInclude Include="..\public\Ray.h" />
     <ClInclude Include="..\public\RectTransform.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -276,6 +277,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\private\MyImGui_Manager.cpp" />
     <ClCompile Include="..\private\Panel.cpp" />
     <ClCompile Include="..\private\Physics_System.cpp" />
+    <ClCompile Include="..\private\Ray.cpp" />
     <ClCompile Include="..\private\RectTransform.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

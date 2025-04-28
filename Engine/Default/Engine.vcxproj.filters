@@ -224,6 +224,9 @@
     <ClInclude Include="..\public\Physics_System.h">
       <Filter>00.System\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Ray.h">
+      <Filter>01.Utility\Ray</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -419,6 +422,9 @@
     <ClCompile Include="..\private\Physics_System.cpp">
       <Filter>00.System\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Ray.cpp">
+      <Filter>01.Utility\Ray</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -561,6 +567,9 @@
     </Filter>
     <Filter Include="00.System\Physics">
       <UniqueIdentifier>{d07a345f-87a8-4c38-ae92-ea75feb2ffd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\Ray">
+      <UniqueIdentifier>{06d15356-ef44-4d8b-8790-ca678c36a44b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

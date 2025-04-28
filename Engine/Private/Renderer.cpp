@@ -66,6 +66,19 @@ HRESULT CRenderer::Render_NonBlend()
 
 	return S_OK;
 }
+HRESULT CRenderer::Render_Debug()
+{
+	for (auto& pGameObject : m_RenderObjects[ENUM_CAST(RENDERGROUP::RG_DEBUG)])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+	m_RenderObjects[ENUM_CAST(RENDERGROUP::RG_NONBLEND)].clear();
+
+	return S_OK;
+}
 //
 //_bool Compare(CGameObject* pSour, CGameObject* pDest)
 //{
