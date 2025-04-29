@@ -26,9 +26,12 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 #pragma endregion
 
 #pragma region Managers
-	m_pMyImGui_Manager = CMyImGui_Manager::Create(EngineDesc.hWnd, *ppDeviceOut, *ppContextOut);
-	if (nullptr == m_pGraphic_Device)
-		return E_FAIL;
+	if (m_bIsEditor)
+	{
+		m_pMyImGui_Manager = CMyImGui_Manager::Create(EngineDesc.hWnd, *ppDeviceOut, *ppContextOut);
+		if (nullptr == m_pGraphic_Device)
+			return E_FAIL;
+	}
 
 	m_pTimer_Manager = CTimer_Manager::Create();
 	if (nullptr == m_pTimer_Manager)
@@ -79,6 +82,9 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 
 	m_pObject_Manager->Late_Update(fTimeDelta);
 
+	if (m_pMyImGui_Manager)
+		m_pMyImGui_Manager->Update(fTimeDelta);
+
 	m_pLevel_Manager->Update(fTimeDelta);
 	m_pSound_Manager->Update(fTimeDelta);
 }
@@ -100,7 +106,9 @@ HRESULT CGameInstance::Draw()
 		return E_FAIL;
 
 	m_pRenderer->Draw();
-	m_pMyImGui_Manager->Render();
+
+	if(m_pMyImGui_Manager)
+		m_pMyImGui_Manager->Render();
 
 	m_pLevel_Manager->Render();
 
@@ -195,6 +203,15 @@ HRESULT CGameInstance::Add_Timer(const _wstring& strTimerTag)
 void CGameInstance::Update_Timer(const _wstring& strTimerTag)
 {
 	return m_pTimer_Manager->Update(strTimerTag);
+}
+
+#pragma endregion
+
+#pragma region MYIMGUI_MANAGER
+
+HRESULT CGameInstance::Add_ImGui(const _wstring& strKey, CMyImGui* pMyImGui)
+{
+	return E_NOTIMPL;
 }
 
 #pragma endregion

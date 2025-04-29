@@ -11,6 +11,9 @@
 #include "WICTextureLoader.h"
 #include <DirectXCollision.h>
 #include "DirectXCollision.inl"
+#include "Effects.h"
+#include "d3dx11effect.h"
+#include "d3dcompiler.h"
 using namespace DirectX;
 #pragma endregion
 
@@ -26,6 +29,7 @@ using json = nlohmann::json;
 #include <unordered_map>
 #include <functional>
 #include <fstream>
+#include <filesystem>
 using namespace std;
 #pragma endregion
 

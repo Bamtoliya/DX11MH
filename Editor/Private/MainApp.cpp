@@ -1,4 +1,5 @@
-﻿#include "MainApp.h"
+﻿#include "Levels.h"
+#include "MainApp.h"
 #include "GameInstance.h"
 #include "Sound_Manager.h"
 
@@ -17,12 +18,16 @@ HRESULT CMainApp::Initialize()
 	EngineDesc.iWinSizeY = g_iWinSizeY;
 	EngineDesc.isWindowed = true;
 	EngineDesc.iNumLevels = static_cast<_uint>(LEVEL::LEVEL_END);
+	EngineDesc.hInstance = g_hInst;
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext, &m_pSound_Manager)))
 		return E_FAIL;
 
-	/*if (FAILED(Start_Level(LEVEL::LEVEL_LOGO)))
-		return E_FAIL;*/
+	//if (FAILED(m_pMyImGui_Manager->Create(g_hWnd, m_pDevice, m_pContext)))
+	//	return E_FAIL;
+
+	if (FAILED(Start_Level(LEVEL::LEVEL_UI)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -44,13 +49,13 @@ HRESULT CMainApp::Render()
 	return S_OK;
 }
 
-//HRESULT CMainApp::Start_Level(LEVEL eStartLevel)
-//{
-//	if (FAILED(m_pGameInstance->Change_Level(static_cast<_uint>(LEVEL::LEVEL_LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, eStartLevel))))
-//		return E_FAIL;
-//
-//	return S_OK;
-//}
+HRESULT CMainApp::Start_Level(LEVEL eStartLevel)
+{
+	if (FAILED(m_pGameInstance->Change_Level(static_cast<_uint>(LEVEL::LEVEL_LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, eStartLevel))))
+		return E_FAIL;
+
+	return S_OK;
+}
 
 CMainApp* CMainApp::Create()
 {

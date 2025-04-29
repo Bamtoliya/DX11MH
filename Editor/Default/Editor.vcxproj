@@ -19,19 +19,34 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\private\Asset_Browser.cpp" />
+    <ClCompile Include="..\private\Inspector.cpp" />
+    <ClCompile Include="..\private\Level_Effect.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\Private\Level_Logo.cpp" />
+    <ClCompile Include="..\private\Level_Map.cpp" />
+    <ClCompile Include="..\private\Level_UI.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
+    <ClCompile Include="..\private\Viewport_2D.cpp" />
+    <ClCompile Include="..\private\Viewport_3D.cpp" />
     <ClCompile Include="Editor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\public\Asset_Browser.h" />
     <ClInclude Include="..\Public\Editor_Defines.h" />
     <ClInclude Include="..\Public\Editor_Enum.h" />
+    <ClInclude Include="..\public\Inspector.h" />
+    <ClInclude Include="..\Public\Levels.h" />
+    <ClInclude Include="..\public\Level_Effect.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\Public\Level_Logo.h" />
+    <ClInclude Include="..\public\Level_Map.h" />
+    <ClInclude Include="..\public\Level_UI.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
+    <ClInclude Include="..\public\Viewport_2D.h" />
+    <ClInclude Include="..\public\Viewport_3D.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -112,9 +127,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>../Bin/</OutDir>
+    <CopyLocalProjectReference>true</CopyLocalProjectReference>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>../Bin/</OutDir>
+    <CopyLocalProjectReference>true</CopyLocalProjectReference>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -148,7 +165,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WITH_EDITOR;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../public/;../../EngineSDK/Inc/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -168,7 +185,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WITH_EDITOR;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../public/;../../EngineSDK/Inc/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>

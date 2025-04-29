@@ -228,7 +228,7 @@
       <Filter>01.Utility\Ray</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PipeLine.h">
-      <Filter>01.Utility\06. Pipeline</Filter>
+      <Filter>01.Utility\06.Pipeline</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Managers.h">
       <Filter>00.System</Filter>
@@ -477,7 +477,7 @@
       <Filter>01.Utility\08.Material</Filter>
     </ClCompile>
     <ClCompile Include="..\private\PipeLine.cpp">
-      <Filter>01.Utility\06. Pipeline</Filter>
+      <Filter>01.Utility\06.Pipeline</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Ray.cpp">
       <Filter>01.Utility\Ray</Filter>
@@ -631,9 +631,6 @@
     <Filter Include="01.Utility\Ray">
       <UniqueIdentifier>{06d15356-ef44-4d8b-8790-ca678c36a44b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\06. Pipeline">
-      <UniqueIdentifier>{512360c6-5658-48b2-9791-19a48ad2c0c5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\07.Light">
       <UniqueIdentifier>{1603318a-1545-498c-87e6-9996514cb97e}</UniqueIdentifier>
     </Filter>
@@ -663,6 +660,18 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Particle\Bounding">
       <UniqueIdentifier>{c30c4214-357b-4065-85b1-ed7461448808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Camera\Free_Camera">
+      <UniqueIdentifier>{5d46fd64-1d31-4d5e-bd7b-c081906743cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Camera\First_Camera">
+      <UniqueIdentifier>{0f3a3556-d269-40fc-b19d-1b9beb5841d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Camera\Spring_Camera">
+      <UniqueIdentifier>{6ac17c45-5535-4a59-9df4-ad3806c25d49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\06.Pipeline">
+      <UniqueIdentifier>{512360c6-5658-48b2-9791-19a48ad2c0c5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -20,6 +20,8 @@ HRESULT CMainApp::Initialize()
 	EngineDesc.isWindowed = true;
 	EngineDesc.iNumLevels = static_cast<_uint>(LEVEL::LEVEL_END);
 
+	m_pGameInstance->SetEditor(false);
+
 	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext, &m_pSound_Manager)))
 		return E_FAIL;
 

@@ -53,7 +53,6 @@ HRESULT CInput_Device::Initialize(HINSTANCE hInstance, HWND hWnd)
 		return E_FAIL;
 
 	return S_OK;
-    return S_OK;
 }
 
 void CInput_Device::Update(_float fTimeDelta)

@@ -5,6 +5,7 @@
 BEGIN(Engine)
 class CGameInstance;
 class CSound_Manager;
+class CMyImGui_Manager;
 END
 
 BEGIN(Editor)
@@ -18,6 +19,8 @@ public:
 	HRESULT Initialize();
 	void	Update(_float fTimeDelta);
 	HRESULT Render();
+
+	HRESULT Start_Level(LEVEL eStartLevel);
 
 private:
 	CGameInstance*			m_pGameInstance = { nullptr };

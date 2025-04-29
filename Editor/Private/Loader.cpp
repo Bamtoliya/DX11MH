@@ -57,6 +57,15 @@ HRESULT CLoader::Loading()
 	case LEVEL::LEVEL_LOGO:
 		hr = Loading_For_Logo();
 		break;
+	case LEVEL::LEVEL_UI:
+		hr = Loading_For_Logo();
+		break;
+	case LEVEL::LEVEL_MAP:
+		hr = Loading_For_Logo();
+		break;
+	case LEVEL::LEVEL_EFFECT:
+		hr = Loading_For_Logo();
+		break;
 	}
 
 	if (FAILED(hr))

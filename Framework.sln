@@ -22,12 +22,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Editor", "Editor\Default\Ed
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_Editor|x64 = Debug_Editor|x64
+		Debug_Editor|x86 = Debug_Editor|x86
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A60343E-798F-4669-AFCE-F8EFAF6A0AA7}.Debug_Editor|x64.ActiveCfg = Debug|x64
+		{1A60343E-798F-4669-AFCE-F8EFAF6A0AA7}.Debug_Editor|x64.Build.0 = Debug|x64
+		{1A60343E-798F-4669-AFCE-F8EFAF6A0AA7}.Debug_Editor|x86.ActiveCfg = Debug|Win32
+		{1A60343E-798F-4669-AFCE-F8EFAF6A0AA7}.Debug_Editor|x86.Build.0 = Debug|Win32
 		{1A60343E-798F-4669-AFCE-F8EFAF6A0AA7}.Debug|x64.ActiveCfg = Debug|x64
 		{1A60343E-798F-4669-AFCE-F8EFAF6A0AA7}.Debug|x64.Build.0 = Debug|x64
 		{1A60343E-798F-4669-AFCE-F8EFAF6A0AA7}.Debug|x86.ActiveCfg = Debug|Win32
@@ -36,6 +42,10 @@ Global
 		{1A60343E-798F-4669-AFCE-F8EFAF6A0AA7}.Release|x64.Build.0 = Release|x64
 		{1A60343E-798F-4669-AFCE-F8EFAF6A0AA7}.Release|x86.ActiveCfg = Release|Win32
 		{1A60343E-798F-4669-AFCE-F8EFAF6A0AA7}.Release|x86.Build.0 = Release|Win32
+		{E6549A29-7A97-4C29-AF47-47CAC692EFB5}.Debug_Editor|x64.ActiveCfg = Debug_Editor|x64
+		{E6549A29-7A97-4C29-AF47-47CAC692EFB5}.Debug_Editor|x64.Build.0 = Debug_Editor|x64
+		{E6549A29-7A97-4C29-AF47-47CAC692EFB5}.Debug_Editor|x86.ActiveCfg = Debug_Editor|Win32
+		{E6549A29-7A97-4C29-AF47-47CAC692EFB5}.Debug_Editor|x86.Build.0 = Debug_Editor|Win32
 		{E6549A29-7A97-4C29-AF47-47CAC692EFB5}.Debug|x64.ActiveCfg = Debug|x64
 		{E6549A29-7A97-4C29-AF47-47CAC692EFB5}.Debug|x64.Build.0 = Debug|x64
 		{E6549A29-7A97-4C29-AF47-47CAC692EFB5}.Debug|x86.ActiveCfg = Debug|Win32
@@ -44,6 +54,10 @@ Global
 		{E6549A29-7A97-4C29-AF47-47CAC692EFB5}.Release|x64.Build.0 = Release|x64
 		{E6549A29-7A97-4C29-AF47-47CAC692EFB5}.Release|x86.ActiveCfg = Release|Win32
 		{E6549A29-7A97-4C29-AF47-47CAC692EFB5}.Release|x86.Build.0 = Release|Win32
+		{10313FD5-AD30-4E9E-BDC2-BD3A8A9CD12B}.Debug_Editor|x64.ActiveCfg = Debug|x64
+		{10313FD5-AD30-4E9E-BDC2-BD3A8A9CD12B}.Debug_Editor|x64.Build.0 = Debug|x64
+		{10313FD5-AD30-4E9E-BDC2-BD3A8A9CD12B}.Debug_Editor|x86.ActiveCfg = Debug|Win32
+		{10313FD5-AD30-4E9E-BDC2-BD3A8A9CD12B}.Debug_Editor|x86.Build.0 = Debug|Win32
 		{10313FD5-AD30-4E9E-BDC2-BD3A8A9CD12B}.Debug|x64.ActiveCfg = Debug|x64
 		{10313FD5-AD30-4E9E-BDC2-BD3A8A9CD12B}.Debug|x64.Build.0 = Debug|x64
 		{10313FD5-AD30-4E9E-BDC2-BD3A8A9CD12B}.Debug|x86.ActiveCfg = Debug|Win32
@@ -55,5 +69,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {24DDE707-B87A-43FF-AA5B-1D1603BDB97B}
 	EndGlobalSection
 EndGlobal

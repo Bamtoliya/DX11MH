@@ -57,12 +57,12 @@ public:
 //#pragma endregion
 
 #pragma region Imgui
-
+	void SetEditor(_bool b) { m_bIsEditor = b; }
+	HRESULT Add_ImGui(const _wstring& strKey, class CMyImGui* pMyImGui);
 #pragma endregion
 
 
 private:
-
 #pragma region Device
 	class CInput_Device*	m_pInput_Device = { nullptr };
 	class CGraphic_Device*	m_pGraphic_Device = { nullptr };
@@ -80,6 +80,10 @@ private:
 #pragma region 
 	class CRenderer*	m_pRenderer = { nullptr };
 	class CPipeLine*	m_pPipeLine = { nullptr };
+#pragma endregion
+
+#pragma region Boolean
+	_bool	m_bIsEditor = { true };
 #pragma endregion
 
 	

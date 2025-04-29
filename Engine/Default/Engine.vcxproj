@@ -81,11 +81,13 @@
     <OutDir>../Bin/</OutDir>
     <ExternalIncludePath>$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\ImGuizmo\;$(SolutionDir)External Libraries\imgui\;$(WWISESDK)\include;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(WWISESDK)\x64_vc170\$(Configuration)\lib\;$(LibraryPath)</LibraryPath>
+    <CopyLocalProjectReference>true</CopyLocalProjectReference>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>../Bin/</OutDir>
     <ExternalIncludePath>$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\ImGuizmo\;$(SolutionDir)External Libraries\imgui\;$(WWISESDK)\include;$(ExternalIncludePath)</ExternalIncludePath>
     <LibraryPath>$(WWISESDK)\x64_vc170\$(Configuration)\lib\;$(LibraryPath)</LibraryPath>
+    <CopyLocalProjectReference>true</CopyLocalProjectReference>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -163,7 +165,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>d3d11.lib;fmod_vc.lib;fsbank_vc.lib;fmodstudio_vc.lib;AkSoundEngine.lib;AkMemoryMgr.lib;AkStreamMgr.lib;AkMusicEngine.lib;AkSpatialAudio.lib;AkAudioInputSource.lib;CommunicationCentral.lib;GameInput.lib;DirectXTK_Release.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)External Libraries\fmod\core\lib\x64\;$(SolutionDir)External Libraries\fmod\studio\lib\x64\;$(SolutionDir)External Libraries\fmod\fsbank\lib\x64\;$(SolutionDir)External Libraries\wwise\x64\$(Configuration)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories>../ThirdPartyLib/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../ThirdPartyLib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>CD "$(SolutionDir)"
@@ -262,7 +264,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\public\Transform.h" />
     <ClInclude Include="..\public\VIBuffer.h" />
     <ClInclude Include="..\public\UIObject.h" />
-    <ClInclude Include="..\Public\VIBuffer_Rect.h" />   
+    <ClInclude Include="..\Public\VIBuffer_Rect.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\External Libraries\ImGuizmo\GraphEditor.cpp" />
