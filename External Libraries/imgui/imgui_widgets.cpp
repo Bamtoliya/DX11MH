@@ -1,4 +1,4 @@
-// dear imgui, v1.91b
+﻿// dear imgui, v1.91b
 // (widgets code)
 
 /*
