@@ -73,4 +73,10 @@ namespace Engine
 	} ATTRIBUTE;
 
 	
+	typedef struct tagVertexPositionTexcoord
+	{
+		XMFLOAT3		vPosition;
+		XMFLOAT2		vTexcoord;
+	}VTXPOSTEX;
+
 }

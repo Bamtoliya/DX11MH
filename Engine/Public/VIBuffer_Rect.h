@@ -11,7 +11,7 @@ protected:
 
 public:
 	static	CVIBuffer_Rect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CVIBuffer_Rect* Clone(void* pArg);
+	virtual CComponent* Clone(void* pArg);
 	virtual void Free();
 #pragma endregion
 

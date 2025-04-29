@@ -9,17 +9,17 @@ CVIBuffer::CVIBuffer(const CVIBuffer& Prototype)
     : CComponent                { Prototype }
     , m_pVB                     { Prototype.m_pVB }
     , m_iNumVertices            { Prototype.m_iNumVertices }
-    , m_iStride                 { Prototype.m_iStride }
+    , m_iVertexStride           { Prototype.m_iVertexStride }
     , m_iNumVertexBuffers       { Prototype.m_iNumVertexBuffers }
     , m_pIB                     { Prototype.m_pIB }
-    , m_iIndicesByte            { Prototype.m_iIndicesByte }
+    , m_iIndexStride            { Prototype.m_iIndexStride }
     , m_iNumPrimitive           { Prototype.m_iNumPrimitive }
     , m_iNumIndicesPerPrimitive { Prototype.m_iNumIndicesPerPrimitive }
-    , m_eFormat                 { Prototype.m_eFormat }
-    , m_eTopology               { Prototype.m_eTopology }
+    , m_eIndexFormat            { Prototype.m_eIndexFormat }
+    , m_ePrimitiveTopology      { Prototype.m_ePrimitiveTopology }
     , m_BufferDesc              { Prototype.m_BufferDesc }
     , m_SubResourceData         { Prototype.m_SubResourceData }
-    , m_pVerticesPos            { Prototype.m_pVerticesPos }
+    , m_pVertexPositions        { Prototype.m_pVertexPositions }
 {
     Safe_AddRef(m_pVB);
     Safe_AddRef(m_pIB);
@@ -30,7 +30,7 @@ void CVIBuffer::Free()
     __super::Free();
 
     if (!m_bIsCloned)
-        Safe_Delete_Array(m_pVerticesPos);
+		Safe_Delete_Array(m_pVertexPositions);
 
     Safe_Release(m_pVB);
     Safe_Release(m_pIB);
@@ -49,20 +49,32 @@ HRESULT CVIBuffer::Initialize(void* pArg)
 }
 #pragma endregion
 
+HRESULT CVIBuffer::Bind_Buffers()
+{
+    ID3D11Buffer*   pBuffer[]   = { m_pVB, };
+    _uint	        iVertexStrides[]  = { m_iVertexStride, };
+    _uint           iOffsets[]  = { 0, };
+
+    m_pContext->IASetVertexBuffers(0, m_iNumVertexBuffers, pBuffer, iVertexStrides, iOffsets);
+    m_pContext->IASetIndexBuffer(m_pIB, m_eIndexFormat, 0);
+    m_pContext->IASetPrimitiveTopology(m_ePrimitiveTopology);
+
+	D3D11_INPUT_ELEMENT_DESC		Elements[6] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+	_uint		iNumElements = 2;
+
+    return S_OK;
+}
 
 HRESULT CVIBuffer::Render()
 {
-    ID3D11Buffer*   pBuffer[]   = { m_pVB, };
-    _uint	        iStrides[]  = { m_iStride, };
-    _uint           iOffsets[]  = { 0, };
+	m_pContext->DrawIndexed(m_iNumIndices, 0, 0);
 
-    m_pContext->IASetVertexBuffers(0, m_iNumVertexBuffers, pBuffer, iStrides, iOffsets);
-    m_pContext->IASetIndexBuffer(m_pIB, m_eFormat, 0);
-    m_pContext->IASetPrimitiveTopology(m_eTopology);
-
-    m_pContext->DrawIndexed(m_iNumIndicesPerPrimitive * m_iNumPrimitive, 0, 0);
-
-    return S_OK;
+	return S_OK;
 }
 
 HRESULT CVIBuffer::Create_VertexBuffer()

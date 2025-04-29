@@ -246,19 +246,28 @@
       <Filter>01.Utility\08.Material</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Particle_Manager.h">
-      <Filter>01.Utility\Paritcle\Manager</Filter>
+      <Filter>01.Utility\04.Components\Particle\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Particle_System.h">
-      <Filter>01.Utility\Paritcle</Filter>
+      <Filter>01.Utility\04.Components\Particle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Bounding_Box.h">
-      <Filter>01.Utility\Paritcle\Bounding</Filter>
+      <Filter>01.Utility\04.Components\Particle\Bounding</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Bounding_Sphere.h">
-      <Filter>01.Utility\Paritcle\Bounding</Filter>
+      <Filter>01.Utility\04.Components\Particle\Bounding</Filter>
     </ClInclude>
     <ClInclude Include="..\..\External Libraries\simdjson.h">
       <Filter>External Libraries\json\simdjson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Rect.h">
+      <Filter>01.Utility\04.Components\VIBuffer\Rect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer.h">
+      <Filter>01.Utility\04.Components\VIBuffer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Shader.h">
+      <Filter>01.Utility\04.Components\Shader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -449,29 +458,32 @@
     <ClCompile Include="..\private\Texture.cpp">
       <Filter>01.Utility\04.Components\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Camera.cpp">
-      <Filter>01.Utility\03.GameObject\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Physics_System.cpp">
-      <Filter>00.System\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Ray.cpp">
-      <Filter>01.Utility\Ray</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\PipeLine.cpp">
-      <Filter>01.Utility\06. Pipeline</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Light.cpp">
       <Filter>01.Utility\07.Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Physics_System.cpp">
+      <Filter>01.Utility\04.Components\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Particle_System.cpp">
+      <Filter>01.Utility\04.Components\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Particle_Manager.cpp">
+      <Filter>01.Utility\04.Components\Particle\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera.cpp">
+      <Filter>01.Utility\03.GameObject\Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Material.cpp">
       <Filter>01.Utility\08.Material</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Particle_Manager.cpp">
-      <Filter>01.Utility\Paritcle\Manager</Filter>
+    <ClCompile Include="..\private\PipeLine.cpp">
+      <Filter>01.Utility\06. Pipeline</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Particle_System.cpp">
-      <Filter>01.Utility\Paritcle</Filter>
+    <ClCompile Include="..\private\Ray.cpp">
+      <Filter>01.Utility\Ray</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Shader.cpp">
+      <Filter>01.Utility\04.Components\Shader</Filter>
     </ClCompile>
     <ClCompile Include="..\..\External Libraries\simdjson.cpp">
       <Filter>External Libraries\json\simdjson</Filter>
@@ -637,20 +649,20 @@
     <Filter Include="01.Utility\08.Material">
       <UniqueIdentifier>{fa0438e9-619a-4fb3-9315-3da70e49e29d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\Paritcle">
-      <UniqueIdentifier>{8087e3ee-0e8c-44ec-b548-4359a1e56d4c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\Paritcle\Manager">
-      <UniqueIdentifier>{f744a8c4-45a0-4862-b480-af3360b03fd5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\Paritcle\Bounding">
-      <UniqueIdentifier>{c30c4214-357b-4065-85b1-ed7461448808}</UniqueIdentifier>
-    </Filter>
     <Filter Include="External Libraries\json">
       <UniqueIdentifier>{f331be90-85ee-4c35-a7ed-32715a77f2a0}</UniqueIdentifier>
     </Filter>
     <Filter Include="External Libraries\json\simdjson">
       <UniqueIdentifier>{ec543cab-41f1-433b-bc47-b4da175eca4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Particle">
+      <UniqueIdentifier>{8087e3ee-0e8c-44ec-b548-4359a1e56d4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Particle\Manager">
+      <UniqueIdentifier>{f744a8c4-45a0-4862-b480-af3360b03fd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Particle\Bounding">
+      <UniqueIdentifier>{c30c4214-357b-4065-85b1-ed7461448808}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -663,6 +675,12 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Shader">
       <UniqueIdentifier>{b28320a0-3358-4482-adbd-83fc1492c376}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\VIBuffer\Rect">
+      <UniqueIdentifier>{6ac2eaed-00c7-4957-b995-528170281560}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\VIBuffer\Terrain">
+      <UniqueIdentifier>{9ddf86be-2abe-4eef-85e6-440fb5c17013}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
