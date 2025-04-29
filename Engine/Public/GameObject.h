@@ -43,6 +43,7 @@ public:
 	virtual HRESULT Pre_Render();
 	virtual HRESULT Render();
 	virtual HRESULT Post_Render();
+	virtual HRESULT RenderImGui();
 #pragma endregion
 
 #pragma region Functions

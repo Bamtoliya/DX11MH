@@ -206,6 +206,9 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\Engine_Typedef.h" />
     <ClInclude Include="..\Public\GameInstance.h" />
     <ClInclude Include="..\Public\GameObject.h" />
+    <ClInclude Include="..\public\GameObject_Cube.h" />
+    <ClInclude Include="..\public\GameObject_Plane.h" />
+    <ClInclude Include="..\public\GameObject_Sphere.h" />
     <ClInclude Include="..\Public\Graphic_Device.h" />
     <ClInclude Include="..\public\GameInput_Device.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -290,6 +293,9 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\GameInstance.cpp" />
     <ClCompile Include="..\Private\GameObject.cpp" />
+    <ClCompile Include="..\private\GameObject_Cube.cpp" />
+    <ClCompile Include="..\private\GameObject_Plane.cpp" />
+    <ClCompile Include="..\private\GameObject_Sphere.cpp" />
     <ClCompile Include="..\Private\Graphic_Device.cpp" />
     <ClCompile Include="..\private\GameInput_Device.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

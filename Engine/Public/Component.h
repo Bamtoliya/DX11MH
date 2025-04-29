@@ -19,6 +19,7 @@ public:
 	virtual void Free();
 #pragma endregion
 public:
+	virtual HRESULT RenderImGui() { return S_OK; }
 	virtual void* Dump() { return nullptr; }
 #pragma region Variables
 protected:

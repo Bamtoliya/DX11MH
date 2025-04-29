@@ -269,6 +269,15 @@
     <ClInclude Include="..\public\Shader.h">
       <Filter>01.Utility\04.Components\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\GameObject_Plane.h">
+      <Filter>01.Utility\03.GameObject\Base\Plane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameObject_Cube.h">
+      <Filter>01.Utility\03.GameObject\Base\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameObject_Sphere.h">
+      <Filter>01.Utility\03.GameObject\Base\Sphere</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -488,6 +497,15 @@
     <ClCompile Include="..\..\External Libraries\simdjson.cpp">
       <Filter>External Libraries\json\simdjson</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\GameObject_Plane.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Plane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameObject_Cube.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameObject_Sphere.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Sphere</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -672,6 +690,21 @@
     </Filter>
     <Filter Include="01.Utility\06.Pipeline">
       <UniqueIdentifier>{512360c6-5658-48b2-9791-19a48ad2c0c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base">
+      <UniqueIdentifier>{6ccf58f7-28fa-42c1-89cf-c809c9934007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Plane">
+      <UniqueIdentifier>{d994268c-fe5a-49ef-b6aa-4e0131b0ec1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Cube">
+      <UniqueIdentifier>{60b50acc-c742-4d65-b29f-9d18a66e9b8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Sphere">
+      <UniqueIdentifier>{15169903-1eee-42f0-9eb9-fea2a576a8e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Capsule">
+      <UniqueIdentifier>{dc47b00b-09cc-4c0a-a515-4156c73a9e34}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

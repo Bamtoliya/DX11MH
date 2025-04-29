@@ -86,6 +86,15 @@ HRESULT CGameObject::Post_Render()
 	return S_OK;
 }
 
+HRESULT CGameObject::RenderImGui()
+{
+	for (auto& c : m_Components)
+	{
+		c.second->RenderImGui();
+	}
+	return S_OK;
+}
+
 HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg)
 {
 	return S_OK;

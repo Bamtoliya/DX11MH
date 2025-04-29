@@ -104,6 +104,7 @@ public:
 #pragma endregion
 
 public:
+	virtual HRESULT RenderImGui() override;
 	virtual void* Dump() override;
 #pragma region Variables
 private:

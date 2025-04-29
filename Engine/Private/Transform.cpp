@@ -102,6 +102,14 @@ void CTransform::Set_Scale(STATE eState, _float fScale)
 }
 
 
+HRESULT CTransform::RenderImGui()
+{
+	ImGui::Begin("Some Window");
+	ImGui::Text("This can dock into the fullscreen space.");
+	ImGui::End();
+	return S_OK;
+}
+
 void* CTransform::Dump()
 {
 	return &m_tDesc;
