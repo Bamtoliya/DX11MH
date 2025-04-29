@@ -8,7 +8,7 @@ using ImGuiDrawCallbackHandle = size_t;
 constexpr ImGuiDrawCallbackHandle InvalidCallbackHandle = 0;
 #pragma endregion
 
-class CMyImGui_Manager final : public CBase
+class ENGINE_DLL CMyImGui_Manager final : public CBase
 {
 public:
 	typedef struct tagRegisteredCallbackInfo {

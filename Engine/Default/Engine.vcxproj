@@ -270,7 +270,9 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\..\External Libraries\ImGuizmo\ImGuizmo.cpp" />
     <ClCompile Include="..\..\External Libraries\ImGuizmo\ImSequencer.cpp" />
     <ClCompile Include="..\..\External Libraries\imgui\backends\imgui_impl_dx11.cpp" />
-    <ClCompile Include="..\..\External Libraries\imgui\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\backends\imgui_impl_win32.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+    </ClCompile>
     <ClCompile Include="..\..\External Libraries\imgui\imgui.cpp" />
     <ClCompile Include="..\..\External Libraries\imgui\imgui_demo.cpp" />
     <ClCompile Include="..\..\External Libraries\imgui\imgui_draw.cpp" />

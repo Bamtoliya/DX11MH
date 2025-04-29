@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "UI_Element.h"
 BEGIN(Engine)
+class CTexture;
 class ENGINE_DLL CPanel : public CUI_Element
 {
 #pragma region Constructor/Destructor
@@ -27,5 +28,7 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Post_Render() override;
 #pragma endregion
+private:
+	CTexture*		m_pTextureCom;
 };
 END

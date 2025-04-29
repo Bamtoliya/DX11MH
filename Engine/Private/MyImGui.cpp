@@ -25,6 +25,7 @@ HRESULT CMyImGui::Initialize(HWND hwnd)
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable Gamepad Controls
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -88,8 +89,12 @@ HRESULT CMyImGui::Render()
     // 3. Show another simple window.
     if (show_another_window)
     {
+        /*if (ImGui::BeginMainMenuBar())
+        {
+
+        }*/
         ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-        ImGui::Text("Hello from another window!");
+
         if (ImGui::Button("Close Me"))
             show_another_window = false;
         ImGui::End();
