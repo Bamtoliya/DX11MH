@@ -13,7 +13,7 @@ CGameInstance::CGameInstance()
 {
 }
 
-HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut)
+HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID3D11Device** ppDeviceOut, _Out_ ID3D11DeviceContext** ppContextOut, _Out_ CSound_Manager** ppSoundOut)
 {
 #pragma region Devices
 	m_pGraphic_Device = CGraphic_Device::Create(EngineDesc.hWnd, EngineDesc.isWindowed, EngineDesc.iWinSizeX, EngineDesc.iWinSizeY, ppDeviceOut, ppContextOut);
@@ -45,6 +45,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	m_pObject_Manager = CObject_Manager::Create(EngineDesc.iNumLevels);
 	if (nullptr == m_pObject_Manager)
 		return E_FAIL;
+
+	m_pSound_Manager = CSound_Manager::Create(512, FMOD_STUDIO_INIT_NORMAL, FMOD_INIT_NORMAL);
+	if (nullptr == m_pSound_Manager)
+		return E_FAIL;
+	*ppSoundOut = m_pSound_Manager;
 #pragma endregion
 
 	m_pRenderer = CRenderer::Create(*ppDeviceOut, *ppContextOut);
@@ -75,6 +80,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pObject_Manager->Late_Update(fTimeDelta);
 
 	m_pLevel_Manager->Update(fTimeDelta);
+	m_pSound_Manager->Update(fTimeDelta);
 }
 
 HRESULT CGameInstance::Begin_Draw()
@@ -114,7 +120,7 @@ void CGameInstance::Clear(_uint iLevelIndex)
 	
 	/* 특정 레벨의 객체을 삭제한다. */
 	m_pObject_Manager->Clear(iLevelIndex);
-
+	m_pSound_Manager->Stop_All_Event();
 	/* 특정 레벨의 원형객을 삭제한다. */
 	m_pPrototype_Manager->Clear(iLevelIndex);
 }
@@ -233,8 +239,4 @@ void CGameInstance::Release_Engine()
 void CGameInstance::Free()
 {
 	__super::Free();
-
-
-
-	
 }

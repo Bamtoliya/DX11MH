@@ -9,7 +9,6 @@
 #include <process.h>
 #include "Client_Enum.h"
 
-
 namespace Client
 {
 	const unsigned int			g_iWinSizeX = 1920;

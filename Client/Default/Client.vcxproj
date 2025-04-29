@@ -182,6 +182,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Engine\Default\Engine.vcxproj">
+      <Project>{e6549a29-7a97-4c29-af47-47cac692efb5}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\..\packages\Microsoft.GameInput.1.2.26100.4782\build\native\targets\Microsoft.GameInput.targets" Condition="Exists('..\..\packages\Microsoft.GameInput.1.2.26100.4782\build\native\targets\Microsoft.GameInput.targets')" />

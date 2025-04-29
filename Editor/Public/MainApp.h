@@ -4,6 +4,7 @@
 
 BEGIN(Engine)
 class CGameInstance;
+class CSound_Manager;
 END
 
 BEGIN(Editor)
@@ -22,6 +23,7 @@ private:
 	CGameInstance*			m_pGameInstance = { nullptr };
 	ID3D11Device*			m_pDevice		= { nullptr };
 	ID3D11DeviceContext*	m_pContext		= { nullptr };
+	CSound_Manager*			m_pSound_Manager = { nullptr };
 
 public:
 	static CMainApp* Create();

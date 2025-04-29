@@ -2,13 +2,6 @@
 #include "Sound_Event.h"
 #include "Transform.h"
 
-inline bool EndsWith(const wstring& str, const wstring& suffix) {
-    if (str.length() < suffix.length()) {
-        return false;
-    }
-    return equal(suffix.rbegin(), suffix.rend(), str.rbegin());
-}
-
 _uint CSound_Manager::sNextID = { 0 };
 
 CSound_Manager::CSound_Manager()

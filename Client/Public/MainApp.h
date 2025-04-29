@@ -5,6 +5,7 @@
 
 BEGIN(Engine)
 class CGameInstance;
+class CSound_Manager;
 END
 
 BEGIN(Client)
@@ -24,6 +25,7 @@ private:
 	CGameInstance*				m_pGameInstance = { };
 	ID3D11Device*				m_pDevice = { nullptr };
 	ID3D11DeviceContext*		m_pContext = { nullptr };
+	CSound_Manager*				m_pSound_Manager = { nullptr };
 
 public:
 	HRESULT Start_Level(LEVEL eStartLevel);

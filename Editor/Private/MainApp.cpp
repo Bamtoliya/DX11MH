@@ -1,5 +1,6 @@
 ﻿#include "MainApp.h"
 #include "GameInstance.h"
+#include "Sound_Manager.h"
 
 CMainApp::CMainApp()
 	: m_pGameInstance{ CGameInstance::Get_Instance() }
@@ -17,7 +18,7 @@ HRESULT CMainApp::Initialize()
 	EngineDesc.isWindowed = true;
 	EngineDesc.iNumLevels = static_cast<_uint>(LEVEL::LEVEL_END);
 
-	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext)))
+	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext, &m_pSound_Manager)))
 		return E_FAIL;
 
 	/*if (FAILED(Start_Level(LEVEL::LEVEL_LOGO)))
@@ -70,7 +71,7 @@ void CMainApp::Free()
 
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
-
+	Safe_Release(m_pSound_Manager);
 	m_pGameInstance->Release_Engine();
 
 	Safe_Release(m_pGameInstance);

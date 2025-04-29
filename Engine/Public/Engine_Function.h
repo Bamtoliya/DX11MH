@@ -80,4 +80,11 @@ namespace Engine
 		XMStoreFloat3(&tmp, in);
 		return FMOD_VECTOR{ tmp.x, tmp.y, tmp.z };
 	}
+
+	inline bool EndsWith(const wstring& str, const wstring& suffix) {
+		if (str.length() < suffix.length()) {
+			return false;
+		}
+		return equal(suffix.rbegin(), suffix.rend(), str.rbegin());
+	}
 }

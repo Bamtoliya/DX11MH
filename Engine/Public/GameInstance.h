@@ -6,8 +6,6 @@
 #include "Prototype_Manager.h"
 
 BEGIN(Engine)
-
-
 class ENGINE_DLL CGameInstance final : public CBase
 {
 	DECLARE_SINGLETON(CGameInstance);
@@ -17,7 +15,7 @@ private:
 	virtual ~CGameInstance() = default;
 
 public:
-	HRESULT Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut);
+	HRESULT Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID3D11Device** ppDeviceOut, _Out_ ID3D11DeviceContext** ppContextOut, _Out_ class CSound_Manager** ppSoundOut);
 	void Update_Engine(_float fTimeDelta);
 	void Clear(_uint iLevelIndex);
 	HRESULT Begin_Draw();
@@ -73,10 +71,10 @@ private:
 #pragma region Manager
 	class CTimer_Manager*		m_pTimer_Manager = { nullptr };
 	class CLevel_Manager*		m_pLevel_Manager = { nullptr };
+	class CSound_Manager*		m_pSound_Manager = { nullptr };
 	class CObject_Manager*		m_pObject_Manager = { nullptr };
 	class CMyImGui_Manager*		m_pMyImGui_Manager = { nullptr };
 	class CPrototype_Manager*	m_pPrototype_Manager = { nullptr };
-	
 #pragma endregion
 
 #pragma region 
