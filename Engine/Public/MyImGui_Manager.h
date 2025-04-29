@@ -29,7 +29,7 @@ private:
 	void DrawAssetBrowser(bool* p_open);
 public:
 
-	HRESULT AddtoImGuiManager(const _wstring key, CMyImGui* pMyImGui);
+	HRESULT Add_ImGui(const _wstring& key, CMyImGui* pMyImGui);
 private:
 	map<const _wstring, CMyImGui*>		m_vecMyImGui = {};
 };

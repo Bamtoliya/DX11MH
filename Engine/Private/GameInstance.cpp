@@ -211,7 +211,7 @@ void CGameInstance::Update_Timer(const _wstring& strTimerTag)
 
 HRESULT CGameInstance::Add_ImGui(const _wstring& strKey, CMyImGui* pMyImGui)
 {
-	return E_NOTIMPL;
+	return m_pMyImGui_Manager->Add_ImGui(strKey, pMyImGui);
 }
 
 #pragma endregion

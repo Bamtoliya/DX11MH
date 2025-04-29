@@ -152,6 +152,9 @@
     <ClInclude Include="..\public\Level_Map.h">
       <Filter>00.Levels\Map</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Tools.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Editor.ico">

@@ -1,4 +1,6 @@
 ﻿#include "Level_UI.h"
+#include "GameInstance.h"
+#include "Tools.h"
 
 CLevel_UI::CLevel_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel {pDevice, pContext}
@@ -18,13 +20,15 @@ void CLevel_UI::Update(_float fTimeDelta)
 
 HRESULT CLevel_UI::Render()
 {
-    SetWindowText(g_hWnd, TEXT("로고레벨입니다."));
+    SetWindowText(g_hWnd, TEXT("UI 툴 입니다."));
 
     return S_OK;
 }
 
 HRESULT CLevel_UI::Ready_Layer_ImGui()
 {
+    if (FAILED(m_pGameInstance->Add_ImGui(L"Inspector", CInspector::Create())))
+        return E_FAIL;
     return S_OK;
 }
 
@@ -34,7 +38,7 @@ CLevel_UI* CLevel_UI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
     if (FAILED(pInstance->Initialize()))
     {
-        MSG_BOX("Failed to Created : CLevel_Logo");
+        MSG_BOX("Failed to Created : CLevel_UI");
         Safe_Release(pInstance);
     }
 

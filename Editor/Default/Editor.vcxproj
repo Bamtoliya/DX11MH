@@ -45,6 +45,7 @@
     <ClInclude Include="..\public\Level_UI.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
+    <ClInclude Include="..\Public\Tools.h" />
     <ClInclude Include="..\public\Viewport_2D.h" />
     <ClInclude Include="..\public\Viewport_3D.h" />
     <ClInclude Include="Editor.h" />

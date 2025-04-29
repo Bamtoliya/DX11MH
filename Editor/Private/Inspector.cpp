@@ -5,11 +5,13 @@ CInspector::CInspector()
 
 HRESULT CInspector::Initialize()
 {
-	return E_NOTIMPL;
+    m_bShow = true;
+	return S_OK;
 }
 
 void CInspector::Update(_float fTimeDelta)
 {
+
 }
 
 HRESULT CInspector::Render()
