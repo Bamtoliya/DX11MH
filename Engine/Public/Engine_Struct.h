@@ -54,5 +54,23 @@ namespace Engine
 	}VTXCUBETEX;
 #pragma endregion
 
+
+	typedef struct tagParticleAttribute
+	{
+		XMFLOAT3		vPosition;
+		XMFLOAT3		vVelocity;
+		XMFLOAT3		vAcceleration;
+		float			fSize;
+		float			fLifetime;
+		float			fAge;
+		XMFLOAT4		vCurrentColor;
+		XMFLOAT4		vInitialColor;
+		XMFLOAT4		vColorFade;
+		bool			bIsAlive;
+		unsigned int	iIndex;
+		XMFLOAT3		vDir;
+		float fFrameProgress = 0.0f;
+	} ATTRIBUTE;
+
 	
 }

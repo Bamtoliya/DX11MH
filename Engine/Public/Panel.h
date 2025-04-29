@@ -11,7 +11,6 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
-	//UI에 컴포넌트를 담아야하는가? 
 	virtual HRESULT Ready_Components();
 public:
 	virtual CGameObject* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr) PURE;

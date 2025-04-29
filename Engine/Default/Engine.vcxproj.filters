@@ -239,6 +239,27 @@
     <ClInclude Include="..\Public\Systems.h">
       <Filter>00.System</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Light.h">
+      <Filter>01.Utility\07.Light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Material.h">
+      <Filter>01.Utility\08.Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Particle_Manager.h">
+      <Filter>01.Utility\Paritcle\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Particle_System.h">
+      <Filter>01.Utility\Paritcle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bounding_Box.h">
+      <Filter>01.Utility\Paritcle\Bounding</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Bounding_Sphere.h">
+      <Filter>01.Utility\Paritcle\Bounding</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\simdjson.h">
+      <Filter>External Libraries\json\simdjson</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -440,6 +461,21 @@
     <ClCompile Include="..\private\PipeLine.cpp">
       <Filter>01.Utility\06. Pipeline</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Light.cpp">
+      <Filter>01.Utility\07.Light</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Material.cpp">
+      <Filter>01.Utility\08.Material</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Particle_Manager.cpp">
+      <Filter>01.Utility\Paritcle\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Particle_System.cpp">
+      <Filter>01.Utility\Paritcle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\simdjson.cpp">
+      <Filter>External Libraries\json\simdjson</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -594,6 +630,27 @@
     </Filter>
     <Filter Include="00.System\Input\GameInput">
       <UniqueIdentifier>{483bebfb-0ef8-4774-85ae-68eb6638aa4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\98.UI\Text">
+      <UniqueIdentifier>{ce1c6cfb-fa25-4996-87fe-c09ce42ffecf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\08.Material">
+      <UniqueIdentifier>{fa0438e9-619a-4fb3-9315-3da70e49e29d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\Paritcle">
+      <UniqueIdentifier>{8087e3ee-0e8c-44ec-b548-4359a1e56d4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\Paritcle\Manager">
+      <UniqueIdentifier>{f744a8c4-45a0-4862-b480-af3360b03fd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\Paritcle\Bounding">
+      <UniqueIdentifier>{c30c4214-357b-4065-85b1-ed7461448808}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External Libraries\json">
+      <UniqueIdentifier>{f331be90-85ee-4c35-a7ed-32715a77f2a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External Libraries\json\simdjson">
+      <UniqueIdentifier>{ec543cab-41f1-433b-bc47-b4da175eca4a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

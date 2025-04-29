@@ -1,14 +1,22 @@
 ﻿#pragma once
 
 #pragma warning (disable : 4251)
+//PhysX Symbol PDB warning Disable
+#pragma warning (disable : 4099)
 
 #pragma region DirectX
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include "DDSTextureLoader.h"
 #include "WICTextureLoader.h"
+#include <DirectXCollision.h>
+#include "DirectXCollision.inl"
 using namespace DirectX;
 #pragma endregion
+
+#include "../../External Libraries/json.hpp"
+using json = nlohmann::json;
+#include "../../External Libraries/simdjson.h"
 
 #pragma region C++
 #include <string>
@@ -17,6 +25,7 @@ using namespace DirectX;
 #include <vector>
 #include <unordered_map>
 #include <functional>
+#include <fstream>
 using namespace std;
 #pragma endregion
 
@@ -79,6 +88,7 @@ using namespace v1;
 using namespace physx;
 #pragma endregion
 
+//#include ""
 
 #ifdef _DEBUG
 

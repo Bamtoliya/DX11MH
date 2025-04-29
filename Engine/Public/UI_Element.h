@@ -9,7 +9,7 @@ typedef struct tagUiDesc {
 	CUI_Element* parent;
 	_float2 pos;
 	_float2 size;
-}UIDESC;
+}UI_DESC;
 #pragma endregion
 #pragma region Constructor/Destructor
 
@@ -49,6 +49,8 @@ protected:
 	CUI_Element* m_pParent = { nullptr };
 protected:
 	map<const _wstring, CUI_Element*> m_Children;
+protected:
+	UI_DESC	m_tDesc		= {};
 protected:
 	bool m_bShow		= { false };
 	bool m_bFocus		= { false };
