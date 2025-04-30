@@ -16,14 +16,15 @@ class PxDefaultErrorCallback;
 END
 
 BEGIN(Engine)
+class CGameInstance;
 class CPhysics_System final : public CBase
 {
 #pragma region Constructor/Destructor
 private:
-	CPhysics_System();
+	CPhysics_System(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CPhysics_System() = default;
 public:
-	static CPhysics_System* Create();
+	static CPhysics_System* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	void Free();
 #pragma endregion
 #pragma region Intialize
@@ -43,6 +44,11 @@ public:
 	PxScene*	CreateScene(); // 씬 생성 함수 (예시)
 
 #pragma endregion
+
+private:
+	ID3D11Device* m_pDevice = { nullptr };
+	ID3D11DeviceContext* m_pContext = { nullptr };
+	CGameInstance* m_pGameInstance = { nullptr };
 
 private:
 	// PhysX Core Objects

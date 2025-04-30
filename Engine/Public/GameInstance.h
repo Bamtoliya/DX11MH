@@ -49,6 +49,15 @@ public:
 	HRESULT Add_Timer(const _wstring& strTimerTag);
 	void Update_Timer(const _wstring& strTimerTag);
 #pragma endregion
+
+#pragma region PHYSICS_SYSTEM
+
+#pragma endregion
+
+#pragma region PICKING_SYSTEM
+
+#pragma endregion
+
 //
 //#pragma region PICKING
 //	void Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse);
@@ -68,6 +77,11 @@ private:
 	class CGraphic_Device*	m_pGraphic_Device = { nullptr };
 #pragma endregion
 
+#pragma region System
+	class CPhysics_System* m_pPhysics_System = { nullptr };
+	class CPicking_System* m_pPicking_System = { nullptr };
+#pragma endregion
+
 #pragma region Manager
 	class CTimer_Manager*		m_pTimer_Manager = { nullptr };
 	class CLevel_Manager*		m_pLevel_Manager = { nullptr };
@@ -85,9 +99,6 @@ private:
 #pragma region Boolean
 	_bool	m_bIsEditor = { true };
 #pragma endregion
-
-	
-	// class CPicking*				m_pPicking = { nullptr };
 
 public:
 	void Release_Engine();

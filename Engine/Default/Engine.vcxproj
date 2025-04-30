@@ -231,6 +231,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\public\Physics_System.h" />
+    <ClInclude Include="..\public\Picking_System.h" />
     <ClInclude Include="..\public\PipeLine.h" />
     <ClInclude Include="..\public\Ray.h" />
     <ClInclude Include="..\public\RectTransform.h">
@@ -317,6 +318,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\private\Physics_System.cpp" />
+    <ClCompile Include="..\private\Picking_System.cpp" />
     <ClCompile Include="..\private\PipeLine.cpp" />
     <ClCompile Include="..\private\Ray.cpp" />
     <ClCompile Include="..\private\RectTransform.cpp">

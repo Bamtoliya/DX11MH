@@ -136,7 +136,7 @@ void CMyImGui_Manager::DrawAssetBrowser(bool* p_open)
     // 상태 유지를 위한 static 변수
     // 중요: "./Assets" 디렉토리가 실행 파일 위치 기준으로 존재해야 합니다.
     // 또는 실제 프로젝트의 애셋 경로로 변경하세요.
-    static fs::path baseAssetPath = fs::absolute("./Assets"); // 기본 애셋 경로 설정
+    static fs::path baseAssetPath = fs::absolute("../../Assets"); // 기본 애셋 경로 설정
     static fs::path currentPath = baseAssetPath;
     static std::string selectedAsset = ""; // 선택된 파일 이름
     static std::string selectedFolder = ""; // 선택된 폴더 이름 (클릭 피드백용)

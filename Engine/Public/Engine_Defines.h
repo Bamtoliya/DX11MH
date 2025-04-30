@@ -10,16 +10,17 @@
 #include "DDSTextureLoader.h"
 #include "WICTextureLoader.h"
 #include <DirectXCollision.h>
-#include "DirectXCollision.inl"
 #include "Effects.h"
 #include "d3dx11effect.h"
 #include "d3dcompiler.h"
 using namespace DirectX;
 #pragma endregion
 
+#pragma region JSON
 #include "../../External Libraries/json.hpp"
 using json = nlohmann::json;
 #include "../../External Libraries/simdjson.h"
+#pragma endregion
 
 #pragma region C++
 #include <string>
@@ -62,7 +63,6 @@ using namespace Engine;
 #include <AK/Comm/AkCommunication.h> // Debug/Profile 빌드용
 #endif
 #pragma endregion
-
 #pragma region imgui
 #include "imgui.h"
 #include "imgui_impl_win32.h"

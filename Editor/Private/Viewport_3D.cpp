@@ -19,6 +19,7 @@ CViewport_3D* CViewport_3D::Create()
 
 void CViewport_3D::Free()
 {
+    __super::Free();
 }
 
 HRESULT CViewport_3D::Initialize()

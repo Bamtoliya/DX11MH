@@ -6,16 +6,26 @@ CAsset_Browser::CAsset_Browser()
 
 CAsset_Browser* CAsset_Browser::Create()
 {
-	return nullptr;
+    CAsset_Browser* pInstance = new CAsset_Browser();
+
+    if (FAILED(pInstance->Initialize()))
+    {
+        MSG_BOX("Failed to Created : CInspector");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
 }
 
 void CAsset_Browser::Free()
 {
+    __super::Free();
 }
 
 HRESULT CAsset_Browser::Initialize()
 {
-	return E_NOTIMPL;
+    m_bShow = true;
+	return S_OK;
 }
 
 void CAsset_Browser::Update(_float fTimeDelta)
@@ -24,5 +34,5 @@ void CAsset_Browser::Update(_float fTimeDelta)
 
 HRESULT CAsset_Browser::Render()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }

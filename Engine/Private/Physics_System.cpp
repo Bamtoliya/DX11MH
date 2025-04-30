@@ -1,14 +1,20 @@
 ﻿#include "Physics_System.h"
-
+#include "GameInstance.h"
 
 #pragma region Constructor/Destructor
-CPhysics_System::CPhysics_System()
+CPhysics_System::CPhysics_System(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+    : m_pGameInstance { CGameInstance::Get_Instance() }
+    , m_pDevice { pDevice }
+    , m_pContext { pContext }
 {
+    Safe_AddRef(m_pDevice);
+    Safe_AddRef(m_pContext);
+    Safe_AddRef(m_pGameInstance);
 }
 
-CPhysics_System* CPhysics_System::Create()
+CPhysics_System* CPhysics_System::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-    CPhysics_System* pInstance = new CPhysics_System();
+    CPhysics_System* pInstance = new CPhysics_System(pDevice, pContext);
 
     if (FAILED(pInstance->Initialize()))
     {
@@ -22,6 +28,10 @@ CPhysics_System* CPhysics_System::Create()
 void CPhysics_System::Free()
 {
     __super::Free(); // 만약 CBase에 가상 Free가 있고 호출해야 한다면
+
+    Safe_Release(m_pDevice);
+    Safe_Release(m_pContext);
+    Safe_Release(m_pGameInstance);
     // PhysX 객체 해제 (생성 역순으로 하는 것이 안전)
     PX_RELEASE(m_pDispatcher); // 4. Dispatcher 해제
     PX_RELEASE(m_pPhysics); // 6. Physics 객체 해제

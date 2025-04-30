@@ -54,9 +54,11 @@ protected:
 #pragma endregion
 
 #pragma region Variables
-	_wstring	m_strName;
+	_wstring								m_strName;
+	_uint									m_iID;
 	CTransform*								m_pTransformCom = { nullptr };
 	CGameObject*							m_pParent = { nullptr };
+	_wstring								m_strTag = {};
 	map<const _wstring, class CComponent*>	m_Components	= {};
 	map<const _wstring, class CGameObject*> m_Childs		= {};
 	_wstring 	m_strLayerTag;

@@ -278,6 +278,9 @@
     <ClInclude Include="..\public\GameObject_Sphere.h">
       <Filter>01.Utility\03.GameObject\Base\Sphere</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Picking_System.h">
+      <Filter>00.System\Picking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -470,9 +473,6 @@
     <ClCompile Include="..\Private\Light.cpp">
       <Filter>01.Utility\07.Light</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Physics_System.cpp">
-      <Filter>01.Utility\04.Components\Particle</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Particle_System.cpp">
       <Filter>01.Utility\04.Components\Particle</Filter>
     </ClCompile>
@@ -505,6 +505,12 @@
     </ClCompile>
     <ClCompile Include="..\private\GameObject_Sphere.cpp">
       <Filter>01.Utility\03.GameObject\Base\Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Picking_System.cpp">
+      <Filter>00.System\Picking</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Physics_System.cpp">
+      <Filter>00.System\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -597,9 +603,6 @@
     </Filter>
     <Filter Include="98.Imgui\Components\Transform">
       <UniqueIdentifier>{80c28ab3-2197-40f6-94f6-843afe306d4e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="98.Imgui\Inspector">
-      <UniqueIdentifier>{e57158f4-9369-490d-8591-bd6f2bbb1318}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\02.Prototypes\Manager">
       <UniqueIdentifier>{4689e40f-5977-4a2b-9f9c-62be8b7df8df}</UniqueIdentifier>
@@ -705,6 +708,9 @@
     </Filter>
     <Filter Include="01.Utility\03.GameObject\Base\Capsule">
       <UniqueIdentifier>{dc47b00b-09cc-4c0a-a515-4156c73a9e34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\Picking">
+      <UniqueIdentifier>{55028f14-38af-45bb-aec4-0c07e526b18c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,6 @@
 ﻿#include "GameInstance.h"
 
-//#include "Picking.h"
-
+#include "Systems.h"
 #include "Devices.h"
 #include "Managers.h"
 #include "Renderer.h"
@@ -24,6 +23,17 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 		return E_FAIL;
 
 #pragma endregion
+
+#pragma region Systems
+	m_pPhysics_System = CPhysics_System::Create(*ppDeviceOut, *ppContextOut);
+	if (nullptr == m_pPhysics_System)
+		return E_FAIL;
+
+	m_pPicking_System = CPicking_System::Create(*ppDeviceOut, *ppContextOut);
+	if (nullptr == m_pPicking_System)
+		return E_FAIL;
+#pragma endregion
+
 
 #pragma region Managers
 	if (m_bIsEditor)
