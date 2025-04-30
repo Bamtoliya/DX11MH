@@ -10,7 +10,7 @@ CAsset_Browser* CAsset_Browser::Create()
 
     if (FAILED(pInstance->Initialize()))
     {
-        MSG_BOX("Failed to Created : CInspector");
+        MSG_BOX("Failed to Created : CAsset_Browser");
         Safe_Release(pInstance);
     }
 

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "GameObject.h"
 BEGIN(Engine)
+class CVIBuffer;
 class ENGINE_DLL CGameObject_Sphere : public CGameObject
 {
 #pragma region Constructor/Destructor
@@ -9,8 +10,8 @@ protected:
 	CGameObject_Sphere(const CGameObject_Sphere& Prototype);
 	virtual ~CGameObject_Sphere() = default;
 public:
-	static CGameObject* Create(ID3D11Device* m_pDevice, ID3D11DeviceContext* m_pContext);
-	virtual CGameObject* Clone(void* pArg = nullptr) override;
+	static CGameObject_Sphere* Create(ID3D11Device* m_pDevice, ID3D11DeviceContext* m_pContext);
+	virtual CGameObject_Sphere* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
 #pragma endregion
 #pragma region Initialize
@@ -29,6 +30,8 @@ public:
 	virtual HRESULT Post_Render() override;
 	virtual HRESULT RenderImGui() override;
 #pragma endregion
+protected:
+	CVIBuffer* m_pVIBufferCom = { nullptr };
 };
 
 END

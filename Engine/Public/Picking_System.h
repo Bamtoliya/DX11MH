@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Base.h"
 BEGIN(Engine)
 class CGameInstance;

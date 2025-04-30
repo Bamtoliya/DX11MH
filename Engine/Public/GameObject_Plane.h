@@ -10,7 +10,7 @@ protected:
 	CGameObject_Plane(const CGameObject_Plane& Prototype);
 	virtual ~CGameObject_Plane() = default;
 public:
-	static CGameObject* Create(ID3D11Device* m_pDevice, ID3D11DeviceContext* m_pContext);
+	static CGameObject_Plane* Create(ID3D11Device* m_pDevice, ID3D11DeviceContext* m_pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
 #pragma endregion

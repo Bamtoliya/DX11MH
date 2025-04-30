@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Component.h"
 BEGIN(Engine)
+class CSound_Manager;
+class CSound_Event;
 class ENGINE_DLL CSound_Source final : public CComponent
 {
 #pragma region Constructor/Destructor

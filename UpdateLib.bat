@@ -2,9 +2,9 @@
 
 
 
-xcopy /d /y ".\Engine\Public\*.h"				".\EngineSDK\Inc\"
-xcopy /d /y ".\Engine\Bin\*.lib"				".\EngineSDK\Lib\"
-xcopy /d /y ".\Engine\Bin\*.dll"				".\Client\Bin\"
-xcopy /d /y ".\Engine\Bin\*.dll"				".\Editor\Bin\"
-xcopy /d /y ".\External Libraries\physx\bin\debug\*.dll"	".\Client\Bin\"
-xcopy /d /y ".\External Libraries\physx\bin\debug\*.dll"	".\Editor\Bin\"
+xcopy ".\Engine\Public\*.h"				".\EngineSDK\Inc\" /y
+xcopy ".\Engine\Bin\*.lib"				".\EngineSDK\Lib\" /y
+xcopy ".\Engine\Bin\*.dll"				".\Client\Bin\" /y 
+xcopy ".\Engine\Bin\*.dll"				".\Editor\Bin\" /y 
+xcopy ".\External Libraries\physx\bin\debug\*.dll"	".\Client\Bin\" /y 
+xcopy ".\External Libraries\physx\bin\debug\*.dll"	".\Editor\Bin\" /y 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Component.h"
 BEGIN(Engine)
 class CCollider abstract : public CComponent

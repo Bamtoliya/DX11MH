@@ -1,4 +1,5 @@
 ﻿#include "Inspector.h"
+#include "GameObject.h"
 CInspector::CInspector()
 {
 }
@@ -20,6 +21,8 @@ HRESULT CInspector::Render()
     {
         ImGui::Begin("Inspector");
         ImGui::Text("This can dock into the fullscreen space.");
+        if (m_pGameObject)
+            m_pGameObject->RenderImGui();
         ImGui::End();
     }
 

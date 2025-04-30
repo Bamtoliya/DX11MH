@@ -148,29 +148,29 @@ HRESULT CShader::Bind_SRVs(const _char* pConstantName, ID3D11ShaderResourceView*
 
 CShader* CShader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {
-	CShader* pGameInstance = new CShader(pDevice, pContext);
+	CShader* pInstance = new CShader(pDevice, pContext);
 
-	if (FAILED(pGameInstance->Initialize_Prototype(pShaderFilePath, pElements, iNumElements)))
+	if (FAILED(pInstance->Initialize_Prototype(pShaderFilePath, pElements, iNumElements)))
 	{
 		MSG_BOX("Failed to Create : CShader");
-		Safe_Release(pGameInstance);
+		Safe_Release(pInstance);
 	}
 
-	return pGameInstance;
+	return pInstance;
 }
 
 
 CComponent* CShader::Clone(void* pArg)
 {
-	CShader* pGameInstance = new CShader(*this);
+	CShader* pInstance = new CShader(*this);
 
-	if (FAILED(pGameInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX("Failed to Clone : CShader");
-		Safe_Release(pGameInstance);
+		Safe_Release(pInstance);
 	}
 
-	return pGameInstance;
+	return pInstance;
 }
 
 void CShader::Free()
