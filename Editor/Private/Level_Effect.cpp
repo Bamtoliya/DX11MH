@@ -1,4 +1,4 @@
-#include "Level_Effect.h"
+ï»¿#include "Level_Effect.h"
 
 #include "Level_Effect.h"
 
@@ -20,7 +20,7 @@ void CLevel_Effect::Update(_float fTimeDelta)
 
 HRESULT CLevel_Effect::Render()
 {
-    SetWindowText(g_hWnd, TEXT("ÀÌÆåÆ® Åø ·¹º§ÀÔ´Ï´Ù."));
+    SetWindowText(g_hWnd, TEXT("ì´í™íŠ¸ íˆ´ ë ˆë²¨ì…ë‹ˆë‹¤."));
 
     return S_OK;
 }

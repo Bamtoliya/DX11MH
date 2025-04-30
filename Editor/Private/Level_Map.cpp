@@ -1,4 +1,4 @@
-#include "Level_Map.h"
+﻿#include "Level_Map.h"
 
 CLevel_Map::CLevel_Map(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel{ pDevice, pContext }
@@ -18,7 +18,7 @@ void CLevel_Map::Update(_float fTimeDelta)
 
 HRESULT CLevel_Map::Render()
 {
-    SetWindowText(g_hWnd, TEXT("�� �� �Դϴ�."));
+    SetWindowText(g_hWnd, TEXT("¸Ê Åø ÀÔ´Ï´Ù."));
 
     return S_OK;
 }

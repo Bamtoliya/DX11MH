@@ -1,4 +1,4 @@
-#include "ToolBar.h"
+ï»¿#include "ToolBar.h"
 CToolBar::CToolBar()
 {
 }
@@ -20,53 +20,53 @@ HRESULT CToolBar::Render()
     {
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
-                // ÆÄÀÏ ¸Ş´º ¾ÆÀÌÅÛµé
+                // íŒŒì¼ ë©”ë‰´ ì•„ì´í…œë“¤
                 if (ImGui::MenuItem("New Scene", "Ctrl+N")) {
-                    // »õ ¾À ·ÎÁ÷
+                    // ìƒˆ ì”¬ ë¡œì§
                     printf("Clicked File->New Scene\n");
                 }
                 if (ImGui::MenuItem("Open Scene...", "Ctrl+O")) {
-                    // ¾À ¿­±â ·ÎÁ÷ (¿¹: ÆÄÀÏ ´ÙÀÌ¾ó·Î±× ¶ç¿ì±â)
+                    // ì”¬ ì—´ê¸° ë¡œì§ (ì˜ˆ: íŒŒì¼ ë‹¤ì´ì–¼ë¡œê·¸ ë„ìš°ê¸°)
                     printf("Clicked File->Open Scene\n");
                 }
                 ImGui::Separator();
                 if (ImGui::MenuItem("Save", "Ctrl+S")) {
-                    // ÀúÀå ·ÎÁ÷
+                    // ì €ì¥ ë¡œì§
                     printf("Clicked File->Save\n");
                 }
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) {
-                    // ´Ù¸¥ ÀÌ¸§À¸·Î ÀúÀå ·ÎÁ÷
+                    // ë‹¤ë¥¸ ì´ë¦„ìœ¼ë¡œ ì €ì¥ ë¡œì§
                     printf("Clicked File->Save As\n");
                 }
                 ImGui::Separator();
                 if (ImGui::MenuItem("Exit")) {
-                    // Á¾·á ·ÎÁ÷ (¿¹: ¾ÖÇÃ¸®ÄÉÀÌ¼Ç Á¾·á ÇÃ·¡±× ¼³Á¤)
+                    // ì¢…ë£Œ ë¡œì§ (ì˜ˆ: ì• í”Œë¦¬ì¼€ì´ì…˜ ì¢…ë£Œ í”Œë˜ê·¸ ì„¤ì •)
                     printf("Clicked File->Exit\n");
-                    // exit_requested = true; // ¿¹½Ã
+                    // exit_requested = true; // ì˜ˆì‹œ
                 }
-                ImGui::EndMenu(); // File ¸Ş´º ³¡
+                ImGui::EndMenu(); // File ë©”ë‰´ ë
             }
 
             if (ImGui::BeginMenu("Edit")) {
-                // ÆíÁı ¸Ş´º ¾ÆÀÌÅÛµé
-                if (ImGui::MenuItem("Undo", "Ctrl+Z", false, false)) { // ¼¼ ¹øÂ°: ¼±ÅÃ ¿©ºÎ, ³× ¹øÂ°: ºñÈ°¼ºÈ­ ¿©ºÎ (Áö±İÀº ºñÈ°¼ºÈ­)
-                    // ½ÇÇà Ãë¼Ò ·ÎÁ÷ (¾ÆÁ÷ ±¸Çö ¾È µÊ)
+                // í¸ì§‘ ë©”ë‰´ ì•„ì´í…œë“¤
+                if (ImGui::MenuItem("Undo", "Ctrl+Z", false, false)) { // ì„¸ ë²ˆì§¸: ì„ íƒ ì—¬ë¶€, ë„¤ ë²ˆì§¸: ë¹„í™œì„±í™” ì—¬ë¶€ (ì§€ê¸ˆì€ ë¹„í™œì„±í™”)
+                    // ì‹¤í–‰ ì·¨ì†Œ ë¡œì§ (ì•„ì§ êµ¬í˜„ ì•ˆ ë¨)
                     printf("Clicked Edit->Undo (Not implemented)\n");
                 }
-                if (ImGui::MenuItem("Redo", "Ctrl+Y", false, false)) { // ºñÈ°¼ºÈ­
-                    // ´Ù½Ã ½ÇÇà ·ÎÁ÷ (¾ÆÁ÷ ±¸Çö ¾È µÊ)
+                if (ImGui::MenuItem("Redo", "Ctrl+Y", false, false)) { // ë¹„í™œì„±í™”
+                    // ë‹¤ì‹œ ì‹¤í–‰ ë¡œì§ (ì•„ì§ êµ¬í˜„ ì•ˆ ë¨)
                     printf("Clicked Edit->Redo (Not implemented)\n");
                 }
-                // ... ´Ù¸¥ ÆíÁı ¸Ş´º ...
-                ImGui::EndMenu(); // Edit ¸Ş´º ³¡
+                // ... ë‹¤ë¥¸ í¸ì§‘ ë©”ë‰´ ...
+                ImGui::EndMenu(); // Edit ë©”ë‰´ ë
             }
 
             if (ImGui::BeginMenu("Window")) {
-                // Ã¢ ¸Ş´º ¾ÆÀÌÅÛµé (°¢ Ã¢ÀÇ Ç¥½Ã ¿©ºÎ¸¦ Åä±Û)
-                // ImGui::MenuItemÀÇ ¼¼ ¹øÂ° ÀÎÀÚ·Î bool Æ÷ÀÎÅÍ¸¦ Àü´ŞÇÏ¸é Ã¼Å©¹Ú½ºÃ³·³ µ¿ÀÛÇÕ´Ï´Ù.
-                if (ImGui::MenuItem("Asset Browser", NULL /* ´ÜÃàÅ° ¾øÀ½ */ /*, &show_asset_browser */)) {
+                // ì°½ ë©”ë‰´ ì•„ì´í…œë“¤ (ê° ì°½ì˜ í‘œì‹œ ì—¬ë¶€ë¥¼ í† ê¸€)
+                // ImGui::MenuItemì˜ ì„¸ ë²ˆì§¸ ì¸ìë¡œ bool í¬ì¸í„°ë¥¼ ì „ë‹¬í•˜ë©´ ì²´í¬ë°•ìŠ¤ì²˜ëŸ¼ ë™ì‘í•©ë‹ˆë‹¤.
+                if (ImGui::MenuItem("Asset Browser", NULL /* ë‹¨ì¶•í‚¤ ì—†ìŒ */ /*, &show_asset_browser */)) {
                     printf("Toggle Asset Browser\n");
-                    // show_asset_browser = !show_asset_browser; // ½ÇÁ¦ º¯¼ö Åä±Û
+                    // show_asset_browser = !show_asset_browser; // ì‹¤ì œ ë³€ìˆ˜ í† ê¸€
                 }
                 if (ImGui::MenuItem("Inspector", NULL /*, &show_inspector */)) {
                     printf("Toggle Inspector\n");
@@ -77,21 +77,21 @@ HRESULT CToolBar::Render()
                     printf("Toggle ImGui Demo Window\n");
                     // show_demo_window = !show_demo_window;
                 }
-                // ... ´Ù¸¥ Ã¢ ¸Ş´º ...
-                ImGui::EndMenu(); // Window ¸Ş´º ³¡
+                // ... ë‹¤ë¥¸ ì°½ ë©”ë‰´ ...
+                ImGui::EndMenu(); // Window ë©”ë‰´ ë
             }
 
             if (ImGui::BeginMenu("Help")) {
-                // µµ¿ò¸» ¸Ş´º ¾ÆÀÌÅÛµé
+                // ë„ì›€ë§ ë©”ë‰´ ì•„ì´í…œë“¤
                 if (ImGui::MenuItem("About My Editor...")) {
-                    // Á¤º¸ ´ëÈ­»óÀÚ Ç¥½Ã ·ÎÁ÷
+                    // ì •ë³´ ëŒ€í™”ìƒì í‘œì‹œ ë¡œì§
                     printf("Clicked Help->About\n");
-                    // open_about_popup = true; // ¿¹½Ã
+                    // open_about_popup = true; // ì˜ˆì‹œ
                 }
-                ImGui::EndMenu(); // Help ¸Ş´º ³¡
+                ImGui::EndMenu(); // Help ë©”ë‰´ ë
             }
 
-            ImGui::EndMainMenuBar(); // ¸ŞÀÎ ¸Ş´º¹Ù ³¡
+            ImGui::EndMainMenuBar(); // ë©”ì¸ ë©”ë‰´ë°” ë
         }
     }
 

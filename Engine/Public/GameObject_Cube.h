@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 BEGIN(Engine)
 class ENGINE_DLL CGameObject_Cube : public CGameObject
