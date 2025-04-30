@@ -18,7 +18,7 @@ HRESULT CInspector::Render()
 {
     if (m_bShow)
     {
-        ImGui::Begin("Some Window");
+        ImGui::Begin("Inspector");
         ImGui::Text("This can dock into the fullscreen space.");
         ImGui::End();
     }

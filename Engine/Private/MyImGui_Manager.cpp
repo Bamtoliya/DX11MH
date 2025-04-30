@@ -90,259 +90,40 @@ void CMyImGui_Manager::Update(_float fTimeDelta)
     }
 }
 
-HRESULT CMyImGui_Manager::Render()
+HRESULT CMyImGui_Manager::Pre_Render()
 {
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+    DrawToolBar(&m_bToolBar);
+    return S_OK;
+}
+
+HRESULT CMyImGui_Manager::Render()
+{
+    Pre_Render();
+
+    DrawDockingSpace(&m_bDockingSpace);
 
     for (auto& e : m_vecMyImGui)
     {
         e.second->Render();
     }
 
-    bool show_demo_window = true;
-    bool show_another_window = true;
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-    //// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-    //if (show_demo_window)
-    //    ImGui::ShowDemoWindow(&show_demo_window);
-
-    //// 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-    //{
-    //    static float f = 0.0f;
-    //    static int counter = 0;
-
-    //    ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-    //    ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-    //    ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-    //    ImGui::Checkbox("Another Window", &show_another_window);
-
-    //    ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-    //    ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-    //    if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-    //        counter++;
-    //    ImGui::SameLine();
-    //    ImGui::Text("counter = %d", counter);
-
-    //    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-    //    ImGui::End();
-    //}
-    // --- 사전 설정 (초기화 시 한 번만) ---
-    // ImGuiIO& io = ImGui::GetIO();
-    // io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // 도킹 활성화
-    // ------------------------------------
-
-    // 메인 뷰포트 가져오기
-    const ImGuiViewport* viewport = ImGui::GetMainViewport();
-
-    // 도킹 공간 플래그 (선택 사항)
-    ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode; // 중앙 노드 비활성 시 입력 통과
-
-    // 뷰포트 위에 도킹 공간 생성
-    // 이 함수는 내부적으로 전체 화면 크기의 투명한 창을 만들고 그 위에 도킹 노드를 설정합니다.
-    ImGuiID dockspace_id = ImGui::GetID("MyFullscreenDockSpace");
-    ImGui::DockSpaceOverViewport(dockspace_id, viewport, dockspace_flags, nullptr); // 세 번째 인자는 창 클래스(고급)
-
-    // --- 이제 다른 ImGui 창들을 Begin/End로 그리면 ---
-    // --- 이 도킹 공간에 붙이거나 플로팅 상태로 둘 수 있습니다 ---
-    // 예:
-    
-
     _bool show = true;
-    DrawGridWindow(&show);
     DrawAssetBrowser(&show);
+    Post_Render();
+    return S_OK;
+}
 
-    // 만약 이 전체 화면 도킹 공간 자체에 무언가를 그리고 싶다면,
-    // 약간의 트릭이 필요하거나 (예: 매우 큰 더미 창을 중앙 노드에 도킹)
-    // 혹은 이 방법은 다른 창을 도킹시키는 배경 용도로만 사용하는 것이 일반적입니다.
-
-    // 3. Show another simple window.
-    //if (show_another_window)
-    //{
-    //    // 도킹 기능을 사용하려면 ImGui 초기화 시 io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; 설정이 필요합니다.
-
-    //    // 창을 시작합니다. 이 창이 도킹 공간의 컨테이너 역할을 합니다.
-    //    ImGui::Begin("Another Window (DockSpace)", &show_another_window); // 창 이름을 좀 더 명확하게 변경하는 것이 좋습니다.
-
-    //    // 도킹 공간 ID를 가져옵니다.
-    //    ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-
-    //    // 도킹 공간 플래그를 설정합니다.
-    //    // ImGuiDockNodeFlags_PassthruCentralNode 플래그는 중앙 노드가 비어 있을 때
-    //    // 뒤의 창과 상호작용할 수 있게 해줍니다 (메인 뷰포트를 덮는 경우 유용).
-    //    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-
-    //    // 현재 창 내부에 도킹 공간을 만듭니다.
-    //    // ImVec2(0.0f, 0.0f)는 사용 가능한 전체 공간을 사용하라는 의미입니다.
-    //    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-
-    //    /*
-    //    // 주석 처리: 도킹 공간으로 사용하는 창 내부에 직접 컨트롤을 넣는 것은
-    //    //             다른 창이 도킹되면 가려질 수 있으므로 일반적이지 않습니다.
-    //    //             창 자체의 닫기 버튼 (Begin 함수의 두 번째 인자)으로 충분할 수 있습니다.
-    //    if (ImGui::Button("Close Me"))
-    //        show_another_window = false;
-    //    */
-
-    //    // 창을 닫습니다.
-    //    ImGui::End();
-    //}
-
+HRESULT CMyImGui_Manager::Post_Render()
+{
     ImGui::Render();
     /*const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
     m_pContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
     m_pContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);*/
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
     return S_OK;
-}
-
-
-
-void CMyImGui_Manager::DrawGridWindow(bool* p_open)
-{
-    // 창 이름 변경 제안 (기능이 추가되었으므로)
-    if (!ImGui::Begin("Interactive Grid with Bounds", p_open)) {
-        ImGui::End();
-        return;
-    }
-
-    // --- 상태 변수 ---
-    static float zoom = 1.0f;
-    static ImVec2 panning = ImVec2(0.0f, 0.0f); // 그리드 원점 이동량 (패닝 오프셋) 추가
-    static char click_info[128] = "Click on the grid area"; // 클릭 정보 표시용 문자열 추가
-
-    // 줌 설정값
-    const float zoom_speed = 0.1f;
-    const float min_zoom = 0.01f;
-    const float max_zoom = 10.0f;
-
-    // --- 입력 처리 ---
-    ImGuiIO& io = ImGui::GetIO();
-    // IsWindowHovered: 팝업이나 다른 활성 아이템에 의해 가려지지 않았을 때도 Hover 상태를 감지하도록 플래그 추가 가능성 고려
-    bool is_window_hovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
-
-    if (is_window_hovered) { // 창 위에 마우스가 있을 때만 입력 처리
-        // 줌 처리 (기존 코드)
-        float wheel = io.MouseWheel;
-        if (wheel != 0) {
-            float scale_delta = wheel * zoom_speed * zoom;
-            zoom += scale_delta;
-            zoom = fmaxf(min_zoom, fminf(zoom, max_zoom));
-        }
-
-        // 패닝 처리 (가운데 마우스 버튼 드래그) --- 추가된 부분 ---
-        if (ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
-            panning += io.MouseDelta; // 마우스 이동량만큼 패닝 오프셋 누적
-        }
-    }
-
-    // --- 좌표 및 그리기 준비 ---
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-
-    ImVec2 win_pos = ImGui::GetWindowPos();
-    ImVec2 content_min_rel = ImGui::GetWindowContentRegionMin();
-    ImVec2 content_max_rel = ImGui::GetWindowContentRegionMax();
-    ImVec2 canvas_p0 = ImVec2(win_pos.x + content_min_rel.x, win_pos.y + content_min_rel.y);
-    ImVec2 canvas_p1 = ImVec2(win_pos.x + content_max_rel.x, win_pos.y + content_max_rel.y);
-    ImVec2 canvas_size = ImVec2(canvas_p1.x - canvas_p0.x, canvas_p1.y - canvas_p0.y);
-
-    // 중앙점 계산 시 패닝 오프셋 적용 --- 수정된 부분 ---
-    ImVec2 initial_center = ImVec2(canvas_p0.x + canvas_size.x * 0.5f, canvas_p0.y + canvas_size.y * 0.5f);
-    ImVec2 canvas_center = ImVec2(initial_center.x + panning.x, initial_center.y + panning.y);
-
-    // 클릭 처리 및 좌표 변환 --- 추가된 부분 ---
-    if (is_window_hovered) {
-        ImVec2 mouse_pos_in_screen = io.MousePos;
-        // 화면 좌표 -> 그리드 좌표 변환 (패닝된 중앙점과 줌 고려)
-        ImVec2 mouse_pos_relative_to_center = ImVec2(mouse_pos_in_screen.x - canvas_center.x, mouse_pos_in_screen.y - canvas_center.y);
-        ImVec2 mouse_pos_in_grid = ImVec2(mouse_pos_relative_to_center.x / zoom, mouse_pos_relative_to_center.y / zoom);
-
-        if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-            snprintf(click_info, sizeof(click_info), "Left Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);
-            // 여기서 last_left_click_grid_pos 같은 변수에 저장하거나 다른 작업 수행 가능
-        }
-        else if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-            snprintf(click_info, sizeof(click_info), "Right Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);
-            // 여기서 last_right_click_grid_pos 같은 변수에 저장하거나 다른 작업 수행 가능
-        }
-    }
-
-
-    // --- 그리기 ---
-    const float grid_base_spacing = 25.0f;
-    const float apparent_spacing = grid_base_spacing * zoom;
-    const ImU32 grid_color = IM_COL32(200, 200, 200, 40);
-    const ImU32 grid_thick_color = IM_COL32(200, 200, 200, 80);
-    const int thick_line_interval = 4;
-
-    // 그리드 그리기 (canvas_center가 패닝을 반영하므로 로직 자체는 동일)
-    if (apparent_spacing > 1.0f) {
-        // 수직선
-        for (float x = canvas_center.x; x <= canvas_p1.x; x += apparent_spacing) {
-            int line_index = static_cast<int>(roundf(fabsf(x - canvas_center.x) / apparent_spacing));
-            bool is_thick_line = (line_index > 0 && line_index % thick_line_interval == 0);
-            draw_list->AddLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), is_thick_line ? grid_thick_color : grid_color);
-        }
-        for (float x = canvas_center.x - apparent_spacing; x >= canvas_p0.x; x -= apparent_spacing) {
-            int line_index = static_cast<int>(roundf(fabsf(x - canvas_center.x) / apparent_spacing));
-            bool is_thick_line = (line_index > 0 && line_index % thick_line_interval == 0);
-            draw_list->AddLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), is_thick_line ? grid_thick_color : grid_color);
-        }
-        // 수평선
-        for (float y = canvas_center.y; y <= canvas_p1.y; y += apparent_spacing) {
-            int line_index = static_cast<int>(roundf(fabsf(y - canvas_center.y) / apparent_spacing));
-            bool is_thick_line = (line_index > 0 && line_index % thick_line_interval == 0);
-            draw_list->AddLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), is_thick_line ? grid_thick_color : grid_color);
-        }
-        for (float y = canvas_center.y - apparent_spacing; y >= canvas_p0.y; y -= apparent_spacing) {
-            int line_index = static_cast<int>(roundf(fabsf(y - canvas_center.y) / apparent_spacing));
-            bool is_thick_line = (line_index > 0 && line_index % thick_line_interval == 0);
-            draw_list->AddLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), is_thick_line ? grid_thick_color : grid_color);
-        }
-        // 중앙선
-        draw_list->AddLine(ImVec2(canvas_center.x, canvas_p0.y), ImVec2(canvas_center.x, canvas_p1.y), grid_thick_color);
-        draw_list->AddLine(ImVec2(canvas_p0.x, canvas_center.y), ImVec2(canvas_p1.x, canvas_center.y), grid_thick_color);
-    }
-
-    // 해상도 영역 그리기 (canvas_center가 패닝을 반영하므로 로직 자체는 동일)
-    const float targetResolutionWidth = 1920.0f;
-    const float targetResolutionHeight = 1080.0f;
-    const float scaledWidth = targetResolutionWidth * zoom;
-    const float scaledHeight = targetResolutionHeight * zoom;
-    ImVec2 rectP0 = ImVec2(canvas_center.x - scaledWidth * 0.5f, canvas_center.y - scaledHeight * 0.5f);
-    ImVec2 rectP1 = ImVec2(canvas_center.x + scaledWidth * 0.5f, canvas_center.y + scaledHeight * 0.5f);
-    const ImU32 rectColor = IM_COL32(0, 255, 0, 255);
-    const float rectThickness = 2.0f;
-    draw_list->AddRect(rectP0, rectP1, rectColor, 0.0f, ImDrawFlags_None, rectThickness);
-
-
-    // --- UI 위젯 (상태 표시 및 제어) ---
-    // 커서 위치를 창 좌상단 기준으로 설정 (정보 표시용)
-    ImGui::SetCursorPos(ImVec2(content_min_rel.x + 10, content_min_rel.y + 10));
-    ImGui::BeginGroup(); // 정보 텍스트 그룹화 (배경 추가 등에 용이)
-    ImGui::Text("Interactive Grid");
-    ImGui::Text("Zoom: %.2f (Mouse Wheel)", zoom);
-    ImGui::Text("Pan Offset: (%.1f, %.1f) (Middle Mouse Drag)", panning.x, panning.y); // 패닝 정보 표시 추가
-    ImGui::TextUnformatted(click_info); // 클릭 정보 표시
-    if (ImGui::Button("Reset View")) { // 리셋 버튼 추가
-        zoom = 1.0f;
-        panning = ImVec2(0.0f, 0.0f);
-        snprintf(click_info, sizeof(click_info), "View Reset");
-    }
-    ImGui::EndGroup();
-
-    // 줌 슬라이더는 정보 텍스트와 분리하여 다른 곳에 배치할 수도 있음
-    // ImGui::SetCursorPosX(content_min_rel.x + 10); // 예시
-    // ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10); // 예시
-    // ImGui::SliderFloat("Zoom Slider", &zoom, min_zoom, max_zoom);
-
-    ImGui::End(); // 창 끝
 }
 
 void CMyImGui_Manager::DrawAssetBrowser(bool* p_open)
@@ -444,6 +225,105 @@ void CMyImGui_Manager::DrawAssetBrowser(bool* p_open)
     ImGui::Text("Selected: %s", selectedAsset.empty() ? "None" : selectedAsset.c_str());
 
     ImGui::End();
+}
+
+void CMyImGui_Manager::DrawToolBar(bool* p_open)
+{
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            // 파일 메뉴 아이템들
+            if (ImGui::MenuItem("New Scene", "Ctrl+N")) {
+                // 새 씬 로직
+                printf("Clicked File->New Scene\n");
+            }
+            if (ImGui::MenuItem("Open Scene...", "Ctrl+O")) {
+                // 씬 열기 로직 (예: 파일 다이얼로그 띄우기)
+                printf("Clicked File->Open Scene\n");
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Save", "Ctrl+S")) {
+                // 저장 로직
+                printf("Clicked File->Save\n");
+            }
+            if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) {
+                // 다른 이름으로 저장 로직
+                printf("Clicked File->Save As\n");
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem("Exit")) {
+                // 종료 로직 (예: 애플리케이션 종료 플래그 설정)
+                printf("Clicked File->Exit\n");
+                // exit_requested = true; // 예시
+            }
+            ImGui::EndMenu(); // File 메뉴 끝
+        }
+
+        if (ImGui::BeginMenu("Edit")) {
+            // 편집 메뉴 아이템들
+            if (ImGui::MenuItem("Undo", "Ctrl+Z", false, false)) { // 세 번째: 선택 여부, 네 번째: 비활성화 여부 (지금은 비활성화)
+                // 실행 취소 로직 (아직 구현 안 됨)
+                printf("Clicked Edit->Undo (Not implemented)\n");
+            }
+            if (ImGui::MenuItem("Redo", "Ctrl+Y", false, false)) { // 비활성화
+                // 다시 실행 로직 (아직 구현 안 됨)
+                printf("Clicked Edit->Redo (Not implemented)\n");
+            }
+            // ... 다른 편집 메뉴 ...
+            ImGui::EndMenu(); // Edit 메뉴 끝
+        }
+
+        if (ImGui::BeginMenu("Window")) {
+            // 창 메뉴 아이템들 (각 창의 표시 여부를 토글)
+            // ImGui::MenuItem의 세 번째 인자로 bool 포인터를 전달하면 체크박스처럼 동작합니다.
+            if (ImGui::MenuItem("Asset Browser", NULL /* 단축키 없음 */ /*, &show_asset_browser */)) {
+                printf("Toggle Asset Browser\n");
+                // show_asset_browser = !show_asset_browser; // 실제 변수 토글
+            }
+            if (ImGui::MenuItem("Inspector", NULL /*, &show_inspector */)) {
+                printf("Toggle Inspector\n");
+                // show_inspector = !show_inspector;
+            }
+            ImGui::Separator();
+            if (ImGui::MenuItem("ImGui Demo Window", NULL /*, &show_demo_window */)) {
+                printf("Toggle ImGui Demo Window\n");
+                // show_demo_window = !show_demo_window;
+            }
+            // ... 다른 창 메뉴 ...
+            ImGui::EndMenu(); // Window 메뉴 끝
+        }
+
+        if (ImGui::BeginMenu("Help")) {
+            // 도움말 메뉴 아이템들
+            if (ImGui::MenuItem("About My Editor...")) {
+                // 정보 대화상자 표시 로직
+                printf("Clicked Help->About\n");
+                // open_about_popup = true; // 예시
+            }
+            ImGui::EndMenu(); // Help 메뉴 끝
+        }
+
+        ImGui::EndMainMenuBar(); // 메인 메뉴바 끝
+    }
+    // --- 메인 메뉴바 생성 끝 ---
+}
+
+void CMyImGui_Manager::DrawDockingSpace(bool* p_open)
+{
+    if (p_open)
+    {
+        // --- 도크스페이스 생성 (메뉴바 다음에 호출) ---
+    // 메인 뷰포트 가져오기
+        const ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+        // 도킹 공간 플래그
+        // 메뉴바가 있을 경우 DockSpaceOverViewport는 자동으로 메뉴바 아래 영역에 맞춰 생성됩니다.
+        ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+
+        // 뷰포트 위에 도킹 공간 생성
+        ImGuiID dockspace_id = ImGui::GetID("MyFullscreenDockSpace");
+        // DockSpaceOverViewport 호출 시 viewport 포인터를 두 번째 인자로 전달합니다.
+        ImGui::DockSpaceOverViewport(dockspace_id, viewport, dockspace_flags);
+    }
 }
 
 HRESULT CMyImGui_Manager::Add_ImGui(const _wstring& key, CMyImGui* pMyImGui)

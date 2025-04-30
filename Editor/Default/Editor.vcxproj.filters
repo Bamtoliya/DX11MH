@@ -58,6 +58,9 @@
     <Filter Include="Imgui\UI_Edit_Imgui">
       <UniqueIdentifier>{519f6b28-30c5-48db-8a08-c17ae091dedf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Imgui\ToolBar">
+      <UniqueIdentifier>{9a6541de-f74f-4ba8-b501-1997999e457e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -95,6 +98,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Level_Map.cpp">
       <Filter>00.Levels\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ToolBar.cpp">
+      <Filter>Imgui\ToolBar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Tools.h">
       <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ToolBar.h">
+      <Filter>Imgui\ToolBar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

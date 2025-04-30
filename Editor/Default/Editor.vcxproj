@@ -28,6 +28,7 @@
     <ClCompile Include="..\private\Level_UI.cpp" />
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
+    <ClCompile Include="..\private\ToolBar.cpp" />
     <ClCompile Include="..\private\Viewport_2D.cpp" />
     <ClCompile Include="..\private\Viewport_3D.cpp" />
     <ClCompile Include="Editor.cpp" />
@@ -45,6 +46,7 @@
     <ClInclude Include="..\public\Level_UI.h" />
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
+    <ClInclude Include="..\public\ToolBar.h" />
     <ClInclude Include="..\Public\Tools.h" />
     <ClInclude Include="..\public\Viewport_2D.h" />
     <ClInclude Include="..\public\Viewport_3D.h" />
