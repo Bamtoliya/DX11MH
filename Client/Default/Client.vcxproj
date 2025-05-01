@@ -118,10 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../public/;../../EngineSDK/Inc/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\imgui\backends\;$(SolutionDir)External Libraries\ImGuizmo\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>../public/;../../EngineSDK/Inc/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -144,8 +141,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../public/;../../EngineSDK/Inc/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\imgui\backends\;$(SolutionDir)External Libraries\ImGuizmo\</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>../public/;../../EngineSDK/Inc/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

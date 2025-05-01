@@ -22,6 +22,17 @@ protected:
 	CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTransform(const CTransform& Prototype);
 	virtual ~CTransform() = default;
+
+public:
+	virtual HRESULT Initialize_Prototype();
+	virtual HRESULT Initialize(void* pArg);
+
+private:
+	_float4x4				m_WorldMatrix = {};
+	_float					m_fSpeedPerSec = {};
+	_float					m_fRotationPerSec = {};
+
+
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg) override;
@@ -104,6 +115,7 @@ public:
 #pragma endregion
 
 public:
+	HRESULT Bind_ShaderResource(class CShader* pShader, const _char* pConstantName);
 	virtual HRESULT RenderImGui() override;
 	virtual void* Dump() override;
 #pragma region Variables

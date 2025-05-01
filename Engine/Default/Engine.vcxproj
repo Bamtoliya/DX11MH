@@ -127,7 +127,6 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../public/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\wwise\include\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\imgui\backends;$(SolutionDir)External Libraries\imGuizmo\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -154,7 +153,6 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../public/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\wwise\include\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\imgui\backends;$(SolutionDir)External Libraries\imGuizmo\</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>

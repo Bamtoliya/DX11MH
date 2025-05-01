@@ -1,4 +1,6 @@
 ﻿#include "Transform.h"
+#include "Shader.h"
+
 #pragma region Constructor/Destructor
 CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent{ pDevice, pContext }
@@ -7,8 +9,30 @@ CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CTransform::CTransform(const CTransform& Prototype)
 	: CComponent{ Prototype }
+	, m_WorldMatrix { Prototype.m_WorldMatrix }
 {
 }
+
+HRESULT CTransform::Initialize_Prototype()
+{
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
+
+	return S_OK;
+}
+
+HRESULT CTransform::Initialize(void* pArg)
+{
+	if (nullptr == pArg)
+		return S_OK;
+
+	TRANSFORM_DESC* pDesc = static_cast<TRANSFORM_DESC*>(pArg);
+
+	m_fSpeedPerSec = pDesc->fSpeedPerSec;
+	m_fRotationPerSec = pDesc->fRotationPerSec;
+
+	return S_OK;
+}
+
 CTransform* CTransform::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CTransform* pInstance = new CTransform(pDevice, pContext);
@@ -101,6 +125,10 @@ void CTransform::Set_Scale(STATE eState, _float fScale)
 	XMStoreFloat4x4(&m_tDesc.WorldMatrix, WorldMatrix);
 }
 
+HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstantName)
+{
+	return pShader->Bind_Matrix(pConstantName, &m_WorldMatrix);	
+}
 
 HRESULT CTransform::RenderImGui()
 {

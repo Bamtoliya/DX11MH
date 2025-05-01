@@ -12,10 +12,10 @@ CShader::CShader(const CShader& Prototype)
 	, m_iNumPasses { Prototype.m_iNumPasses }
 	, m_InputLayouts { Prototype.m_InputLayouts }
 {
-	Safe_AddRef(m_pEffect);
-
 	for (auto& pInputLayout : m_InputLayouts)
-		Safe_AddRef(pInputLayout);	
+		Safe_AddRef(pInputLayout);
+
+	Safe_AddRef(m_pEffect);
 }
 
 HRESULT CShader::Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
@@ -53,6 +53,22 @@ HRESULT CShader::Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11
 
 		D3DX11_PASS_DESC		PassDesc{};
 		pPass->GetDesc(&PassDesc);
+	D3DX11_TECHNIQUE_DESC		TechniqueDesc{};
+
+	pTechnique->GetDesc(&TechniqueDesc);
+
+	m_iNumPasses = TechniqueDesc.Passes;
+
+	m_InputLayouts.reserve(m_iNumPasses);
+
+	for (size_t i = 0; i < TechniqueDesc.Passes; i++)
+	{
+		ID3D11InputLayout*	pInputLayout = { nullptr };
+		ID3DX11EffectPass*	pPass = pTechnique->GetPassByIndex(static_cast<uint32_t>(i));
+
+		D3DX11_PASS_DESC		PassDesc{};
+
+		pPass->GetDesc(&PassDesc);
 
 		ID3D11InputLayout*		pInputLayout = { nullptr };
 
@@ -71,17 +87,28 @@ HRESULT CShader::Initialize(void* pArg)
 
 HRESULT CShader::Begin(_uint iPassIndex)
 {
-	if (iPassIndex >= m_iNumPasses)
-		return E_FAIL;
+	m_pContext->IASetInputLayout(m_InputLayouts[iPassIndex]);	
 
-	m_pContext->IASetInputLayout(m_InputLayouts[iPassIndex]);
-
-	ID3DX11EffectPass*		pPass = m_pEffect->GetTechniqueByIndex(0)->GetPassByIndex(iPassIndex);
+	ID3DX11EffectPass* pPass = m_pEffect->GetTechniqueByIndex(0)->GetPassByIndex(iPassIndex);
 	if (nullptr == pPass)
 		return E_FAIL;
 
-	/* Apply호출 전에 셰이더에 전달해야 할 모든 데이터를 다 전달해놔야한다.  */
-	return pPass->Apply(0, m_pContext);	
+	/* 이 쉐이더에 이 패스로 그린다. */
+	/* Apply() 이전에 쉐이더에 전달해야할 모든 데이터들을 다 전달해놔야한다. */
+	return pPass->Apply(0, m_pContext);
+}
+
+HRESULT CShader::Bind_Matrix(const _char* pConstantName, const _float4x4* pMatrix)
+{
+	ID3DX11EffectVariable*		pVariable = m_pEffect->GetVariableByName(pConstantName);
+	if (nullptr == pVariable)
+		return E_FAIL;
+
+	ID3DX11EffectMatrixVariable* pMatrixVariable = pVariable->AsMatrix();
+	if (nullptr == pMatrixVariable)
+		return E_FAIL;
+
+	return pMatrixVariable->SetMatrix(reinterpret_cast<const _float*>(pMatrix));	
 }
 
 HRESULT CShader::Bind_RawValue(const _char* pConstantName, const void* pValue, _uint iLength)
@@ -91,19 +118,6 @@ HRESULT CShader::Bind_RawValue(const _char* pConstantName, const void* pValue, _
 		return E_FAIL;
 
 	return pVariable->SetRawValue(pValue, 0, iLength);	
-}
-
-HRESULT CShader::Bind_Matrix(const _char* pConstantName, const _float4x4* pMatrix)
-{
-	ID3DX11EffectVariable*		pVariable = m_pEffect->GetVariableByName(pConstantName);
-	if (nullptr == pVariable)
-		return E_FAIL;
-
-	ID3DX11EffectMatrixVariable*	pMatrixVariable = pVariable->AsMatrix();
-	if (nullptr == pMatrixVariable)
-		return E_FAIL;	
-
-	return pMatrixVariable->SetMatrix(reinterpret_cast<const _float*>(pMatrix));	
 }
 
 HRESULT CShader::Bind_Matrices(const _char* pConstantName, const _float4x4* pMatrices, _uint iNumMatrices)
@@ -126,11 +140,12 @@ HRESULT CShader::Bind_SRV(const _char* pConstantName, ID3D11ShaderResourceView* 
 	if (nullptr == pVariable)
 		return E_FAIL;
 
-	ID3DX11EffectShaderResourceVariable*	pSRVVariable = pVariable->AsShaderResource();
-	if (nullptr == pSRVVariable)
+	
+	ID3DX11EffectShaderResourceVariable* pShaderResourceVariable = pVariable->AsShaderResource();
+	if (nullptr == pShaderResourceVariable)
 		return E_FAIL;
 
-	return pSRVVariable->SetResource(pSRV);	
+	return pShaderResourceVariable->SetResource(pSRV);
 }
 
 HRESULT CShader::Bind_SRVs(const _char* pConstantName, ID3D11ShaderResourceView** ppSRVs, _uint iNumSRVs)
@@ -184,4 +199,5 @@ void CShader::Free()
 
 	m_InputLayouts.clear();
 
+	Safe_Release(m_pEffect);
 }
