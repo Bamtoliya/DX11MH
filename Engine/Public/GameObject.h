@@ -49,13 +49,16 @@ public:
 #pragma region Functions
 public:
 	CComponent* Get_Component(const _wstring& strComponentTag);
+	_uint GetID() const { return m_oID; }
+	void SetID(_uint oID) { m_oID = oID; }
 protected:
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr);
+
 #pragma endregion
 
 #pragma region Variables
+	_uint									m_oID = { 0 };
 	_wstring								m_strName;
-	_uint									m_iID;
 	CTransform*								m_pTransformCom = { nullptr };
 	CGameObject*							m_pParent = { nullptr };
 	_wstring								m_strTag = {};
@@ -63,6 +66,10 @@ protected:
 	map<const _wstring, class CGameObject*> m_Childs		= {};
 	_wstring 	m_strLayerTag;
 	_tchar		m_szName[MAX_PATH];
+
+
+	_bool									m_bRelative = { false };
+	_bool									m_bAbsolute = { false };
 #pragma endregion
 
 };

@@ -1,4 +1,5 @@
 #include "GameObject_Plane.h"
+#include "VIBuffer.h"
 
 CGameObject_Plane::CGameObject_Plane(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject { pDevice, pContext }

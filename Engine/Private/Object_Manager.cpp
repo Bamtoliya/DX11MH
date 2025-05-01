@@ -4,6 +4,8 @@
 #include "GameInstance.h"
 #include "GameObject.h"
 
+_uint CObject_Manager::m_oID = { 1 };
+
 CObject_Manager::CObject_Manager()
 	: m_pGameInstance { CGameInstance::Get_Instance() }
 {
@@ -37,6 +39,7 @@ HRESULT CObject_Manager::Add_GameObject(_uint iPrototypeLevelIndex, const _wstri
 	if (nullptr == pGameObject)
 		return E_FAIL;
 
+	pGameObject->SetID(m_oID++);
 	CLayer*		pLayer = Find_Layer(iLevelIndex, strLayerTag);
 
 	if (nullptr == pLayer)

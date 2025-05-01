@@ -281,6 +281,9 @@
     <ClInclude Include="..\public\Picking_System.h">
       <Filter>00.System\Picking</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Components.h">
+      <Filter>01.Utility\04.Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
