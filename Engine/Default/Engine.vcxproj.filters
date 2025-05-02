@@ -281,8 +281,8 @@
     <ClInclude Include="..\public\Picking_System.h">
       <Filter>00.System\Picking</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Components.h">
-      <Filter>01.Utility\04.Components</Filter>
+    <ClInclude Include="..\public\GameObject_Capsule.h">
+      <Filter>01.Utility\03.GameObject\Base\Capsule</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -514,6 +514,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Physics_System.cpp">
       <Filter>00.System\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameObject_Capsule.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Capsule</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

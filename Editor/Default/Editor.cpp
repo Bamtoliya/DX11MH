@@ -79,21 +79,23 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 DispatchMessage(&msg);
             }
         }
-
-        pGameInstance->Update_Timer(TEXT("Timer_Default"));
-
-        fTimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
-
-        if (fTimeAcc >= 1.f / 60.f)
+        else
         {
-            pGameInstance->Update_Timer(TEXT("Timer_60"));
+            pGameInstance->Update_Timer(TEXT("Timer_Default"));
 
-            pMainApp->Update(pGameInstance->Get_TimeDelta(TEXT("Timer_60")));
-            pMainApp->Render();
+            fTimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
 
-            fTimeAcc = 0.f;
+            if (fTimeAcc >= 1.f / 60.f)
+            {
+                pGameInstance->Update_Timer(TEXT("Timer_60"));
+
+                pMainApp->Update(pGameInstance->Get_TimeDelta(TEXT("Timer_60")));
+                pMainApp->Render();
+
+                fTimeAcc = 0.f;
+            }
+
         }
-
     }
     Safe_Release(pGameInstance);
     Safe_Release(pMainApp);

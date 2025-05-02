@@ -18,19 +18,19 @@ public:
 #pragma region Get/Set
 public:
 	const _float4x4* Get_Transform_Float4x4(TRANSFORMSTATE eState) const {
-		return &m_TransformationMatrix[ENUM_CAST(eState)];
+		return &m_TransformationMatrix[ENUM_CLASS(eState)];
 	}
 
 	const _matrix Get_Transform_Matrix(TRANSFORMSTATE eState) const {
-		return XMLoadFloat4x4(&m_TransformationMatrix[ENUM_CAST(eState)]);
+		return XMLoadFloat4x4(&m_TransformationMatrix[ENUM_CLASS(eState)]);
 	}
 
 	const _float4x4* Get_Transform_Inverse_Float4x4(TRANSFORMSTATE eState) const {
-		return &m_TransformationMatrix_Inverse[ENUM_CAST(eState)];
+		return &m_TransformationMatrix_Inverse[ENUM_CLASS(eState)];
 	}
 
 	const _matrix Get_Transform_Inverse_Matrix(TRANSFORMSTATE eState) const {
-		return XMLoadFloat4x4(&m_TransformationMatrix_Inverse[ENUM_CAST(eState)]);
+		return XMLoadFloat4x4(&m_TransformationMatrix_Inverse[ENUM_CLASS(eState)]);
 	}
 
 	const _float4* Get_CamPosition() const {
@@ -39,7 +39,7 @@ public:
 
 public:
 	void Set_Transform(TRANSFORMSTATE eState, _fmatrix StateMatrix) {
-		XMStoreFloat4x4(&m_TransformationMatrix[ENUM_CAST(eState)], StateMatrix);
+		XMStoreFloat4x4(&m_TransformationMatrix[ENUM_CLASS(eState)], StateMatrix);
 	}
 #pragma endregion
 
@@ -47,8 +47,8 @@ public:
 	void Update();
 
 private:
-	_float4x4				m_TransformationMatrix[ENUM_CAST(TRANSFORMSTATE::D3DTS_END)] = {};
-	_float4x4				m_TransformationMatrix_Inverse[ENUM_CAST(TRANSFORMSTATE::D3DTS_END)] = {};
+	_float4x4				m_TransformationMatrix[ENUM_CLASS(TRANSFORMSTATE::D3DTS_END)] = {};
+	_float4x4				m_TransformationMatrix_Inverse[ENUM_CLASS(TRANSFORMSTATE::D3DTS_END)] = {};
 	_float4					m_vCamPosition = {};
 };
 

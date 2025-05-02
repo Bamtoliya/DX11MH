@@ -9,7 +9,6 @@ CShader::CShader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CShader::CShader(const CShader& Prototype)
     : CComponent{ Prototype }
 	, m_pEffect { Prototype.m_pEffect }
-	, m_iNumPasses { Prototype.m_iNumPasses }
 	, m_InputLayouts { Prototype.m_InputLayouts }
 {
 	for (auto& pInputLayout : m_InputLayouts)
@@ -20,64 +19,42 @@ CShader::CShader(const CShader& Prototype)
 
 HRESULT CShader::Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {
-	_uint	iHlslFlag = {};
+	_uint	iShaderFlag = {};
 
 #ifdef _DEBUG
-	iHlslFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+	iShaderFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #else
-	iHlslFlag = D3DCOMPILE_OPTIMIZATION_LEVEL1;
+	iShaderFlag = D3DCOMPILE_OPTIMIZATION_LEVEL1;
 #endif
-
-	/* 무언가를 담기위한 메모리공간 */
-	/* 함수를 호출했을때의 결과 데이터를 담아주기위해 주로 사용된다. */
-	ID3DBlob* pBlob = { nullptr };
-
 	if (FAILED(D3DX11CompileEffectFromFile(pShaderFilePath, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		iHlslFlag, 0, m_pDevice, &m_pEffect, nullptr)))
+		iShaderFlag, 0, m_pDevice, &m_pEffect, nullptr)))
 		return E_FAIL;
 
-	ID3DX11EffectTechnique*		pTechnique = m_pEffect->GetTechniqueByIndex(0);
+	ID3DX11EffectTechnique* pTechnique = m_pEffect->GetTechniqueByIndex(0);
 	if (nullptr == pTechnique)
 		return E_FAIL;
 
 	D3DX11_TECHNIQUE_DESC		TechniqueDesc{};
 	pTechnique->GetDesc(&TechniqueDesc);
-
 	m_iNumPasses = TechniqueDesc.Passes;
-
-	for (_uint i = 0; i < m_iNumPasses; i++)
-	{
-		ID3DX11EffectPass*		pPass = pTechnique->GetPassByIndex(i);
-		if (nullptr == pPass)
-			return E_FAIL;
-
-		D3DX11_PASS_DESC		PassDesc{};
-		pPass->GetDesc(&PassDesc);
-	D3DX11_TECHNIQUE_DESC		TechniqueDesc{};
-
-	pTechnique->GetDesc(&TechniqueDesc);
-
-	m_iNumPasses = TechniqueDesc.Passes;
-
 	m_InputLayouts.reserve(m_iNumPasses);
 
 	for (size_t i = 0; i < TechniqueDesc.Passes; i++)
 	{
-		ID3D11InputLayout*	pInputLayout = { nullptr };
-		ID3DX11EffectPass*	pPass = pTechnique->GetPassByIndex(static_cast<uint32_t>(i));
+		ID3D11InputLayout* pInputLayout = { nullptr };
+		ID3DX11EffectPass* pPass = pTechnique->GetPassByIndex(static_cast<uint32_t>(i));
 
 		D3DX11_PASS_DESC		PassDesc{};
-
 		pPass->GetDesc(&PassDesc);
-
-		ID3D11InputLayout*		pInputLayout = { nullptr };
-
-		if (FAILED(m_pDevice->CreateInputLayout(pElements, iNumElements, PassDesc.pIAInputSignature, PassDesc.IAInputSignatureSize, &pInputLayout)))
+		
+		if (FAILED(m_pDevice->CreateInputLayout(pElements, iNumElements,
+			PassDesc.pIAInputSignature, PassDesc.IAInputSignatureSize, &pInputLayout)))
 			return E_FAIL;
 
 		m_InputLayouts.push_back(pInputLayout);
 	}
-    return S_OK;
+
+	return S_OK;
 }
 
 HRESULT CShader::Initialize(void* pArg)
@@ -191,8 +168,6 @@ CComponent* CShader::Clone(void* pArg)
 void CShader::Free()
 {
     __super::Free();
-
-	Safe_Release(m_pEffect);
 
 	for (auto& pInputLayout : m_InputLayouts)
 		Safe_Release(pInputLayout);

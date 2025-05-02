@@ -12,13 +12,14 @@ CVIBuffer::CVIBuffer(const CVIBuffer& Prototype)
     , m_iVertexStride           { Prototype.m_iVertexStride }
     , m_iNumVertexBuffers       { Prototype.m_iNumVertexBuffers }
     , m_pIB                     { Prototype.m_pIB }
+    , m_iNumIndices             { Prototype.m_iNumIndices }
     , m_iIndexStride            { Prototype.m_iIndexStride }
     , m_iNumPrimitive           { Prototype.m_iNumPrimitive }
     , m_iNumIndicesPerPrimitive { Prototype.m_iNumIndicesPerPrimitive }
     , m_eIndexFormat            { Prototype.m_eIndexFormat }
     , m_ePrimitiveTopology      { Prototype.m_ePrimitiveTopology }
-    , m_BufferDesc              { Prototype.m_BufferDesc }
-    , m_SubResourceData         { Prototype.m_SubResourceData }
+    /*, m_BufferDesc              { Prototype.m_BufferDesc }
+    , m_SubResourceData         { Prototype.m_SubResourceData }*/
     , m_pVertexPositions        { Prototype.m_pVertexPositions }
 {
     Safe_AddRef(m_pVB);
@@ -51,11 +52,11 @@ HRESULT CVIBuffer::Initialize(void* pArg)
 
 HRESULT CVIBuffer::Bind_Buffers()
 {
-    ID3D11Buffer*   pBuffer[]   = { m_pVB, };
+    ID3D11Buffer*   pVertexBuffers[]   = { m_pVB, };
     _uint	        iVertexStrides[]  = { m_iVertexStride, };
     _uint           iOffsets[]  = { 0, };
 
-    m_pContext->IASetVertexBuffers(0, m_iNumVertexBuffers, pBuffer, iVertexStrides, iOffsets);
+    m_pContext->IASetVertexBuffers(0, m_iNumVertexBuffers, pVertexBuffers, iVertexStrides, iOffsets);
     m_pContext->IASetIndexBuffer(m_pIB, m_eIndexFormat, 0);
     m_pContext->IASetPrimitiveTopology(m_ePrimitiveTopology);
 
