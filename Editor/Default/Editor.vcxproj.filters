@@ -61,6 +61,12 @@
     <Filter Include="Imgui\ToolBar">
       <UniqueIdentifier>{9a6541de-f74f-4ba8-b501-1997999e457e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Test">
+      <UniqueIdentifier>{4d097cc6-40ce-4d5f-bb8e-c7e26d2241eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ShaderFiles">
+      <UniqueIdentifier>{9bfd93bb-a31e-4ef1-9b56-e8e2d25c774b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -101,6 +107,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ToolBar.cpp">
       <Filter>Imgui\ToolBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BackGround.cpp">
+      <Filter>Test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +173,9 @@
     <ClInclude Include="..\public\ToolBar.h">
       <Filter>Imgui\ToolBar</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\BackGround.h">
+      <Filter>Test</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Editor.ico">
@@ -180,5 +192,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxPosTex.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

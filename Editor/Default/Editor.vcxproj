@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\Asset_Browser.cpp" />
+    <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\private\Inspector.cpp" />
     <ClCompile Include="..\private\Level_Effect.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
@@ -35,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\Asset_Browser.h" />
+    <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\Public\Editor_Defines.h" />
     <ClInclude Include="..\Public\Editor_Enum.h" />
     <ClInclude Include="..\public\Inspector.h" />
@@ -69,6 +71,9 @@
     <ProjectReference Include="..\..\Engine\Default\Engine.vcxproj">
       <Project>{e6549a29-7a97-4c29-af47-47cac692efb5}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxPosTex.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -181,6 +186,12 @@
       <AdditionalLibraryDirectories>../../EngineSDK/Lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

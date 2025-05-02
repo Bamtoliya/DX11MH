@@ -60,6 +60,8 @@ struct PS_IN
 struct PS_OUT
 {
     vector vColor : SV_TARGET0;
+    /*vector vImGui : SV_TARGET1;
+    vector vPickColor : SV_TARGET2;*/
 };
 
 PS_OUT PS_MAIN(PS_IN In)

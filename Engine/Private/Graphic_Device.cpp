@@ -131,7 +131,7 @@ HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, _bool isWindowed, _uint iWin
 
 	/* 스케치북에 사과를 그릴꺼야. */
 	/* RENDER_TARGET : 그림을 당하는 대상. 스케치북 */
-	SwapChain.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	SwapChain.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
 	SwapChain.BufferCount = 1;
 
 	/*스왑하는 형태 : 모니터 주사율에 따라 조절해도 됨. */
@@ -180,7 +180,17 @@ HRESULT CGraphic_Device::Ready_BackBufferRenderTargetView()
 	if (FAILED(m_pDevice->CreateRenderTargetView(pBackBufferTexture, nullptr, &m_pBackBufferRTV)))
 		return E_FAIL;	
 
-	Safe_Release(pBackBufferTexture);
+	//Safe_Release(pBackBufferTexture);
+
+	m_pBackBufferTexture = pBackBufferTexture; // 포인터를 클래스 멤버에 저장
+
+	// 백 버퍼 텍스처로 SRV 생성
+	if (FAILED(m_pDevice->CreateShaderResourceView(m_pBackBufferTexture, nullptr, &m_pBackBufferSRV)))
+	{
+		// SRV 생성 실패 시 백 버퍼 텍스처도 해제해야 함
+		Safe_Release(m_pBackBufferTexture);
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -246,6 +256,8 @@ void CGraphic_Device::Free()
 {
 	Safe_Release(m_pSwapChain);
 	Safe_Release(m_pDepthStencilView);
+	Safe_Release(m_pBackBufferSRV);
+	Safe_Release(m_pBackBufferTexture);
 	Safe_Release(m_pBackBufferRTV);
 	Safe_Release(m_pDeviceContext);
 

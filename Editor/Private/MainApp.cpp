@@ -23,8 +23,8 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext, &m_pSound_Manager)))
 		return E_FAIL;
 
-	//if (FAILED(m_pMyImGui_Manager->Create(g_hWnd, m_pDevice, m_pContext)))
-	//	return E_FAIL;
+	if (FAILED(Ready_Prototype_Components()))
+		return E_FAIL;
 
 	if (FAILED(Start_Level(LEVEL::LEVEL_UI)))
 		return E_FAIL;
@@ -52,6 +52,27 @@ HRESULT CMainApp::Render()
 HRESULT CMainApp::Start_Level(LEVEL eStartLevel)
 {
 	if (FAILED(m_pGameInstance->Change_Level(static_cast<_uint>(LEVEL::LEVEL_LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, eStartLevel))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CMainApp::Ready_Prototype_Components()
+{
+	/* For.Prototype_Component_VIBuffer_Rect*/
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
+		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxPosTex */
+	D3D11_INPUT_ELEMENT_DESC		Elements[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LEVEL_STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxPosTex.hlsl"), Elements, 2))))
 		return E_FAIL;
 
 	return S_OK;

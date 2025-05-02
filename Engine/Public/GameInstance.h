@@ -25,6 +25,11 @@ public:
 	_float Compute_Random_Normal();
 	_float Compute_Random(_float fMin, _float fMax);
 
+#pragma region GRAPHIC_DEVIE
+	ID3D11ShaderResourceView* Get_BackBufferSRV() const;
+#pragma endregion
+
+
 #pragma region LEVEL_MANAGER
 public:
 	HRESULT Change_Level(_uint iLevelIndex, class CLevel* pNewLevel);

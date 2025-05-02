@@ -1,7 +1,9 @@
 ﻿#pragma once
 #include "GameObject.h"
 BEGIN(Engine)
-class CVIBuffer;
+class CShader;
+class CTexture;
+class CVIBuffer_Rect;
 class ENGINE_DLL CGameObject_Plane : public CGameObject
 {
 #pragma region Constructor/Destructor
@@ -31,7 +33,11 @@ public:
 	virtual HRESULT RenderImGui() override;
 #pragma endregion
 protected:
-	CVIBuffer* m_pVIBufferCom = { nullptr };
+	HRESULT Ready_Components();
+protected:
+	CShader*		m_pShaderCom = { nullptr };
+	CTexture*		m_pTextureCom = { nullptr };
+	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 };
 
 END

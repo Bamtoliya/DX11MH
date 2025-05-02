@@ -21,6 +21,7 @@ public:
 	HRESULT Render();
 
 	HRESULT Start_Level(LEVEL eStartLevel);
+	HRESULT Ready_Prototype_Components();
 
 private:
 	CGameInstance*			m_pGameInstance = { nullptr };

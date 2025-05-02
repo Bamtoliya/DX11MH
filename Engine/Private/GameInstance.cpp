@@ -154,6 +154,16 @@ _float CGameInstance::Compute_Random(_float fMin, _float fMax)
 	return fMin + (fMax - fMin) * Compute_Random_Normal();	
 }
 
+#pragma region GRAPHIC_DEVICE
+ID3D11ShaderResourceView* CGameInstance::Get_BackBufferSRV() const
+{
+	return m_pGraphic_Device->Get_BackBufferSRV();
+}
+#pragma endregion
+
+
+
+
 #pragma region LEVEL_MANAGER
 
 HRESULT CGameInstance::Change_Level(_uint iLevelIndex, CLevel* pNewLevel)
