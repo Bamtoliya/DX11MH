@@ -31,7 +31,7 @@ private:
 	void DrawToolBar(bool* p_open);
 	void DrawDockingSpace(bool* p_open);
 public:
-
+	HRESULT Resize(_uint iWinSizeX, _uint iWinSizeY);
 	HRESULT Add_ImGui(const _wstring& key, CMyImGui* pMyImGui);
 private:
 	map<const _wstring, CMyImGui*>		m_vecMyImGui = {};

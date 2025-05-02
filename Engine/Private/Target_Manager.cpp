@@ -1,5 +1,5 @@
-#include "Target_Manager.h" // °æ·Î È®ÀÎ
-#include "RenderTarget.h" // CRenderTarget Å¬·¡½º »ç¿ë ½Ã
+ï»¿#include "Target_Manager.h" // ê²½ë¡œ í™•ì¸
+#include "RenderTarget.h" // CRenderTarget í´ë˜ìŠ¤ ì‚¬ìš© ì‹œ
 
 BEGIN(Engine)
 
@@ -13,7 +13,7 @@ CTarget_Manager::CTarget_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 
 HRESULT CTarget_Manager::Initialize()
 {
-    // ÇÊ¿ä½Ã ÃÊ±âÈ­ ·ÎÁ÷ Ãß°¡
+    // í•„ìš”ì‹œ ì´ˆê¸°í™” ë¡œì§ ì¶”ê°€
     return S_OK;
 }
 
@@ -21,14 +21,14 @@ HRESULT CTarget_Manager::Add_RenderTarget(const _wstring& strTargetTag, _uint iW
 {
     if (Find_RenderTarget(strTargetTag) != nullptr) {
         MSG_BOX("Render Target already exists with this tag.");
-        return E_FAIL; // ÀÌ¹Ì Á¸ÀçÇÏ´Â ÅÂ±×
+        return E_FAIL; // ì´ë¯¸ ì¡´ì¬í•˜ëŠ” íƒœê·¸
     }
 
     CRenderTarget* pRenderTarget = CRenderTarget::Create(m_pDevice, m_pContext, iWidth, iHeight, eFormat, vClearColor);
     if (nullptr == pRenderTarget)
         return E_FAIL;
 
-    pRenderTarget->Set_DebugName(WideToUtf8(strTargetTag.c_str())); // µğ¹ö±× ÀÌ¸§ ¼³Á¤
+    pRenderTarget->Set_DebugName(WideToUtf8(strTargetTag.c_str())); // ë””ë²„ê·¸ ì´ë¦„ ì„¤ì •
     m_RenderTargets.emplace(strTargetTag, pRenderTarget);
 
     return S_OK;
@@ -43,21 +43,21 @@ HRESULT CTarget_Manager::Add_MRT(const _wstring& strMRTTag, const std::vector<_w
 
     if (m_MRTs.count(strMRTTag)) {
         MSG_BOX("MRT Group already exists with this tag.");
-        return E_FAIL; // ÀÌ¹Ì Á¸ÀçÇÏ´Â MRT ±×·ì ÅÂ±×
+        return E_FAIL; // ì´ë¯¸ ì¡´ì¬í•˜ëŠ” MRT ê·¸ë£¹ íƒœê·¸
     }
 
     std::vector<ID3D11RenderTargetView*> rtvs;
-    D3D11_VIEWPORT firstViewport = {}; // Ã¹ ¹øÂ° Å¸°ÙÀÇ ºäÆ÷Æ®¸¦ ±×·ì ºäÆ÷Æ®·Î »ç¿ë
+    D3D11_VIEWPORT firstViewport = {}; // ì²« ë²ˆì§¸ íƒ€ê²Ÿì˜ ë·°í¬íŠ¸ë¥¼ ê·¸ë£¹ ë·°í¬íŠ¸ë¡œ ì‚¬ìš©
 
     for (size_t i = 0; i < pTargetTags.size(); ++i) {
         CRenderTarget* pRT = Find_RenderTarget(pTargetTags[i]);
         if (nullptr == pRT) {
             MSG_BOX("Render target not found for MRT group.");
-            return E_FAIL; // ±×·ì¿¡ Æ÷ÇÔµÉ ·»´õ Å¸°ÙÀÌ Á¸ÀçÇÏÁö ¾ÊÀ½
+            return E_FAIL; // ê·¸ë£¹ì— í¬í•¨ë  ë Œë” íƒ€ê²Ÿì´ ì¡´ì¬í•˜ì§€ ì•ŠìŒ
         }
         rtvs.push_back(pRT->Get_RTV());
 
-        // ¸ğµç ·»´õ Å¸°ÙÀÇ Å©±â°¡ µ¿ÀÏÇÑÁö È®ÀÎ (¼±ÅÃÀûÀÌÁö¸¸ ±ÇÀåµÊ)
+        // ëª¨ë“  ë Œë” íƒ€ê²Ÿì˜ í¬ê¸°ê°€ ë™ì¼í•œì§€ í™•ì¸ (ì„ íƒì ì´ì§€ë§Œ ê¶Œì¥ë¨)
         const D3D11_VIEWPORT& currentVP = pRT->Get_Viewport();
         if (i == 0) {
             firstViewport = currentVP;
@@ -65,13 +65,13 @@ HRESULT CTarget_Manager::Add_MRT(const _wstring& strMRTTag, const std::vector<_w
         else {
             if (firstViewport.Width != currentVP.Width || firstViewport.Height != currentVP.Height) {
                 MSG_BOX("Render targets in MRT group must have the same dimensions.");
-                // return E_FAIL; // ÇÊ¿ä½Ã ¿¡·¯ Ã³¸®
+                // return E_FAIL; // í•„ìš”ì‹œ ì—ëŸ¬ ì²˜ë¦¬
             }
         }
     }
 
     m_MRTs.emplace(strMRTTag, rtvs);
-    m_MRTViewports.emplace(strMRTTag, firstViewport); // Ã¹ ¹øÂ° ºäÆ÷Æ® ÀúÀå
+    m_MRTViewports.emplace(strMRTTag, firstViewport); // ì²« ë²ˆì§¸ ë·°í¬íŠ¸ ì €ì¥
 
     return S_OK;
 }
@@ -83,31 +83,31 @@ HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencil
     auto mrtIter = m_MRTs.find(strMRTTag);
     if (mrtIter == m_MRTs.end()) {
         MSG_BOX("MRT Group not found.");
-        return E_FAIL; // MRT ±×·ìÀ» Ã£À» ¼ö ¾øÀ½
+        return E_FAIL; // MRT ê·¸ë£¹ì„ ì°¾ì„ ìˆ˜ ì—†ìŒ
     }
 
     auto vpIter = m_MRTViewports.find(strMRTTag);
     if (vpIter == m_MRTViewports.end()) {
-        // ÀÌ·ĞÀûÀ¸·Î´Â MRT ±×·ì°ú ÇÔ²² »ı¼ºµÇ¹Ç·Î ÀÌ °æ¿ì´Â µå¹°¾î¾ß ÇÔ
+        // ì´ë¡ ì ìœ¼ë¡œëŠ” MRT ê·¸ë£¹ê³¼ í•¨ê»˜ ìƒì„±ë˜ë¯€ë¡œ ì´ ê²½ìš°ëŠ” ë“œë¬¼ì–´ì•¼ í•¨
         MSG_BOX("Viewport for MRT Group not found.");
         return E_FAIL;
     }
 
-    // 1. ÇöÀç »óÅÂ ¹é¾÷
-    m_iNumViews = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; // ÃÖ´ë °³¼ö¸¸Å­ °¡Á®¿À±â ½Ãµµ
+    // 1. í˜„ì¬ ìƒíƒœ ë°±ì—…
+    m_iNumViews = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; // ìµœëŒ€ ê°œìˆ˜ë§Œí¼ ê°€ì ¸ì˜¤ê¸° ì‹œë„
     m_pContext->OMGetRenderTargets(m_iNumViews, m_pBackupRTVs, &m_pBackupDSV);
-    // ½ÇÁ¦ ¹ÙÀÎµùµÈ ºä °³¼ö È®ÀÎ (OMGetRenderTargets´Â Ã¹ ¹øÂ° nullptr¿¡¼­ ¸ØÃã)
+    // ì‹¤ì œ ë°”ì¸ë”©ëœ ë·° ê°œìˆ˜ í™•ì¸ (OMGetRenderTargetsëŠ” ì²« ë²ˆì§¸ nullptrì—ì„œ ë©ˆì¶¤)
     for (m_iNumViews = 0; m_iNumViews < D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; ++m_iNumViews) {
         if (m_pBackupRTVs[m_iNumViews] == nullptr) break;
     }
     _uint numViewports = 1;
-    m_pContext->RSGetViewports(&numViewports, &m_BackupViewport); // º¸Åë ºäÆ÷Æ®´Â 1°³
+    m_pContext->RSGetViewports(&numViewports, &m_BackupViewport); // ë³´í†µ ë·°í¬íŠ¸ëŠ” 1ê°œ
 
-    // 2. MRT ¹ÙÀÎµù
+    // 2. MRT ë°”ì¸ë”©
     const auto& rtvs = mrtIter->second;
     m_pContext->OMSetRenderTargets(static_cast<UINT>(rtvs.size()), rtvs.data(), pDSV);
 
-    // 3. ºäÆ÷Æ® ¼³Á¤
+    // 3. ë·°í¬íŠ¸ ì„¤ì •
     m_pContext->RSSetViewports(1, &(vpIter->second));
 
     return S_OK;
@@ -117,18 +117,18 @@ HRESULT CTarget_Manager::End_MRT(ID3D11RenderTargetView* pBackBufferRTV, ID3D11D
 {
     if (m_pContext == nullptr) return E_FAIL;
 
-    // ¹é¾÷µÈ »óÅÂ º¹¿ø
+    // ë°±ì—…ëœ ìƒíƒœ ë³µì›
     m_pContext->OMSetRenderTargets(m_iNumViews, m_pBackupRTVs, m_pBackupDSV);
     m_pContext->RSSetViewports(1, &m_BackupViewport);
 
-    // ¹é¾÷ Æ÷ÀÎÅÍ ¸±¸®Áî (OMGetRenderTargets°¡ ÂüÁ¶ Ä«¿îÆ® Áõ°¡½ÃÅ´)
+    // ë°±ì—… í¬ì¸í„° ë¦´ë¦¬ì¦ˆ (OMGetRenderTargetsê°€ ì°¸ì¡° ì¹´ìš´íŠ¸ ì¦ê°€ì‹œí‚´)
     for (_uint i = 0; i < m_iNumViews; ++i) {
         Safe_Release(m_pBackupRTVs[i]);
-        m_pBackupRTVs[i] = nullptr; // nullptr·Î ÃÊ±âÈ­
+        m_pBackupRTVs[i] = nullptr; // nullptrë¡œ ì´ˆê¸°í™”
     }
     Safe_Release(m_pBackupDSV);
-    m_pBackupDSV = nullptr; // nullptr·Î ÃÊ±âÈ­
-    m_iNumViews = 0; // °³¼ö ÃÊ±âÈ­
+    m_pBackupDSV = nullptr; // nullptrë¡œ ì´ˆê¸°í™”
+    m_iNumViews = 0; // ê°œìˆ˜ ì´ˆê¸°í™”
 
     return S_OK;
 }
@@ -140,7 +140,7 @@ HRESULT CTarget_Manager::Clear_RenderTarget(const _wstring& strTargetTag, _float
         MSG_BOX("Render Target not found for clearing.");
         return E_FAIL;
     }
-    return pRT->Clear(pClearColor); // CRenderTargetÀÇ Clear È£Ãâ
+    return pRT->Clear(pClearColor); // CRenderTargetì˜ Clear í˜¸ì¶œ
 }
 
 HRESULT CTarget_Manager::Clear_MRT(const _wstring& strMRTTag)
@@ -151,23 +151,23 @@ HRESULT CTarget_Manager::Clear_MRT(const _wstring& strMRTTag)
         return E_FAIL;
     }
 
-    // MRT ±×·ì ³» ¸ğµç RTV Å¬¸®¾î (°¢ RTV°¡ ¼ÓÇÑ CRenderTargetÀÇ Clear È£Ãâ)
-    // ÁÖÀÇ: MRT ±×·ì Á¤º¸¿¡´Â RTV Æ÷ÀÎÅÍ¸¸ ÀÖÀ¸¹Ç·Î, CRenderTarget °´Ã¼¸¦ ´Ù½Ã Ã£¾Æ¾ß ÇÒ ¼ö ÀÖÀ½
-    //       ¶Ç´Â Add_MRT ½Ã CRenderTarget Æ÷ÀÎÅÍ ¸ñ·ÏÀ» ÀúÀåÇÏ´Â ¹æ½ÄÀ¸·Î º¯°æ ÇÊ¿ä
-    // ¿©±â¼­´Â m_RenderTargets ¸ÊÀ» ´Ù½Ã °Ë»öÇÏ´Â ¹æ½ÄÀ¸·Î °¡Á¤
+    // MRT ê·¸ë£¹ ë‚´ ëª¨ë“  RTV í´ë¦¬ì–´ (ê° RTVê°€ ì†í•œ CRenderTargetì˜ Clear í˜¸ì¶œ)
+    // ì£¼ì˜: MRT ê·¸ë£¹ ì •ë³´ì—ëŠ” RTV í¬ì¸í„°ë§Œ ìˆìœ¼ë¯€ë¡œ, CRenderTarget ê°ì²´ë¥¼ ë‹¤ì‹œ ì°¾ì•„ì•¼ í•  ìˆ˜ ìˆìŒ
+    //       ë˜ëŠ” Add_MRT ì‹œ CRenderTarget í¬ì¸í„° ëª©ë¡ì„ ì €ì¥í•˜ëŠ” ë°©ì‹ìœ¼ë¡œ ë³€ê²½ í•„ìš”
+    // ì—¬ê¸°ì„œëŠ” m_RenderTargets ë§µì„ ë‹¤ì‹œ ê²€ìƒ‰í•˜ëŠ” ë°©ì‹ìœ¼ë¡œ ê°€ì •
     for (const auto& rtvPtr : mrtIter->second) {
         bool found = false;
         for (const auto& pair : m_RenderTargets) {
             if (pair.second->Get_RTV() == rtvPtr) {
-                if (FAILED(pair.second->Clear())) { // ±âº» Å¬¸®¾î »ö»ó »ç¿ë
-                    // ¿¡·¯ Ã³¸®
+                if (FAILED(pair.second->Clear())) { // ê¸°ë³¸ í´ë¦¬ì–´ ìƒ‰ìƒ ì‚¬ìš©
+                    // ì—ëŸ¬ ì²˜ë¦¬
                 }
                 found = true;
                 break;
             }
         }
         if (!found) {
-            // RTV¿¡ ÇØ´çÇÏ´Â CRenderTarget °´Ã¼¸¦ Ã£Áö ¸øÇÑ °æ¿ì ¿¡·¯ Ã³¸®
+            // RTVì— í•´ë‹¹í•˜ëŠ” CRenderTarget ê°ì²´ë¥¼ ì°¾ì§€ ëª»í•œ ê²½ìš° ì—ëŸ¬ ì²˜ë¦¬
             MSG_BOX("Could not find RenderTarget object for an RTV in MRT group during clear.");
         }
     }
@@ -204,17 +204,17 @@ CTarget_Manager* CTarget_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 void CTarget_Manager::Free()
 {
-    // MRT ±×·ì Á¤º¸ Á¤¸® (Æ÷ÀÎÅÍ¸¸ °¡Áö°í ÀÖÀ¸¹Ç·Î º°µµ ÇØÁ¦ ºÒÇÊ¿ä)
+    // MRT ê·¸ë£¹ ì •ë³´ ì •ë¦¬ (í¬ì¸í„°ë§Œ ê°€ì§€ê³  ìˆìœ¼ë¯€ë¡œ ë³„ë„ í•´ì œ ë¶ˆí•„ìš”)
     m_MRTs.clear();
     m_MRTViewports.clear();
 
-    // ·»´õ Å¸°Ù °´Ã¼µé ÇØÁ¦
+    // ë Œë” íƒ€ê²Ÿ ê°ì²´ë“¤ í•´ì œ
     for (auto& pair : m_RenderTargets) {
         Safe_Release(pair.second);
     }
     m_RenderTargets.clear();
 
-    // ¹é¾÷ Æ÷ÀÎÅÍµé ¾ÈÀüÇÏ°Ô ¸±¸®Áî (È¤½Ã End_MRT°¡ È£ÃâµÇÁö ¾ÊÀº °æ¿ì ´ëºñ)
+    // ë°±ì—… í¬ì¸í„°ë“¤ ì•ˆì „í•˜ê²Œ ë¦´ë¦¬ì¦ˆ (í˜¹ì‹œ End_MRTê°€ í˜¸ì¶œë˜ì§€ ì•Šì€ ê²½ìš° ëŒ€ë¹„)
     for (_uint i = 0; i < D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i) {
         Safe_Release(m_pBackupRTVs[i]);
     }

@@ -7,13 +7,17 @@ using ImGuiCallBack = function<void()>;
 #pragma region HelperFuntions
 #pragma endregion
 
-CMyImGui::CMyImGui()
+CMyImGui::CMyImGui(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : m_pGameInstance   { CGameInstance::Get_Instance() }
+    , m_pDevice { pDevice }
+    , m_pContext  { pContext }
 {
+    Safe_AddRef(m_pDevice);
+    Safe_AddRef(m_pContext);
     Safe_AddRef(m_pGameInstance);
 }
 
-HRESULT CMyImGui::Initialize()
+HRESULT CMyImGui::Initialize(void* pArg)
 {
     return S_OK;
 }
@@ -80,11 +84,11 @@ HRESULT CMyImGui::Render()
     return S_OK;
 }
 
-CMyImGui* CMyImGui::Create()
+CMyImGui* CMyImGui::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {
-    CMyImGui* pInstance = new CMyImGui();
+    CMyImGui* pInstance = new CMyImGui(pDevice, pContext);
 
-    if (FAILED(pInstance->Initialize()))
+    if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Created : CMyImGui");
         Safe_Release(pInstance);
@@ -97,4 +101,6 @@ void CMyImGui::Free()
 {
     __super::Free();
     Safe_Release(m_pGameInstance);
+    Safe_Release(m_pDevice);
+    Safe_Release(m_pContext);
 }

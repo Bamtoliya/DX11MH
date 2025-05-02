@@ -154,6 +154,17 @@ _float CGameInstance::Compute_Random(_float fMin, _float fMax)
 	return fMin + (fMax - fMin) * Compute_Random_Normal();	
 }
 
+HRESULT CGameInstance::Resize(_uint iWinResizeX, _uint iWinResizeY)
+{
+	if (m_pGraphic_Device)
+		m_pGraphic_Device->Resize(iWinResizeX, iWinResizeY);
+
+	if (m_pMyImGui_Manager)
+		m_pMyImGui_Manager->Resize(iWinResizeX, iWinResizeY);
+		
+	return S_OK;
+}
+
 #pragma region GRAPHIC_DEVICE
 ID3D11ShaderResourceView* CGameInstance::Get_BackBufferSRV() const
 {

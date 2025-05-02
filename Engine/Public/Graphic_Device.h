@@ -30,6 +30,8 @@ public:
 	/* 후면 버퍼를 전면버퍼로 교체한다.(백버퍼를 화면에 직접 보여준다.) */
 	HRESULT Present();
 
+	HRESULT Resize(_uint iWinResizeX, _uint iWinResizeY);
+
 	ID3D11ShaderResourceView* Get_BackBufferSRV() const { return m_pBackBufferSRV; }
 
 private:

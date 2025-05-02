@@ -1,6 +1,6 @@
-#pragma once
-#include "RenderTarget.h" // °æ·Î È®ÀÎ ÇÊ¿ä
-#include "Engine_Function.h" // Safe_Release µî
+ï»¿#pragma once
+#include "RenderTarget.h" // ê²½ë¡œ í™•ì¸ í•„ìš”
+#include "Engine_Function.h" // Safe_Release ë“±
 
 BEGIN(Engine)
 
@@ -20,9 +20,9 @@ HRESULT CRenderTarget::Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT eForm
     m_iWidth = iWidth;
     m_iHeight = iHeight;
     m_eFormat = eFormat;
-    m_vClearColor = vClearColor; // DirectX::XMFLOAT4·Î º¯°æÇÏ°Å³ª _float4 À¯Áö
+    m_vClearColor = vClearColor; // DirectX::XMFLOAT4ë¡œ ë³€ê²½í•˜ê±°ë‚˜ _float4 ìœ ì§€
 
-    // 1. ÅØ½ºÃ³ »ı¼º
+    // 1. í…ìŠ¤ì²˜ ìƒì„±
     D3D11_TEXTURE2D_DESC textureDesc = {};
     textureDesc.Width = iWidth;
     textureDesc.Height = iHeight;
@@ -31,7 +31,7 @@ HRESULT CRenderTarget::Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT eForm
     textureDesc.Format = eFormat;
     textureDesc.SampleDesc.Count = 1;
     textureDesc.Usage = D3D11_USAGE_DEFAULT;
-    textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE; // RTV, SRV·Î ¹ÙÀÎµù °¡´ÉÇØ¾ß ÇÔ
+    textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE; // RTV, SRVë¡œ ë°”ì¸ë”© ê°€ëŠ¥í•´ì•¼ í•¨
     textureDesc.CPUAccessFlags = 0;
     textureDesc.MiscFlags = 0;
 
@@ -41,7 +41,7 @@ HRESULT CRenderTarget::Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT eForm
         return E_FAIL;
     }
 
-    // 2. RTV »ı¼º
+    // 2. RTV ìƒì„±
     D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
     rtvDesc.Format = eFormat;
     rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
@@ -53,7 +53,7 @@ HRESULT CRenderTarget::Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT eForm
         return E_FAIL;
     }
 
-    // 3. SRV »ı¼º
+    // 3. SRV ìƒì„±
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
     srvDesc.Format = eFormat;
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
@@ -66,7 +66,7 @@ HRESULT CRenderTarget::Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT eForm
         return E_FAIL;
     }
 
-    // 4. ºäÆ÷Æ® ¼³Á¤
+    // 4. ë·°í¬íŠ¸ ì„¤ì •
     ZeroMemory(&m_Viewport, sizeof(D3D11_VIEWPORT));
     m_Viewport.TopLeftX = 0;
     m_Viewport.TopLeftY = 0;
@@ -83,7 +83,7 @@ HRESULT CRenderTarget::Clear(_float4* pClearColor)
     if (nullptr == m_pContext || nullptr == m_pRTV)
         return E_FAIL;
 
-    // Å¬¸®¾î »ö»ó °áÁ¤
+    // í´ë¦¬ì–´ ìƒ‰ìƒ ê²°ì •
     float clearColor[4];
     if (pClearColor) {
         clearColor[0] = pClearColor->x;
@@ -108,15 +108,15 @@ void CRenderTarget::Bind(ID3D11DepthStencilView* pDSV)
     if (nullptr == m_pContext)
         return;
 
-    // ÀÌ RTV¿Í Àü´Ş¹ŞÀº DSV¸¦ ¹ÙÀÎµù
+    // ì´ RTVì™€ ì „ë‹¬ë°›ì€ DSVë¥¼ ë°”ì¸ë”©
     m_pContext->OMSetRenderTargets(1, &m_pRTV, pDSV);
-    // ÀÌ ·»´õÅ¸°Ù¿¡ ¸Â´Â ºäÆ÷Æ® ¼³Á¤
+    // ì´ ë Œë”íƒ€ê²Ÿì— ë§ëŠ” ë·°í¬íŠ¸ ì„¤ì •
     m_pContext->RSSetViewports(1, &m_Viewport);
 }
 
-// µğ¹ö±ë¿ë ÀÌ¸§ ¼³Á¤ ÇÔ¼ö (¼±ÅÃ »çÇ×)
+// ë””ë²„ê¹…ìš© ì´ë¦„ ì„¤ì • í•¨ìˆ˜ (ì„ íƒ ì‚¬í•­)
 #if !defined(NO_D3D11_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
-#include <string> // std::string »ç¿ë À§ÇØ
+#include <string> // std::string ì‚¬ìš© ìœ„í•´
 void CRenderTarget::Set_DebugName(const std::string& name)
 {
     if (m_pTexture) m_pTexture->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(name.length()), name.c_str());
@@ -136,7 +136,7 @@ CRenderTarget* CRenderTarget::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
     {
         MSG_BOX("Failed to Created : CRenderTarget");
         Safe_Release(pInstance);
-        return nullptr; // ½ÇÆĞ ½Ã nullptr ¹İÈ¯
+        return nullptr; // ì‹¤íŒ¨ ì‹œ nullptr ë°˜í™˜
     }
 
     return pInstance;

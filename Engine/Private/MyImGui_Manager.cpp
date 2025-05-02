@@ -341,6 +341,15 @@ void CMyImGui_Manager::DrawDockingSpace(bool* p_open)
     }
 }
 
+HRESULT CMyImGui_Manager::Resize(_uint iWinSizeX, _uint iWinSizeY)
+{
+    ImGuiIO& io = ImGui::GetIO();
+    io.DisplaySize = ImVec2(static_cast<float>(iWinSizeX), static_cast<float>(iWinSizeY));
+    // DPI 스케일링을 사용하지 않는 경우 보통 1.0f
+    io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
+    return S_OK;
+}
+
 HRESULT CMyImGui_Manager::Add_ImGui(const _wstring& key, CMyImGui* pMyImGui)
 {
     if (pMyImGui == nullptr)

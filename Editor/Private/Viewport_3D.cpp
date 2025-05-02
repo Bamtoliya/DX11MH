@@ -1,14 +1,15 @@
 ﻿#include "Viewport_3D.h"
 
-CViewport_3D::CViewport_3D()
+CViewport_3D::CViewport_3D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+    : CMyImGui { pDevice, pContext }
 {
 }
 
-CViewport_3D* CViewport_3D::Create()
+CViewport_3D* CViewport_3D::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {
-    CViewport_3D* pInstance = new CViewport_3D();
+    CViewport_3D* pInstance = new CViewport_3D(pDevice, pContext);
 
-    if (FAILED(pInstance->Initialize()))
+    if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Created : CInspector");
         Safe_Release(pInstance);
@@ -22,7 +23,7 @@ void CViewport_3D::Free()
     __super::Free();
 }
 
-HRESULT CViewport_3D::Initialize()
+HRESULT CViewport_3D::Initialize(void* pArg)
 {
     m_bShow = true;
     return S_OK;

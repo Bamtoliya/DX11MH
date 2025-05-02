@@ -102,6 +102,18 @@ HRESULT CGraphic_Device::Present()
 	return m_pSwapChain->Present(0, 0);	
 }
 
+HRESULT CGraphic_Device::Resize(_uint iWinResizeX, _uint iWinResizeY)
+{
+	if (iWinResizeX == 0 || iWinResizeY == 0)
+	{
+		return S_OK;
+	}
+
+
+
+	return S_OK;
+}
+
 
 HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, _bool isWindowed, _uint iWinCX, _uint iWinCY)
 {

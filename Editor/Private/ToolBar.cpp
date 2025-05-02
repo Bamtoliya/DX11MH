@@ -1,9 +1,10 @@
 ﻿#include "ToolBar.h"
-CToolBar::CToolBar()
+CToolBar::CToolBar(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+    : CMyImGui { pDevice, pContext }
 {
 }
 
-HRESULT CToolBar::Initialize()
+HRESULT CToolBar::Initialize(void* pArg)
 {
     m_bShow = true;
     return S_OK;
@@ -98,11 +99,11 @@ HRESULT CToolBar::Render()
     return S_OK;
 }
 
-CToolBar* CToolBar::Create()
+CToolBar* CToolBar::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {
-    CToolBar* pInstance = new CToolBar();
+    CToolBar* pInstance = new CToolBar(pDevice, pContext);
 
-    if (FAILED(pInstance->Initialize()))
+    if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Created : CToolBar");
         Safe_Release(pInstance);

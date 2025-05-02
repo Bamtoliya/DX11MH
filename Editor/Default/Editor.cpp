@@ -1,9 +1,8 @@
 ﻿// Editor.cpp : 애플리케이션에 대한 진입점을 정의합니다.
 //
-
+#pragma once
 #include "framework.h"
 #include "Editor.h"
-
 #include "MainApp.h"
 #include "GameInstance.h"
 
@@ -15,6 +14,9 @@ HINSTANCE g_hInst;                                // 현재 인스턴스입니�
 HWND g_hWnd;
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
+_uint g_iWinResizeX;
+_uint g_iWinResizeY;
+_bool g_SwapChainNeedsResize = false;    // 리사이즈 필요 플래그 설정
 
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -182,6 +184,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     switch (message)
     {
+    case WM_SIZE:
+        if (wParam != SIZE_MINIMIZED) { // 최소화 상태가 아닐 때만 처리
+            g_iWinResizeX = LOWORD(lParam); // 새 너비
+            g_iWinResizeY = HIWORD(lParam); // 새 높이
+            g_SwapChainNeedsResize = true;    // 리사이즈 필요 플래그 설정
+        }
+        break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);

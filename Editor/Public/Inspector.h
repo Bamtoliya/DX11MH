@@ -9,15 +9,15 @@ class CInspector final : public CMyImGui
 {
 #pragma region Constructor/Destructor
 private:
-	CInspector();
+	CInspector(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CInspector() = default;
 public:
-	static CInspector* Create();
+	static CInspector* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr);
 	virtual void Free() override;
 #pragma endregion
 
 public:
-	virtual HRESULT Initialize() override;
+	virtual HRESULT Initialize(void* pArg = nullptr) override;
 	virtual void Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 

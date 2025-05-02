@@ -25,6 +25,8 @@ public:
 	_float Compute_Random_Normal();
 	_float Compute_Random(_float fMin, _float fMax);
 
+	HRESULT Resize(_uint iWinResizeX, _uint iWinResizeY);
+
 #pragma region GRAPHIC_DEVIE
 	ID3D11ShaderResourceView* Get_BackBufferSRV() const;
 #pragma endregion
