@@ -16,39 +16,40 @@ public:
 
 		_float4			qOrientation = { 0.f, 0.f, 0.f, 1.f }; // 단위 쿼터니언으로 초기화
 	}TRANSFORM_DESC;
-	enum STATE { RIGHT, UP, LOOK, POS, T_END };
 #pragma region Constructor/Destructor
 private:
 	CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTransform(const CTransform& Prototype);
 	virtual ~CTransform() = default;
-public:
-	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CComponent* Clone(void* pArg) override;
-	virtual void Free() override;
-#pragma endregion
-#pragma region Initialize
+
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
+
+public:
+	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CComponent* Clone(void* pArg = nullptr) override;
+	virtual void Free() override;
+
 #pragma endregion
 
 #pragma region Get/Set
 	//Matrix
 public:
-	_vector Get_State(STATE eState) const { return XMLoadFloat4((_float4*)&m_tDesc.WorldMatrix.m[eState][0]); }
+	_vector Get_State(STATE eState) { return XMLoadFloat4x4(&m_tDesc.WorldMatrix).r[ENUM_CLASS(eState)]; }
 	_matrix Get_WorldMatrix() const { return XMLoadFloat4x4(&m_tDesc.WorldMatrix); }
 	_float4x4 Get_World4x4() const { return m_tDesc.WorldMatrix; }
 	const _float4x4* Get_World4x4Ptr() const { return &m_tDesc.WorldMatrix; }
-	void Set_State(STATE eState, _fvector vState) {
-		_matrix		WorldMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix);
-		WorldMatrix.r[eState] = vState;
-		XMStoreFloat4x4(&m_tDesc.WorldMatrix, WorldMatrix);
-	}
+	void Set_State(STATE eState, _fvector vState) { XMStoreFloat4(reinterpret_cast<_float4*>(&m_tDesc.WorldMatrix.m[ENUM_CLASS(eState)]), vState); }
+
+public:
+	void Scaling(_float fX = 1.f, _float fY = 1.f, _float fZ = 1.f);
+	void Scaling(const _float3& vScale);
 
 	void Set_WorldMatrix(_matrix mWorldMatrix) { XMStoreFloat4x4(&m_tDesc.WorldMatrix, mWorldMatrix); }
+	_float3 Get_Scaled();
 	_vector Get_Scale_Vector() const;
-	_float Get_Scale(STATE eState) { return XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_tDesc.WorldMatrix).r[eState])); }
+	_float Get_Scale(STATE eState) { return XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_tDesc.WorldMatrix).r[ENUM_CLASS(eState)])); }
 
 	void Set_Scale(STATE eState, _float fScale);
 	void Set_TransformDesc(const TRANSFORM_DESC& tDesc) { m_tDesc = tDesc; }
@@ -67,6 +68,8 @@ public: /* Not Use Sliding */
 	bool Go_Left(_float fTimeDelta, class CNavigation* pNavigation = nullptr, _float fRadius = 1.f);
 	bool Go_Right(_float fTimeDelta, class CNavigation* pNavigation = nullptr, _float fRadius = 1.f);
 	bool Go_Up(_float fTimeDelta, class CNavigation* pNavigation = nullptr, _float fRadius = 1.f);
+
+	void Go_Target(_fvector vTarget, _float fTimeDelta, _float fMinDistance);
 
 public: /* Use Sliding */
 	bool Sliding_Straight(_float fTimeDelta, class CNavigation* pNavigation = nullptr, _float fRadius = 1.f);
@@ -102,7 +105,7 @@ public:
 public:
 	void RoamingTurn(_matrix WorldMatrix, _float fRadian);
 #pragma endregion
-
+	
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShader, const _char* pConstantName);
 	virtual HRESULT RenderImGui() override;

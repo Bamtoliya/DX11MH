@@ -16,7 +16,7 @@ public:
 	void Update(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
 public:
-	void Set_Listner(const class CTransform& worldTrans);
+	void Set_Listner(class CTransform* worldTrans);
 private:
 	CSound_Manager*			m_pSound_Manager;
 public:

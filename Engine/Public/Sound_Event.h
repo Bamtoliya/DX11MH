@@ -13,7 +13,7 @@ public: // Setters
     void SetVolume(float value);
     void SetPitch(float value);
     void SetParameter(const std::string& name, float value);
-    void Set3DAttributes(const class CTransform& worldTrans);
+    void Set3DAttributes(class CTransform* worldTrans);
 public: // Getters
     _bool       IsValid();
     _bool       Is3D() const;

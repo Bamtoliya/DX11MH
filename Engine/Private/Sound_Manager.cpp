@@ -301,17 +301,17 @@ void CSound_Manager::Set_Global_Parameter(const string& name, _float value)
     m_pStudioSystem->setParameterByName(name.c_str(), value);
 }
 
-void CSound_Manager::Set_Listner(const CTransform& worldTrans)
+void CSound_Manager::Set_Listner(CTransform* worldTrans)
 {
     //m_pGraphic_Device->GetViewMatrix();
     //worldTrans.
     FMOD_3D_ATTRIBUTES listener = {};
     // 리스너의 위치와 전방 벡터, 상향 벡터를 설정
-    listener.position = VecToFMOD(worldTrans.Get_State(CTransform::POS));
+    listener.position = VecToFMOD(worldTrans->Get_State(STATE::POSITION));
     //// 뷰 행렬의 역행렬에서 세 번째 행은 전방 벡터
-    listener.forward = VecToFMOD(worldTrans.Get_State(CTransform::LOOK));
+    listener.forward = VecToFMOD(worldTrans->Get_State(STATE::LOOK));
     //// 뷰 행렬의 역행렬에서 두 번째 행은 상향 벡터
-    listener.up = VecToFMOD(worldTrans.Get_State(CTransform::UP));
+    listener.up = VecToFMOD(worldTrans->Get_State(STATE::UP));
     // 속도를 0으로 설정 (도플러 효과를 사용할 시 수정)
     listener.velocity = { 0.0f, 0.0f, 0.0f };
     // FMOD로 보낸다 (0 = 리스너는 하나)

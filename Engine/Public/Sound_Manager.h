@@ -42,7 +42,7 @@ public:
 	void					Set_Global_Parameter(const string& name, _float value);
 	
 public:
-	void					Set_Listner(const class CTransform& worldTrans);
+	void					Set_Listner(class CTransform* worldTrans);
 
 #pragma region BusControl
 public:

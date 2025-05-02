@@ -240,6 +240,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\public\RenderTarget.h" />
     <ClInclude Include="..\Public\Sound_Event.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -261,6 +262,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\Renderer.h" />
     <ClInclude Include="..\Public\Systems.h" />
     <ClInclude Include="..\public\Shader.h" />
+    <ClInclude Include="..\public\Target_Manager.h" />
     <ClInclude Include="..\public\Texture.h" />
     <ClInclude Include="..\Public\Timer.h" />
     <ClInclude Include="..\Public\Timer_Manager.h" />
@@ -328,6 +330,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\private\RenderTarget.cpp" />
     <ClCompile Include="..\Private\Sound_Event.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -348,6 +351,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\Prototype_Manager.cpp" />
     <ClCompile Include="..\Private\Renderer.cpp" />
     <ClCompile Include="..\private\Shader.cpp" />
+    <ClCompile Include="..\private\Target_Manager.cpp" />
     <ClCompile Include="..\private\Texture.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
     <ClCompile Include="..\Private\Timer_Manager.cpp" />

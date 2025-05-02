@@ -38,7 +38,7 @@ void CSound_Listener::Late_Update(_float fTimeDelta)
 {
 }
 
-void CSound_Listener::Set_Listner(const CTransform& worldTrans)
+void CSound_Listener::Set_Listner(CTransform* worldTrans)
 {
     m_pSound_Manager->Set_Listner(worldTrans);
 }

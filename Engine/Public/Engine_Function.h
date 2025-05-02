@@ -72,7 +72,7 @@ namespace Engine
 	}
 
 
-	inline FMOD_VECTOR VecToFMOD(const XMVECTOR& in)
+	inline FMOD_VECTOR VecToFMOD(XMVECTOR in)
 	{
 		// +x = 오른쪽 +y는 윗쪽 , +z 는 전방
 		// FMOD (+z 전방, +x 오른쪽, +y 위쪽) 좌표로 변환

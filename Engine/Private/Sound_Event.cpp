@@ -1,4 +1,5 @@
-﻿#include "Sound_Event.h"
+﻿#pragma once
+#include "Sound_Event.h"
 #include "Sound_Manager.h"
 #include "Transform.h"
 
@@ -66,18 +67,18 @@ void CSound_Event::SetParameter(const std::string& name, float value)
 	}
 }
 
-void CSound_Event::Set3DAttributes(const CTransform& worldTrans)
+void CSound_Event::Set3DAttributes(CTransform* worldTrans)
 {
 	auto event = m_pSound_Manager ? m_pSound_Manager->Get_EventInstance(m_iID) : nullptr;
 	if (event)
 	{
 		FMOD_3D_ATTRIBUTES attr = {};
 		// Set position, forward, up
-		attr.position = VecToFMOD(worldTrans.Get_State(CTransform::POS));
+		attr.position = VecToFMOD(worldTrans->Get_State(STATE::POSITION));
 		//// 세계 공간에서 첫 번째 행은 전방 벡터
-		attr.forward = VecToFMOD(worldTrans.Get_State(CTransform::LOOK));
+		attr.forward = VecToFMOD(worldTrans->Get_State(STATE::LOOK));
 		//// 세 번째 행은 상향 벡터
-		attr.up = VecToFMOD(worldTrans.Get_State(CTransform::UP));
+		attr.up = VecToFMOD(worldTrans->Get_State(STATE::UP));
 		// 속도를 0으로 설정 (도플러 효과를 사용한다면 수정)
 		attr.velocity = { 0.0f, 0.0f, 0.0f };
 		event->set3DAttributes(&attr);
