@@ -17,5 +17,8 @@ public:
 	virtual HRESULT Initialize() override;
 	virtual void Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+
+public:
+		
 };
 END

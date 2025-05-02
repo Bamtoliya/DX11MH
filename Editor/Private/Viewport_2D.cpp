@@ -140,6 +140,9 @@ HRESULT CViewport_2D::Render()
         draw_list->AddLine(ImVec2(canvas_p0.x, canvas_center.y), ImVec2(canvas_p1.x, canvas_center.y), grid_thick_color);
     }
 
+    //
+    //ImGui::Image(ImTextureID user_texture_id, const ImVec2 & image_size, const ImVec2 & uv0, const ImVec2 & uv1, const ImVec4 & tint_col, const ImVec4 & border_col);
+
     // 해상도 영역 그리기 (canvas_center가 패닝을 반영하므로 로직 자체는 동일)
     const float targetResolutionWidth = 1920.0f;
     const float targetResolutionHeight = 1080.0f;
