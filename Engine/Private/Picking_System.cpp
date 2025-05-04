@@ -16,7 +16,10 @@ CPicking_System* CPicking_System::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 {
 	CPicking_System* pInstance = new CPicking_System(pDevice, pContext);
 	if (FAILED(pInstance->Initialize()))
+	{
+		MSG_BOX("Failed to Created : CPicking_System");
 		return nullptr;
+	}
 	return pInstance;
 }
 

@@ -73,6 +73,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Test.hlsl" />
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxPosTex.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

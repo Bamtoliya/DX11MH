@@ -28,12 +28,14 @@ public:
 	HRESULT Resize(_uint iWinResizeX, _uint iWinResizeY);
 
 #pragma region GRAPHIC_DEVIE
+	ID3D11RenderTargetView* Get_RTV() const;
+	ID3D11DepthStencilView* Get_DSV() const;
+	ID3D11Texture2D* Get_BackBufferTexture() const;
 	ID3D11ShaderResourceView* Get_BackBufferSRV() const;
 #pragma endregion
 
-
-#pragma region LEVEL_MANAGER
 public:
+#pragma region LEVEL_MANAGER
 	HRESULT Change_Level(_uint iLevelIndex, class CLevel* pNewLevel);
 #pragma endregion
 
@@ -41,6 +43,21 @@ public:
 	HRESULT Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
 #pragma endregion
+
+#pragma region TARGET_MANAGER
+	//Render Target
+	HRESULT Add_RenderTarget(const _wstring& strTargetTag, _uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor);
+	HRESULT Clear_RenderTarget(const _wstring& strTargetTag, _float4* pClearColor = nullptr);
+	//MRT
+	HRESULT Add_MRT(const _wstring& strMRTTag, const std::vector<_wstring>& pTargetTags);
+	HRESULT Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV); // 메인 깊이 버퍼 사용
+	HRESULT End_MRT(ID3D11RenderTargetView* pBackBufferRTV, ID3D11DepthStencilView* pMainDSV, const D3D11_VIEWPORT& vp);
+	HRESULT Clear_MRT(const _wstring& strMRTTag);
+	ID3D11ShaderResourceView* Get_SRV(const _wstring& strTargetTag) const;
+
+	HRESULT Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTag);
+#pragma endregion
+
 
 #pragma region OBJECT_MANAGER
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
@@ -93,6 +110,7 @@ private:
 	class CTimer_Manager*		m_pTimer_Manager = { nullptr };
 	class CLevel_Manager*		m_pLevel_Manager = { nullptr };
 	class CSound_Manager*		m_pSound_Manager = { nullptr };
+	class CTarget_Manager*		m_pTarget_Manager = { nullptr };
 	class CObject_Manager*		m_pObject_Manager = { nullptr };
 	class CMyImGui_Manager*		m_pMyImGui_Manager = { nullptr };
 	class CPrototype_Manager*	m_pPrototype_Manager = { nullptr };

@@ -1,12 +1,14 @@
 ﻿#pragma once
 #include "RenderTarget.h" // 경로 확인 필요
 #include "Engine_Function.h" // Safe_Release 등
+#include "GameInstance.h"
 
 BEGIN(Engine)
 
 CRenderTarget::CRenderTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    : m_pDevice(pDevice)
-    , m_pContext(pContext)
+    : m_pDevice{ pDevice }
+    , m_pContext { pContext }
+    , m_pGameInstance{ CGameInstance::Get_Instance() }
 {
     Safe_AddRef(m_pDevice);
     Safe_AddRef(m_pContext);

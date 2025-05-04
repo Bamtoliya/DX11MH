@@ -63,6 +63,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	if (nullptr == m_pSound_Manager)
 		return E_FAIL;
 	*ppSoundOut = m_pSound_Manager;
+
+	m_pTarget_Manager = CTarget_Manager::Create(*ppDeviceOut, *ppContextOut);
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
+
 #pragma endregion
 
 	m_pRenderer = CRenderer::Create(*ppDeviceOut, *ppContextOut);
@@ -166,6 +171,18 @@ HRESULT CGameInstance::Resize(_uint iWinResizeX, _uint iWinResizeY)
 }
 
 #pragma region GRAPHIC_DEVICE
+ID3D11RenderTargetView* CGameInstance::Get_RTV() const
+{
+	return m_pGraphic_Device->Get_RTV();
+}
+ID3D11DepthStencilView* CGameInstance::Get_DSV() const
+{
+	return m_pGraphic_Device->Get_DSV();
+}
+ID3D11Texture2D* CGameInstance::Get_BackBufferTexture() const
+{
+	return m_pGraphic_Device->Get_BackBufferTexture();
+}
 ID3D11ShaderResourceView* CGameInstance::Get_BackBufferSRV() const
 {
 	return m_pGraphic_Device->Get_BackBufferSRV();
@@ -189,10 +206,44 @@ HRESULT CGameInstance::Add_Prototype(_uint iPrototypeLevelIndex, const _wstring&
 {
 	return m_pPrototype_Manager->Add_Prototype(iPrototypeLevelIndex, strPrototypeTag, pPrototype);
 }
-
 CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, void* pArg)
 {
 	return m_pPrototype_Manager->Clone_Prototype(ePrototypeType, iPrototypeLevelIndex, strPrototypeTag, pArg);
+}
+#pragma endregion
+
+#pragma region TARGET_MANAGER
+HRESULT CGameInstance::Add_RenderTarget(const _wstring& strTargetTag, _uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor)
+{
+	return m_pTarget_Manager->Add_RenderTarget(strTargetTag, iWidth, iHeight, eFormat, vClearColor);
+}
+HRESULT CGameInstance::Clear_RenderTarget(const _wstring& strTargetTag, _float4* pClearColor)
+{
+	return m_pTarget_Manager->Clear_RenderTarget(strTargetTag, pClearColor);
+}
+HRESULT CGameInstance::Add_MRT(const _wstring& strMRTTag, const std::vector<_wstring>& pTargetTags)
+{
+	return m_pTarget_Manager->Add_MRT(strMRTTag, pTargetTags);
+}
+HRESULT CGameInstance::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV)
+{
+	return m_pTarget_Manager->Begin_MRT(strMRTTag, pDSV);
+}
+HRESULT CGameInstance::End_MRT(ID3D11RenderTargetView* pBackBufferRTV, ID3D11DepthStencilView* pMainDSV, const D3D11_VIEWPORT& vp)
+{
+	return m_pTarget_Manager->End_MRT(pBackBufferRTV, pMainDSV, vp);
+}
+HRESULT CGameInstance::Clear_MRT(const _wstring& strMRTTag)
+{
+	return m_pTarget_Manager->Clear_MRT(strMRTTag);
+}
+ID3D11ShaderResourceView* CGameInstance::Get_SRV(const _wstring& strTargetTag) const
+{
+	return m_pTarget_Manager->Get_SRV(strTargetTag);
+}
+HRESULT CGameInstance::Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTag)
+{
+	return m_pTarget_Manager->Copy_ToBackBuffer(strSourceRenderTargetTag);
 }
 #pragma endregion
 

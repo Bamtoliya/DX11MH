@@ -1,4 +1,5 @@
 ﻿#include "Viewport_3D.h"
+#include "GameInstance.h"
 
 CViewport_3D::CViewport_3D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMyImGui { pDevice, pContext }
@@ -26,6 +27,19 @@ void CViewport_3D::Free()
 HRESULT CViewport_3D::Initialize(void* pArg)
 {
     m_bShow = true;
+    m_bRenderTargetDirty = true; // 처음에는 RT를 생성해야 함
+
+    // Target Manager 가져오기 (GameInstance를 통해 접근한다고 가정)
+    if (FAILED(m_pGameInstance->Add_RenderTarget(
+        m_strRenderTargetTag,
+        1, 1, // 초기 크기
+        DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, // SRGB 포맷 사용 권장 (ImGui 호환성)
+        _float4(0.1f, 0.1f, 0.1f, 1.0f)  // 초기 배경색
+    )))
+        return E_FAIL;
+    // 생성된 RenderTarget 포인터 가져오기 (선택적, 필요 시 사용)
+    //m_pViewportRT = pTargetManager->Find_RenderTarget(m_strRenderTargetTag); // 이런 함수가 TargetManager에 있다고 가정
+
     return S_OK;
 }
 
@@ -148,4 +162,56 @@ HRESULT CViewport_3D::Render()
 
     ImGui::End(); // 뷰포트 창 끝
     return S_OK;
+}
+
+HRESULT CViewport_3D::EnsureRenderTargetSize(UINT width, UINT height)
+{
+    //if (width == 0 || height == 0) {
+    //    m_bRenderTargetDirty = true; // 크기가 0이면 유효하지 않으므로 다시 생성 필요
+    //    return S_OK; // 0 크기로는 생성/조정하지 않음
+    //}
+
+    //if (m_bRenderTargetDirty || m_iRenderTargetWidth != width || m_iRenderTargetHeight != height)
+    //{
+    //    m_iRenderTargetWidth = width;
+    //    m_iRenderTargetHeight = height;
+
+    //    CTarget_Manager* pTargetManager = m_pGameInstance->GetTargetManager();
+    //    if (!pTargetManager) return E_FAIL;
+
+    //    // TargetManager를 통해 RenderTarget 재생성 또는 크기 변경
+    //    // 1. 기존 RT 제거 (만약 존재하면)
+    //    pTargetManager->Remove_RenderTarget(m_strRenderTargetTag); // 이런 함수가 TargetManager에 필요
+
+    //    // 2. 새 크기로 RT 추가
+    //    HRESULT hr = pTargetManager->Add_RenderTarget(
+    //        m_strRenderTargetTag,
+    //        m_iRenderTargetWidth,
+    //        m_iRenderTargetHeight,
+    //        DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, // SRGB 포맷
+    //        _float4(0.1f, 0.1f, 0.1f, 1.0f)
+    //    );
+
+    //    if (FAILED(hr))
+    //    {
+    //        MSG_BOX("Failed to resize/recreate RenderTarget for Viewport_3D");
+    //        m_bRenderTargetDirty = true; // 실패 시 다시 시도하도록 플래그 유지
+    //        return hr;
+    //    }
+
+    //    // 새 RenderTarget 포인터 업데이트 (선택적)
+    //    m_pViewportRT = pTargetManager->Find_RenderTarget(m_strRenderTargetTag);
+    //    m_bRenderTargetDirty = false; // 성공적으로 처리되었으므로 플래그 리셋
+
+    //    OutputDebugStringA("Resized Viewport 3D RenderTarget\n");
+    //}
+    return S_OK;
+}
+
+void CViewport_3D::RenderSceneToRenderTarget()
+{
+}
+
+void CViewport_3D::DrawGridInWindow(ImDrawList* draw_list, const ImVec2& canvas_origin, const ImVec2& canvas_size, const ImVec2& canvas_center, float zoom)
+{
 }

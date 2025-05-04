@@ -34,6 +34,8 @@ public:
     // (선택 사항) 특정 렌더 타겟 객체 직접 반환
     // CRenderTarget* Get_RenderTarget(const _wstring& strTargetTag) const;
 
+    HRESULT Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTag);
+
 private:
     ID3D11Device* m_pDevice = nullptr;
     ID3D11DeviceContext* m_pContext = nullptr;

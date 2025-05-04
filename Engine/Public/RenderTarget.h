@@ -4,7 +4,7 @@
 #include <DirectXMath.h> // For XMFLOAT4/_float4 if not included via Base.h/Engine_Typedef.h
 
 BEGIN(Engine)
-
+class CGameInstance;
 class ENGINE_DLL CRenderTarget final : public CBase
 {
 private:
@@ -32,12 +32,13 @@ public:
     void Set_DebugName(const std::string& name);
 
 private:
-    ID3D11Device* m_pDevice = nullptr;
-    ID3D11DeviceContext* m_pContext = nullptr;
+    ID3D11Device*           m_pDevice = nullptr;
+    ID3D11DeviceContext*    m_pContext = nullptr;
+    CGameInstance*          m_pGameInstance = nullptr;
 
-    ID3D11Texture2D* m_pTexture = nullptr;
-    ID3D11RenderTargetView* m_pRTV = nullptr;
-    ID3D11ShaderResourceView* m_pSRV = nullptr;
+    ID3D11Texture2D*            m_pTexture = nullptr;
+    ID3D11RenderTargetView*     m_pRTV = nullptr;
+    ID3D11ShaderResourceView*   m_pSRV = nullptr;
 
     _float4                 m_vClearColor = {};
     _uint                   m_iWidth = 0;

@@ -28,6 +28,9 @@ HRESULT CLevel_UI::Render()
 
 HRESULT CLevel_UI::Ready_Layer_ImGui()
 {
+    
+
+
     CBackGround::BACKGROUND_DESC				BackGroundDesc{};
 
     BackGroundDesc.fX = g_iWinSizeX * 0.5f;

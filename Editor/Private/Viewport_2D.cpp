@@ -23,16 +23,44 @@ CViewport_2D* CViewport_2D::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 void CViewport_2D::Free()
 {
     __super::Free();
+    Safe_Release(m_pTextureCom);
 }
 
 HRESULT CViewport_2D::Initialize(void* pArg)
 {
     m_bShow = true;
+    m_bShowImage = true;
+    m_pTextureCom = CTexture::Create(m_pDevice, m_pContext, L"../../Assets/Texture/ui_common/uiRANGE_img_hologram3.dds", 1);
+    m_pGameInstance->Add_RenderTarget(
+        L"Viewport_2D", 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, _float4(0.2f, 0.2f, 0.2f, 1.0f)
+    );
+    if (m_pTextureCom == nullptr)
+        return E_FAIL;
+    //m_pSRV = m_pTextureCom->Get_SRV(0);
+    m_pSRV = m_pGameInstance->Get_BackBufferSRV();
+    m_vImageGridPosition = { -50.f, -50.f }; // 그리드 (0,0) 기준 좌상단 좌표
+    m_vImageGridSize = { 400.f, 400.f };   // 그리드 단위 크기
+
     return S_OK;
+}
+
+void CViewport_2D::Priority_Update(_float fTimeDelta)
+{
 }
 
 void CViewport_2D::Update(_float fTimeDelta)
 {
+}
+
+void CViewport_2D::Late_Update(_float fTimeDelta)
+{
+}
+
+// 그리드 좌표 -> 화면 좌표 변환 헬퍼 함수 구현
+ImVec2 CViewport_2D::GridToScreen(const ImVec2& gridPos, const ImVec2& canvas_center, float zoom) {
+    // 그리드 좌표계 원점 = canvas_center
+    // 스케일 = zoom
+    return ImVec2(canvas_center.x + gridPos.x * zoom, canvas_center.y + gridPos.y * zoom);
 }
 
 HRESULT CViewport_2D::Render()
@@ -156,6 +184,32 @@ HRESULT CViewport_2D::Render()
     const ImU32 rectColor = IM_COL32(0, 255, 0, 255);
     const float rectThickness = 2.0f;
     draw_list->AddRect(rectP0, rectP1, rectColor, 0.0f, ImDrawFlags_None, rectThickness);
+
+    m_pSRV = m_pGameInstance->Get_BackBufferSRV();
+    ID3D11ShaderResourceView* pFinalSceneSRV = m_pGameInstance->Get_SRV(L"RT_FinalScene");
+    if (m_bShowImage && m_pSRV) // 이미지를 표시하고 SRV가 유효할 때만
+    {
+        // 1. 이미지의 그리드 좌표 계산 (m_vImageGridPosition이 좌상단이라고 가정)
+        ImVec2 imageGridMin = { m_vImageGridPosition.x, m_vImageGridPosition.y };
+        ImVec2 imageGridMax = { m_vImageGridPosition.x + m_vImageGridSize.x, m_vImageGridPosition.y + m_vImageGridSize.y };
+
+        // 2. 그리드 좌표를 화면 좌표로 변환
+        ImVec2 imageScreenMin = GridToScreen(imageGridMin, canvas_center, zoom);
+        ImVec2 imageScreenMax = GridToScreen(imageGridMax, canvas_center, zoom);
+
+        // 3. ImDrawList::AddImage() 호출하여 그리기
+        draw_list->AddImage(
+            (ImTextureID)pFinalSceneSRV,      // 텍스처의 Shader Resource View
+            imageScreenMin,     // 화면 좌상단 좌표
+            imageScreenMax,     // 화면 우하단 좌표
+            ImVec2(0, 0),       // UV 시작 좌표 (텍스처 전체 사용)
+            ImVec2(1, 1),       // UV 끝 좌표 (텍스처 전체 사용)
+            IM_COL32_WHITE      // 틴트 색상 (흰색, 불투명). IM_COL32(R,G,B,A) 형태로 지정 가능.
+        );
+
+        // (선택 사항) 이미지 주변에 테두리 그리기 (디버깅용)
+        draw_list->AddRect(imageScreenMin, imageScreenMax, IM_COL32(255, 255, 0, 255));
+    }
 
 
     // --- UI 위젯 (상태 표시 및 제어) ---

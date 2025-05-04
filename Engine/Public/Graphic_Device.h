@@ -32,7 +32,11 @@ public:
 
 	HRESULT Resize(_uint iWinResizeX, _uint iWinResizeY);
 
+	ID3D11RenderTargetView* Get_RTV() const { return m_pBackBufferRTV; }
+	ID3D11DepthStencilView* Get_DSV() const { return m_pDepthStencilView; }
+
 	ID3D11ShaderResourceView* Get_BackBufferSRV() const { return m_pBackBufferSRV; }
+	ID3D11Texture2D* Get_BackBufferTexture() const { return m_pBackBufferTexture; }
 
 private:
 	// IDirect3DDevice9* == LPDIRECT3DDEVICE9 == ID3D11Device + ID3D11DeviceContext 	
@@ -76,8 +80,8 @@ private:
 	ID3D11RenderTargetView* m_pBackBufferRTV = { nullptr };
 	ID3D11DepthStencilView* m_pDepthStencilView = { nullptr };
 
-	ID3D11Texture2D* m_pBackBufferTexture = { nullptr }; // 백 버퍼 텍스처 저장용
-	ID3D11ShaderResourceView* m_pBackBufferSRV = { nullptr };     // 백 버퍼 SRV 저장용
+	ID3D11Texture2D*			m_pBackBufferTexture = { nullptr }; // 백 버퍼 텍스처 저장용
+	ID3D11ShaderResourceView*	m_pBackBufferSRV = { nullptr };     // 백 버퍼 SRV 저장용
 
 private:
 	/* 스왑체인에게 필수적으로 필요한 데이터는 백버퍼가 필요하여 백버퍼를 생성하기위한 정보를 던져준다. */

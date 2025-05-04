@@ -105,7 +105,7 @@ HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencil
 
     // 2. MRT 바인딩
     const auto& rtvs = mrtIter->second;
-    m_pContext->OMSetRenderTargets(static_cast<UINT>(rtvs.size()), rtvs.data(), pDSV);
+    m_pContext->OMSetRenderTargets(static_cast<_uint>(rtvs.size()), rtvs.data(), pDSV);
 
     // 3. 뷰포트 설정
     m_pContext->RSSetViewports(1, &(vpIter->second));
@@ -180,6 +180,96 @@ ID3D11ShaderResourceView* CTarget_Manager::Get_SRV(const _wstring& strTargetTag)
 {
     CRenderTarget* pRT = Find_RenderTarget(strTargetTag);
     return (pRT != nullptr) ? pRT->Get_SRV() : nullptr;
+}
+
+HRESULT CTarget_Manager::Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTag)
+{
+    // 백업된 RTV가 유효한지 확인 (보통 배열의 첫 번째 요소 사용)
+    if (!m_pBackupRTVs[0])
+    {
+        MSG_BOX("Backup Render Target View [0] is null. Did you call Begin_MRT before?");
+        return E_FAIL; // 또는 다른 적절한 에러 코드
+    }
+
+    // 1. 원본 RenderTarget 찾기
+    CRenderTarget* pSourceRT = Find_RenderTarget(strSourceRenderTargetTag);
+    if (!pSourceRT)
+    {
+        MSG_BOX("Source Render Target not found for copy.");
+        return E_FAIL;
+    }
+
+    // 2. 원본 RenderTarget에서 리소스(텍스처) 가져오기
+    ID3D11Resource* pSourceResource = nullptr;
+    ID3D11RenderTargetView* pSourceRTV = pSourceRT->Get_RTV();
+    if (!pSourceRTV)
+    {
+        MSG_BOX("Failed to get RTV from source Render Target.");
+        return E_FAIL;
+    }
+    pSourceRTV->GetResource(&pSourceResource); // AddRef됨
+    if (!pSourceResource)
+    {
+        MSG_BOX("Failed to get Resource from source RTV.");
+        return E_FAIL;
+    }
+
+    // 3. 대상 리소스(백업된 RTV[0]의 텍스처) 가져오기
+    ID3D11Resource* pDestResource = nullptr;
+    m_pBackupRTVs[0]->GetResource(&pDestResource); // AddRef됨
+    if (!pDestResource)
+    {
+        MSG_BOX("Failed to get Resource from backup RTV[0].");
+        Safe_Release(pSourceResource); // 이전에 얻은 리소스 해제
+        return E_FAIL;
+    }
+
+    // --- (선택 사항) 리소스 호환성 검사 ---
+    // 복사하려면 두 리소스의 크기와 포맷이 같아야 합니다.
+    // 디버깅 목적으로 검사 코드를 추가할 수 있습니다.
+#ifdef _DEBUG
+    {
+        D3D11_RESOURCE_DIMENSION srcDim, destDim;
+        pSourceResource->GetType(&srcDim);
+        pDestResource->GetType(&destDim);
+
+        if (srcDim == D3D11_RESOURCE_DIMENSION_TEXTURE2D && destDim == D3D11_RESOURCE_DIMENSION_TEXTURE2D)
+        {
+            ID3D11Texture2D* pSrcTex = nullptr;
+            ID3D11Texture2D* pDestTex = nullptr;
+            if (SUCCEEDED(pSourceResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&pSrcTex)) &&
+                SUCCEEDED(pDestResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&pDestTex)))
+            {
+                D3D11_TEXTURE2D_DESC srcDesc, destDesc;
+                pSrcTex->GetDesc(&srcDesc);
+                pDestTex->GetDesc(&destDesc);
+
+                if (srcDesc.Width != destDesc.Width || srcDesc.Height != destDesc.Height || srcDesc.Format != destDesc.Format)
+                {
+                    OutputDebugStringA("Warning: CopyResource source and destination dimensions or format mismatch.\n");
+                    // 필요시 여기서 에러 처리 (return E_FAIL)
+                }
+            }
+            Safe_Release(pSrcTex);
+            Safe_Release(pDestTex);
+        }
+        else
+        {
+            OutputDebugStringA("Warning: CopyResource source or destination is not a Texture2D.\n");
+            // 다른 리소스 타입 처리 또는 에러
+        }
+    }
+#endif // _DEBUG
+
+    // 4. 리소스 복사 (Source -> Destination)
+    // 복사할 내용(pSourceResource)을 대상(pDestResource)으로 복사합니다.
+    m_pContext->CopyResource(pDestResource, pSourceResource);
+
+    // 5. 사용한 리소스 참조 해제 (GetResource로 AddRef된 것들)
+    Safe_Release(pSourceResource);
+    Safe_Release(pDestResource);
+
+    return S_OK;
 }
 
 CRenderTarget* CTarget_Manager::Find_RenderTarget(const _wstring& strTargetTag) const

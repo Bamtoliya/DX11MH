@@ -197,5 +197,8 @@
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxPosTex.hlsl">
       <Filter>ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Test.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -22,9 +22,22 @@ HRESULT CMyImGui::Initialize(void* pArg)
     return S_OK;
 }
 
+void CMyImGui::Priority_Update(_float fTimeDelta)
+{
+}
+
 void CMyImGui::Update(_float fTimeDelta)
 {
 
+}
+
+void CMyImGui::Late_Update(_float fTimeDelta)
+{
+}
+
+HRESULT CMyImGui::Pre_Render()
+{
+    return S_OK;
 }
 
 HRESULT CMyImGui::Render()
@@ -81,6 +94,11 @@ HRESULT CMyImGui::Render()
     m_pContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
     m_pContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);*/
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    return S_OK;
+}
+
+HRESULT CMyImGui::Post_Render()
+{
     return S_OK;
 }
 

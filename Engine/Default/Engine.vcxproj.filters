@@ -288,8 +288,9 @@
       <Filter>01.Utility\05.Renderer\RenderTarget</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Target_Manager.h">
-      <Filter>01.Utility\05.Renderer\RenderTarget\TargetManager</Filter>
+      <Filter>01.Utility\05.Renderer\RenderTarget\Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Light_Manager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -528,8 +529,9 @@
       <Filter>01.Utility\05.Renderer\RenderTarget</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Target_Manager.cpp">
-      <Filter>01.Utility\05.Renderer\RenderTarget\TargetManager</Filter>
+      <Filter>01.Utility\05.Renderer\RenderTarget\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Light_Manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -733,7 +735,7 @@
     <Filter Include="01.Utility\05.Renderer\RenderTarget">
       <UniqueIdentifier>{1a0be9a3-d380-417b-92f0-74f307a0c9a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\05.Renderer\RenderTarget\TargetManager">
+    <Filter Include="01.Utility\05.Renderer\RenderTarget\Manager">
       <UniqueIdentifier>{5282a437-ecee-41ee-bad3-bc648bc34cd5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
