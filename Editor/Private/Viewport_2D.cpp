@@ -38,8 +38,8 @@ HRESULT CViewport_2D::Initialize(void* pArg)
         return E_FAIL;
     //m_pSRV = m_pTextureCom->Get_SRV(0);
     m_pSRV = m_pGameInstance->Get_BackBufferSRV();
-    m_vImageGridPosition = { -50.f, -50.f }; // 그리드 (0,0) 기준 좌상단 좌표
-    m_vImageGridSize = { 400.f, 400.f };   // 그리드 단위 크기
+    m_vImageGridPosition = { -(g_iWinSizeX/2.f), -(g_iWinSizeY / 2.f)}; // 그리드 (0,0) 기준 좌상단 좌표
+    m_vImageGridSize = { 1920.f, 1080.f };   // 그리드 단위 크기
 
     return S_OK;
 }
@@ -173,6 +173,10 @@ HRESULT CViewport_2D::Render()
 
     //
     //ImGui::Image(ImTextureID user_texture_id, const ImVec2 & image_size, const ImVec2 & uv0, const ImVec2 & uv1, const ImVec4 & tint_col, const ImVec4 & border_col);
+
+
+
+ 
 
     // 해상도 영역 그리기 (canvas_center가 패닝을 반영하므로 로직 자체는 동일)
     const float targetResolutionWidth = 1920.0f;

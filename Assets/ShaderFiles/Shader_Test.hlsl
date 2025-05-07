@@ -1,5 +1,3 @@
-
-
 /* 상수테이블 ConstantTable */
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_Texture;
@@ -17,6 +15,7 @@ struct VS_IN
 {
     float3 vPosition : POSITION;
     float2 vTexcoord : TEXCOORD0;
+    //float4 vColor : 
 };
 
 struct VS_OUT

@@ -23,8 +23,8 @@ HRESULT CRenderer::Initialize()
 		L"RT_FinalScene",                // 렌더 타겟 고유 태그
 		ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
 		ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
-		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,  // 포맷 (백버퍼/ImGui 호환성 고려)
-		_float4(0.f, 0.f, 1.f, 1.f)      // 클리어 색상 (투명 검정 등)
+		DXGI_FORMAT_R8G8B8A8_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
+		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
 	)))
 	{
 		MSG_BOX("Failed to create RT_Background Render Target");
@@ -64,7 +64,7 @@ HRESULT CRenderer::Draw()
 		return E_FAIL;
 
 	// 2. Clear the Off-Screen Target
-	_float4 tempColor = { 0.0f, 0.0f, 1.0f, 1.0f };
+	_float4 tempColor = { 0.0f, 0.0f, 0.0f, 0.0f };
 	m_pGameInstance->Clear_RenderTarget(L"RT_FinalScene", &tempColor);
 	m_pContext->ClearDepthStencilView(pMainDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 
@@ -82,6 +82,8 @@ HRESULT CRenderer::Draw()
 
 	if (FAILED(m_pGameInstance->End_MRT(nullptr, nullptr, {})))
 		return E_FAIL;
+
+	
 
 	return S_OK;
 }
