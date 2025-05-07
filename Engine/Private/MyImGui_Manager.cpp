@@ -132,7 +132,6 @@ void CMyImGui_Manager::DrawAssetBrowser(bool* p_open)
         ImGui::End();
         return;
     }
-
     
     // 상태 유지를 위한 static 변수
     // 중요: "./Assets" 디렉토리가 실행 파일 위치 기준으로 존재해야 합니다.
@@ -224,20 +223,6 @@ void CMyImGui_Manager::DrawAssetBrowser(bool* p_open)
 
     ImGui::Separator();
     ImGui::Text("Selected: %s", selectedAsset.empty() ? "None" : selectedAsset.c_str());
-
-
-    ID3D11ShaderResourceView* pBackBufferSRV = m_pGameInstance->Get_BackBufferSRV();
-    if (pBackBufferSRV)
-    {
-        // 뷰포트 크기 가져오기 (예시)
-        D3D11_VIEWPORT vp;
-        UINT numViewports = 1;
-        m_pContext->RSGetViewports(&numViewports, &vp);
-        ImVec2 imageSize = ImVec2(vp.Width, vp.Height); // 전체 백 버퍼 크기
-
-        ImGui::Image((ImTextureID)pBackBufferSRV, imageSize);
-    }
-
     ImGui::End();
 
 }

@@ -265,8 +265,8 @@ HRESULT CTarget_Manager::Copy_ToBackBuffer(const _wstring& strSourceRenderTarget
     // 복사할 내용(pSourceResource)을 대상(pDestResource)으로 복사합니다.
     m_pContext->CopyResource(pDestResource, pSourceResource);
 
-    //ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
-    //m_pContext->PSSetShaderResources(0, 1, nullSRV); // 사용 후 즉시 언바인딩
+    ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+    m_pContext->PSSetShaderResources(0, 1, nullSRV); // 사용한 슬롯을 명시적으로 NULL로 설정
 
     // 5. 사용한 리소스 참조 해제 (GetResource로 AddRef된 것들)
     Safe_Release(pSourceResource);
