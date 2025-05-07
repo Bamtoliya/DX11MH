@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Base.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CGameInstance;
 class CPicking_System final : public CBase
 {
@@ -28,4 +28,4 @@ private:
 	ID3D11DeviceContext*	m_pContext		= { nullptr };
 	
 };
-END
+NS_END

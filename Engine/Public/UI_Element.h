@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class ENGINE_DLL CUI_Element abstract : public CGameObject
 {
 #pragma region Struct
@@ -60,4 +60,4 @@ protected:
 protected:
 #pragma endregion
 };
-END
+NS_END

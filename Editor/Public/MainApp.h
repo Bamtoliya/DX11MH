@@ -2,13 +2,13 @@
 #include "Base.h"
 #include "Editor_Defines.h"
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CGameInstance;
 class CSound_Manager;
 class CMyImGui_Manager;
-END
+NS_END
 
-BEGIN(Editor)
+NS_BEGIN(Editor)
 class CMainApp final : public CBase
 {
 private:
@@ -33,4 +33,4 @@ public:
 	static CMainApp* Create();
 	virtual void Free() override;
 };
-END
+NS_END

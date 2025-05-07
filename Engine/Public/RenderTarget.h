@@ -3,7 +3,7 @@
 #include <d3d11.h>
 #include <DirectXMath.h> // For XMFLOAT4/_float4 if not included via Base.h/Engine_Typedef.h
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CGameInstance;
 class ENGINE_DLL CRenderTarget final : public CBase
 {
@@ -52,4 +52,4 @@ public:
     virtual void Free() override;
 };
 
-END
+NS_END

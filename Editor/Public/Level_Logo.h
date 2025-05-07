@@ -3,7 +3,7 @@
 #include "Editor_Defines.h"
 #include "Level.h"
 
-BEGIN(Editor)
+NS_BEGIN(Editor)
 
 class CLevel_Logo final : public CLevel
 {
@@ -23,4 +23,4 @@ public:
 	virtual void Free() override;
 };
 
-END
+NS_END

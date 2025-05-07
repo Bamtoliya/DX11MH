@@ -37,6 +37,9 @@
     <Filter Include="01.Levels\Loading\Loader\json">
       <UniqueIdentifier>{3d59f27b-0874-4e73-ba9c-f555667f11dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObjects\01.Terrain">
+      <UniqueIdentifier>{191921a7-783e-4ca6-bb37-84f789e968ab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -75,6 +78,9 @@
     <ClInclude Include="..\public\BackGround.h">
       <Filter>02.GameObjects\00.BackGround</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Terrain.h">
+      <Filter>02.GameObjects\01.Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -111,6 +117,9 @@
     <ClCompile Include="..\private\BackGround.cpp">
       <Filter>02.GameObjects\00.BackGround</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Terrain.cpp">
+      <Filter>02.GameObjects\01.Terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -120,6 +129,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Test.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxNorTex.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

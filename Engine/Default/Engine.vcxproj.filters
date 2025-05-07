@@ -291,6 +291,12 @@
       <Filter>01.Utility\05.Renderer\RenderTarget\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Light_Manager.h" />
+    <ClInclude Include="..\Public\VIBuffer_Terrain.h">
+      <Filter>01.Utility\04.Components\VIBuffer\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PipeLine.h">
+      <Filter>01.Utility\06.PipeLine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -532,6 +538,15 @@
       <Filter>01.Utility\05.Renderer\RenderTarget\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Light_Manager.cpp" />
+    <ClCompile Include="..\Private\VIBuffer_Terrain.cpp">
+      <Filter>01.Utility\04.Components\VIBuffer\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Engine_Struct.cpp">
+      <Filter>99.Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PipeLine.cpp">
+      <Filter>01.Utility\06.PipeLine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -755,6 +770,9 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\VIBuffer\Terrain">
       <UniqueIdentifier>{9ddf86be-2abe-4eef-85e6-440fb5c17013}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\06.PipeLine">
+      <UniqueIdentifier>{a9bff44e-0513-4881-b2e8-07d7cf188f43}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
 #include "Base.h"
 #include "Transform.h"
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CGameInstance;
 class ENGINE_DLL CGameObject abstract : public CBase
 {
@@ -73,4 +73,4 @@ protected:
 #pragma endregion
 
 };
-END
+NS_END

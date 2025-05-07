@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Component.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class ENGINE_DLL CVIBuffer abstract : public CComponent
 {
 #pragma region Constructor/Destructor
@@ -52,4 +52,4 @@ protected:
 protected:
 	_float3*				m_pVertexPositions = { nullptr };
 };
-END
+NS_END

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Base.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class ENGINE_DLL CRay : public CBase
 {
 public:
@@ -49,4 +49,4 @@ public:
 private:
 	RAY_DESC m_tDesc;
 };
-END
+NS_END

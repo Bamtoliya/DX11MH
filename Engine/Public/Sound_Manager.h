@@ -2,7 +2,7 @@
 #include "Base.h"
 #include "Sound_Event.h"
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CSound_Manager final : public CBase
 {
 public:
@@ -85,4 +85,4 @@ private:
 #pragma endregion
 };
 
-END
+NS_END

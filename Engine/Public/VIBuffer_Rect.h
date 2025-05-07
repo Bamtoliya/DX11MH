@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "VIBuffer.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class ENGINE_DLL CVIBuffer_Rect final : public CVIBuffer
 {
 #pragma region Constructor/Destructor
@@ -21,4 +21,4 @@ public:
 	virtual HRESULT Initialize(void* pArg);
 #pragma endregion
 };
-END
+NS_END

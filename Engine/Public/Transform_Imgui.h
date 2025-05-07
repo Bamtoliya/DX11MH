@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Base.h"
 #include "Transform.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CTransform_Imgui : public CBase
 {
 public:
@@ -15,4 +15,4 @@ public:
 		ImGui::Text(to_string(tDesc.WorldMatrix._11).c_str());
 	}
 };
-END
+NS_END

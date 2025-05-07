@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Component.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CSound_Manager;
 class CSound_Event;
 class ENGINE_DLL CSound_Source final : public CComponent
@@ -45,4 +45,4 @@ private:
 
 };
 
-END;
+NS_END;

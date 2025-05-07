@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "UI_Element.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CTexture;
 class ENGINE_DLL CPanel : public CUI_Element
 {
@@ -31,4 +31,4 @@ public:
 private:
 	CTexture*		m_pTextureCom;
 };
-END
+NS_END

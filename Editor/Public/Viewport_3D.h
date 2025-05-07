@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "Editor_Defines.h"
 #include "MyImGui.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CRenderTarget;
-END
-BEGIN(Editor)
+NS_END
+NS_BEGIN(Editor)
 class CViewport_3D final : public CMyImGui
 {
 #pragma region Constructor/Destructor
@@ -37,5 +37,4 @@ private:
 	// ImGui 창 내 좌표로 그리드 그리는 함수 (수정 필요)
 	void DrawGridInWindow(ImDrawList* draw_list, const ImVec2& canvas_origin, const ImVec2& canvas_size, const ImVec2& canvas_center, float zoom);
 };
-END
-
+NS_END

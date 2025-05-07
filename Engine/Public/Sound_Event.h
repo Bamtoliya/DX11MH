@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Base.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CSound_Manager;
 class ENGINE_DLL CSound_Event final : public CBase
 {
@@ -32,4 +32,4 @@ public:
 	void Free();
 };
 
-END
+NS_END

@@ -77,6 +77,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	if (nullptr == m_pPipeLine)
 		return E_FAIL;
 
+	m_pPipeLine = CPipeLine::Create();
+	if (nullptr == m_pPipeLine)
+		return E_FAIL;
+
+
 	//m_pPicking = CPicking::Create(*ppOut, EngineDesc.hWnd, EngineDesc.iWinSizeX, EngineDesc.iWinSizeY);
 	//if (nullptr == m_pPicking)
 	//	return E_FAIL;
@@ -90,9 +95,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 void CGameInstance::Update_Engine(_float fTimeDelta)
 {
 	m_pObject_Manager->Priority_Update(fTimeDelta);
+	m_pPipeLine->Update();
 
 	//m_pPicking->Update();
-	m_pInput_Device->Update(fTimeDelta);
+
 	m_pObject_Manager->Update(fTimeDelta);	
 
 	m_pObject_Manager->Late_Update(fTimeDelta);
@@ -298,6 +304,30 @@ HRESULT CGameInstance::Add_ImGui(const _wstring& strKey, CMyImGui* pMyImGui)
 
 #pragma endregion
 
+#pragma region PIPELINE
+
+void CGameInstance::Set_Transform(D3DTS eState, _fmatrix TransformMatrix)
+{
+	m_pPipeLine->Set_Transform(eState, TransformMatrix);
+}
+
+const _float4x4* CGameInstance::Get_Transform_Float4x4(D3DTS eState) const
+{
+	return m_pPipeLine->Get_Transform_Float4x4(eState);
+}
+
+_matrix CGameInstance::Get_Transform_Matrix(D3DTS eState) const
+{
+	return m_pPipeLine->Get_Transform_Matrix(eState);
+}
+
+const _float4* CGameInstance::Get_CamPosition() const
+{
+	return m_pPipeLine->Get_CamPosition();
+}
+
+#pragma endregion
+
 //#pragma region PICKING
 //void CGameInstance::Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse)
 //{
@@ -318,6 +348,8 @@ void CGameInstance::Release_Engine()
 {
 	//Safe_Release(m_pPicking);
 	Safe_Release(m_pMyImGui_Manager);
+
+	Safe_Release(m_pPipeLine);
 
 	Safe_Release(m_pTimer_Manager);
 

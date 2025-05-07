@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Editor_Defines.h"
 #include "Level.h"
-BEGIN(Editor)
+NS_BEGIN(Editor)
 class CLevel_Map : public CLevel
 {
 private:
@@ -20,4 +20,4 @@ public:
 	static CLevel_Map* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
 };
-END
+NS_END

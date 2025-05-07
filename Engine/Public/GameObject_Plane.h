@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CShader;
 class CTexture;
 class CVIBuffer_Rect;
@@ -40,4 +40,4 @@ protected:
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 };
 
-END
+NS_END

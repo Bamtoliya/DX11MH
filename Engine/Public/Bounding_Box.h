@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Base.h"          // _float3 등 기본 타입 정의 가정
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 
 // Axis-Aligned Bounding Box 구조체 (DirectXMath _vector 사용 버전)
 // _vector 멤버를 가지므로 16바이트 정렬이 필요합니다.
@@ -127,4 +127,4 @@ typedef struct alignas(16) tagBoundingBox // C++11 alignas 키워드로 정렬 �
 
 } BOUNDINGBOX; // 기존 코드와의 호환성을 위해 typedef 이름 유지
 
-END
+NS_END

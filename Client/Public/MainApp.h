@@ -3,12 +3,12 @@
 #include "Client_Defines.h"
 #include "Base.h"
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CGameInstance;
 class CSound_Manager;
-END
+NS_END
 
-BEGIN(Client)
+NS_BEGIN(Client)
 
 class CMainApp final : public CBase
 {
@@ -38,4 +38,4 @@ public:
 
 };
 
-END
+NS_END

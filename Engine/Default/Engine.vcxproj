@@ -235,7 +235,6 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     </ClInclude>
     <ClInclude Include="..\public\Physics_System.h" />
     <ClInclude Include="..\public\Picking_System.h" />
-    <ClInclude Include="..\public\PipeLine.h" />
     <ClInclude Include="..\public\Ray.h" />
     <ClInclude Include="..\public\RectTransform.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -259,6 +258,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Public\Object_Manager.h" />
+    <ClInclude Include="..\public\PipeLine.h" />
     <ClInclude Include="..\Public\Prototype_Manager.h" />
     <ClInclude Include="..\Public\Renderer.h" />
     <ClInclude Include="..\Public\Systems.h" />
@@ -274,6 +274,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\public\VIBuffer.h" />
     <ClInclude Include="..\public\UIObject.h" />
     <ClInclude Include="..\Public\VIBuffer_Rect.h" />
+    <ClInclude Include="..\Public\VIBuffer_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\External Libraries\ImGuizmo\GraphEditor.cpp" />
@@ -297,6 +298,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\Base.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
+    <ClCompile Include="..\Private\Engine_Struct.cpp" />
     <ClCompile Include="..\Private\GameInstance.cpp" />
     <ClCompile Include="..\Private\GameObject.cpp" />
     <ClCompile Include="..\private\GameObject_Capsule.cpp" />
@@ -326,7 +328,6 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     </ClCompile>
     <ClCompile Include="..\private\Physics_System.cpp" />
     <ClCompile Include="..\private\Picking_System.cpp" />
-    <ClCompile Include="..\private\PipeLine.cpp" />
     <ClCompile Include="..\private\Ray.cpp" />
     <ClCompile Include="..\private\RectTransform.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -350,6 +351,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Private\Object_Manager.cpp" />
+    <ClCompile Include="..\private\PipeLine.cpp" />
     <ClCompile Include="..\Private\Prototype_Manager.cpp" />
     <ClCompile Include="..\Private\Renderer.cpp" />
     <ClCompile Include="..\private\Shader.cpp" />
@@ -367,6 +369,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <ClCompile Include="..\Private\VIBuffer_Terrain.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

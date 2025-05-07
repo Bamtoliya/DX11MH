@@ -2,54 +2,36 @@
 
 #include "Base.h"
 
-BEGIN(Engine)
+/* 렌더링 파이프라인의 변환을 위한 뷰, 투영행려을 보관한다. */
+/* 렌더링 파이프라인의 변환을 위한 뷰, 투영행렬의 역행렬을 계산, 보관한다. */
+/* 카메라 위치도 보관한ㄷ,ㅏㅡ ./*/
+
+NS_BEGIN(Engine)
+
 class CPipeLine final : public CBase
 {
-
-#pragma region Constructor/Destructor
 private:
 	CPipeLine();
 	virtual ~CPipeLine() = default;
-public:
-	static CPipeLine* Create();
-	virtual void Free();
-#pragma endregion
-
-#pragma region Get/Set
-public:
-	const _float4x4* Get_Transform_Float4x4(TRANSFORMSTATE eState) const {
-		return &m_TransformationMatrix[ENUM_CLASS(eState)];
-	}
-
-	const _matrix Get_Transform_Matrix(TRANSFORMSTATE eState) const {
-		return XMLoadFloat4x4(&m_TransformationMatrix[ENUM_CLASS(eState)]);
-	}
-
-	const _float4x4* Get_Transform_Inverse_Float4x4(TRANSFORMSTATE eState) const {
-		return &m_TransformationMatrix_Inverse[ENUM_CLASS(eState)];
-	}
-
-	const _matrix Get_Transform_Inverse_Matrix(TRANSFORMSTATE eState) const {
-		return XMLoadFloat4x4(&m_TransformationMatrix_Inverse[ENUM_CLASS(eState)]);
-	}
-
-	const _float4* Get_CamPosition() const {
-		return &m_vCamPosition;
-	}
 
 public:
-	void Set_Transform(TRANSFORMSTATE eState, _fmatrix StateMatrix) {
-		XMStoreFloat4x4(&m_TransformationMatrix[ENUM_CLASS(eState)], StateMatrix);
-	}
-#pragma endregion
+	void Set_Transform(D3DTS eState, _fmatrix TransformMatrix);
+	const _float4x4* Get_Transform_Float4x4(D3DTS eState) const;
+	_matrix Get_Transform_Matrix(D3DTS eState) const;
+	const _float4* Get_CamPosition() const;
+
 
 public:
 	void Update();
 
 private:
-	_float4x4				m_TransformationMatrix[ENUM_CLASS(TRANSFORMSTATE::D3DTS_END)] = {};
-	_float4x4				m_TransformationMatrix_Inverse[ENUM_CLASS(TRANSFORMSTATE::D3DTS_END)] = {};
+	_float4x4				m_TransformationMatrices[ENUM_CLASS(D3DTS::END)] = {};
+	_float4x4				m_TransformationMatrixInverse[ENUM_CLASS(D3DTS::END)] = {};
 	_float4					m_vCamPosition = {};
+
+public:
+	static CPipeLine* Create();
+	virtual void Free() override;
 };
 
-END
+NS_END

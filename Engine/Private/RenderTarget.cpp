@@ -3,8 +3,6 @@
 #include "Engine_Function.h" // Safe_Release 등
 #include "GameInstance.h"
 
-BEGIN(Engine)
-
 CRenderTarget::CRenderTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : m_pDevice{ pDevice }
     , m_pContext { pContext }
@@ -153,5 +151,3 @@ void CRenderTarget::Free()
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
 }
-
-END

@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Base.h"
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CGameInput_Device final : public CBase
 {
 #pragma region Structs
@@ -55,4 +55,4 @@ private:
 	INPUT_STATE			m_curStates = {};
 	INPUT_STATE			m_preStates = {};
 };
-END
+NS_END

@@ -4,7 +4,7 @@
 #include "Bounding_Sphere.h"
 #include "Texture.h"
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 
 class ENGINE_DLL CParticle_System abstract : public CComponent
 {
@@ -82,4 +82,4 @@ public:
 	void Free() override;
 };
 
-END
+NS_END

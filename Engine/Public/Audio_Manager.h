@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Base.h"
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CAudio_Manager final : public CBase
 {
 public:
@@ -84,4 +84,4 @@ private:
 #pragma endregion
 };
 
-END
+NS_END

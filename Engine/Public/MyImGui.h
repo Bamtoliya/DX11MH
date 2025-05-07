@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Base.h"
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CGameInstance;
 class ENGINE_DLL CMyImGui : public CBase
 {
@@ -26,4 +26,4 @@ protected:
 protected:
 	_bool					m_bShow = { false };
 };
-END
+NS_END

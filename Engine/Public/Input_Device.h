@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Base.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CInput_Device : public CBase
 {
 #pragma region Constructor/Destructor
@@ -54,4 +54,4 @@ private:
 	DIMOUSESTATE				m_curMouseState;
 };
 
-END;
+NS_END;

@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "Base.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CUI_Manager : public CBase
 {
 
 };
-END
+NS_END

@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "Editor_Defines.h"
 #include "MyImGui.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CTexture;
-END
-BEGIN(Editor)
+NS_END
+NS_BEGIN(Editor)
 class CViewport_2D final : public CMyImGui
 {
 #pragma region Constructor/Destructor
@@ -37,4 +37,4 @@ public:
 	// 그리드 좌표를 화면 좌표로 변환하는 헬퍼 함수 (선택적)
 	ImVec2 GridToScreen(const ImVec2& gridPos, const ImVec2& canvas_center, float zoom);
 };
-END
+NS_END

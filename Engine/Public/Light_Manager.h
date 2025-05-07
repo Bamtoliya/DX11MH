@@ -1,9 +1,9 @@
 ﻿#pragma once
 #include "Base.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CLight;
 class CLight_Manager : public CBase
 {
 
 };
-END
+NS_END

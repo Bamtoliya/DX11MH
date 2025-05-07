@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Base.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CGameInstance;
 class CMyImGui;
 class ENGINE_DLL CMyImGui_Manager final : public CBase
@@ -38,4 +38,4 @@ private:
 	_bool								m_bToolBar = { true };
 	_bool								m_bDockingSpace = { true };
 };
-END
+NS_END

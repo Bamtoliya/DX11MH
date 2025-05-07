@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Base.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CRenderTarget;
 class ENGINE_DLL CTarget_Manager final : public CBase
 {
@@ -63,4 +63,4 @@ public:
     virtual void Free() override;
 };
 
-END
+NS_END

@@ -3,11 +3,11 @@
 #include "Editor_Defines.h"
 #include "Base.h"
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CGameInstance;
-END
+NS_END
 
-BEGIN(Editor)
+NS_BEGIN(Editor)
 
 class CLoader final : public CBase
 {
@@ -51,4 +51,4 @@ public:
 	virtual void Free() override;
 };
 
-END
+NS_END

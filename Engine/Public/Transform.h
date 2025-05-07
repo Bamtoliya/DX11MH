@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Component.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class ENGINE_DLL CTransform final : public CComponent
 {	
 public:
@@ -116,4 +116,4 @@ private:
 #pragma endregion
 };
 
-END
+NS_END

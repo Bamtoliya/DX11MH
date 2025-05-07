@@ -3,7 +3,7 @@
 #include "Level.h"
 #include "Editor_Defines.h"
 
-BEGIN(Editor)
+NS_BEGIN(Editor)
 
 class CLevel_Loading final : public CLevel
 {
@@ -23,4 +23,4 @@ public:
 	virtual void Free() override;
 };
 
-END
+NS_END

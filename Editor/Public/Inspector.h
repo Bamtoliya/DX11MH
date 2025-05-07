@@ -1,10 +1,10 @@
 ﻿#pragma once
 #include "Editor_Defines.h"
 #include "MyImGui.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CGameObject;
-END
-BEGIN(Editor)
+NS_END
+NS_BEGIN(Editor)
 class CInspector final : public CMyImGui
 {
 #pragma region Constructor/Destructor
@@ -27,4 +27,4 @@ public:
 private:
 	CGameObject* m_pGameObject = { nullptr };
 };
-END
+NS_END

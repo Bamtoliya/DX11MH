@@ -1,8 +1,8 @@
-﻿	#pragma once
-	#include "Base.h"
+﻿#pragma once
+#include "Base.h"
 
 
-BEGIN(physx)
+NS_BEGIN(physx)
 // PhysX 클래스 전방 선언 (헤더 의존성 감소 목적)
 class PxFoundation;
 class PxPhysics;
@@ -13,9 +13,9 @@ class PxMaterial;
 class PxScene; // 씬은 보통 별도로 관리하거나 나중에 생성
 class PxDefaultAllocator;
 class PxDefaultErrorCallback;
-END
+NS_END
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CGameInstance;
 class CPhysics_System final : public CBase
 {
@@ -63,4 +63,4 @@ private:
 	PxPvd* m_pPvd = nullptr;
 };
 
-END
+NS_END

@@ -3,13 +3,13 @@
 #include "Client_Defines.h"
 #include "UIObject.h"
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CShader;
 class CTexture;
 class CVIBuffer_Rect;
-END
+NS_END
 
-BEGIN(Client)
+NS_BEGIN(Client)
 
 class CBackGround final : public CUIObject
 {
@@ -47,4 +47,4 @@ public:
 
 };
 
-END
+NS_END

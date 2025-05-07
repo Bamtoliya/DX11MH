@@ -5,7 +5,7 @@
 // 만약 Bounding_Box.h 가 이 파일을 포함하거나, 그 반대의 경우 전방 선언 필요
 // struct tagBoundingBox; // 예시
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
 
 // 구 형태의 경계 볼륨을 정의하는 구조체 (DirectXMath XMVECTOR 사용 버전)
 // 참고: XMVECTOR 멤버는 16바이트 정렬이 필요할 수 있습니다. 클래스/구조체 할당 시 주의해야 합니다.
@@ -145,4 +145,4 @@ typedef struct alignas(16) tagBoundingSphere // C++11 alignas 키워드로 정�
 
 } BOUNDINGSPHERE;
 
-END
+NS_END

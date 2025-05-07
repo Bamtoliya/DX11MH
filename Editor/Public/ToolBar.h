@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Editor_Defines.h"
 #include "MyImGui.h"
-BEGIN(Editor)
+NS_BEGIN(Editor)
 class CToolBar : public CMyImGui
 {
 #pragma region Constructor/Destructor
@@ -18,4 +18,4 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 };
-END
+NS_END

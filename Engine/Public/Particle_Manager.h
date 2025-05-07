@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Particle_System.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CParticle_Manager : public CBase
 {
 private:
@@ -20,4 +20,4 @@ public:
 	virtual void Free() override;
 	
 };
-END
+NS_END

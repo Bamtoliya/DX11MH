@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CVIBuffer;
 class ENGINE_DLL CGameObject_Sphere : public CGameObject
 {
@@ -34,4 +34,4 @@ protected:
 	CVIBuffer* m_pVIBufferCom = { nullptr };
 };
 
-END
+NS_END

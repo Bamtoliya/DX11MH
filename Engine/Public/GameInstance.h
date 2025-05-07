@@ -5,7 +5,8 @@
 /* 엔진 개발자가 클라개밫자에게 보여주고싶은 함수를 ... */
 #include "Prototype_Manager.h"
 
-BEGIN(Engine)
+NS_BEGIN(Engine)
+
 class ENGINE_DLL CGameInstance final : public CBase
 {
 	DECLARE_SINGLETON(CGameInstance);
@@ -73,16 +74,14 @@ public:
 	HRESULT Add_Timer(const _wstring& strTimerTag);
 	void Update_Timer(const _wstring& strTimerTag);
 #pragma endregion
-
-#pragma region PHYSICS_SYSTEM
-
-#pragma endregion
-
-#pragma region PICKING_SYSTEM
-
-#pragma endregion
-
 //
+
+#pragma region 	PIPELINE
+	void Set_Transform(D3DTS eState, _fmatrix TransformMatrix);
+	const _float4x4* Get_Transform_Float4x4(D3DTS eState) const;
+	_matrix Get_Transform_Matrix(D3DTS eState) const;
+	const _float4* Get_CamPosition() const;
+#pragma endregion
 //#pragma region PICKING
 //	void Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse);
 //	_bool Picking_InWorld(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
@@ -115,19 +114,17 @@ private:
 	class CMyImGui_Manager*		m_pMyImGui_Manager = { nullptr };
 	class CPrototype_Manager*	m_pPrototype_Manager = { nullptr };
 #pragma endregion
-
 #pragma region 
-	class CRenderer*	m_pRenderer = { nullptr };
-	class CPipeLine*	m_pPipeLine = { nullptr };
+	class CRenderer* m_pRenderer = { nullptr };
+	class CPipeLine* m_pPipeLine = { nullptr };
 #pragma endregion
-
-#pragma region Boolean
+	// class CPicking*				m_pPicking = { nullptr };
+	#pragma region Boolean
 	_bool	m_bIsEditor = { true };
 #pragma endregion
-
 public:
 	void Release_Engine();
 	virtual void Free() override;
 };
 
-END
+NS_END

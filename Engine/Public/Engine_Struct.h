@@ -42,12 +42,6 @@ namespace Engine
 		XMFLOAT2		vTextureCoord;
 	}VTXTEX;
 
-	typedef struct tagVertexNormalTexture {
-		XMFLOAT3		vPosition;
-		XMFLOAT3		vNormal;
-		XMFLOAT2		vTextureCoord;
-	}VTXNORTEX;
-
 	typedef struct tagVertexCubeTexture {
 		XMFLOAT3		vPosition;
 		XMFLOAT3		vTextureCoord;
@@ -73,10 +67,38 @@ namespace Engine
 	} ATTRIBUTE;
 
 	
-	typedef struct tagVertexPositionTexcoord
+
+
+
+	typedef struct ENGINE_DLL tagVertexPositionTexcoord
 	{
 		XMFLOAT3		vPosition;
 		XMFLOAT2		vTexcoord;
+
+		static const unsigned int					iNumElements = {2};
+
+		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	}VTXPOSTEX;
+
+	typedef struct ENGINE_DLL tagVertexPositionNormalTexcoord
+	{
+		XMFLOAT3		vPosition;
+		XMFLOAT3		vNormal;
+		XMFLOAT2		vTexcoord;
+
+		static const unsigned int					iNumElements = { 3 };
+		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
+	}VTXNORTEX;
+
+	typedef struct ENGINE_DLL tagVertexMesh
+	{
+		XMFLOAT3		vPosition;
+		XMFLOAT3		vNormal;
+		XMFLOAT3		vTangent;
+		XMFLOAT2		vTexcoord;
+
+		static const unsigned int					iNumElements = { 4 };
+		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
+	}VTXMESH;
 
 }

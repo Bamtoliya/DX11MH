@@ -1,8 +1,6 @@
 ﻿#include "Target_Manager.h" // 경로 확인
 #include "RenderTarget.h" // CRenderTarget 클래스 사용 시
 
-BEGIN(Engine)
-
 CTarget_Manager::CTarget_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : m_pDevice(pDevice)
     , m_pContext(pContext)
@@ -317,5 +315,3 @@ void CTarget_Manager::Free()
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
 }
-
-END

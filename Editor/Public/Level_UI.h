@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Editor_Defines.h"
 #include "Level.h"
-BEGIN(Editor)
+NS_BEGIN(Editor)
 class CLevel_UI final : public CLevel
 {
 private:
@@ -21,4 +21,4 @@ public:
 	virtual void Free() override;
 };
 
-END
+NS_END

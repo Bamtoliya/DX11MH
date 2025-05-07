@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Level.h"
 #include "Editor_Defines.h"
-BEGIN(Editor)
+NS_BEGIN(Editor)
 class CLevel_Effect final : public CLevel
 {
 private:
@@ -20,4 +20,4 @@ public:
 	static CLevel_Effect* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
 };
-END
+NS_END

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class ENGINE_DLL CCamera abstract :public CGameObject
 {
 public:
@@ -46,4 +46,4 @@ protected:
 	CAMERA_DESC			m_tDesc;
 #pragma endregion
 };
-END
+NS_END
