@@ -29,14 +29,14 @@ HRESULT CViewport_3D::Initialize(void* pArg)
     m_bShow = true;
     m_bRenderTargetDirty = true; // 처음에는 RT를 생성해야 함
 
-    // Target Manager 가져오기 (GameInstance를 통해 접근한다고 가정)
-    if (FAILED(m_pGameInstance->Add_RenderTarget(
-        m_strRenderTargetTag,
-        1, 1, // 초기 크기
-        DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, // SRGB 포맷 사용 권장 (ImGui 호환성)
-        _float4(0.1f, 0.1f, 0.1f, 1.0f)  // 초기 배경색
-    )))
-        return E_FAIL;
+    //// Target Manager 가져오기 (GameInstance를 통해 접근한다고 가정)
+    //if (FAILED(m_pGameInstance->Add_RenderTarget(
+    //    m_strRenderTargetTag,
+    //    1, 1, // 초기 크기
+    //    DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, // SRGB 포맷 사용 권장 (ImGui 호환성)
+    //    _float4(0.1f, 0.1f, 0.1f, 1.0f)  // 초기 배경색
+    //)))
+    //    return E_FAIL;
     // 생성된 RenderTarget 포인터 가져오기 (선택적, 필요 시 사용)
     //m_pViewportRT = pTargetManager->Find_RenderTarget(m_strRenderTargetTag); // 이런 함수가 TargetManager에 있다고 가정
 

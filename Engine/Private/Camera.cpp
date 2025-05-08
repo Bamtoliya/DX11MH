@@ -16,6 +16,7 @@ CCamera::CCamera(const CCamera& Prototype)
 
 void CCamera::Free()
 {
+	__super::Free();
 }
 
 HRESULT CCamera::Initialize_Prototype()

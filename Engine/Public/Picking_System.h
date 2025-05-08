@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Base.h"
 NS_BEGIN(Engine)
+class CGameObject;
 class CGameInstance;
 class CPicking_System final : public CBase
 {
@@ -14,7 +15,9 @@ public:
 	virtual void Free() override;
 #pragma endregion
 
-
+public:
+	HRESULT ReadPickingTargetPixel(_int screenX, _int screenY, _Out_ _float4* pPickedColor);
+	HRESULT PickObject(_float4* pColor);
 public:
 	virtual HRESULT Initialize();
 public:
@@ -26,6 +29,12 @@ private:
 	CGameInstance*			m_pGameInstance = { nullptr };
 	ID3D11Device*			m_pDevice		= { nullptr };
 	ID3D11DeviceContext*	m_pContext		= { nullptr };
+
+private:
+	ID3D11Texture2D*		m_pTexture		= { nullptr };
+
+private:
+	CGameObject*			m_pPickedObject = { nullptr };
 	
 };
 NS_END

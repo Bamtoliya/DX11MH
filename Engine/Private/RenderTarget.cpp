@@ -144,10 +144,12 @@ CRenderTarget* CRenderTarget::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 
 void CRenderTarget::Free()
 {
+    __super::Free();
     Safe_Release(m_pSRV);
     Safe_Release(m_pRTV);
     Safe_Release(m_pTexture);
 
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
+    Safe_Release(m_pGameInstance);
 }

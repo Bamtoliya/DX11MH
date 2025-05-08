@@ -39,6 +39,12 @@ public:
 	_byte	Get_DIKeyState(_ubyte byKeyID);
 	_byte	Get_DIMouseState(DIM eMouse);	
 	_long	Get_DIMouseMove(DIMM eMouseState);
+	_bool	Key_Down(_ubyte eKeyID);
+	_bool	Key_Up(_ubyte eKeyID);
+	_bool	Key_Pressing(_ubyte eKeyID);
+	_bool	Mouse_Down(DIM eMouseKeyID);
+	_bool	Mouse_Up(DIM eMouseKeyID);
+	_bool	Mouse_Pressing(DIM eMouseKeyID);
 #pragma endregion
 
 public:
@@ -54,6 +60,7 @@ public:
 #pragma region TARGET_MANAGER
 	//Render Target
 	HRESULT Add_RenderTarget(const _wstring& strTargetTag, _uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor);
+	class CRenderTarget* Get_RenderTarget(const _wstring& strTargetTag) const;
 	HRESULT Clear_RenderTarget(const _wstring& strTargetTag, _float4* pClearColor = nullptr);
 	//MRT
 	HRESULT Add_MRT(const _wstring& strMRTTag, const std::vector<_wstring>& pTargetTags);
@@ -69,6 +76,7 @@ public:
 #pragma region OBJECT_MANAGER
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
 	CComponent* Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex = 0);
+	class CGameObject* Get_GameObjectById(_uint iId);
 #pragma endregion
 
 #pragma region RENDERER
@@ -89,11 +97,13 @@ public:
 	const _float4* Get_CamPosition() const;
 #pragma endregion
 //
-//#pragma region PICKING
+#pragma region PICKING
+	HRESULT ReadPickingTargetPixel(_int screenX, _int screenY, _float4* pPickedColor);
+	HRESULT PickObjectByColor(_float4* pColor);
 //	void Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse);
 //	_bool Picking_InWorld(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
 //	_bool Picking_InLocal(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
-//#pragma endregion
+#pragma endregion
 
 #pragma region Imgui
 	void SetEditor(_bool b) { m_bIsEditor = b; }

@@ -48,7 +48,7 @@ namespace Engine
 	}
 
 
-	inline string WideToUtf8(const wchar_t* wstr)
+	static string WideToUtf8(const wchar_t* wstr)
 	{
 		if (!wstr) return "";
 
@@ -61,7 +61,7 @@ namespace Engine
 	}
 
 	// UTF-8을 와이드 문자열로 변환 (반대 방향 변환도 필요함)
-	inline wstring Utf8ToWide(const string& str)
+	static wstring Utf8ToWide(const string& str)
 	{
 		int size_needed = MultiByteToWideChar(CP_UTF8, 0, str.c_str(), -1, NULL, 0);
 		wstring wstrTo(size_needed, 0);
@@ -72,7 +72,7 @@ namespace Engine
 	}
 
 
-	inline FMOD_VECTOR VecToFMOD(XMVECTOR in)
+	static FMOD_VECTOR VecToFMOD(XMVECTOR in)
 	{
 		// +x = 오른쪽 +y는 윗쪽 , +z 는 전방
 		// FMOD (+z 전방, +x 오른쪽, +y 위쪽) 좌표로 변환
@@ -81,10 +81,24 @@ namespace Engine
 		return FMOD_VECTOR{ tmp.x, tmp.y, tmp.z };
 	}
 
-	inline bool EndsWith(const wstring& str, const wstring& suffix) {
+	static bool EndsWith(const wstring& str, const wstring& suffix) {
 		if (str.length() < suffix.length()) {
 			return false;
 		}
 		return equal(suffix.rbegin(), suffix.rend(), str.rbegin());
+	}
+
+	static unsigned int ConvertColorToId(XMFLOAT4 color) {
+		// 부동소수점 값을 [0, 255] 범위의 바이트 값으로 변환
+		// 값의 범위를 벗어나지 않도록 clamp 처리도 고려할 수 있습니다.
+		// r = std::max(0.0f, std::min(1.0f, r)); (필요시)
+		unsigned char r_byte = static_cast<unsigned char>(color.x * 255.0f);
+		unsigned char g_byte = static_cast<unsigned char>(color.y * 255.0f);
+		unsigned char b_byte = static_cast<unsigned char>(color.z * 255.0f);
+
+		// 바이트 값을 조합하여 ID 복원
+		return (static_cast<unsigned int>(r_byte) << 16) |
+			(static_cast<unsigned int>(g_byte) << 8) |
+			static_cast<unsigned int>(b_byte);
 	}
 }

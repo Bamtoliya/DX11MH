@@ -31,9 +31,6 @@ HRESULT CViewport_2D::Initialize(void* pArg)
     m_bShow = true;
     m_bShowImage = true;
     m_pTextureCom = CTexture::Create(m_pDevice, m_pContext, L"../../Assets/Texture/ui_common/uiRANGE_img_hologram3.dds", 1);
-    m_pGameInstance->Add_RenderTarget(
-        L"Viewport_2D", 1, 1, DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, _float4(0.2f, 0.2f, 0.2f, 1.0f)
-    );
     if (m_pTextureCom == nullptr)
         return E_FAIL;
     //m_pSRV = m_pTextureCom->Get_SRV(0);
@@ -50,6 +47,7 @@ void CViewport_2D::Priority_Update(_float fTimeDelta)
 
 void CViewport_2D::Update(_float fTimeDelta)
 {
+
 }
 
 void CViewport_2D::Late_Update(_float fTimeDelta)
@@ -76,7 +74,10 @@ HRESULT CViewport_2D::Render()
     // --- 상태 변수 ---
     static float zoom = 1.0f;
     static ImVec2 panning = ImVec2(0.0f, 0.0f); // 그리드 원점 이동량 (패닝 오프셋) 추가
+    static char mouse_cursor[128] = "Click on the grid area"; // 클릭 정보 표시용 문자열 추가
     static char click_info[128] = "Click on the grid area"; // 클릭 정보 표시용 문자열 추가
+    static char click_color[128] = "Click on the grid area"; // 클릭 정보 표시용 문자열 추가
+    
 
     // 줌 설정값
     const float zoom_speed = 0.1f;
@@ -123,9 +124,20 @@ HRESULT CViewport_2D::Render()
         // 화면 좌표 -> 그리드 좌표 변환 (패닝된 중앙점과 줌 고려)
         ImVec2 mouse_pos_relative_to_center = ImVec2(mouse_pos_in_screen.x - canvas_center.x, mouse_pos_in_screen.y - canvas_center.y);
         ImVec2 mouse_pos_in_grid = ImVec2(mouse_pos_relative_to_center.x / zoom, mouse_pos_relative_to_center.y / zoom);
+        ImVec2 ScreenPos = GridToScreen(mouse_pos_in_grid, canvas_center, zoom);
 
         if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+            snprintf(mouse_cursor, sizeof(mouse_cursor), "Mouse Clicked at Screen(%.1f, %.1f)", ScreenPos.x, ScreenPos.y);
             snprintf(click_info, sizeof(click_info), "Left Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);
+            _float4 testColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+            if (FAILED(m_pGameInstance->ReadPickingTargetPixel(mouse_pos_in_grid.x, mouse_pos_in_grid.y, &testColor)))
+                return E_FAIL;
+            snprintf(click_color, sizeof(click_color), "Left Clicked Color(%.1f, %.1f, %.1f, %.1f)", testColor.x, testColor.y, testColor.z, testColor.w);
+
+
+            //m_pGameInstance->PickObjectByColor(&testColor);
+
+            int a = 10;
             // 여기서 last_left_click_grid_pos 같은 변수에 저장하거나 다른 작업 수행 가능
         }
         else if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
@@ -133,7 +145,6 @@ HRESULT CViewport_2D::Render()
             // 여기서 last_right_click_grid_pos 같은 변수에 저장하거나 다른 작업 수행 가능
         }
     }
-
 
     // --- 그리기 ---
     const float grid_base_spacing = 25.0f;
@@ -171,13 +182,6 @@ HRESULT CViewport_2D::Render()
         draw_list->AddLine(ImVec2(canvas_p0.x, canvas_center.y), ImVec2(canvas_p1.x, canvas_center.y), grid_thick_color);
     }
 
-    //
-    //ImGui::Image(ImTextureID user_texture_id, const ImVec2 & image_size, const ImVec2 & uv0, const ImVec2 & uv1, const ImVec4 & tint_col, const ImVec4 & border_col);
-
-
-
- 
-
     // 해상도 영역 그리기 (canvas_center가 패닝을 반영하므로 로직 자체는 동일)
     const float targetResolutionWidth = 1920.0f;
     const float targetResolutionHeight = 1080.0f;
@@ -189,8 +193,7 @@ HRESULT CViewport_2D::Render()
     const float rectThickness = 2.0f;
     draw_list->AddRect(rectP0, rectP1, rectColor, 0.0f, ImDrawFlags_None, rectThickness);
 
-    m_pSRV = m_pGameInstance->Get_BackBufferSRV();
-    ID3D11ShaderResourceView* pFinalSceneSRV = m_pGameInstance->Get_SRV(L"RT_FinalScene");
+    m_pSRV = m_pGameInstance->Get_SRV(L"RT_Picking");
     if (m_bShowImage && m_pSRV) // 이미지를 표시하고 SRV가 유효할 때만
     {
         // 1. 이미지의 그리드 좌표 계산 (m_vImageGridPosition이 좌상단이라고 가정)
@@ -203,7 +206,7 @@ HRESULT CViewport_2D::Render()
 
         // 3. ImDrawList::AddImage() 호출하여 그리기
         draw_list->AddImage(
-            (ImTextureID)pFinalSceneSRV,      // 텍스처의 Shader Resource View
+            (ImTextureID)m_pSRV,      // 텍스처의 Shader Resource View
             imageScreenMin,     // 화면 좌상단 좌표
             imageScreenMax,     // 화면 우하단 좌표
             ImVec2(0, 0),       // UV 시작 좌표 (텍스처 전체 사용)
@@ -215,6 +218,8 @@ HRESULT CViewport_2D::Render()
         draw_list->AddRect(imageScreenMin, imageScreenMax, IM_COL32(255, 255, 0, 255));
     }
 
+    
+
 
     // --- UI 위젯 (상태 표시 및 제어) ---
     // 커서 위치를 창 좌상단 기준으로 설정 (정보 표시용)
@@ -223,7 +228,9 @@ HRESULT CViewport_2D::Render()
     ImGui::Text("Interactive Grid");
     ImGui::Text("Zoom: %.2f (Mouse Wheel)", zoom);
     ImGui::Text("Pan Offset: (%.1f, %.1f) (Right Mouse Click & Drag)", panning.x, panning.y); // 패닝 정보 표시 추가
+    ImGui::TextUnformatted(mouse_cursor); // 클릭 정보 표시
     ImGui::TextUnformatted(click_info); // 클릭 정보 표시
+    ImGui::TextUnformatted(click_color); // 클릭 정보 표시
     if (ImGui::Button("Reset View")) { // 리셋 버튼 추가
         zoom = 1.0f;
         panning = ImVec2(0.0f, 0.0f);
@@ -235,6 +242,8 @@ HRESULT CViewport_2D::Render()
     ImGui::SetCursorPosX(content_min_rel.x + 10); // 예시
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10); // 예시
     ImGui::SliderFloat("Zoom Slider", &zoom, min_zoom, max_zoom);
+
+   
 
     ImGui::End(); // 창 끝
     return S_OK;

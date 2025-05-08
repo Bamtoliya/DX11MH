@@ -1,31 +1,5 @@
-
-
-/* 상수테이블 ConstantTable */
-matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-texture2D g_Texture;
-
-sampler DefaultSampler = sampler_state
-{
-    filter = min_mag_mip_linear;
-};
-
-
-/* 정점의 기초적인 변환 (월드변환, 뷰, 투영변환) */ 
-/* 정점의 구성 정보를 변형할 수 있다. */ 
-
-struct VS_IN
-{
-    float3 vPosition : POSITION;
-    float2 vTexcoord : TEXCOORD0;
-};
-
-struct VS_OUT
-{
-    /* SV_ : ShaderValue약자 */
-    /* 내가 해야할 연산은 다 했으니 이제 니(장치)가 알아서 추가적인 연산을 해라. */     
-    float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;    
-};
+#include "Shader_Struct.hlsl"
+#include "Shader_Test.hlsl"
 
 VS_OUT VS_MAIN(VS_IN In)
 {
@@ -51,22 +25,15 @@ VS_OUT VS_MAIN(VS_IN In)
 /* 모든 성분에 대해서 래스터라이즈. -> 픽셀을 생성한다. */
 
 
-struct PS_IN
-{
-    float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;
-};
-
-struct PS_OUT
-{
-    vector vColor : SV_TARGET0;
-};
-
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;    
     
     Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    float r = (float) ((objectId >> 16) & 0xFF) / 255.0f;
+    float g = (float) ((objectId >> 8) & 0xFF) / 255.0f;
+    float b = (float) (objectId & 0xFF) / 255.0f;
+    Out.vPick = float4(r, g, b, 1.0f);
     
     return Out;    
 }
@@ -87,6 +54,12 @@ technique11 DefaultTechnique
     {
         VertexShader = compile vs_5_0 VS_MAIN();        
         PixelShader = compile ps_5_0 PS_MAIN();      
+    }
+
+    pass Picking /* 명암 + 스펙큘러 + 그림자 + ssao + 림라이트 */
+    {
+        VertexShader = compile vs_5_0 VS_MAIN();
+        PixelShader = compile ps_5_0 PS_PICKING();
     }
     //pass Disstortion/* 왜곡 1*/ 
     //{

@@ -24,7 +24,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
-public:
+private:
 	// 이미지 렌더링을 위한 멤버 변수 추가
 	CTexture* m_pTextureCom = { nullptr }; // 이미지 로드 및 관리를 위한 CTexture 포인터 (선택적)
 	ID3D11ShaderResourceView* m_pSRV = nullptr; // 실제 렌더링에 사용할 SRV
@@ -36,5 +36,11 @@ public:
 
 	// 그리드 좌표를 화면 좌표로 변환하는 헬퍼 함수 (선택적)
 	ImVec2 GridToScreen(const ImVec2& gridPos, const ImVec2& canvas_center, float zoom);
+
+	//Redering Grid Variables
+private:
+	const float zoom_speed = 0.1f;
+	const float min_zoom = 0.01f;
+	const float max_zoom = 10.0f;
 };
 NS_END

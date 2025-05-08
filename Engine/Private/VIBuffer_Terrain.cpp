@@ -97,7 +97,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	{
 		for (size_t j = 0; j < m_iNumVerticesX - 1; j++)
 		{
-			_uint		iIndex = i * m_iNumVerticesX + j;
+			_uint		iIndex = (_uint)i * m_iNumVerticesX + (_uint)j;
 
 			_uint		iIndices[4] = {
 				iIndex + m_iNumVerticesX,

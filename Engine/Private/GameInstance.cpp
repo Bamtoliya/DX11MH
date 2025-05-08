@@ -82,33 +82,17 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	if (nullptr == m_pPipeLine)
 		return E_FAIL;
 
-	m_pPipeLine = CPipeLine::Create();
-	if (nullptr == m_pPipeLine)
-		return E_FAIL;
-
-
-	//m_pPicking = CPicking::Create(*ppOut, EngineDesc.hWnd, EngineDesc.iWinSizeX, EngineDesc.iWinSizeY);
-	//if (nullptr == m_pPicking)
-	//	return E_FAIL;
-
-
-
-
 	return S_OK;
 }
 
 void CGameInstance::Update_Engine(_float fTimeDelta)
 {
 	m_pInput_Device->Update(fTimeDelta);
-
 	m_pObject_Manager->Priority_Update(fTimeDelta);
 	m_pPipeLine->Update();
-
-	//m_pPicking->Update();
-
 	m_pObject_Manager->Update(fTimeDelta);	
-
 	m_pObject_Manager->Late_Update(fTimeDelta);
+	m_pPicking_System->Update(fTimeDelta);
 
 	if (m_pMyImGui_Manager)
 		m_pMyImGui_Manager->Update(fTimeDelta);
@@ -230,6 +214,10 @@ HRESULT CGameInstance::Add_RenderTarget(const _wstring& strTargetTag, _uint iWid
 {
 	return m_pTarget_Manager->Add_RenderTarget(strTargetTag, iWidth, iHeight, eFormat, vClearColor);
 }
+CRenderTarget* CGameInstance::Get_RenderTarget(const _wstring& strTargetTag) const
+{
+	return m_pTarget_Manager->Get_RenderTarget(strTargetTag);
+}
 HRESULT CGameInstance::Clear_RenderTarget(const _wstring& strTargetTag, _float4* pClearColor)
 {
 	return m_pTarget_Manager->Clear_RenderTarget(strTargetTag, pClearColor);
@@ -270,6 +258,11 @@ CComponent* CGameInstance::Get_Component(_uint iLevelIndex, const _wstring& strL
 {
 	return m_pObject_Manager->Get_Component(iLevelIndex, strLayerTag, strComponentTag, iIndex);
 	
+}
+
+CGameObject* CGameInstance::Get_GameObjectById(_uint iId)
+{
+	return m_pObject_Manager->Get_GameObjectById(iId);
 }
 
 #pragma endregion
@@ -333,6 +326,22 @@ const _float4* CGameInstance::Get_CamPosition() const
 	return m_pPipeLine->Get_CamPosition();
 }
 
+#pragma endregion
+
+#pragma region Picking_System
+HRESULT CGameInstance::ReadPickingTargetPixel(_int screenX, _int screenY, _float4* pPickedColor)
+{
+	return m_pPicking_System->ReadPickingTargetPixel(screenX, screenY, pPickedColor);
+}
+HRESULT CGameInstance::PickObjectByColor(_float4* pColor)
+{
+	return m_pPicking_System->PickObject(pColor);
+}
+#pragma endregion
+
+
+#pragma region Input_Device
+
 _byte CGameInstance::Get_DIKeyState(_ubyte byKeyID)
 {
 	return m_pInput_Device->Get_DIKeyState(byKeyID);
@@ -346,6 +355,36 @@ _byte CGameInstance::Get_DIMouseState(DIM eMouse)
 _long CGameInstance::Get_DIMouseMove(DIMM eMouseState)
 {
 	return m_pInput_Device->Get_DIMouseMove(eMouseState);
+}
+
+_bool CGameInstance::Key_Down(_ubyte eKeyID)
+{
+	return m_pInput_Device->Key_Down(eKeyID);
+}
+
+_bool CGameInstance::Key_Up(_ubyte eKeyID)
+{
+	return m_pInput_Device->Key_Up(eKeyID);
+}
+
+_bool CGameInstance::Key_Pressing(_ubyte eKeyID)
+{
+	return m_pInput_Device->Key_Pressing(eKeyID);
+}
+
+_bool CGameInstance::Mouse_Down(DIM eMouseKeyID)
+{
+	return m_pInput_Device->Mouse_Down(eMouseKeyID);
+}
+
+_bool CGameInstance::Mouse_Up(DIM eMouseKeyID)
+{
+	return m_pInput_Device->Mouse_Up(eMouseKeyID);
+}
+
+_bool CGameInstance::Mouse_Pressing(DIM eMouseKeyID)
+{
+	return m_pInput_Device->Mouse_Pressing(eMouseKeyID);
 }
 
 #pragma endregion
@@ -369,6 +408,9 @@ _long CGameInstance::Get_DIMouseMove(DIMM eMouseState)
 void CGameInstance::Release_Engine()
 {
 	//Safe_Release(m_pPicking);
+
+	
+
 	Safe_Release(m_pMyImGui_Manager);
 
 	Safe_Release(m_pPipeLine);
@@ -385,7 +427,8 @@ void CGameInstance::Release_Engine()
 
 	Safe_Release(m_pInput_Device);
 
-	Safe_Release(m_pInput_Device);
+	Safe_Release(m_pTarget_Manager);
+
 	Safe_Release(m_pGraphic_Device);
 
 	Destroy_Instance();

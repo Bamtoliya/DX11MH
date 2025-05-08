@@ -23,6 +23,7 @@ public:
 	void Update(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
 	void Clear(_uint iLevelIndex);
+	CGameObject* Get_GameObjectById(_uint iId);
 private:
 	static _uint						m_oID;
 	_uint								m_iNumLevels = {};

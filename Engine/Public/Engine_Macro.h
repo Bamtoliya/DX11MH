@@ -47,3 +47,13 @@ unsigned int ClassName::Destroy_Instance()				\
 }
 
 #define BANKPATH L""
+
+#define ASSETPATH L"../../Assets/"
+
+#define KEY_DOWN(eKey) m_pGameInstance->Key_Down(eKey)
+#define KEY_UP(eKey) m_pGameInstance->Key_Up(eKey)
+#define KEY_PRESSING(eKey) m_pGameInstance->Key_Pressing(eKey)
+
+#define MOUSE_DOWN(eKey) m_pGameInstance->Mouse_Down(eKey)
+#define MOUSE_UP(eKey) m_pGameInstance->Mouse_Up(eKey)
+#define MOUSE_PRESSING(eKey) m_pGameInstance->Mouse_Pressing(eKey)

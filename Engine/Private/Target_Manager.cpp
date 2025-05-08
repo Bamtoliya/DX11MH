@@ -180,6 +180,14 @@ ID3D11ShaderResourceView* CTarget_Manager::Get_SRV(const _wstring& strTargetTag)
     return (pRT != nullptr) ? pRT->Get_SRV() : nullptr;
 }
 
+CRenderTarget* CTarget_Manager::Get_RenderTarget(const _wstring& strTargetTag) const
+{
+    auto iter = m_RenderTargets.find(strTargetTag);
+    if (iter == m_RenderTargets.end())
+        return nullptr;
+    return iter->second;
+}
+
 HRESULT CTarget_Manager::Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTag)
 {
     // 백업된 RTV가 유효한지 확인 (보통 배열의 첫 번째 요소 사용)
@@ -308,8 +316,7 @@ void CTarget_Manager::Free()
     for (_uint i = 0; i < D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i) {
         Safe_Release(m_pBackupRTVs[i]);
     }
-    Safe_Release(m_pBackupDSV);
-
+    //Safe_Release(m_pBackupDSV);
 
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);

@@ -49,8 +49,8 @@ public:
 #pragma region Functions
 public:
 	CComponent* Get_Component(const _wstring& strComponentTag);
-	_uint GetID() const { return m_oID; }
-	void SetID(_uint oID) { m_oID = oID; }
+	_uint Get_ID() const { return m_oID; }
+	void Set_ID(_uint oID) { m_oID = oID; }
 protected:
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr);
 

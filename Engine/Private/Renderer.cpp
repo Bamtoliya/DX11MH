@@ -2,7 +2,6 @@
 #include "GameObject.h"
 #include "GameInstance.h"
 
-
 CRenderer::CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice { pDevice }
 	, m_pContext { pContext }
@@ -27,7 +26,7 @@ HRESULT CRenderer::Initialize()
 		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
 	)))
 	{
-		MSG_BOX("Failed to create RT_Background Render Target");
+		MSG_BOX("Failed to create RT_FinalScene Render Target");
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 
@@ -39,16 +38,23 @@ HRESULT CRenderer::Initialize()
 		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
 	)))
 	{
-		MSG_BOX("Failed to create RT_Background Render Target");
+		MSG_BOX("Failed to create RT_Picking Render Target");
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 
-	vector<wstring> FinalTargets = { L"RT_FinalScene" };
+	vector<wstring> FinalTargets = { L"RT_FinalScene", L"RT_Picking"};
 	if (FAILED(m_pGameInstance->Add_MRT(L"RT_FinalScene_Group", FinalTargets)))
 	{
-		MSG_BOX("Failed to create MRT_BackgroundOnly group");
+		MSG_BOX("Failed to create RT_FinalScene group");
 		return E_FAIL;
 	}
+
+	/*vector<wstring> PickingTargets = { L"RT_Picking" };
+	if (FAILED(m_pGameInstance->Add_MRT(L"RT_Picking_Group", PickingTargets)))
+	{
+		MSG_BOX("Failed to create RT_Picking group");
+		return E_FAIL;
+	}*/
 	return S_OK;
 }
 

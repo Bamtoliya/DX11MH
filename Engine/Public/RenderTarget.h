@@ -17,6 +17,7 @@ public:
     ID3D11RenderTargetView* Get_RTV() const { return m_pRTV; }
     ID3D11ShaderResourceView* Get_SRV() const { return m_pSRV; }
     const D3D11_VIEWPORT& Get_Viewport() const { return m_Viewport; }
+    ID3D11Texture2D* Get_Texture() const { return m_pTexture; }
 
 public:
     // 초기화 함수

@@ -32,7 +32,7 @@ public:
     ID3D11ShaderResourceView* Get_SRV(const _wstring& strTargetTag) const;
 
     // (선택 사항) 특정 렌더 타겟 객체 직접 반환
-    // CRenderTarget* Get_RenderTarget(const _wstring& strTargetTag) const;
+    CRenderTarget* Get_RenderTarget(const _wstring& strTargetTag) const;
 
     HRESULT Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTag);
 
