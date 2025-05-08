@@ -84,6 +84,7 @@ HRESULT CRenderer::Draw()
 	// 2. Clear the Off-Screen Target
 	_float4 tempColor = { 0.0f, 0.0f, 0.0f, 0.0f };
 	m_pGameInstance->Clear_RenderTarget(L"RT_FinalScene", &tempColor);
+	m_pGameInstance->Clear_RenderTarget(L"RT_Picking", &tempColor);
 	m_pContext->ClearDepthStencilView(pMainDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 
 	if (FAILED(Render_Priority()))

@@ -1,5 +1,6 @@
 ﻿#include "Viewport_2D.h"
 #include "GameInstance.h"
+#include "GameObject.h"
 #include "Texture.h"
 
 CViewport_2D::CViewport_2D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -33,8 +34,6 @@ HRESULT CViewport_2D::Initialize(void* pArg)
     m_pTextureCom = CTexture::Create(m_pDevice, m_pContext, L"../../Assets/Texture/ui_common/uiRANGE_img_hologram3.dds", 1);
     if (m_pTextureCom == nullptr)
         return E_FAIL;
-    //m_pSRV = m_pTextureCom->Get_SRV(0);
-    m_pSRV = m_pGameInstance->Get_BackBufferSRV();
     m_vImageGridPosition = { -(g_iWinSizeX/2.f), -(g_iWinSizeY / 2.f)}; // 그리드 (0,0) 기준 좌상단 좌표
     m_vImageGridSize = { 1920.f, 1080.f };   // 그리드 단위 크기
 
@@ -47,7 +46,7 @@ void CViewport_2D::Priority_Update(_float fTimeDelta)
 
 void CViewport_2D::Update(_float fTimeDelta)
 {
-
+    m_pGameObject = m_pGameInstance->Get_PickedObject();
 }
 
 void CViewport_2D::Late_Update(_float fTimeDelta)
@@ -144,81 +143,16 @@ HRESULT CViewport_2D::Render()
         }
     }
 
-    // --- 그리기 ---
-    const float grid_base_spacing = 25.0f;
-    const float apparent_spacing = grid_base_spacing * zoom;
-    const ImU32 grid_color = IM_COL32(200, 200, 200, 40);
-    const ImU32 grid_thick_color = IM_COL32(200, 200, 200, 80);
-    const int thick_line_interval = 4;
-
-    // 그리드 그리기 (canvas_center가 패닝을 반영하므로 로직 자체는 동일)
-    if (apparent_spacing > 1.0f) {
-        // 수직선
-        for (float x = canvas_center.x; x <= canvas_p1.x; x += apparent_spacing) {
-            int line_index = static_cast<int>(roundf(fabsf(x - canvas_center.x) / apparent_spacing));
-            bool is_thick_line = (line_index > 0 && line_index % thick_line_interval == 0);
-            draw_list->AddLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), is_thick_line ? grid_thick_color : grid_color);
-        }
-        for (float x = canvas_center.x - apparent_spacing; x >= canvas_p0.x; x -= apparent_spacing) {
-            int line_index = static_cast<int>(roundf(fabsf(x - canvas_center.x) / apparent_spacing));
-            bool is_thick_line = (line_index > 0 && line_index % thick_line_interval == 0);
-            draw_list->AddLine(ImVec2(x, canvas_p0.y), ImVec2(x, canvas_p1.y), is_thick_line ? grid_thick_color : grid_color);
-        }
-        // 수평선
-        for (float y = canvas_center.y; y <= canvas_p1.y; y += apparent_spacing) {
-            int line_index = static_cast<int>(roundf(fabsf(y - canvas_center.y) / apparent_spacing));
-            bool is_thick_line = (line_index > 0 && line_index % thick_line_interval == 0);
-            draw_list->AddLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), is_thick_line ? grid_thick_color : grid_color);
-        }
-        for (float y = canvas_center.y - apparent_spacing; y >= canvas_p0.y; y -= apparent_spacing) {
-            int line_index = static_cast<int>(roundf(fabsf(y - canvas_center.y) / apparent_spacing));
-            bool is_thick_line = (line_index > 0 && line_index % thick_line_interval == 0);
-            draw_list->AddLine(ImVec2(canvas_p0.x, y), ImVec2(canvas_p1.x, y), is_thick_line ? grid_thick_color : grid_color);
-        }
-        // 중앙선
-        draw_list->AddLine(ImVec2(canvas_center.x, canvas_p0.y), ImVec2(canvas_center.x, canvas_p1.y), grid_thick_color);
-        draw_list->AddLine(ImVec2(canvas_p0.x, canvas_center.y), ImVec2(canvas_p1.x, canvas_center.y), grid_thick_color);
-    }
+    //그리드 그리기
+    DrawGrid(draw_list, canvas_p0, canvas_p1, canvas_center, zoom);
 
     // 해상도 영역 그리기 (canvas_center가 패닝을 반영하므로 로직 자체는 동일)
-    const float targetResolutionWidth = 1920.0f;
-    const float targetResolutionHeight = 1080.0f;
-    const float scaledWidth = targetResolutionWidth * zoom;
-    const float scaledHeight = targetResolutionHeight * zoom;
-    ImVec2 rectP0 = ImVec2(canvas_center.x - scaledWidth * 0.5f, canvas_center.y - scaledHeight * 0.5f);
-    ImVec2 rectP1 = ImVec2(canvas_center.x + scaledWidth * 0.5f, canvas_center.y + scaledHeight * 0.5f);
-    const ImU32 rectColor = IM_COL32(0, 255, 0, 255);
-    const float rectThickness = 2.0f;
-    draw_list->AddRect(rectP0, rectP1, rectColor, 0.0f, ImDrawFlags_None, rectThickness);
+    DrawResolutionRect(draw_list, canvas_center, zoom);
 
-    m_pSRV = m_pGameInstance->Get_SRV(L"RT_Picking");
-    if (m_bShowImage && m_pSRV) // 이미지를 표시하고 SRV가 유효할 때만
-    {
-        // 1. 이미지의 그리드 좌표 계산 (m_vImageGridPosition이 좌상단이라고 가정)
-        ImVec2 imageGridMin = { m_vImageGridPosition.x, m_vImageGridPosition.y };
-        ImVec2 imageGridMax = { m_vImageGridPosition.x + m_vImageGridSize.x, m_vImageGridPosition.y + m_vImageGridSize.y };
+    //렌더링 결과물
+    DrawTexture(draw_list, canvas_center, zoom);
 
-        // 2. 그리드 좌표를 화면 좌표로 변환
-        ImVec2 imageScreenMin = GridToScreen(imageGridMin, canvas_center, zoom);
-        ImVec2 imageScreenMax = GridToScreen(imageGridMax, canvas_center, zoom);
-
-        // 3. ImDrawList::AddImage() 호출하여 그리기
-        draw_list->AddImage(
-            (ImTextureID)m_pSRV,      // 텍스처의 Shader Resource View
-            imageScreenMin,     // 화면 좌상단 좌표
-            imageScreenMax,     // 화면 우하단 좌표
-            ImVec2(0, 0),       // UV 시작 좌표 (텍스처 전체 사용)
-            ImVec2(1, 1),       // UV 끝 좌표 (텍스처 전체 사용)
-            IM_COL32_WHITE      // 틴트 색상 (흰색, 불투명). IM_COL32(R,G,B,A) 형태로 지정 가능.
-        );
-
-        // (선택 사항) 이미지 주변에 테두리 그리기 (디버깅용)
-        draw_list->AddRect(imageScreenMin, imageScreenMax, IM_COL32(255, 255, 0, 255));
-    }
-
-    
-
-
+#pragma region Widgets
     // --- UI 위젯 (상태 표시 및 제어) ---
     // 커서 위치를 창 좌상단 기준으로 설정 (정보 표시용)
     ImGui::SetCursorPos(ImVec2(content_min_rel.x + 10, content_min_rel.y + 10));
@@ -240,9 +174,196 @@ HRESULT CViewport_2D::Render()
     ImGui::SetCursorPosX(content_min_rel.x + 10); // 예시
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10); // 예시
     ImGui::SliderFloat("Zoom Slider", &zoom, min_zoom, max_zoom);
+#pragma endregion
 
-   
+    DrawImGuizmo2D(zoom, panning);
 
     ImGui::End(); // 창 끝
+    return S_OK;
+}
+
+HRESULT CViewport_2D::DrawGrid(ImDrawList* pList, ImVec2& p0, ImVec2& p1, ImVec2& center, _float fZoom)
+{
+    // --- 그리기 ---
+    const float grid_base_spacing = 25.0f;
+    const float apparent_spacing = grid_base_spacing * fZoom;
+    const ImU32 grid_color = IM_COL32(200, 200, 200, 40);
+    const ImU32 grid_thick_color = IM_COL32(200, 200, 200, 80);
+    const int thick_line_interval = 4;
+
+    // 그리드 그리기 (canvas_center가 패닝을 반영하므로 로직 자체는 동일)
+    if (apparent_spacing > 1.0f) {
+        // 수직선
+        for (float x = center.x; x <= p1.x; x += apparent_spacing) {
+            int line_index = static_cast<int>(roundf(fabsf(x - center.x) / apparent_spacing));
+            bool is_thick_line = (line_index > 0 && line_index % thick_line_interval == 0);
+            pList->AddLine(ImVec2(x, p0.y), ImVec2(x, p1.y), is_thick_line ? grid_thick_color : grid_color);
+        }
+        for (float x = center.x - apparent_spacing; x >= p0.x; x -= apparent_spacing) {
+            int line_index = static_cast<int>(roundf(fabsf(x - center.x) / apparent_spacing));
+            bool is_thick_line = (line_index > 0 && line_index % thick_line_interval == 0);
+            pList->AddLine(ImVec2(x, p0.y), ImVec2(x, p1.y), is_thick_line ? grid_thick_color : grid_color);
+        }
+        // 수평선
+        for (float y = center.y; y <= p1.y; y += apparent_spacing) {
+            int line_index = static_cast<int>(roundf(fabsf(y - center.y) / apparent_spacing));
+            bool is_thick_line = (line_index > 0 && line_index % thick_line_interval == 0);
+            pList->AddLine(ImVec2(p0.x, y), ImVec2(p1.x, y), is_thick_line ? grid_thick_color : grid_color);
+        }
+        for (float y = center.y - apparent_spacing; y >= p0.y; y -= apparent_spacing) {
+            int line_index = static_cast<int>(roundf(fabsf(y - center.y) / apparent_spacing));
+            bool is_thick_line = (line_index > 0 && line_index % thick_line_interval == 0);
+            pList->AddLine(ImVec2(p0.x, y), ImVec2(p1.x, y), is_thick_line ? grid_thick_color : grid_color);
+        }
+        // 중앙선
+        pList->AddLine(ImVec2(center.x, p0.y), ImVec2(center.x, p1.y), grid_thick_color);
+        pList->AddLine(ImVec2(p0.x, center.y), ImVec2(p1.x, center.y), grid_thick_color);
+    }
+    return S_OK;
+}
+
+HRESULT CViewport_2D::DrawResolutionRect(ImDrawList* pList, ImVec2& center, _float fZoom)
+{
+    // 해상도 영역 그리기 (canvas_center가 패닝을 반영하므로 로직 자체는 동일)
+    const float targetResolutionWidth = 1920.0f;
+    const float targetResolutionHeight = 1080.0f;
+    const float scaledWidth = targetResolutionWidth * fZoom;
+    const float scaledHeight = targetResolutionHeight * fZoom;
+    ImVec2 rectP0 = ImVec2(center.x - scaledWidth * 0.5f, center.y - scaledHeight * 0.5f);
+    ImVec2 rectP1 = ImVec2(center.x + scaledWidth * 0.5f, center.y + scaledHeight * 0.5f);
+    const ImU32 rectColor = IM_COL32(0, 255, 0, 255);
+    const float rectThickness = 2.0f;
+    pList->AddRect(rectP0, rectP1, rectColor, 0.0f, ImDrawFlags_None, rectThickness);
+    return S_OK;
+}
+
+HRESULT CViewport_2D::DrawTexture(ImDrawList* pList, ImVec2& center, _float fZoom)
+{
+    m_pSRV = m_pGameInstance->Get_SRV(L"RT_Picking");
+    if (m_bShowImage && m_pSRV) // 이미지를 표시하고 SRV가 유효할 때만
+    {
+        // 1. 이미지의 그리드 좌표 계산 (m_vImageGridPosition이 좌상단이라고 가정)
+        ImVec2 imageGridMin = { m_vImageGridPosition.x, m_vImageGridPosition.y };
+        ImVec2 imageGridMax = { m_vImageGridPosition.x + m_vImageGridSize.x, m_vImageGridPosition.y + m_vImageGridSize.y };
+
+        // 2. 그리드 좌표를 화면 좌표로 변환
+        ImVec2 imageScreenMin = GridToScreen(imageGridMin, center, fZoom);
+        ImVec2 imageScreenMax = GridToScreen(imageGridMax, center, fZoom);
+
+        // 3. ImDrawList::AddImage() 호출하여 그리기
+        pList->AddImage(
+            (ImTextureID)m_pSRV,      // 텍스처의 Shader Resource View
+            imageScreenMin,     // 화면 좌상단 좌표
+            imageScreenMax,     // 화면 우하단 좌표
+            ImVec2(0, 0),       // UV 시작 좌표 (텍스처 전체 사용)
+            ImVec2(1, 1),       // UV 끝 좌표 (텍스처 전체 사용)
+            IM_COL32_WHITE      // 틴트 색상 (흰색, 불투명). IM_COL32(R,G,B,A) 형태로 지정 가능.
+        );
+
+        // (선택 사항) 이미지 주변에 테두리 그리기 (디버깅용)
+        //pList->AddRect(imageScreenMin, imageScreenMax, IM_COL32(255, 255, 0, 255));
+    }
+    return S_OK;
+}
+
+HRESULT CViewport_2D::DrawImGuizmo2D(_float fZoom, ImVec2& vPanning)
+{
+    if (m_pGameObject)
+    {
+        CTransform* pTransform = static_cast<CTransform*>(m_pGameObject->Get_Component(g_strTransformTag));
+        if (pTransform)
+        {
+            // 2. 실제 카메라 행렬 가져오기 (GameInstance 사용)
+
+            // View: 줌과 패닝을 적용 (카메라가 줌 아웃하고 패닝하는 효과)
+            // 스케일 중심은 (0,0), 패닝은 화면 좌표 기준
+            _matrix scaleMatrix = XMMatrixScaling(fZoom, fZoom, 1.f);
+            // 패닝: 카메라가 -panning 만큼 이동하는 것과 동일
+            _matrix panMatrix = XMMatrixTranslation(vPanning.x / fZoom, -vPanning.y / fZoom, 0.f);
+            // 최종 View 행렬: 이동 -> 스케일 순서 적용
+            _matrix viewMatrix = panMatrix * scaleMatrix;
+
+            //_matrix viewMatrix = XMMatrixIdentity(); //m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW);
+            
+
+            // 3. ImGuizmo 설정
+            // ImGuizmo::BeginFrame(); // Pre_Render에서 호출됨
+            ImGuizmo::SetOrthographic(true); // 원근 투영이므로 false
+            ImGuizmo::SetDrawlist();
+
+            // --- 중요: 현재 ImGui 윈도우("Viewport_2D")의 내용 영역으로 SetRect 설정 ---
+            ImVec2 windowPos = ImGui::GetWindowPos(); // Viewport_2D 윈도우의 화면 좌표
+            ImVec2 contentMin = ImGui::GetWindowContentRegionMin(); // 내용 영역의 상대 좌표 (좌상단)
+            ImVec2 contentMax = ImGui::GetWindowContentRegionMax(); // 내용 영역의 상대 좌표 (우하단)
+            
+            float contentWidth = contentMax.x - contentMin.x;
+            float contentHeight = contentMax.y - contentMin.y;
+
+            _matrix projMatrix = XMMatrixOrthographicLH(contentWidth, contentHeight, 0.0f, 1.0f);//m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ); // 원근 투영 행렬
+
+            // 내용 영역의 화면 절대 좌표 및 크기 계산
+            float viewManipulateLeft = windowPos.x + contentMin.x;
+            float viewManipulateTop = windowPos.y + contentMin.y;
+
+            // 유효한 영역인지 확인 후 설정
+            if (contentWidth > 1.0f && contentHeight > 1.0f)
+            {
+                ImGuizmo::SetRect(viewManipulateLeft, viewManipulateTop, contentWidth, contentHeight);
+
+                // 4. 행렬 준비 (float[16] 배열)
+                _matrix objectMatrix = pTransform->Get_WorldMatrix();
+                float matrixPtr[16], viewPtr[16], projPtr[16];
+                XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(matrixPtr), objectMatrix);
+                XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(viewPtr), viewMatrix);
+                XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(projPtr), projMatrix);
+
+                // 5. ImGuizmo 조작 함수 호출
+                float* pSnap = m_bUseSnap ? m_fSnapValue : nullptr;
+                if (ImGuizmo::Manipulate(viewPtr, projPtr, m_currentGizmoOperation, m_currentGizmoMode, matrixPtr, nullptr, pSnap))
+                {
+                    // 6. Transform 컴포넌트 업데이트
+                    _matrix updatedMatrix = XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4*>(matrixPtr));
+                    pTransform->Set_WorldMatrix(updatedMatrix);
+                }
+
+                // (선택 사항) 그리드 및 큐브 그리기
+                float identityMatrixPtr[16];
+                XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(identityMatrixPtr), XMMatrixIdentity());
+                //ImGuizmo::DrawGrid(viewPtr, projPtr, identityMatrixPtr, 10.0f); // 필요 시 활성화
+                // ImGuizmo::DrawCubes(viewPtr, projPtr, matrixPtr, 1); // 필요 시 활성화
+            }
+            else
+            {
+                // 내용 영역이 너무 작거나 유효하지 않으면 기즈모를 그리지 않음
+                // ImGui::Text("Viewport too small for Gizmo"); // 디버깅 메시지
+            }
+#pragma region Widgets
+            // --- ImGui 윈도우 내에 조작 모드 변경 버튼 추가 ---
+            ImGui::Begin("Gizmo Controls"); // 별도 윈도우 또는 인스펙터 내부에 추가
+            if (ImGui::RadioButton("Translate", m_currentGizmoOperation == ImGuizmo::TRANSLATE)) m_currentGizmoOperation = ImGuizmo::TRANSLATE; ImGui::SameLine();
+            if (ImGui::RadioButton("Rotate", m_currentGizmoOperation == ImGuizmo::ROTATE)) m_currentGizmoOperation = ImGuizmo::ROTATE; ImGui::SameLine();
+            if (ImGui::RadioButton("Scale", m_currentGizmoOperation == ImGuizmo::SCALE)) m_currentGizmoOperation = ImGuizmo::SCALE;
+
+            if (m_currentGizmoOperation != ImGuizmo::SCALE)
+            {
+                if (ImGui::RadioButton("World", m_currentGizmoMode == ImGuizmo::WORLD)) m_currentGizmoMode = ImGuizmo::WORLD; ImGui::SameLine();
+                if (ImGui::RadioButton("Local", m_currentGizmoMode == ImGuizmo::LOCAL)) m_currentGizmoMode = ImGuizmo::LOCAL;
+            }
+            else {
+                m_currentGizmoMode = ImGuizmo::LOCAL; // Scale은 보통 Local 모드 사용
+            }
+            // -- 스냅 기능 추가 (선택 사항) --
+            ImGui::Checkbox("Snap", &m_bUseSnap); ImGui::SameLine();
+            switch (m_currentGizmoOperation)
+            {
+            case ImGuizmo::TRANSLATE: ImGui::InputFloat3("Snap T", &m_fSnapValue[0]); break;
+            case ImGuizmo::ROTATE:    ImGui::InputFloat("Snap R", &m_fSnapValue[0]); break;
+            case ImGuizmo::SCALE:     ImGui::InputFloat("Snap S", &m_fSnapValue[0]); break;
+
+            }
+            ImGui::End(); // Gizmo Controls 윈도우 끝
+#pragma endregion
+        }
+    }
     return S_OK;
 }

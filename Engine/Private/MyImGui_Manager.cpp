@@ -65,11 +65,11 @@ void CMyImGui_Manager::Free()
     Safe_Release(m_pGameInstance);
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
-    for (auto& pair : m_vecMyImGui)
+    for (auto& pair : m_MyImGuis)
     {
         Safe_Release(pair.second);
     }
-    m_vecMyImGui.clear();
+    m_MyImGuis.clear();
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
@@ -81,7 +81,7 @@ void CMyImGui_Manager::Free()
 void CMyImGui_Manager::Update(_float fTimeDelta)
 {
     //for(auto& e : )
-    for (auto& e : m_vecMyImGui)
+    for (auto& e : m_MyImGuis)
     {
         e.second->Update(fTimeDelta);
     }
@@ -97,6 +97,7 @@ HRESULT CMyImGui_Manager::Pre_Render()
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+    ImGuizmo::BeginFrame();
     DrawToolBar(&m_bToolBar);
     return S_OK;
 }
@@ -107,12 +108,12 @@ HRESULT CMyImGui_Manager::Render()
 
     DrawDockingSpace(&m_bDockingSpace);
 
-    for (auto& e : m_vecMyImGui)
+    for (auto& e : m_MyImGuis)
     {
         e.second->Render();
     }
 
-    DrawImGuizmo();
+    //DrawImGuizmo();
 
     _bool show = true;
     DrawAssetBrowser(&show);
@@ -338,11 +339,14 @@ void CMyImGui_Manager::DrawImGuizmo()
         if (pTransform)
         {
             // 3. 카메라 행렬 가져오기
-            _matrix viewMatrix = m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW);
-            _matrix projMatrix = m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ);
-
+            D3D11_VIEWPORT vp;
+            UINT numViewports = 1;
+            m_pContext->RSGetViewports(&numViewports, &vp); // Get the main viewport
+            _matrix viewMatrix = XMMatrixIdentity(); 
+            
+            _matrix projMatrix = XMMatrixOrthographicLH(vp.Width, vp.Height, 0.0f, 1.f); //m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ);
+            
             // 4. ImGuizmo 설정
-            ImGuizmo::BeginFrame(); // 매 프레임 호출
             ImGuizmo::SetOrthographic(true); // 3D 뷰이므로 false
 
             // --- 중요: 기즈모 렌더링 영역 설정 ---
@@ -355,9 +359,7 @@ void CMyImGui_Manager::DrawImGuizmo()
             float contentHeight = contentMax.y - contentMin.y;
             ImGuizmo::SetRect(windowPos.x + contentMin.x, windowPos.y + contentMin.y, contentWidth, contentHeight);
             // -- 또는 렌더링 뷰포트 정보 직접 사용 --
-            D3D11_VIEWPORT vp;
-            UINT numViewports = 1;
-            m_pContext->RSGetViewports(&numViewports, &vp); // Get the main viewport
+            
             ImGuizmo::SetRect(vp.TopLeftX, vp.TopLeftY, vp.Width, vp.Height);
 
 
@@ -429,7 +431,7 @@ HRESULT CMyImGui_Manager::Add_ImGui(const _wstring& key, CMyImGui* pMyImGui)
     if (pMyImGui == nullptr)
         return E_FAIL;
 
-    auto [iterator, success] = m_vecMyImGui.try_emplace(key, pMyImGui);
+    auto [iterator, success] = m_MyImGuis.try_emplace(key, pMyImGui);
 
     if (!success) 
         return E_FAIL;

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\private\Asset_Browser.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
+    <ClCompile Include="..\Private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Hierarchy.cpp" />
     <ClCompile Include="..\private\Inspector.cpp" />
     <ClCompile Include="..\private\Level_Effect.cpp" />
@@ -38,6 +39,7 @@
   <ItemGroup>
     <ClInclude Include="..\public\Asset_Browser.h" />
     <ClInclude Include="..\Public\BackGround.h" />
+    <ClInclude Include="..\Public\Camera_Free.h" />
     <ClInclude Include="..\Public\Editor_Defines.h" />
     <ClInclude Include="..\Public\Editor_Enum.h" />
     <ClInclude Include="..\public\Hierarchy.h" />

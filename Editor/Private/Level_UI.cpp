@@ -12,6 +12,12 @@ HRESULT CLevel_UI::Initialize()
 {
     if(FAILED(Ready_Layer_ImGui()))
         return E_FAIL;
+
+    if (FAILED(Ready_Layer_Background(L"Layer_Background")))
+        return E_FAIL;
+
+    if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
+        return E_FAIL;
     return S_OK;
 }
 
@@ -26,11 +32,8 @@ HRESULT CLevel_UI::Render()
     return S_OK;
 }
 
-HRESULT CLevel_UI::Ready_Layer_ImGui()
+HRESULT CLevel_UI::Ready_Layer_Background(const wstring strLayerTag)
 {
-    
-
-
     CBackGround::BACKGROUND_DESC				BackGroundDesc{};
 
     BackGroundDesc.fX = g_iWinSizeX * 0.5f;
@@ -38,9 +41,23 @@ HRESULT CLevel_UI::Ready_Layer_ImGui()
     BackGroundDesc.fSizeX = 200.0f;
     BackGroundDesc.fSizeY = 200.0f;
 
-    if (FAILED(m_pGameInstance->Add_GameObject(static_cast<_uint>(LEVEL::LEVEL_UI), TEXT("Prototype_GameObject_BackGround"),
-        static_cast<_uint>(LEVEL::LEVEL_UI), L"strLayerTag", &BackGroundDesc)))
+    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::LEVEL_UI), TEXT("Prototype_GameObject_BackGround"),
+        ENUM_CLASS(LEVEL::LEVEL_UI), strLayerTag, &BackGroundDesc)))
         return E_FAIL;
+    return S_OK;
+}
+
+HRESULT CLevel_UI::Ready_Layer_Camera(const wstring strLayerTag)
+{
+    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::LEVEL_UI), TEXT("Prototype_GameObject_Camera_Free"),
+        ENUM_CLASS(LEVEL::LEVEL_UI), strLayerTag)))
+        return E_FAIL;
+
+    return S_OK;
+}
+
+HRESULT CLevel_UI::Ready_Layer_ImGui()
+{
     //if (FAILED(m_pGameInstance->Add_Prototype(LEVEL::LEVEL_STATIC, "Prototype_Test", )))) return E_FAIL;
     //if (FAILED(m_pGameInstance->Add_GameObject()(L"Inspector", CInspector::Create()))) return E_FAIL;
     if (FAILED(m_pGameInstance->Add_ImGui(L"Inspector", CInspector::Create(m_pDevice, m_pContext)))) return E_FAIL;

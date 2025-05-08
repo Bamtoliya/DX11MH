@@ -70,6 +70,18 @@
     <Filter Include="Imgui\Hierarchy">
       <UniqueIdentifier>{8d0f09b6-59b5-4a4c-895e-e01ae75aac82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject">
+      <UniqueIdentifier>{4a92cbcf-b788-4020-b3cc-2e48cbffb481}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\00.Background">
+      <UniqueIdentifier>{0034ba79-dc85-446c-afa8-a812c072601f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Terrain">
+      <UniqueIdentifier>{94cdaa1a-82b9-4282-8367-0d28d78ceac6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Camera">
+      <UniqueIdentifier>{6c343bba-2825-4de6-90cc-621e80077e35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -111,11 +123,14 @@
     <ClCompile Include="..\private\ToolBar.cpp">
       <Filter>Imgui\ToolBar</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\BackGround.cpp">
-      <Filter>Test</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Hierarchy.cpp">
       <Filter>Imgui\Hierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BackGround.cpp">
+      <Filter>02.GameObject\00.Background</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Free.cpp">
+      <Filter>02.GameObject\02.Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -179,11 +194,14 @@
     <ClInclude Include="..\public\ToolBar.h">
       <Filter>Imgui\ToolBar</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BackGround.h">
-      <Filter>Test</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Hierarchy.h">
       <Filter>Imgui\Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BackGround.h">
+      <Filter>02.GameObject\00.Background</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Free.h">
+      <Filter>02.GameObject\02.Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

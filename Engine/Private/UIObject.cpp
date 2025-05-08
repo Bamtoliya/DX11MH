@@ -1,5 +1,5 @@
 ﻿#include "UIObject.h"
-
+#include "GameInstance.h"
 CUIObject::CUIObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject { pDevice, pContext }
 {
@@ -35,7 +35,7 @@ HRESULT CUIObject::Initialize(void* pArg)
 	_uint					iNumViewports = { 1 };
 
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
-	
+
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.0f, 1.f));
 
