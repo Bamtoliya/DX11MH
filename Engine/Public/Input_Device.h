@@ -19,27 +19,32 @@ public:
 	virtual void Update(_float fTimeDelta);
 
 #pragma region Keyboard
-	_char Get_DIKState(_uchar eKeyID) {
+	_byte Get_DIKState(_ubyte eKeyID) {
 		return m_curKeyState[eKeyID];
 	}
-	_bool Key_Down(_uchar eKeyID);
-	_bool Key_Up(_uchar eKeyID);
-	_bool Key_Pressing(_uchar eKeyID);
+	_byte Get_DIKeyState(_ubyte eKeyID) { return m_curKeyState[eKeyID]; }
+	_bool Key_Down(_ubyte eKeyID);
+	_bool Key_Up(_ubyte eKeyID);
+	_bool Key_Pressing(_ubyte eKeyID);
 
 	
 #pragma endregion
 
 #pragma region Mouse
-	_char Get_DIMKeyState(DIMK eMouseKeyID) {
-		return m_curMouseState.rgbButtons[eMouseKeyID];
+	_byte Get_DIMouseState(DIM eMouseKeyID) {
+		return m_curMouseState.rgbButtons[ENUM_CLASS(eMouseKeyID)];
 	}
 
 	_long Get_DIMMoveState(DIMM eMouseMoveID) {
-		return ((_long*)&m_curMouseState)[eMouseMoveID];
+		return ((_long*)&m_curMouseState)[ENUM_CLASS(eMouseMoveID)];
 	}
-	_bool Mouse_Down(DIMK eMouseKeyID);
-	_bool Mouse_Up(DIMK eMouseKeyID);
-	_bool Mouse_Pressing(DIMK eMouseKeyID);
+	_long	Get_DIMouseMove(DIMM eMouseState)
+	{
+		return *((reinterpret_cast<_int*>(&m_curMouseState)) + ENUM_CLASS(eMouseState));
+	}
+	_bool Mouse_Down(DIM eMouseKeyID);
+	_bool Mouse_Up(DIM eMouseKeyID);
+	_bool Mouse_Pressing(DIM eMouseKeyID);
 #pragma endregion
 
 

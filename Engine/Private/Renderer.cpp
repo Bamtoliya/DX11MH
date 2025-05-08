@@ -21,8 +21,8 @@ HRESULT CRenderer::Initialize()
 
 	if (FAILED(m_pGameInstance->Add_RenderTarget(
 		L"RT_FinalScene",                // 렌더 타겟 고유 태그
-		ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
-		ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
+		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
 		DXGI_FORMAT_R8G8B8A8_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
 		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
 	)))
@@ -33,8 +33,8 @@ HRESULT CRenderer::Initialize()
 
 	if (FAILED(m_pGameInstance->Add_RenderTarget(
 		L"RT_Picking",                // 렌더 타겟 고유 태그
-		ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
-		ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
+		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
 		DXGI_FORMAT_R8G8B8A8_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
 		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
 	)))

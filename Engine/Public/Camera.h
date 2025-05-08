@@ -37,11 +37,9 @@ public:
 	virtual void Update(_float fTimeDelta) = 0;
 	virtual void Late_Update(_float fTimeDelta) = 0;
 public:
-	virtual HRESULT Pre_Render() = 0;
 	virtual HRESULT Render() = 0;
-	virtual HRESULT Post_Render() = 0;
 public:
-	virtual void UpdateViewMatrix() = 0;
+	virtual void Bind_Matrices();
 protected:
 	CAMERA_DESC			m_tDesc;
 #pragma endregion

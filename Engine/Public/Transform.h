@@ -38,6 +38,7 @@ public:
 public:
 	_vector Get_State(STATE eState) { return XMLoadFloat4x4(&m_tDesc.WorldMatrix).r[ENUM_CLASS(eState)]; }
 	_matrix Get_WorldMatrix() const { return XMLoadFloat4x4(&m_tDesc.WorldMatrix); }
+	_matrix Get_WorldMatrix_Inverse() { return XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_tDesc.WorldMatrix));}
 	_float4x4 Get_World4x4() const { return m_tDesc.WorldMatrix; }
 	const _float4x4* Get_World4x4Ptr() const { return &m_tDesc.WorldMatrix; }
 	void Set_State(STATE eState, _fvector vState) { XMStoreFloat4(reinterpret_cast<_float4*>(&m_tDesc.WorldMatrix.m[ENUM_CLASS(eState)]), vState); }
@@ -68,8 +69,6 @@ public: /* Not Use Sliding */
 	bool Go_Left(_float fTimeDelta, class CNavigation* pNavigation = nullptr, _float fRadius = 1.f);
 	bool Go_Right(_float fTimeDelta, class CNavigation* pNavigation = nullptr, _float fRadius = 1.f);
 	bool Go_Up(_float fTimeDelta, class CNavigation* pNavigation = nullptr, _float fRadius = 1.f);
-
-	void Go_Target(_fvector vTarget, _float fTimeDelta, _float fMinDistance);
 
 public: /* Use Sliding */
 	bool Sliding_Straight(_float fTimeDelta, class CNavigation* pNavigation = nullptr, _float fRadius = 1.f);

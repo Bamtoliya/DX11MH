@@ -6,6 +6,9 @@ texture2D g_Texture;
 sampler DefaultSampler = sampler_state
 {
     filter = min_mag_mip_linear;
+    AddressU = wrap;
+    AddressV = wrap;
+
 };
 
 struct VS_IN
@@ -52,7 +55,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;    
     
-    Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord * 50.f);
     
     return Out;    
 }

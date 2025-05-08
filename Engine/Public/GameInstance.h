@@ -35,6 +35,12 @@ public:
 	ID3D11ShaderResourceView* Get_BackBufferSRV() const;
 #pragma endregion
 
+#pragma region INPUT_DEVICE
+	_byte	Get_DIKeyState(_ubyte byKeyID);
+	_byte	Get_DIMouseState(DIM eMouse);	
+	_long	Get_DIMouseMove(DIMM eMouseState);
+#pragma endregion
+
 public:
 #pragma region LEVEL_MANAGER
 	HRESULT Change_Level(_uint iLevelIndex, class CLevel* pNewLevel);
@@ -82,6 +88,7 @@ public:
 	_matrix Get_Transform_Matrix(D3DTS eState) const;
 	const _float4* Get_CamPosition() const;
 #pragma endregion
+//
 //#pragma region PICKING
 //	void Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse);
 //	_bool Picking_InWorld(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
