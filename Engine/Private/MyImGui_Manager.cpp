@@ -1,5 +1,6 @@
 ﻿#include "MyImGui_Manager.h"
 #include "GameInstance.h"
+#include "GameObject.h"
 #include "MyImGui.h"
 
 using ImGuiCallBack = function<void()>;
@@ -88,6 +89,7 @@ void CMyImGui_Manager::Update(_float fTimeDelta)
     {
 
     }
+    m_pGameObject = m_pGameInstance->Get_PickedObject();
 }
 
 HRESULT CMyImGui_Manager::Pre_Render()
@@ -109,6 +111,8 @@ HRESULT CMyImGui_Manager::Render()
     {
         e.second->Render();
     }
+
+    DrawImGuizmo();
 
     _bool show = true;
     DrawAssetBrowser(&show);
@@ -323,6 +327,91 @@ void CMyImGui_Manager::DrawDockingSpace(bool* p_open)
         ImGuiID dockspace_id = ImGui::GetID("MyFullscreenDockSpace");
         // DockSpaceOverViewport 호출 시 viewport 포인터를 두 번째 인자로 전달합니다.
         ImGui::DockSpaceOverViewport(dockspace_id, viewport, dockspace_flags);
+    }
+}
+
+void CMyImGui_Manager::DrawImGuizmo()
+{
+    if (m_pGameObject)
+    {
+        CTransform* pTransform = static_cast<CTransform*>(m_pGameObject->Get_Component(g_strTransformTag)); // 2. Transform 컴포넌트 가져오기
+        if (pTransform)
+        {
+            // 3. 카메라 행렬 가져오기
+            _matrix viewMatrix = m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW);
+            _matrix projMatrix = m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ);
+
+            // 4. ImGuizmo 설정
+            ImGuizmo::BeginFrame(); // 매 프레임 호출
+            ImGuizmo::SetOrthographic(true); // 3D 뷰이므로 false
+
+            // --- 중요: 기즈모 렌더링 영역 설정 ---
+            // 예시: 현재 ImGui 윈도우 영역을 사용 (게임 뷰 윈도우가 별도로 있다면 해당 윈도우 정보 사용)
+            ImVec2 windowPos = ImGui::GetWindowPos();
+            ImVec2 windowSize = ImGui::GetWindowSize();
+            ImVec2 contentMin = ImGui::GetWindowContentRegionMin(); // 내용 영역 시작점
+            ImVec2 contentMax = ImGui::GetWindowContentRegionMax(); // 내용 영역 끝점
+            float contentWidth = contentMax.x - contentMin.x;
+            float contentHeight = contentMax.y - contentMin.y;
+            ImGuizmo::SetRect(windowPos.x + contentMin.x, windowPos.y + contentMin.y, contentWidth, contentHeight);
+            // -- 또는 렌더링 뷰포트 정보 직접 사용 --
+            D3D11_VIEWPORT vp;
+            UINT numViewports = 1;
+            m_pContext->RSGetViewports(&numViewports, &vp); // Get the main viewport
+            ImGuizmo::SetRect(vp.TopLeftX, vp.TopLeftY, vp.Width, vp.Height);
+
+
+            // 5. 조작 모드 설정 (예시: ImGui 버튼 사용)
+            static ImGuizmo::OPERATION currentOperation = ImGuizmo::TRANSLATE;
+            static ImGuizmo::MODE currentMode = ImGuizmo::WORLD;
+
+            // --- ImGui 윈도우 내에 조작 모드 변경 버튼 추가 ---
+            ImGui::Begin("Gizmo Controls"); // 별도 윈도우 또는 인스펙터 내부에 추가
+            if (ImGui::RadioButton("Translate", currentOperation == ImGuizmo::TRANSLATE)) currentOperation = ImGuizmo::TRANSLATE; ImGui::SameLine();
+            if (ImGui::RadioButton("Rotate", currentOperation == ImGuizmo::ROTATE)) currentOperation = ImGuizmo::ROTATE; ImGui::SameLine();
+            if (ImGui::RadioButton("Scale", currentOperation == ImGuizmo::SCALE)) currentOperation = ImGuizmo::SCALE;
+
+            if (currentOperation != ImGuizmo::SCALE)
+            {
+                if (ImGui::RadioButton("World", currentMode == ImGuizmo::WORLD)) currentMode = ImGuizmo::WORLD; ImGui::SameLine();
+                if (ImGui::RadioButton("Local", currentMode == ImGuizmo::LOCAL)) currentMode = ImGuizmo::LOCAL;
+            }
+            else {
+                currentMode = ImGuizmo::LOCAL; // Scale은 보통 Local 모드 사용
+            }
+            // -- 스냅 기능 추가 (선택 사항) --
+            static bool useSnap = false;
+            ImGui::Checkbox("Snap", &useSnap); ImGui::SameLine();
+            static float snapValue[3] = { 0.1f, 0.1f, 0.1f }; // 스냅 값 (이동, 회전(도), 스케일)
+            switch (currentOperation)
+            {
+            case ImGuizmo::TRANSLATE: ImGui::InputFloat3("Snap T", &snapValue[0]); break;
+            case ImGuizmo::ROTATE:    ImGui::InputFloat("Snap R", &snapValue[0]); break;
+            case ImGuizmo::SCALE:     ImGui::InputFloat("Snap S", &snapValue[0]); break;
+            }
+            ImGui::End(); // Gizmo Controls 윈도우 끝
+            // ---------------------------------------------
+
+            // 6. 객체의 월드 행렬 가져오기 및 ImGuizmo 용 float[16] 배열로 변환
+            _matrix objectMatrix = pTransform->Get_WorldMatrix();
+            float matrixPtr[16];
+            XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(matrixPtr), objectMatrix);
+
+            // View, Projection 행렬도 float[16]으로 변환
+            float viewPtr[16];
+            XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(viewPtr), viewMatrix);
+            float projPtr[16];
+            XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(projPtr), projMatrix);
+
+            // 7. ImGuizmo 조작 함수 호출
+            float* pSnap = useSnap ? snapValue : nullptr;
+            if (ImGuizmo::Manipulate(viewPtr, projPtr, currentOperation, currentMode, matrixPtr, nullptr, pSnap /* snap, bounds */))
+            {
+                // 8. 조작 결과가 있다면 Transform 컴포넌트 업데이트
+                _matrix updatedMatrix = XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4*>(matrixPtr));
+                pTransform->Set_WorldMatrix(updatedMatrix);
+            }
+        }
     }
 }
 

@@ -30,6 +30,7 @@ private:
 	void DrawAssetBrowser(bool* p_open);
 	void DrawToolBar(bool* p_open);
 	void DrawDockingSpace(bool* p_open);
+	void DrawImGuizmo();
 public:
 	HRESULT Resize(_uint iWinSizeX, _uint iWinSizeY);
 	HRESULT Add_ImGui(const _wstring& key, CMyImGui* pMyImGui);
@@ -37,5 +38,6 @@ private:
 	map<const _wstring, CMyImGui*>		m_vecMyImGui = {};
 	_bool								m_bToolBar = { true };
 	_bool								m_bDockingSpace = { true };
+	class CGameObject*					m_pGameObject = { nullptr };
 };
 NS_END

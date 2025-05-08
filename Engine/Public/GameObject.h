@@ -57,6 +57,7 @@ protected:
 #pragma endregion
 
 #pragma region Variables
+	_bool									m_bPicked = { false };
 	_uint									m_oID = { 0 };
 	_wstring								m_strName;
 	CTransform*								m_pTransformCom = { nullptr };
