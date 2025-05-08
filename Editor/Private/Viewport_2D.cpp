@@ -124,13 +124,14 @@ HRESULT CViewport_2D::Render()
         // 화면 좌표 -> 그리드 좌표 변환 (패닝된 중앙점과 줌 고려)
         ImVec2 mouse_pos_relative_to_center = ImVec2(mouse_pos_in_screen.x - canvas_center.x, mouse_pos_in_screen.y - canvas_center.y);
         ImVec2 mouse_pos_in_grid = ImVec2(mouse_pos_relative_to_center.x / zoom, mouse_pos_relative_to_center.y / zoom);
-        ImVec2 ScreenPos = GridToScreen(mouse_pos_in_grid, canvas_center, zoom);
+        
 
         if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-            snprintf(mouse_cursor, sizeof(mouse_cursor), "Mouse Clicked at Screen(%.1f, %.1f)", ScreenPos.x, ScreenPos.y);
+            ImVec2 TexturePos = ImVec2(mouse_pos_in_grid.x + g_iWinSizeX * 0.5f, mouse_pos_in_grid.y + g_iWinSizeY * 0.5f);
+            snprintf(mouse_cursor, sizeof(mouse_cursor), "Mouse Clicked at Screen(%.1f, %.1f)", TexturePos.x, TexturePos.y);
             snprintf(click_info, sizeof(click_info), "Left Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);
             _float4 testColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-            if (FAILED(m_pGameInstance->ReadPickingTargetPixel(mouse_pos_in_grid.x, mouse_pos_in_grid.y, &testColor)))
+            if (FAILED(m_pGameInstance->ReadPickingTargetPixel(TexturePos.x, TexturePos.y, &testColor)))
                 return E_FAIL;
             snprintf(click_color, sizeof(click_color), "Left Clicked Color(%.1f, %.1f, %.1f, %.1f)", testColor.x, testColor.y, testColor.z, testColor.w);
 
