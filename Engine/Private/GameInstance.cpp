@@ -337,6 +337,10 @@ HRESULT CGameInstance::PickObjectByColor(_float4* pColor)
 {
 	return m_pPicking_System->PickObject(pColor);
 }
+CGameObject* CGameInstance::Get_PickedObject() const
+{
+	return m_pPicking_System->Get_PickedObject();
+}
 #pragma endregion
 
 

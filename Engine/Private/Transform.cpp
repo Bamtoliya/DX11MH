@@ -136,9 +136,10 @@ HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstant
 
 HRESULT CTransform::RenderImGui()
 {
-	ImGui::Begin("Transform");
-	ImGui::Text("Transform Example");
-	ImGui::End();
+	if (ImGui::CollapsingHeader("Transform"))
+	{
+		ImGui::Text("Transform Example");
+	}
 	return S_OK;
 }
 

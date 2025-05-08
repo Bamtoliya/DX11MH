@@ -1,5 +1,6 @@
 ﻿#include "Inspector.h"
 #include "GameObject.h"
+#include "GameInstance.h"
 CInspector::CInspector(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMyImGui { pDevice, pContext }
 {
@@ -13,7 +14,7 @@ HRESULT CInspector::Initialize(void* pArg)
 
 void CInspector::Update(_float fTimeDelta)
 {
-
+    m_pGameObject = m_pGameInstance->Get_PickedObject();
 }
 
 HRESULT CInspector::Render()

@@ -18,6 +18,7 @@ public:
 public:
 	HRESULT ReadPickingTargetPixel(_int screenX, _int screenY, _Out_ _float4* pPickedColor);
 	HRESULT PickObject(_float4* pColor);
+	CGameObject* Get_PickedObject() const { return m_pPickedObject; }
 public:
 	virtual HRESULT Initialize();
 public:

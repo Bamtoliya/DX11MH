@@ -127,19 +127,16 @@ HRESULT CViewport_2D::Render()
         
 
         if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+            snprintf(click_info, sizeof(click_info), "Left Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);
+            // 여기서 last_left_click_grid_pos 같은 변수에 저장하거나 다른 작업 수행 가능
             ImVec2 TexturePos = ImVec2(mouse_pos_in_grid.x + g_iWinSizeX * 0.5f, mouse_pos_in_grid.y + g_iWinSizeY * 0.5f);
             snprintf(mouse_cursor, sizeof(mouse_cursor), "Mouse Clicked at Screen(%.1f, %.1f)", TexturePos.x, TexturePos.y);
-            snprintf(click_info, sizeof(click_info), "Left Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);
             _float4 testColor = { 1.0f, 1.0f, 1.0f, 1.0f };
             if (FAILED(m_pGameInstance->ReadPickingTargetPixel(TexturePos.x, TexturePos.y, &testColor)))
                 return E_FAIL;
             snprintf(click_color, sizeof(click_color), "Left Clicked Color(%.1f, %.1f, %.1f, %.1f)", testColor.x, testColor.y, testColor.z, testColor.w);
-
-
-            //m_pGameInstance->PickObjectByColor(&testColor);
-
-            int a = 10;
-            // 여기서 last_left_click_grid_pos 같은 변수에 저장하거나 다른 작업 수행 가능
+            m_pGameInstance->PickObjectByColor(&testColor);
+            
         }
         else if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
             snprintf(click_info, sizeof(click_info), "Right Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);

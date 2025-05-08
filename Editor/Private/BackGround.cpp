@@ -52,8 +52,7 @@ HRESULT CBackGround::Render()
 {
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
-	_uint tmpId = 65535;
-	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &tmpId, sizeof(_uint))))
+	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &m_oID, sizeof(_uint))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;

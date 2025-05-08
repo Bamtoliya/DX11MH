@@ -100,6 +100,7 @@ public:
 #pragma region PICKING
 	HRESULT ReadPickingTargetPixel(_int screenX, _int screenY, _float4* pPickedColor);
 	HRESULT PickObjectByColor(_float4* pColor);
+	class CGameObject* Get_PickedObject() const;
 //	void Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse);
 //	_bool Picking_InWorld(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
 //	_bool Picking_InLocal(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);

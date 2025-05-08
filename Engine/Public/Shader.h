@@ -26,6 +26,9 @@ public:
 	HRESULT Bind_SRV(const _char* pConstantName, ID3D11ShaderResourceView* pSRV);
 	HRESULT Bind_SRVs(const _char* pConstantName, ID3D11ShaderResourceView** ppSRVs, _uint iNumSRVs);
 
+public:
+	virtual HRESULT RenderImGui() override;
+
 private:
 	ID3DX11Effect*				m_pEffect = { nullptr };
 	_uint						m_iNumPasses = {};

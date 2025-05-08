@@ -19,7 +19,7 @@ public:
 	ID3D11ShaderResourceView* Get_SRV(_uint index) { return m_SRVs[index]; }
 	/* 쉐이더에 텍스쳐를 셋한다. */
 	HRESULT Bind_ShaderResource(class CShader* pShader, const _char* pConstantName, _uint iTextureIndex);
-
+	virtual HRESULT RenderImGui() override;
 private:	
 	vector<ID3D11ShaderResourceView*>				m_SRVs;
 	_uint											m_iNumTextures = {};

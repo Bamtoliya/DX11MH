@@ -66,6 +66,15 @@ HRESULT CTexture::Bind_ShaderResource(CShader* pShader, const _char* pConstantNa
 	return pShader->Bind_SRV(pConstantName, m_SRVs[iTextureIndex]);	
 }
 
+HRESULT CTexture::RenderImGui()
+{
+	if (ImGui::CollapsingHeader("Texture"))
+	{
+		ImGui::Text("Texture Example");
+	}
+	return S_OK;
+}
+
 CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures)
 {
 	CTexture* pInstance = new CTexture(pDevice, pContext);
