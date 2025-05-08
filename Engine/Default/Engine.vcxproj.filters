@@ -34,9 +34,6 @@
     <ClInclude Include="..\Public\Level_Manager.h">
       <Filter>01.Utility\01.Levels\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Graphic_Device.h">
-      <Filter>00.System\01.Device</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Base.h">
       <Filter>01.Utility\99.SuperClass</Filter>
     </ClInclude>
@@ -207,13 +204,13 @@
       <Filter>98.Imgui\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\GameInput_Device.h">
-      <Filter>00.System\Input\GameInput</Filter>
+      <Filter>00.System\01.Device\Input\GameInput</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Rect.h">
       <Filter>01.Utility\04.Components\VIBuffer\Rect</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Input_Device.h">
-      <Filter>00.System\Input</Filter>
+      <Filter>00.System\01.Device\Input</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Texture.h">
       <Filter>01.Utility\04.Components\Texture</Filter>
@@ -290,12 +287,17 @@
     <ClInclude Include="..\public\Target_Manager.h">
       <Filter>01.Utility\05.Renderer\RenderTarget\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Light_Manager.h" />
     <ClInclude Include="..\Public\VIBuffer_Terrain.h">
       <Filter>01.Utility\04.Components\VIBuffer\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="..\public\PipeLine.h">
       <Filter>01.Utility\06.PipeLine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Light_Manager.h">
+      <Filter>01.Utility\07.Light\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Graphic_Device.h">
+      <Filter>00.System\01.Device\Graphic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -313,9 +315,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Level_Manager.cpp">
       <Filter>01.Utility\01.Levels\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Graphic_Device.cpp">
-      <Filter>00.System\01.Device</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Base.cpp">
       <Filter>01.Utility\99.SuperClass</Filter>
@@ -475,13 +474,13 @@
       <Filter>98.Imgui\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GameInput_Device.cpp">
-      <Filter>00.System\Input\GameInput</Filter>
+      <Filter>00.System\01.Device\Input\GameInput</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Rect.cpp">
       <Filter>01.Utility\04.Components\VIBuffer\Rect</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Input_Device.cpp">
-      <Filter>00.System\Input</Filter>
+      <Filter>00.System\01.Device\Input</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Texture.cpp">
       <Filter>01.Utility\04.Components\Texture</Filter>
@@ -537,7 +536,6 @@
     <ClCompile Include="..\private\Target_Manager.cpp">
       <Filter>01.Utility\05.Renderer\RenderTarget\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Light_Manager.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Terrain.cpp">
       <Filter>01.Utility\04.Components\VIBuffer\Terrain</Filter>
     </ClCompile>
@@ -546,6 +544,12 @@
     </ClCompile>
     <ClCompile Include="..\private\PipeLine.cpp">
       <Filter>01.Utility\06.PipeLine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Light_Manager.cpp">
+      <Filter>01.Utility\07.Light\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Graphic_Device.cpp">
+      <Filter>00.System\01.Device\Graphic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -678,9 +682,6 @@
     <Filter Include="98.Imgui\Manager">
       <UniqueIdentifier>{07f227a3-2c83-431d-90d4-bed4393f1549}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00.System\Input">
-      <UniqueIdentifier>{c6b21f28-5396-4762-b029-16f112c94f54}</UniqueIdentifier>
-    </Filter>
     <Filter Include="00.System\Physics">
       <UniqueIdentifier>{d07a345f-87a8-4c38-ae92-ea75feb2ffd0}</UniqueIdentifier>
     </Filter>
@@ -692,9 +693,6 @@
     </Filter>
     <Filter Include="01.Utility\07.Light\Manager">
       <UniqueIdentifier>{022a3968-4843-4491-8936-4a6de20ac4db}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00.System\Input\GameInput">
-      <UniqueIdentifier>{483bebfb-0ef8-4774-85ae-68eb6638aa4c}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\98.UI\Text">
       <UniqueIdentifier>{ce1c6cfb-fa25-4996-87fe-c09ce42ffecf}</UniqueIdentifier>
@@ -752,6 +750,15 @@
     </Filter>
     <Filter Include="01.Utility\05.Renderer\RenderTarget\Manager">
       <UniqueIdentifier>{5282a437-ecee-41ee-bad3-bc648bc34cd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\01.Device\Input">
+      <UniqueIdentifier>{c6b21f28-5396-4762-b029-16f112c94f54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\01.Device\Input\GameInput">
+      <UniqueIdentifier>{483bebfb-0ef8-4774-85ae-68eb6638aa4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\01.Device\Graphic">
+      <UniqueIdentifier>{7873c165-2bd8-4260-949c-6d11ebe067e4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

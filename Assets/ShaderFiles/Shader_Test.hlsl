@@ -1,12 +1,14 @@
 /* 상수테이블 ConstantTable */
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_Texture;
-
+uint objectId;
 sampler DefaultSampler = sampler_state
 {
     filter = min_mag_mip_linear;
 };
 
+
+uint g_oID;
 
 /* 정점의 기초적인 변환 (월드변환, 뷰, 투영변환) */
 /* 정점의 구성 정보를 변형할 수 있다. */
@@ -14,8 +16,6 @@ sampler DefaultSampler = sampler_state
 struct VS_IN
 {
     float3 vPosition : POSITION;
-    float2 vTexcoord : TEXCOORD0;
-    //float4 vColor : 
 };
 
 struct VS_OUT
@@ -23,7 +23,6 @@ struct VS_OUT
     /* SV_ : ShaderValue약자 */
     /* 내가 해야할 연산은 다 했으니 이제 니(장치)가 알아서 추가적인 연산을 해라. */
     float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -37,7 +36,6 @@ VS_OUT VS_MAIN(VS_IN In)
     matWVP = mul(matWV, g_ProjMatrix);
 
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-    Out.vTexcoord = In.vTexcoord;
 
     return Out;
 }
@@ -53,7 +51,6 @@ VS_OUT VS_MAIN(VS_IN In)
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;
 };
 
 struct PS_OUT
@@ -66,13 +63,13 @@ struct PS_OUT
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
-
-    Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
-
+    
+    float r = (float) ((objectId >> 16) & 0xFF) / 255.0f;
+    float g = (float) ((objectId >> 8) & 0xFF) / 255.0f;
+    float b = (float) (objectId & 0xFF) / 255.0f;
+    Out.vColor = float4(r, g, b, 1.0f);
     return Out;
 }
-
-
 
 technique11 DefaultTechnique
 {

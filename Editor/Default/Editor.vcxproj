@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="..\private\Asset_Browser.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
+    <ClCompile Include="..\private\Hierarchy.cpp" />
     <ClCompile Include="..\private\Inspector.cpp" />
     <ClCompile Include="..\private\Level_Effect.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
@@ -39,6 +40,7 @@
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\Public\Editor_Defines.h" />
     <ClInclude Include="..\Public\Editor_Enum.h" />
+    <ClInclude Include="..\public\Hierarchy.h" />
     <ClInclude Include="..\public\Inspector.h" />
     <ClInclude Include="..\Public\Levels.h" />
     <ClInclude Include="..\public\Level_Effect.h" />

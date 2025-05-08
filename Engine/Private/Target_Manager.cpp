@@ -288,7 +288,6 @@ CTarget_Manager* CTarget_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceCont
     {
         MSG_BOX("Failed to Created : CTarget_Manager");
         Safe_Release(pInstance);
-        return nullptr;
     }
     return pInstance;
 }

@@ -31,6 +31,18 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 
+	if (FAILED(m_pGameInstance->Add_RenderTarget(
+		L"RT_Picking",                // 렌더 타겟 고유 태그
+		ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
+		ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		DXGI_FORMAT_R8G8B8A8_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
+		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
+	)))
+	{
+		MSG_BOX("Failed to create RT_Background Render Target");
+		return E_FAIL; // 또는 적절한 에러 처리
+	}
+
 	vector<wstring> FinalTargets = { L"RT_FinalScene" };
 	if (FAILED(m_pGameInstance->Add_MRT(L"RT_FinalScene_Group", FinalTargets)))
 	{
@@ -174,7 +186,7 @@ CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	if (FAILED(pInstance->Initialize()))
 	{
 		MSG_BOX("Failed to Created : CRenderer");
-		return nullptr;
+		Safe_Release(pInstance);
 	}
 	return pInstance;
 }

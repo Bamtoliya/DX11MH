@@ -67,6 +67,9 @@
     <Filter Include="ShaderFiles">
       <UniqueIdentifier>{9bfd93bb-a31e-4ef1-9b56-e8e2d25c774b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Imgui\Hierarchy">
+      <UniqueIdentifier>{8d0f09b6-59b5-4a4c-895e-e01ae75aac82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -110,6 +113,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\BackGround.cpp">
       <Filter>Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Hierarchy.cpp">
+      <Filter>Imgui\Hierarchy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -175,6 +181,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\BackGround.h">
       <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Hierarchy.h">
+      <Filter>Imgui\Hierarchy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
