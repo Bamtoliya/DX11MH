@@ -76,6 +76,18 @@ void CLayer::Late_Update(_float fTimeDelta)
 	}
 }
 
+HRESULT CLayer::RenderImGui(const wstring& strLayerTag)
+{
+	if (ImGui::CollapsingHeader(WideToUtf8(strLayerTag.c_str()).c_str()))
+	{
+		for (auto& pGameObject : m_GameObjects)
+		{
+			pGameObject->RenderImGuiObjects();
+		}
+	}
+	return S_OK;
+}
+
 CLayer* CLayer::Create()
 {
 	return new CLayer();

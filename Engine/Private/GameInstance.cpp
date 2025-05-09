@@ -265,6 +265,11 @@ CGameObject* CGameInstance::Get_GameObjectById(_uint iId)
 	return m_pObject_Manager->Get_GameObjectById(iId);
 }
 
+HRESULT CGameInstance::Object_Manager_RenderImGui()
+{
+	return m_pObject_Manager->RenderImGui();
+}
+
 #pragma endregion
 
 #pragma region RENDERER

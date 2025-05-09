@@ -109,6 +109,18 @@ CGameObject* CObject_Manager::Get_GameObjectById(_uint iId)
 	return nullptr;
 }
 
+HRESULT CObject_Manager::RenderImGui()
+{
+	for (size_t i = 0; i < m_iNumLevels; i++)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			Pair.second->RenderImGui(Pair.first);
+		}
+	}
+	return S_OK;
+}
+
 CLayer* CObject_Manager::Find_Layer(_uint iLevelIndex, const _wstring& strLayerTag)
 {
 	auto	iter = m_pLayers[iLevelIndex].find(strLayerTag);

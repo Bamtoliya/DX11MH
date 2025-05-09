@@ -77,6 +77,8 @@ public:
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
 	CComponent* Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex = 0);
 	class CGameObject* Get_GameObjectById(_uint iId);
+
+	HRESULT Object_Manager_RenderImGui();
 #pragma endregion
 
 #pragma region RENDERER

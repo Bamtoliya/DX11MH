@@ -1,4 +1,5 @@
 ﻿#include "Hierarchy.h"
+#include "GameInstance.h"
 
 CHierarchy::CHierarchy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMyImGui {pDevice, pContext}
@@ -43,5 +44,12 @@ void CHierarchy::Late_Update(_float fTimeDelta)
 
 HRESULT CHierarchy::Render()
 {
+    if (m_bShow)
+    {
+        ImGui::Begin("Hierarchy");
+        m_pGameInstance->Object_Manager_RenderImGui();
+        ImGui::End();
+    }
+
     return S_OK;
 }

@@ -116,12 +116,6 @@ HRESULT CGameObject_Plane::Post_Render()
 	return S_OK;
 }
 
-HRESULT CGameObject_Plane::RenderImGui()
-{
-	__super::RenderImGui();
-	return S_OK;
-}
-
 HRESULT CGameObject_Plane::Ready_Components()
 {
 	return S_OK;

@@ -22,9 +22,18 @@ HRESULT CInspector::Render()
     if (m_bShow)
     {
         ImGui::Begin("Inspector");
-        ImGui::Text("This can dock into the fullscreen space.");
         if (m_pGameObject)
-            m_pGameObject->RenderImGui();
+        {
+            string tmp = WideToUtf8(m_pGameObject->Get_Name().c_str());
+            ImGui::Text(tmp.c_str());
+        }
+        else
+        {
+            ImGui::Text("This can dock into the fullscreen space.");
+        }
+        
+        if (m_pGameObject)
+            m_pGameObject->RenderImGuiComponents();
         ImGui::End();
     }
 

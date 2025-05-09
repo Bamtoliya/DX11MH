@@ -35,7 +35,7 @@ HRESULT CViewport_2D::Initialize(void* pArg)
     if (m_pTextureCom == nullptr)
         return E_FAIL;
     m_vImageGridPosition = { -(g_iWinSizeX/2.f), -(g_iWinSizeY / 2.f)}; // 그리드 (0,0) 기준 좌상단 좌표
-    m_vImageGridSize = { 1920.f, 1080.f };   // 그리드 단위 크기
+    m_vImageGridSize = { g_iWinSizeX, g_iWinSizeY };   // 그리드 단위 크기
 
     return S_OK;
 }
@@ -239,7 +239,7 @@ HRESULT CViewport_2D::DrawResolutionRect(ImDrawList* pList, ImVec2& center, _flo
 
 HRESULT CViewport_2D::DrawTexture(ImDrawList* pList, ImVec2& center, _float fZoom)
 {
-    m_pSRV = m_pGameInstance->Get_SRV(L"RT_Picking");
+    m_pSRV = m_pGameInstance->Get_SRV(L"RT_FinalScene");
     if (m_bShowImage && m_pSRV) // 이미지를 표시하고 SRV가 유효할 때만
     {
         // 1. 이미지의 그리드 좌표 계산 (m_vImageGridPosition이 좌상단이라고 가정)

@@ -86,11 +86,31 @@ HRESULT CGameObject::Post_Render()
 	return S_OK;
 }
 
-HRESULT CGameObject::RenderImGui()
+HRESULT CGameObject::RenderImGuiComponents()
 {
 	for (auto& c : m_Components)
 	{
 		c.second->RenderImGui();
+	}
+	return S_OK;
+}
+
+HRESULT CGameObject::RenderImGuiObjects()
+{
+	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+	static bool align_label_with_current_x_position = false;
+	static bool test_drag_and_drop = false;
+	ImGui::Indent();
+	if (ImGui::TreeNode(WideToUtf8(m_szName).c_str()))
+	{
+		ImGui::Text("Hello!");
+		ImGui::TreePop();
+	}
+	
+	ImGui::Unindent();
+	for (auto& c : m_Childs)
+	{
+		c.second->RenderImGuiObjects();
 	}
 	return S_OK;
 }

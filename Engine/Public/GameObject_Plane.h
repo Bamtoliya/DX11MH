@@ -30,7 +30,6 @@ public:
 	virtual HRESULT Pre_Render() override;
 	virtual HRESULT Render() override;
 	virtual HRESULT Post_Render() override;
-	virtual HRESULT RenderImGui() override;
 #pragma endregion
 protected:
 	HRESULT Ready_Components();

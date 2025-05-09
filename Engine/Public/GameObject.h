@@ -42,8 +42,9 @@ public:
 public:
 	virtual HRESULT Pre_Render();
 	virtual HRESULT Render();
-	virtual HRESULT Post_Render();
-	virtual HRESULT RenderImGui();
+	virtual HRESULT Post_Render();	
+	virtual HRESULT RenderImGuiComponents();
+	virtual HRESULT RenderImGuiObjects();
 #pragma endregion
 
 #pragma region Functions
@@ -51,6 +52,8 @@ public:
 	CComponent* Get_Component(const _wstring& strComponentTag);
 	_uint Get_ID() const { return m_oID; }
 	void Set_ID(_uint oID) { m_oID = oID; }
+	wstring Get_Name() const { return m_szName; }
+	void Set_Name(const wstring& str) { lstrcpy(m_szName, str.c_str()); }
 protected:
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr);
 
@@ -59,7 +62,6 @@ protected:
 #pragma region Variables
 	_bool									m_bPicked = { false };
 	_uint									m_oID = { 0 };
-	_wstring								m_strName;
 	CTransform*								m_pTransformCom = { nullptr };
 	CGameObject*							m_pParent = { nullptr };
 	_wstring								m_strTag = {};
