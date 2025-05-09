@@ -40,8 +40,15 @@ External Libraries/physx/
 !External Libraries/physx/
 !External Libraries/physx/bin/
 !External Libraries/physx/bin/debug
+!External Libraries/physx/bin/checked
 !External Libraries/physx/bin/release
-
+!External Libraries/physx/bin/profile
+!External Libraries/assimp/lib/Debug/
+!External Libraries/assimp/lib/Release/
+!External Libraries/assimp/bin/
+!External Libraries/assimp/bin/Debug/
+!External Libraries/assimp/bin/Release/
+EngineSDK/
 # Visual Studio 2015/2017 cache/options directory
 .vs/
 # Uncomment if you have tasks that create the project's static files in wwwroot
@@ -408,9 +415,3 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-EngineSDK
-EngineSDK
-EngineSDK
-EngineSDK
-EngineSDK/
-EngineSDK

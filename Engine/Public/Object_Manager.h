@@ -23,7 +23,7 @@ public:
 	void Update(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
 	void Clear(_uint iLevelIndex);
-	CGameObject* Get_GameObjectById(_uint iId);
+	class CGameObject* Get_GameObjectById(_uint iId);
 
 	HRESULT RenderImGui();
 private:

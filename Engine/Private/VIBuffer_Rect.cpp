@@ -1,7 +1,7 @@
 ﻿#include "VIBuffer_Rect.h"
 #pragma region Constructor/Destructor
 CVIBuffer_Rect::CVIBuffer_Rect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    : CVIBuffer { pDevice, pContext }
+	: CVIBuffer{ pDevice, pContext }
 {
 }
 
@@ -45,6 +45,7 @@ void CVIBuffer_Rect::Free()
 #pragma region Initialize
 HRESULT CVIBuffer_Rect::Initialize_Prototype()
 {
+	
 	m_iNumVertexBuffers = 1;
 	m_iNumVertices = 4;
 	m_iVertexStride = sizeof(VTXPOSTEX);
@@ -118,11 +119,12 @@ HRESULT CVIBuffer_Rect::Initialize_Prototype()
 
 	Safe_Delete_Array(pIndices);
 
-    return S_OK;
+	return S_OK;
 }
 
 HRESULT CVIBuffer_Rect::Initialize(void* pArg)
 {
+	return S_OK;
 	return S_OK;
 }
 #pragma endregion

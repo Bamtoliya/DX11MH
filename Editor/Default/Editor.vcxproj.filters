@@ -61,9 +61,6 @@
     <Filter Include="Imgui\ToolBar">
       <UniqueIdentifier>{9a6541de-f74f-4ba8-b501-1997999e457e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Test">
-      <UniqueIdentifier>{4d097cc6-40ce-4d5f-bb8e-c7e26d2241eb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ShaderFiles">
       <UniqueIdentifier>{9bfd93bb-a31e-4ef1-9b56-e8e2d25c774b}</UniqueIdentifier>
     </Filter>
@@ -231,6 +228,9 @@
       <Filter>ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Struct.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxMesh.hlsl">
       <Filter>ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

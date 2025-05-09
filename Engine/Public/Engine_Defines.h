@@ -16,6 +16,13 @@
 using namespace DirectX;
 #pragma endregion
 
+#pragma region assimp
+#include "scene.h"
+#include "Importer.hpp"
+#include "assimp/postprocess.h"
+#pragma endregion
+
+
 #pragma region JSON
 #include "../../External Libraries/json.hpp"
 using json = nlohmann::json;
