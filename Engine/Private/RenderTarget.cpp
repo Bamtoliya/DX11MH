@@ -139,9 +139,9 @@ HRESULT CRenderTarget::Resize(_uint iWinResizeX, _uint iWinResizeY)
     // CTarget_Manager::Resize에서 이 작업을 선행하거나, 여기서 처리할 수 있지만
     // CTarget_Manager에서 전체적으로 관리하는 것이 더 안전할 수 있습니다.
     // 여기서는 CRenderTarget 자체의 리소스만 해제한다고 가정합니다.
-    /*Safe_Release(m_pSRV);
+    Safe_Release(m_pSRV);
     Safe_Release(m_pRTV);
-    Safe_Release(m_pTexture);*/
+    Safe_Release(m_pTexture);
 
     // 2. 새로운 크기로 멤버 변수 업데이트
     m_iWidth = iWinResizeX;

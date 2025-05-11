@@ -36,7 +36,6 @@ HRESULT CViewport_2D::Initialize(void* pArg)
         return E_FAIL;
     m_vImageGridPosition = { -(g_iWinSizeX/2.f), -(g_iWinSizeY / 2.f)}; // 그리드 (0,0) 기준 좌상단 좌표
     m_vImageGridSize = { g_iWinSizeX, g_iWinSizeY };   // 그리드 단위 크기
-
     return S_OK;
 }
 
@@ -47,10 +46,15 @@ void CViewport_2D::Priority_Update(_float fTimeDelta)
 void CViewport_2D::Update(_float fTimeDelta)
 {
     m_pGameObject = m_pGameInstance->Get_PickedObject();
+    //m_vImageGridPosition = { -(io.DisplaySize.x / 2.f), -(io.DisplaySize.y / 2.f) }; // 그리드 (0,0) 기준 좌상단 좌표
+    //m_vImageGridSize = { io.DisplaySize.x, io.DisplaySize.y };   // 그리드 단위 크기
 }
 
 void CViewport_2D::Late_Update(_float fTimeDelta)
 {
+    
+    //// DPI 스케일링을 사용하지 않는 경우 보통 1.0f
+    //io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
 }
 
 // 그리드 좌표 -> 화면 좌표 변환 헬퍼 함수 구현
@@ -123,13 +127,14 @@ HRESULT CViewport_2D::Render()
         // 화면 좌표 -> 그리드 좌표 변환 (패닝된 중앙점과 줌 고려)
         ImVec2 mouse_pos_relative_to_center = ImVec2(mouse_pos_in_screen.x - canvas_center.x, mouse_pos_in_screen.y - canvas_center.y);
         ImVec2 mouse_pos_in_grid = ImVec2(mouse_pos_relative_to_center.x / zoom, mouse_pos_relative_to_center.y / zoom);
-        
 
         if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
             snprintf(click_info, sizeof(click_info), "Left Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);
             // 여기서 last_left_click_grid_pos 같은 변수에 저장하거나 다른 작업 수행 가능
-            ImVec2 TexturePos = ImVec2(mouse_pos_in_grid.x + g_iWinSizeX * 0.5f, mouse_pos_in_grid.y + g_iWinSizeY * 0.5f);
-            snprintf(mouse_cursor, sizeof(mouse_cursor), "Mouse Clicked at Screen(%.1f, %.1f)", TexturePos.x, TexturePos.y);
+
+            _float2 ratio = { io.DisplaySize.x / g_iWinSizeX, io.DisplaySize.y / g_iWinSizeY };
+            ImVec2 TexturePos = ImVec2(mouse_pos_in_grid.x * ratio.x + io.DisplaySize.x * 0.5f, mouse_pos_in_grid.y * ratio.y + io.DisplaySize.y * 0.5f);
+            snprintf(mouse_cursor, sizeof(mouse_cursor), "TexturePos(%.1f, %.1f)", TexturePos.x, TexturePos.y);
             _float4 testColor = { 1.0f, 1.0f, 1.0f, 1.0f };
             if (FAILED(m_pGameInstance->ReadPickingTargetPixel(TexturePos.x, TexturePos.y, &testColor)))
                 return E_FAIL;
