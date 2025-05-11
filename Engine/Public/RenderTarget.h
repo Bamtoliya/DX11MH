@@ -21,13 +21,15 @@ public:
 
 public:
     // 초기화 함수
-    HRESULT Initialize(_uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor);
+    HRESULT Initialize(const _wstring& strName, _uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor);
 
     // 렌더 타겟 클리어 함수
     HRESULT Clear(_float4* pClearColor = nullptr); // 인자가 없으면 멤버 변수의 클리어 색상 사용
 
     // 렌더 타겟 바인딩 함수 (깊이 버퍼는 외부에서 받거나, 관리하지 않음)
     void Bind(ID3D11DepthStencilView* pDSV); // 메인 깊이 버퍼를 주로 사용
+
+    HRESULT Resize(_uint iWinResizeX, _uint iWinResizeY);
 
     // 특정 이름으로 디버그 객체 이름 설정 (선택 사항)
     void Set_DebugName(const std::string& name);
@@ -37,19 +39,21 @@ private:
     ID3D11DeviceContext*    m_pContext = nullptr;
     CGameInstance*          m_pGameInstance = nullptr;
 
+private:
     ID3D11Texture2D*            m_pTexture = nullptr;
     ID3D11RenderTargetView*     m_pRTV = nullptr;
     ID3D11ShaderResourceView*   m_pSRV = nullptr;
-
+    D3D11_VIEWPORT              m_Viewport = {};
+private:
+    _wstring                m_strName = {};
     _float4                 m_vClearColor = {};
     _uint                   m_iWidth = 0;
     _uint                   m_iHeight = 0;
     DXGI_FORMAT             m_eFormat = DXGI_FORMAT_UNKNOWN;
-    D3D11_VIEWPORT          m_Viewport = {};
 
 public:
     // 생성 함수
-    static CRenderTarget* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, _uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor);
+    static CRenderTarget* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strName, _uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor);
     virtual void Free() override;
 };
 

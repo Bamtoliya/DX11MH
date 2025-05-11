@@ -19,9 +19,8 @@ void CInspector::Update(_float fTimeDelta)
 
 HRESULT CInspector::Render()
 {
-    if (m_bShow)
+    if (ImGui::Begin("Inspector", &m_bShow))
     {
-        ImGui::Begin("Inspector");
         if (m_pGameObject)
         {
             string tmp = WideToUtf8(m_pGameObject->Get_Name().c_str());
@@ -31,12 +30,11 @@ HRESULT CInspector::Render()
         {
             ImGui::Text("This can dock into the fullscreen space.");
         }
-        
+
         if (m_pGameObject)
             m_pGameObject->RenderImGuiComponents();
         ImGui::End();
     }
-
     return S_OK;
 }
 

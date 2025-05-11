@@ -83,6 +83,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
         else
         {
+            if (g_SwapChainNeedsResize)
+            {
+                pGameInstance->Resize(g_iWinResizeX, g_iWinResizeY);
+                g_SwapChainNeedsResize = false;
+            }
             pGameInstance->Update_Timer(TEXT("Timer_Default"));
 
             fTimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
@@ -149,7 +154,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    RECT     rcWindowed = { 0, 0, g_iWinSizeX, g_iWinSizeY };
 
-   AdjustWindowRect(&rcWindowed, WS_OVERLAPPEDWINDOW, true);
+   AdjustWindowRect(&rcWindowed, WS_OVERLAPPEDWINDOW, false);
 
    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
        CW_USEDEFAULT, 0, rcWindowed.right - rcWindowed.left, rcWindowed.bottom - rcWindowed.top, nullptr, nullptr, hInstance, nullptr);

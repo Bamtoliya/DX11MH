@@ -161,6 +161,9 @@ HRESULT CGameInstance::Resize(_uint iWinResizeX, _uint iWinResizeY)
 	if (m_pGraphic_Device)
 		m_pGraphic_Device->Resize(iWinResizeX, iWinResizeY);
 
+	if (m_pTarget_Manager)
+		m_pTarget_Manager->Resize(iWinResizeX, iWinResizeY);
+
 	if (m_pMyImGui_Manager)
 		m_pMyImGui_Manager->Resize(iWinResizeX, iWinResizeY);
 		

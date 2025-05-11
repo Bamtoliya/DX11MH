@@ -419,6 +419,8 @@ void CMyImGui_Manager::DrawImGuizmo()
 
 HRESULT CMyImGui_Manager::Resize(_uint iWinSizeX, _uint iWinSizeY)
 {
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    viewport->PlatformRequestResize = true;
     ImGuiIO& io = ImGui::GetIO();
     io.DisplaySize = ImVec2(static_cast<float>(iWinSizeX), static_cast<float>(iWinSizeY));
     // DPI 스케일링을 사용하지 않는 경우 보통 1.0f

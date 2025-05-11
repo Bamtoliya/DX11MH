@@ -36,18 +36,23 @@ public:
 
     HRESULT Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTag);
 
+    HRESULT Resize(_uint iWinResizeX, _uint iWinResizeY);
+
 private:
     ID3D11Device* m_pDevice = nullptr;
     ID3D11DeviceContext* m_pContext = nullptr;
 
     // 생성된 렌더 타겟 정보 저장 (CRenderTarget 객체 또는 직접 리소스 관리)
     // 예시: CRenderTarget 객체 사용 시
-    std::map<const _wstring, CRenderTarget*> m_RenderTargets;
+    map<const _wstring, CRenderTarget*> m_RenderTargets;
 
     // MRT 그룹 정보 저장 (예: 그룹 이름 -> RTV 포인터 배열)
-    std::map<const _wstring, std::vector<ID3D11RenderTargetView*>> m_MRTs;
+    map<const _wstring, vector<ID3D11RenderTargetView*>> m_MRTs;
+    // MRT 그룹 정보 저장 (예: 그룹 이름 -> RTV 배열 이름)
+    map<const _wstring, vector<_wstring>> m_MRTTags;
+
     // MRT 그룹에 맞는 뷰포트 정보 저장 (첫 번째 타겟 기준 또는 별도 저장)
-    std::map<const _wstring, D3D11_VIEWPORT> m_MRTViewports;
+    map<const _wstring, D3D11_VIEWPORT> m_MRTViewports;
 
     // 백업용 포인터 (Begin_MRT 호출 시 저장)
     _uint                   m_iNumViews = 0;

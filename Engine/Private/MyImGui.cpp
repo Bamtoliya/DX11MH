@@ -37,15 +37,16 @@ void CMyImGui::Late_Update(_float fTimeDelta)
 
 HRESULT CMyImGui::Pre_Render()
 {
+    // Start the Dear ImGui frame
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
     return S_OK;
 }
 
 HRESULT CMyImGui::Render()
 {
-    // Start the Dear ImGui frame
-    ImGui_ImplDX11_NewFrame();
-    ImGui_ImplWin32_NewFrame();
-    ImGui::NewFrame();
+    Pre_Render();
 
     bool show_demo_window = true;
     bool show_another_window = true;
@@ -89,16 +90,17 @@ HRESULT CMyImGui::Render()
         ImGui::End();
     }
 
-    ImGui::Render();
-    /*const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
-    m_pContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
-    m_pContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);*/
-    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    Post_Render();
     return S_OK;
 }
 
 HRESULT CMyImGui::Post_Render()
 {
+    ImGui::Render();
+    /*const float clear_color_with_alpha[4] = { clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w };
+    m_pContext->OMSetRenderTargets(1, &g_mainRenderTargetView, nullptr);
+    m_pContext->ClearRenderTargetView(g_mainRenderTargetView, clear_color_with_alpha);*/
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
     return S_OK;
 }
 

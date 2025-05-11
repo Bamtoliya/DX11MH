@@ -106,11 +106,65 @@ HRESULT CGraphic_Device::Resize(_uint iWinResizeX, _uint iWinResizeY)
 {
 	if (iWinResizeX == 0 || iWinResizeY == 0)
 	{
-		return S_OK;
+		return S_OK; // 크기가 0이면 아무것도 하지 않음 (최소화 상태 등)
 	}
 
+	if (m_pDeviceContext && m_pSwapChain)
+	{
+		// 1. 기존 렌더 타겟 뷰와 깊이 스텐실 뷰 해제
+		// OMSetRenderTargets를 NULL로 설정하여 리소스 바인딩 해제
+		ID3D11RenderTargetView* nullRTVs[] = { nullptr };
+		m_pDeviceContext->OMSetRenderTargets(1, nullRTVs, nullptr);
 
+		Safe_Release(m_pBackBufferRTV);
+		Safe_Release(m_pBackBufferSRV); // SRV도 해제
+		Safe_Release(m_pBackBufferTexture); // 백버퍼 텍스쳐도 해제
+		Safe_Release(m_pDepthStencilView);
 
+		// 2. 스왑 체인 버퍼 크기 변경
+		// DXGI_FORMAT_UNKNOWN과 0은 기존 설정을 유지하라는 의미.
+		HRESULT hr = m_pSwapChain->ResizeBuffers(
+			1, // 버퍼 수 (보통 1 또는 2)
+			iWinResizeX,
+			iWinResizeY,
+			DXGI_FORMAT_R8G8B8A8_UNORM, // 백버퍼 포맷 (기존 포맷과 동일하게)
+			0 // 스왑 체인 플래그 (특별한 경우가 아니면 0)
+		);
+
+		if (FAILED(hr))
+		{
+			MSG_BOX("Failed to Resize SwapChain Buffers");
+			return hr;
+		}
+
+		// 3. 새로운 크기로 백버퍼 렌더 타겟 뷰 및 SRV 재생성
+		if (FAILED(Ready_BackBufferRenderTargetView())) // 이 함수는 내부적으로 스왑체인에서 새 백버퍼를 가져와 RTV, SRV를 만듭니다.
+		{
+			MSG_BOX("Failed to Recreate BackBuffer RenderTargetView after Resize");
+			return E_FAIL;
+		}
+
+		// 4. 새로운 크기로 깊이 스텐실 뷰 재생성
+		if (FAILED(Ready_DepthStencilView(iWinResizeX, iWinResizeY)))
+		{
+			MSG_BOX("Failed to Recreate DepthStencilView after Resize");
+			return E_FAIL;
+		}
+
+		// 5. 새로운 렌더 타겟과 깊이 스텐실 뷰를 파이프라인에 바인딩
+		ID3D11RenderTargetView* pRTVs[] = { m_pBackBufferRTV };
+		m_pDeviceContext->OMSetRenderTargets(1, pRTVs, m_pDepthStencilView);
+
+		// 6. 뷰포트 업데이트
+		D3D11_VIEWPORT vp;
+		vp.Width = static_cast<FLOAT>(iWinResizeX);
+		vp.Height = static_cast<FLOAT>(iWinResizeY);
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		vp.TopLeftX = 0;
+		vp.TopLeftY = 0;
+		m_pDeviceContext->RSSetViewports(1, &vp);
+	}
 	return S_OK;
 }
 

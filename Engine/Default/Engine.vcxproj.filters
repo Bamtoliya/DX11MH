@@ -124,9 +124,6 @@
     <ClInclude Include="..\Public\MyImGui.h">
       <Filter>98.Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Transform_Imgui.h">
-      <Filter>98.Imgui\Components\Transform</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\External Libraries\imgui\imconfig.h">
       <Filter>External Libraries\Imgui</Filter>
     </ClInclude>
@@ -415,9 +412,6 @@
     <ClCompile Include="..\Private\MyImGui.cpp">
       <Filter>98.Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Transform_Imgui.cpp">
-      <Filter>98.Imgui\Components\Transform</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\External Libraries\imgui\imgui.cpp">
       <Filter>External Libraries\Imgui</Filter>
     </ClCompile>
@@ -666,12 +660,6 @@
     </Filter>
     <Filter Include="98.Imgui">
       <UniqueIdentifier>{9728f8ff-a65a-41c5-82c0-cfc8e5b76706}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="98.Imgui\Components">
-      <UniqueIdentifier>{6c7812af-df91-452b-9b77-9faf5d044c6f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="98.Imgui\Components\Transform">
-      <UniqueIdentifier>{80c28ab3-2197-40f6-94f6-843afe306d4e}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\02.Prototypes\Manager">
       <UniqueIdentifier>{4689e40f-5977-4a2b-9f9c-62be8b7df8df}</UniqueIdentifier>

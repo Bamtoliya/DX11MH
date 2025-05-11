@@ -22,7 +22,7 @@ HRESULT CTarget_Manager::Add_RenderTarget(const _wstring& strTargetTag, _uint iW
         return E_FAIL; // 이미 존재하는 태그
     }
 
-    CRenderTarget* pRenderTarget = CRenderTarget::Create(m_pDevice, m_pContext, iWidth, iHeight, eFormat, vClearColor);
+    CRenderTarget* pRenderTarget = CRenderTarget::Create(m_pDevice, m_pContext, strTargetTag, iWidth, iHeight, eFormat, vClearColor);
     if (nullptr == pRenderTarget)
         return E_FAIL;
 
@@ -44,11 +44,13 @@ HRESULT CTarget_Manager::Add_MRT(const _wstring& strMRTTag, const std::vector<_w
         return E_FAIL; // 이미 존재하는 MRT 그룹 태그
     }
 
-    std::vector<ID3D11RenderTargetView*> rtvs;
+    vector<ID3D11RenderTargetView*> rtvs;
+    vector<_wstring> rtvtags;
     D3D11_VIEWPORT firstViewport = {}; // 첫 번째 타겟의 뷰포트를 그룹 뷰포트로 사용
 
     for (size_t i = 0; i < pTargetTags.size(); ++i) {
         CRenderTarget* pRT = Find_RenderTarget(pTargetTags[i]);
+        rtvtags.push_back(pTargetTags[i]);
         if (nullptr == pRT) {
             MSG_BOX("Render target not found for MRT group.");
             return E_FAIL; // 그룹에 포함될 렌더 타겟이 존재하지 않음
@@ -69,6 +71,7 @@ HRESULT CTarget_Manager::Add_MRT(const _wstring& strMRTTag, const std::vector<_w
     }
 
     m_MRTs.emplace(strMRTTag, rtvs);
+    m_MRTTags.emplace(strMRTTag, rtvtags);
     m_MRTViewports.emplace(strMRTTag, firstViewport); // 첫 번째 뷰포트 저장
 
     return S_OK;
@@ -281,6 +284,50 @@ HRESULT CTarget_Manager::Copy_ToBackBuffer(const _wstring& strSourceRenderTarget
     return S_OK;
 }
 
+HRESULT CTarget_Manager::Resize(_uint iWinResizeX, _uint iWinResizeY)
+{
+    for (auto& pair : m_RenderTargets)
+    {
+        if(FAILED(pair.second->Resize(iWinResizeX, iWinResizeY)))
+            return E_FAIL;
+    }
+
+    for (auto& pair : m_MRTTags)
+    {
+        m_MRTs[pair.first].clear();
+        vector<ID3D11RenderTargetView*> rtvs;
+        D3D11_VIEWPORT firstViewport = {}; // 첫 번째 타겟의 뷰포트를 그룹 뷰포트로 사용
+        for (size_t i = 0; i < pair.second.size(); ++i) {
+            CRenderTarget* pRT = Find_RenderTarget(pair.second[i]);
+            if (nullptr == pRT) {
+                MSG_BOX("Render target not found for MRT group.");
+                return E_FAIL; // 그룹에 포함될 렌더 타겟이 존재하지 않음
+            }
+            rtvs.push_back(pRT->Get_RTV());
+
+            // 모든 렌더 타겟의 크기가 동일한지 확인 (선택적이지만 권장됨)
+            const D3D11_VIEWPORT& currentVP = pRT->Get_Viewport();
+            if (i == 0) {
+                firstViewport = currentVP;
+            }
+            else {
+                if (firstViewport.Width != currentVP.Width || firstViewport.Height != currentVP.Height) {
+                    MSG_BOX("Render targets in MRT group must have the same dimensions.");
+                    return E_FAIL; // 필요시 에러 처리
+                }
+            }
+        }
+        m_MRTs[pair.first] = rtvs;
+    }
+
+    for (auto& pair : m_MRTViewports)
+    {
+        pair.second.Width = static_cast<FLOAT>(iWinResizeX);
+        pair.second.Height = static_cast<FLOAT>(iWinResizeY);
+    }
+    return S_OK;
+}
+
 CRenderTarget* CTarget_Manager::Find_RenderTarget(const _wstring& strTargetTag) const
 {
     auto iter = m_RenderTargets.find(strTargetTag);
@@ -304,6 +351,7 @@ void CTarget_Manager::Free()
 {
     // MRT 그룹 정보 정리 (포인터만 가지고 있으므로 별도 해제 불필요)
     m_MRTs.clear();
+    m_MRTTags.clear();
     m_MRTViewports.clear();
 
     // 렌더 타겟 객체들 해제
