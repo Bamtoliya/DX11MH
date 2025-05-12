@@ -25,6 +25,9 @@ public:
 	void SetGameObject(CGameObject* pGameObject) { m_pGameObject = pGameObject; }
 
 private:
+	HRESULT PopUpComponents();
+
+private:
 	CGameObject* m_pGameObject = { nullptr };
 };
 NS_END

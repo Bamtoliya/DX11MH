@@ -9,7 +9,7 @@ private:
 	CToolBar(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CToolBar() = default;
 public:
-	static CToolBar* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg);
+	static CToolBar* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr);
 	virtual void Free() override;
 #pragma endregion
 

@@ -28,12 +28,31 @@ HRESULT CInspector::Render()
         }
         else
         {
-            ImGui::Text("This can dock into the fullscreen space.");
+            ImGui::Text("Intentionaly Blank");
         }
 
         if (m_pGameObject)
+        {
             m_pGameObject->RenderImGuiComponents();
+            if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+            {
+                ImGui::OpenPopup("my popup");
+            }
+            PopUpComponents();
+        }
+            
         ImGui::End();
+    }
+    return S_OK;
+}
+
+HRESULT CInspector::PopUpComponents()
+{
+    if (ImGui::BeginPopupContextItem("my popup"))
+    {
+        if (ImGui::Button("Add Component"));
+        if (ImGui::Button("Delete Component"));
+        ImGui::EndPopup();
     }
     return S_OK;
 }

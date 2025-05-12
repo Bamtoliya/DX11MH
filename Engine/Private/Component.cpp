@@ -38,3 +38,8 @@ void CComponent::Free()
 	Safe_Release(m_pContext);
 	Safe_Release(m_pGameInstance);
 }
+
+HRESULT CComponent::RenderImGui()
+{
+	return S_OK;
+}
