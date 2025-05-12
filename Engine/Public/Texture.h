@@ -28,6 +28,9 @@ public:
 	static CTexture* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures = 1);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
+
+private:
+	_bool		m_bTiling = { false };
 };
 
 NS_END

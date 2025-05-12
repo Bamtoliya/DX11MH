@@ -33,6 +33,7 @@ private:
 	ID3DX11Effect*				m_pEffect = { nullptr };
 	_uint						m_iNumPasses = {};
 	vector<ID3D11InputLayout*>	m_InputLayouts;
+	_wstring					m_strShaderFile = {};
 
 public:
 	static CShader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);

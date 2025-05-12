@@ -22,6 +22,10 @@ public:
 public:
 	HRESULT Bind_Buffers();
 	HRESULT Render();
+	virtual HRESULT RenderImGui() override;
+	_float3 Get_LocalSize() { return m_vLocalSize; }
+	void Set_LocalSize(const _float3& vSize) { memcpy(&m_vLocalSize, &vSize, sizeof(_float3)); }
+	void Set_LocalSize(_float x = 1.f, _float y = 1.f, _float z = 1.f) { m_vLocalSize = { x, y, z }; }
 
 protected:
 	HRESULT Create_VertexBuffer();
@@ -51,5 +55,8 @@ protected:
 
 protected:
 	_float3*				m_pVertexPositions = { nullptr };
+
+protected:
+	_float3					m_vLocalSize = { 1.0f, 1.0f, 1.0f };
 };
 NS_END

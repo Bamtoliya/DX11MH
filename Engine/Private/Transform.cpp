@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Transform.h"
 #include "Shader.h"
+#include "VIBuffer.h"
 
 #pragma region Constructor/Destructor
 CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -134,13 +135,154 @@ HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstant
 	return pShader->Bind_Matrix(pConstantName, &m_tDesc.WorldMatrix);	
 }
 
+HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstantName, CVIBuffer* pVIBuffer)
+{
+	if (nullptr == pShader)
+		return E_FAIL;
+
+	_matrix worldMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix); // CTransform의 현재 월드 행렬 (위치, 회전, 상대 스케일 적용됨)
+
+	if (pVIBuffer != nullptr)
+	{
+		_float3 bufferLocalSize = pVIBuffer->Get_LocalSize();
+		_matrix vibufferScaleMatrix = XMMatrixScaling(bufferLocalSize.x, bufferLocalSize.y, bufferLocalSize.z);
+		_matrix finalWorldMatrixForShader = vibufferScaleMatrix * worldMatrix;
+
+		_float4x4 finalMatrixToBind;
+		XMStoreFloat4x4(&finalMatrixToBind, finalWorldMatrixForShader);
+		return pShader->Bind_Matrix(pConstantName, &finalMatrixToBind);
+	}
+	// pVIBuffer가 nullptr이면, CTransform의 월드 행렬만 사용 (기존 방식)
+	return pShader->Bind_Matrix(pConstantName, &m_tDesc.WorldMatrix);
+}
+
 HRESULT CTransform::RenderImGui()
 {
-	if (ImGui::CollapsingHeader("Transform"))
+	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) // 기본적으로 열려있도록 플래그 추가
 	{
-		ImGui::Text("Transform Example");
+		// 현재 월드 행렬을 가져옵니다.
+		_matrix worldMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix);
+		_vector scaleVec, rotationQuatVec, translationVec;
+
+		// 1. 월드 행렬 분해 (스케일, 회전 사원수, 위치)
+		if (XMMatrixDecompose(&scaleVec, &rotationQuatVec, &translationVec, worldMatrix))
+		{
+			// XMVECTOR를 _float3 또는 _float4로 변환하여 ImGui 위젯에 사용
+			_float3 position, scale;
+			_float4 rotationQuat; // 사원수는 _float4 (x, y, z, w)
+
+			XMStoreFloat3(&position, translationVec);
+			XMStoreFloat3(&scale, scaleVec);
+			XMStoreFloat4(&rotationQuat, rotationQuatVec);
+
+			bool changed = false;
+
+			// --- 위치 (Position) ---
+			if (ImGui::DragFloat3("Position", &position.x, 1.0f)) // 속도 조절 가능
+			{
+				translationVec = XMLoadFloat3(&position);
+				changed = true;
+			}
+
+			// --- 회전 (Rotation) ---
+			// 옵션 1: 오일러 각 사용 (기존 fCurRotationX, Y, Z 와 연동)
+			_float3 eulerAnglesDegrees = {
+				XMConvertToDegrees(m_tDesc.fCurRotationX), // 현재는 라디안 값일 수 있으므로 확인 필요
+				XMConvertToDegrees(m_tDesc.fCurRotationY),
+				XMConvertToDegrees(m_tDesc.fCurRotationZ)
+			};
+			// 만약 m_tDesc.fCurRotationX,Y,Z가 이미 도(degree) 단위라면 XMConvertToDegrees 불필요.
+			// 여기서는 현재 라디안이라고 가정하고 UI는 도로 표시.
+			// 또는 사원수에서 직접 오일러 각을 계산하여 표시할 수도 있습니다.
+			// 예: rotationQuat를 오일러 각으로 변환 (DirectXMath에는 직접적인 함수가 없으므로 구현 필요 또는 행렬 변환 후 각도 추출)
+
+			if (ImGui::DragFloat3("Rotation (Euler °)", &eulerAnglesDegrees.x, 1.0f, -360.0f, 360.0f))
+			{
+				// UI에서 변경된 오일러 각(도)을 라디안으로 변환
+				_float3 eulerAnglesRadians = {
+					XMConvertToRadians(eulerAnglesDegrees.x),
+					XMConvertToRadians(eulerAnglesDegrees.y),
+					XMConvertToRadians(eulerAnglesDegrees.z)
+				};
+				// 오일러 각으로부터 새로운 사원수 생성
+				rotationQuatVec = XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&eulerAnglesRadians)); // 순서 주의: Roll (X), Pitch (Y), Yaw (Z)
+
+				// CTransform의 fCurRotationX, Y, Z도 업데이트 (라디안으로 저장한다고 가정)
+				m_tDesc.fCurRotationX = eulerAnglesRadians.x;
+				m_tDesc.fCurRotationY = eulerAnglesRadians.y;
+				m_tDesc.fCurRotationZ = eulerAnglesRadians.z;
+				XMStoreFloat4(&m_tDesc.qOrientation, rotationQuatVec); // 내부 사원수 멤버도 업데이트
+
+				changed = true;
+			}
+
+			// 옵션 2: 사원수 직접 편집 (고급 사용자용, 보통은 오일러 각이 더 직관적)
+			// if (ImGui::DragFloat4("Rotation (Quaternion)", &rotationQuat.x, 0.01f, -1.0f, 1.0f))
+			// {
+			//     rotationQuatVec = XMLoadFloat4(&rotationQuat);
+			//     // 사원수 정규화 중요
+			//     rotationQuatVec = XMQuaternionNormalize(rotationQuatVec);
+			//     XMStoreFloat4(&m_tDesc.qOrientation, rotationQuatVec); // 내부 사원수 멤버 업데이트
+			//     // 사원수가 변경되면 오일러 각(fCurRotationX 등)도 업데이트 필요
+			//     changed = true;
+			// }
+
+
+			// --- 크기 (Scale) ---
+			if (ImGui::DragFloat3("Scale", &scale.x, 0.01f, 0.001f, 1000.0f)) // 최소/최대값 설정 가능
+			{
+				// 스케일 값은 음수가 되지 않도록 주의 (필요시)
+				if (scale.x < 0.001f) scale.x = 0.001f;
+				if (scale.y < 0.001f) scale.y = 0.001f;
+				if (scale.z < 0.001f) scale.z = 0.001f;
+				scaleVec = XMLoadFloat3(&scale);
+				changed = true;
+			}
+
+			// 2. 변경 사항이 있다면 월드 행렬 재구성 및 업데이트
+			if (changed)
+			{
+				// XMMatrixAffineTransformation 사용 (Scale, RotationOrigin, RotationQuaternion, Translation)
+				// RotationOrigin은 보통 (0,0,0)이므로 생략하거나 XMVectorZero() 사용 가능
+				_matrix newWorldMatrix = XMMatrixScalingFromVector(scaleVec) *
+					XMMatrixRotationQuaternion(rotationQuatVec) *
+					XMMatrixTranslationFromVector(translationVec);
+
+				// 또는 XMMatrixMultiply 순서대로
+				// _matrix matScale = XMMatrixScalingFromVector(scaleVec);
+				// _matrix matRotation = XMMatrixRotationQuaternion(rotationQuatVec);
+				// _matrix matTranslation = XMMatrixTranslationFromVector(translationVec);
+				// _matrix newWorldMatrix = matScale * matRotation * matTranslation;
+
+
+				XMStoreFloat4x4(&m_tDesc.WorldMatrix, newWorldMatrix);
+
+				// 만약 CTransform 내부에 Set_WorldMatrix 같은 함수가 있어서
+				// 추가적인 작업(예: 자식 트랜스폼 업데이트)을 한다면 해당 함수 호출
+				// Set_WorldMatrix(newWorldMatrix);
+
+				// 또는 CTransform 내의 Update_WorldMatrix_From_SQT() 같은 함수를 호출하여
+				// m_tDesc.qOrientation, position, scale 값들을 사용하여 월드 행렬 업데이트
+				// Set_State(STATE::POSITION, translationVec); // 위치 업데이트
+				// XMStoreFloat4(&m_tDesc.qOrientation, rotationQuatVec); // 회전 업데이트
+				// Scaling(scale); // 스케일 업데이트 (내부적으로 m_tDesc.WorldMatrix를 수정)
+				// Update_WorldMatrix_From_SQT(); // SQT 정보로 최종 월드 행렬 업데이트
+			}
+		}
+		else
+		{
+			ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "XMMatrixDecompose failed. Matrix might be non-affine.");
+			// 비상 상황: 월드 행렬 직접 편집 (위치만이라도)
+			// 기존 코드의 ImGui::DragFloat3("Position", &m_tDesc.WorldMatrix.m[ENUM_CLASS(STATE::POSITION)][0]); 사용
+			float* positionPtr = &m_tDesc.WorldMatrix.m[ENUM_CLASS(STATE::POSITION)][0];
+			if (ImGui::DragFloat3("Position (Raw Matrix)", positionPtr, 0.1f))
+			{
+				// 변경됨, 필요시 추가 처리
+			}
+		}
 	}
 	return S_OK;
+
 }
 
 void* CTransform::Dump()

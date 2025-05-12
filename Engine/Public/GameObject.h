@@ -54,6 +54,8 @@ public:
 	void Set_ID(_uint oID) { m_oID = oID; }
 	wstring Get_Name() const { return m_szName; }
 	void Set_Name(const wstring& str) { lstrcpy(m_szName, str.c_str()); }
+	_bool Get_Picked() { return m_bPicked; }
+	void Set_Picked(_bool bPicked) { m_bPicked = bPicked; }
 protected:
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr);
 

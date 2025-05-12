@@ -136,7 +136,7 @@ HRESULT CViewport_2D::Render()
             ImVec2 TexturePos = ImVec2(mouse_pos_in_grid.x * ratio.x + io.DisplaySize.x * 0.5f, mouse_pos_in_grid.y * ratio.y + io.DisplaySize.y * 0.5f);
             snprintf(mouse_cursor, sizeof(mouse_cursor), "TexturePos(%.1f, %.1f)", TexturePos.x, TexturePos.y);
             _float4 testColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-            if (FAILED(m_pGameInstance->ReadPickingTargetPixel(TexturePos.x, TexturePos.y, &testColor)))
+            if (FAILED(m_pGameInstance->ReadPickingTargetPixel((_uint)TexturePos.x, (_uint)TexturePos.y, &testColor)))
                 return E_FAIL;
             snprintf(click_color, sizeof(click_color), "Left Clicked Color(%.1f, %.1f, %.1f, %.1f)", testColor.x, testColor.y, testColor.z, testColor.w);
             m_pGameInstance->PickObjectByColor(&testColor);

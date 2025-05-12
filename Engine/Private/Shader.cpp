@@ -10,6 +10,7 @@ CShader::CShader(const CShader& Prototype)
     : CComponent{ Prototype }
 	, m_pEffect { Prototype.m_pEffect }
 	, m_InputLayouts { Prototype.m_InputLayouts }
+	, m_strShaderFile { Prototype.m_strShaderFile }
 {
 	for (auto& pInputLayout : m_InputLayouts)
 		Safe_AddRef(pInputLayout);
@@ -20,6 +21,7 @@ CShader::CShader(const CShader& Prototype)
 HRESULT CShader::Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
 {
 	_uint	iShaderFlag = {};
+	m_strShaderFile = pShaderFilePath;
 
 #ifdef _DEBUG
 	iShaderFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -140,8 +142,10 @@ HRESULT CShader::Bind_SRVs(const _char* pConstantName, ID3D11ShaderResourceView*
 
 HRESULT CShader::RenderImGui()
 {
-	if (ImGui::CollapsingHeader("Shader"))
+	if (ImGui::CollapsingHeader("Shader"), ImGuiTreeNodeFlags_DefaultOpen)
 	{
+		
+		ImGui::TextUnformatted(WideToUtf8(m_strShaderFile.c_str()).c_str());
 		ImGui::Text("Shader Example");
 	}
 	return S_OK;

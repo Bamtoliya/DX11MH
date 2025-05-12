@@ -172,9 +172,6 @@
     <ClInclude Include="..\Public\MyImGui.h">
       <Filter>98.Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Transform_Imgui.h">
-      <Filter>98.Imgui\Components\Transform</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Component.h">
       <Filter>01.Utility\04.Components</Filter>
     </ClInclude>
@@ -453,9 +450,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\MyImGui.cpp">
       <Filter>98.Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Transform_Imgui.cpp">
-      <Filter>98.Imgui\Components\Transform</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Component.cpp">
       <Filter>01.Utility\04.Components</Filter>
@@ -777,6 +771,9 @@
     </Filter>
     <Filter Include="00.System\01.Device\Graphic">
       <UniqueIdentifier>{7873c165-2bd8-4260-949c-6d11ebe067e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\UI">
+      <UniqueIdentifier>{b8309cf6-f33a-4bb1-885a-48a859a35775}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

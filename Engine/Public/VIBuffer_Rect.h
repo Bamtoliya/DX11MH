@@ -20,5 +20,7 @@ public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
 #pragma endregion
+public:
+	virtual HRESULT RenderImGui() override;
 };
 NS_END

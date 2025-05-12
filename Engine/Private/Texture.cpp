@@ -68,9 +68,9 @@ HRESULT CTexture::Bind_ShaderResource(CShader* pShader, const _char* pConstantNa
 
 HRESULT CTexture::RenderImGui()
 {
-	if (ImGui::CollapsingHeader("Texture"))
+	if (ImGui::CollapsingHeader("Texture", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::Text("Texture Example");
+		ImGui::Text("Numbers of Texture: %d", m_iNumTextures);
 	}
 	return S_OK;
 }

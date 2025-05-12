@@ -125,6 +125,14 @@ HRESULT CVIBuffer_Rect::Initialize_Prototype()
 HRESULT CVIBuffer_Rect::Initialize(void* pArg)
 {
 	return S_OK;
-	return S_OK;
 }
 #pragma endregion
+
+HRESULT CVIBuffer_Rect::RenderImGui()
+{
+	if (ImGui::CollapsingHeader("VIBuffer_Rect", ImGuiTreeNodeFlags_DefaultOpen)) // 기본적으로 열려있도록 플래그 추가
+	{
+		ImGui::DragFloat2("Size", &m_vLocalSize.x);
+	}
+	return S_OK;
+}

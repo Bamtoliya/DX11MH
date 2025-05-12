@@ -107,6 +107,7 @@ public:
 	
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShader, const _char* pConstantName);
+	HRESULT Bind_ShaderResource(class CShader* pShader, const _char* pConstantName, class CVIBuffer* pVIBuffer);
 	virtual HRESULT RenderImGui() override;
 	virtual void* Dump() override;
 #pragma region Variables

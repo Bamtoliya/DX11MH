@@ -21,6 +21,7 @@ CVIBuffer::CVIBuffer(const CVIBuffer& Prototype)
     /*, m_BufferDesc              { Prototype.m_BufferDesc }
     , m_SubResourceData         { Prototype.m_SubResourceData }*/
     , m_pVertexPositions        { Prototype.m_pVertexPositions }
+    , m_vLocalSize              { Prototype.m_vLocalSize }
 {
     Safe_AddRef(m_pVB);
     Safe_AddRef(m_pIB);
@@ -89,6 +90,15 @@ HRESULT CVIBuffer::Render()
 	m_pContext->DrawIndexed(m_iNumIndices, 0, 0);
 
 	return S_OK;
+}
+
+HRESULT CVIBuffer::RenderImGui()
+{
+    if (ImGui::CollapsingHeader("VIBuffer", ImGuiTreeNodeFlags_DefaultOpen)) // 기본적으로 열려있도록 플래그 추가
+    {
+        ImGui::DragFloat3("Size", &m_vLocalSize.x);
+    }
+    return S_OK;
 }
 
 HRESULT CVIBuffer::Create_VertexBuffer()

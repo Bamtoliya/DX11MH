@@ -1,6 +1,7 @@
 ﻿#include "Picking_System.h"
 #include "GameInstance.h"
 #include "RenderTarget.h"
+#include "GameObject.h"
 
 #pragma region Constructor/Destructor
 CPicking_System::CPicking_System(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -108,9 +109,25 @@ HRESULT CPicking_System::ReadPickingTargetPixel(_int screenX, _int screenY, _flo
 	return S_OK;
 }
 
-HRESULT CPicking_System::PickObject(_float4* pColor)
+HRESULT CPicking_System::PickObjectById(_uint iId)
 {
+	if (m_pPickedObject != nullptr)
+		m_pPickedObject->Set_Picked(false);
+	m_pPickedObject = m_pGameInstance->Get_GameObjectById(iId);
+	if (m_pPickedObject != nullptr)
+		m_pPickedObject->Set_Picked(true);
+	if (m_pPickedObject == nullptr)
+		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CPicking_System::PickObjectByColor(_float4* pColor)
+{
+	if (m_pPickedObject != nullptr)
+		m_pPickedObject->Set_Picked(false);
 	m_pPickedObject = m_pGameInstance->Get_GameObjectById(ConvertColorToId(*pColor));
+	if(m_pPickedObject != nullptr)
+		m_pPickedObject->Set_Picked(true);
 	if (m_pPickedObject == nullptr)
 		return E_FAIL;
 	return S_OK;

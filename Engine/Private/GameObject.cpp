@@ -100,9 +100,15 @@ HRESULT CGameObject::RenderImGuiObjects()
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	static bool align_label_with_current_x_position = false;
 	static bool test_drag_and_drop = false;
+	ImGuiTreeNodeFlags node_flags = 0;
 	ImGui::Indent();
-	if (ImGui::TreeNode(WideToUtf8(m_szName).c_str()))
+	if (m_bPicked)
+		node_flags |= ImGuiTreeNodeFlags_Selected;
+
+	if (ImGui::TreeNodeEx(WideToUtf8(m_szName).c_str(), base_flags | node_flags))
 	{
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+			m_pGameInstance->PickObjectById(m_oID);
 		ImGui::Text("Hello!");
 		ImGui::TreePop();
 	}

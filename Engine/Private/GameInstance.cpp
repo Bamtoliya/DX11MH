@@ -343,7 +343,11 @@ HRESULT CGameInstance::ReadPickingTargetPixel(_int screenX, _int screenY, _float
 }
 HRESULT CGameInstance::PickObjectByColor(_float4* pColor)
 {
-	return m_pPicking_System->PickObject(pColor);
+	return m_pPicking_System->PickObjectByColor(pColor);
+}
+HRESULT CGameInstance::PickObjectById(_uint iId)
+{
+	return m_pPicking_System->PickObjectById(iId);
 }
 CGameObject* CGameInstance::Get_PickedObject() const
 {
