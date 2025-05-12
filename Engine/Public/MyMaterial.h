@@ -1,10 +1,9 @@
 ﻿#pragma once
-
 #include "Component.h"
 
 NS_BEGIN(Engine)
 
-class ENGINE_DLL CMaterial final : public CComponent
+class ENGINE_DLL CMyMaterial final : public CComponent
 {
 public:
 	typedef struct tagMaterialInit
@@ -20,9 +19,9 @@ public:
 		_float	Power;
 	} MATERIAL;
 private:
-	CMaterial(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CMaterial(const CMaterial& Prototype);
-	virtual ~CMaterial() = default;
+	CMyMaterial(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CMyMaterial(const CMyMaterial& Prototype);
+	virtual ~CMyMaterial() = default;
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pMaterialFilePath);
 	virtual HRESULT Initialize(void* pArg) override;
@@ -32,10 +31,9 @@ public:
 private:
 	MATERIAL						m_tMaterial;
 public:
-	static	CMaterial* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pMaterialFilePath);
+	static	CMyMaterial* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pMaterialFilePath);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
-
 };
 
 NS_END

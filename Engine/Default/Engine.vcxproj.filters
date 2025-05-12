@@ -308,6 +308,12 @@
     <ClInclude Include="..\public\Mesh.h">
       <Filter>01.Utility\04.Components\Model\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Material.h">
+      <Filter>01.Utility\04.Components\Model\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MyMaterial.h">
+      <Filter>01.Utility\04.Components\MyMaterial</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -569,6 +575,12 @@
     <ClCompile Include="..\private\Mesh.cpp">
       <Filter>01.Utility\04.Components\Model\Mesh</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Material.cpp">
+      <Filter>01.Utility\04.Components\Model\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MyMaterial.cpp">
+      <Filter>01.Utility\04.Components\MyMaterial</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -775,6 +787,9 @@
     <Filter Include="01.Utility\04.Components\UI">
       <UniqueIdentifier>{b8309cf6-f33a-4bb1-885a-48a859a35775}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\04.Components\MyMaterial">
+      <UniqueIdentifier>{5e86b55f-7645-4095-b474-073e0f0d5eab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -810,6 +825,9 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Model\Mesh">
       <UniqueIdentifier>{aeb439ba-420d-42b2-8fb7-b1d2323b7627}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Model\Material">
+      <UniqueIdentifier>{ae85330d-538b-4ff9-82b3-a93aac9dfa82}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

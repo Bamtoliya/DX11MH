@@ -1,18 +1,18 @@
-﻿#include "Material.h"
+﻿#include "MyMaterial.h"
 //#include "Shader.h"
 
-CMaterial::CMaterial(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CMyMaterial::CMyMaterial(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     :   CComponent { pDevice, pContext }
 {
 }
 
-CMaterial::CMaterial(const CMaterial& Prototype)
+CMyMaterial::CMyMaterial(const CMyMaterial& Prototype)
     : CComponent    { Prototype }
     , m_tMaterial   { Prototype.m_tMaterial }
 {
 }
 
-HRESULT CMaterial::Initialize_Prototype(const _tchar* pMaterialFilePath)
+HRESULT CMyMaterial::Initialize_Prototype(const _tchar* pMaterialFilePath)
 {
     ifstream f(pMaterialFilePath);
     json data = json::parse(f);
@@ -24,7 +24,7 @@ HRESULT CMaterial::Initialize_Prototype(const _tchar* pMaterialFilePath)
     return S_OK;
 }
 
-HRESULT CMaterial::Initialize(void* pArg)
+HRESULT CMyMaterial::Initialize(void* pArg)
 {
     if (pArg)
     {
@@ -40,7 +40,7 @@ HRESULT CMaterial::Initialize(void* pArg)
     return S_OK;
 }
 
-HRESULT CMaterial::Bind_Resource()
+HRESULT CMyMaterial::Bind_Resource()
 {
    /* memcpy(&material.Diffuse,   &m_tMaterial.Diffuse,   sizeof(_float4));
     memcpy(&material.Ambient,   &m_tMaterial.Ambient,   sizeof(_float4));
@@ -52,37 +52,37 @@ HRESULT CMaterial::Bind_Resource()
     return S_OK;
 }
 
-HRESULT CMaterial::Bind_Material(CShader* pShader)
+HRESULT CMyMaterial::Bind_Material(CShader* pShader)
 {
     /*pShader->Bind_Value("g_Material", &m_tMaterial, sizeof(MATERIAL));*/
     return S_OK;
 }
 
-CMaterial* CMaterial::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pMaterialFilePath)
+CMyMaterial* CMyMaterial::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pMaterialFilePath)
 {
-    CMaterial* pInstance = new CMaterial(pDevice, pContext);
+    CMyMaterial* pInstance = new CMyMaterial(pDevice, pContext);
 
     if (FAILED(pInstance->Initialize_Prototype(pMaterialFilePath)))
     {
-        MSG_BOX("Failed to Created : CMaterial");
+        MSG_BOX("Failed to Created : CMyMaterial");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-CComponent* CMaterial::Clone(void* pArg)
+CComponent* CMyMaterial::Clone(void* pArg)
 {
-    CMaterial* pInstance = new CMaterial(*this);
+    CMyMaterial* pInstance = new CMyMaterial(*this);
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Created : CMaterial");
+        MSG_BOX("Failed to Cloned : CMyMaterial");
         Safe_Release(pInstance);
     }
     return pInstance;
 }
 
-void CMaterial::Free()
+void CMyMaterial::Free()
 {
     __super::Free();
 }

@@ -68,8 +68,6 @@ namespace Engine
 
 	
 
-
-
 	typedef struct ENGINE_DLL tagVertexPositionTexcoord
 	{
 		XMFLOAT3		vPosition;
