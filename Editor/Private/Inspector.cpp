@@ -19,29 +19,32 @@ void CInspector::Update(_float fTimeDelta)
 
 HRESULT CInspector::Render()
 {
-    if (ImGui::Begin("Inspector", &m_bShow))
+    if (m_bShow)
     {
-        if (m_pGameObject)
+        if (ImGui::Begin("Inspector", &m_bShow))
         {
-            string tmp = WideToUtf8(m_pGameObject->Get_Name().c_str());
-            ImGui::Text(tmp.c_str());
-        }
-        else
-        {
-            ImGui::Text("Intentionaly Blank");
-        }
-
-        if (m_pGameObject)
-        {
-            m_pGameObject->RenderImGuiComponents();
-            if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+            if (m_pGameObject)
             {
-                ImGui::OpenPopup("my popup");
+                string tmp = WideToUtf8(m_pGameObject->Get_Name().c_str());
+                ImGui::Text(tmp.c_str());
             }
-            PopUpComponents();
+            else
+            {
+                ImGui::Text("Intentionaly Blank");
+            }
+
+            if (m_pGameObject)
+            {
+                m_pGameObject->RenderImGuiComponents();
+                if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+                {
+                    ImGui::OpenPopup("my popup");
+                }
+                PopUpComponents();
+            }
+
+            ImGui::End();
         }
-            
-        ImGui::End();
     }
     return S_OK;
 }
@@ -50,8 +53,14 @@ HRESULT CInspector::PopUpComponents()
 {
     if (ImGui::BeginPopupContextItem("my popup"))
     {
-        if (ImGui::Button("Add Component"));
-        if (ImGui::Button("Delete Component"));
+        if (ImGui::Button("Add Component"))
+        {
+
+        }
+        if (ImGui::Button("Delete Component"))
+        {
+
+        }
         ImGui::EndPopup();
     }
     return S_OK;

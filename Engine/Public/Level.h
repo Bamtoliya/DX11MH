@@ -24,7 +24,8 @@ protected:
 
 public:	
 	virtual void Free() override;
-
+protected:
+	_uint					m_iLevel;
 };
 
 NS_END

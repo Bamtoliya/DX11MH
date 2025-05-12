@@ -43,9 +43,6 @@
     <Filter Include="Imgui\Inspector">
       <UniqueIdentifier>{ef5b2774-fc43-4158-8184-51614d6459f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Imgui\TreeView">
-      <UniqueIdentifier>{d209510f-40f3-4a0b-9f2c-0eaa1952e659}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Imgui\Viewport\2D">
       <UniqueIdentifier>{4d98c056-a793-40ff-b731-dda5138cfa74}</UniqueIdentifier>
     </Filter>
@@ -54,9 +51,6 @@
     </Filter>
     <Filter Include="Imgui\DockSpace">
       <UniqueIdentifier>{4cd92866-04bf-4a08-a549-3b9fd7ede63b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Imgui\UI_Edit_Imgui">
-      <UniqueIdentifier>{519f6b28-30c5-48db-8a08-c17ae091dedf}</UniqueIdentifier>
     </Filter>
     <Filter Include="Imgui\ToolBar">
       <UniqueIdentifier>{9a6541de-f74f-4ba8-b501-1997999e457e}</UniqueIdentifier>

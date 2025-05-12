@@ -27,23 +27,17 @@ private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
 private:
-	void DrawAssetBrowser(bool* p_open);
-	void DrawToolBar(bool* p_open);
 	void DrawDockingSpace(bool* p_open);
-	void DrawImGuizmo();
 public:
 	HRESULT Resize(_uint iWinSizeX, _uint iWinSizeY);
 	HRESULT Add_ImGui(const _wstring& key, CMyImGui* pMyImGui);
+	HRESULT Clear();
+	HRESULT ShowImGui(const _wstring& key);
+	HRESULT HideImGui(const _wstring& key);
 private:
 	class CGameObject* m_pGameObject = { nullptr };
 private:
 	map<const _wstring, CMyImGui*>		m_MyImGuis = {};
-	_bool								m_bToolBar = { true };
 	_bool								m_bDockingSpace = { true };
-private: //IMGUIZMO Variable
-	ImGuizmo::OPERATION                 m_currentGizmoOperation = ImGuizmo::TRANSLATE;
-	ImGuizmo::MODE                      m_currentGizmoMode = ImGuizmo::WORLD;
-	bool                                m_bUseSnap = false;
-	float                               m_fSnapValue[3] = { 0.1f, 0.1f, 0.1f };
 };
 NS_END

@@ -112,6 +112,8 @@ public:
 #pragma region Imgui
 	void SetEditor(_bool b) { m_bIsEditor = b; }
 	HRESULT Add_ImGui(const _wstring& strKey, class CMyImGui* pMyImGui);
+	HRESULT ShowImGui(const _wstring& key);
+	HRESULT HideImGui(const _wstring& key);
 #pragma endregion
 
 

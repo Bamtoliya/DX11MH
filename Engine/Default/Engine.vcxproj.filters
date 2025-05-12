@@ -790,6 +790,12 @@
     <Filter Include="01.Utility\04.Components\MyMaterial">
       <UniqueIdentifier>{5e86b55f-7645-4095-b474-073e0f0d5eab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\99.SuperClass\Observer">
+      <UniqueIdentifier>{16a861eb-f8ed-45ba-887c-18309be191be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\99.SuperClass\ISerialzable">
+      <UniqueIdentifier>{048d4ce1-f314-445b-92ff-2d85bc0b148c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

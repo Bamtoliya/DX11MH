@@ -17,6 +17,9 @@ public:
 	virtual HRESULT Render();
 	virtual HRESULT Post_Render();
 public:
+	void Show() { m_bShow = true; }
+	void Hide() { m_bShow = false; }
+public:
 	static CMyImGui* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr);
 	void Free();
 protected:

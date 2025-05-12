@@ -1,4 +1,6 @@
 ﻿#include "ToolBar.h"
+#include "GameInstance.h"
+#include "Level_Loading.h"
 CToolBar::CToolBar(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMyImGui { pDevice, pContext }
 {
@@ -66,20 +68,51 @@ HRESULT CToolBar::Render()
                 // 창 메뉴 아이템들 (각 창의 표시 여부를 토글)
                 // ImGui::MenuItem의 세 번째 인자로 bool 포인터를 전달하면 체크박스처럼 동작합니다.
                 if (ImGui::MenuItem("Asset Browser", NULL /* 단축키 없음 */ /*, &show_asset_browser */)) {
-                    printf("Toggle Asset Browser\n");
-                    // show_asset_browser = !show_asset_browser; // 실제 변수 토글
+                    m_pGameInstance->ShowImGui(L"Asset Browser");
                 }
                 if (ImGui::MenuItem("Inspector", NULL /*, &show_inspector */)) {
-                    printf("Toggle Inspector\n");
-                    // show_inspector = !show_inspector;
+                    m_pGameInstance->ShowImGui(L"Inspector");
+                }
+                if (ImGui::MenuItem("Hierarchy", NULL /*, &show_inspector */)) {
+                    m_pGameInstance->ShowImGui(L"Hierarchy");
+                }
+                if (ImGui::MenuItem("Viewport2D", NULL /*, &show_inspector */)) {
+                    m_pGameInstance->ShowImGui(L"Viewport2D");
+                }
+                if (ImGui::MenuItem("Viewport3D", NULL /*, &show_inspector */)) {
+                    m_pGameInstance->ShowImGui(L"Viewport3D");
                 }
                 ImGui::Separator();
-                if (ImGui::MenuItem("ImGui Demo Window", NULL /*, &show_demo_window */)) {
-                    printf("Toggle ImGui Demo Window\n");
-                    // show_demo_window = !show_demo_window;
-                }
-                // ... 다른 창 메뉴 ...
                 ImGui::EndMenu(); // Window 메뉴 끝
+            }
+
+            if (ImGui::BeginMenu("Levels")) {
+                // 도움말 메뉴 아이템들
+                if (ImGui::MenuItem("UI Tool")) {
+                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LEVEL_LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LEVEL_UI))))
+                        return E_FAIL;
+                    //m_pGameInstance->Change_Level()
+                    printf("Clicked Help->About\n");
+                    // open_about_popup = true; // 예시
+                }
+                if (ImGui::MenuItem("Map Tool")) {
+                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LEVEL_LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LEVEL_MAP))))
+                        return E_FAIL;
+                    printf("Clicked Help->About\n");
+                    // open_about_popup = true; // 예시
+                }
+                if (ImGui::MenuItem("Effect Tool")) {
+                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LEVEL_LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LEVEL_EFFECT))))
+                        return E_FAIL;
+                    printf("Clicked Help->About\n");
+                    // open_about_popup = true; // 예시
+                }
+
+                if (ImGui::MenuItem("Gameplay")) {
+                    printf("Clicked Help->About\n");
+                    // open_about_popup = true; // 예시
+                }
+                ImGui::EndMenu(); // Help 메뉴 끝
             }
 
             if (ImGui::BeginMenu("Help")) {
@@ -97,6 +130,36 @@ HRESULT CToolBar::Render()
     }
 
     return S_OK;
+}
+
+HRESULT CToolBar::Save_Scene()
+{
+    return S_OK;
+}
+
+HRESULT CToolBar::Load_Scene()
+{
+    return S_OK;
+}
+
+HRESULT CToolBar::Save_Map()
+{
+    return S_OK;
+}
+
+HRESULT CToolBar::Load_Map()
+{
+    return S_OK;
+}
+
+HRESULT CToolBar::Save_Prefab()
+{
+    return E_NOTIMPL;
+}
+
+HRESULT CToolBar::Load_Prefab()
+{
+    return E_NOTIMPL;
 }
 
 CToolBar* CToolBar::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)

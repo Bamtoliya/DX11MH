@@ -197,6 +197,7 @@ ID3D11ShaderResourceView* CGameInstance::Get_BackBufferSRV() const
 HRESULT CGameInstance::Change_Level(_uint iLevelIndex, CLevel* pNewLevel)
 {
 	return m_pLevel_Manager->Change_Level(iLevelIndex, pNewLevel);
+
 }
 #pragma endregion
 
@@ -308,6 +309,16 @@ void CGameInstance::Update_Timer(const _wstring& strTimerTag)
 HRESULT CGameInstance::Add_ImGui(const _wstring& strKey, CMyImGui* pMyImGui)
 {
 	return m_pMyImGui_Manager->Add_ImGui(strKey, pMyImGui);
+}
+
+HRESULT CGameInstance::ShowImGui(const _wstring& key)
+{
+	return m_pMyImGui_Manager->ShowImGui(key);
+}
+
+HRESULT CGameInstance::HideImGui(const _wstring& key)
+{
+	return m_pMyImGui_Manager->HideImGui(key);
 }
 
 #pragma endregion

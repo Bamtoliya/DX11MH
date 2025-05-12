@@ -10,6 +10,7 @@ CLevel_UI::CLevel_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_UI::Initialize()
 {
+    m_iLevel = ENUM_CLASS(LEVEL::LEVEL_UI);
     if(FAILED(Ready_Layer_ImGui()))
         return E_FAIL;
 
@@ -43,7 +44,7 @@ HRESULT CLevel_UI::Ready_Layer_Background(const wstring strLayerTag)
     BackGroundDesc.fSizeY = 200.0f;
 
     if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::LEVEL_UI), TEXT("Prototype_GameObject_BackGround"),
-        ENUM_CLASS(LEVEL::LEVEL_UI), strLayerTag, &BackGroundDesc)))
+        m_iLevel, strLayerTag, &BackGroundDesc)))
         return E_FAIL;
     return S_OK;
 }
@@ -51,7 +52,7 @@ HRESULT CLevel_UI::Ready_Layer_Background(const wstring strLayerTag)
 HRESULT CLevel_UI::Ready_Layer_Camera(const wstring strLayerTag)
 {
     if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::LEVEL_UI), TEXT("Prototype_GameObject_Camera_Free"),
-        ENUM_CLASS(LEVEL::LEVEL_UI), strLayerTag)))
+        m_iLevel, strLayerTag)))
         return E_FAIL;
 
     return S_OK;
@@ -59,14 +60,11 @@ HRESULT CLevel_UI::Ready_Layer_Camera(const wstring strLayerTag)
 
 HRESULT CLevel_UI::Ready_Layer_ImGui()
 {
-    //if (FAILED(m_pGameInstance->Add_Prototype(LEVEL::LEVEL_STATIC, "Prototype_Test", )))) return E_FAIL;
-    //if (FAILED(m_pGameInstance->Add_GameObject()(L"Inspector", CInspector::Create()))) return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_ImGui(L"ToolBar", CToolBar::Create(m_pDevice, m_pContext)))) return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_ImGui(L"Inspector", CInspector::Create(m_pDevice, m_pContext)))) return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_ImGui(L"Hierarchy", CHierarchy::Create(m_pDevice, m_pContext)))) return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_ImGui(L"Asset Browser", CAsset_Browser::Create(m_pDevice, m_pContext)))) return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_ImGui(L"Viewport2D", CViewport_2D::Create(m_pDevice, m_pContext)))) return E_FAIL;
-    if (FAILED(m_pGameInstance->Add_ImGui(L"Viewport3D", CViewport_3D::Create(m_pDevice, m_pContext)))) return E_FAIL;
+    m_pGameInstance->Add_ImGui(L"Inspector", CInspector::Create(m_pDevice, m_pContext));
+    m_pGameInstance->Add_ImGui(L"Hierarchy", CHierarchy::Create(m_pDevice, m_pContext));
+    m_pGameInstance->Add_ImGui(L"Asset Browser", CAsset_Browser::Create(m_pDevice, m_pContext));
+    m_pGameInstance->Add_ImGui(L"Viewport2D", CViewport_2D::Create(m_pDevice, m_pContext));
+    m_pGameInstance->Add_ImGui(L"Viewport3D", CViewport_3D::Create(m_pDevice, m_pContext));
     return S_OK;
 }
 
