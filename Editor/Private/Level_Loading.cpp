@@ -35,16 +35,16 @@ void CLevel_Loading::Update(_float fTimeDelta)
 
 			switch (m_eNextLevelID)
 			{
-			case LEVEL::LEVEL_LOGO:
+			case LEVEL::LOGO:
 				pLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
 				break;
-			case LEVEL::LEVEL_UI:
+			case LEVEL::UI:
 				pLevel = CLevel_UI::Create(m_pDevice, m_pContext);
 				break;
-			case LEVEL::LEVEL_MAP:
+			case LEVEL::MAP:
 				pLevel = CLevel_Map::Create(m_pDevice, m_pContext);
 				break;
-			case LEVEL::LEVEL_EFFECT:
+			case LEVEL::EFFECT:
 				pLevel = CLevel_Effect::Create(m_pDevice, m_pContext);
 				break;
 			}

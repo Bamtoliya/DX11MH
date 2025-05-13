@@ -114,6 +114,46 @@ void CTransform::Scaling(const _float3& vScale)
 	Set_State(STATE::LOOK, XMVector3Normalize(Get_State(STATE::LOOK)) * vScale.z);
 }
 
+void CTransform::Set_WorldMatrix(const _matrix& WorldMatrix)
+{
+	XMStoreFloat4x4(&m_tDesc.WorldMatrix, WorldMatrix);
+
+	// 월드 행렬로부터 스케일, 회전(쿼터니언), 위치를 분해합니다.
+	_vector scaleVec, rotationQuatVec, translationVec;
+	if (XMMatrixDecompose(&scaleVec, &rotationQuatVec, &translationVec, WorldMatrix))
+	{
+		// 정규화된 쿼터니언을 저장합니다.
+		XMStoreFloat4(&m_tDesc.qOrientation, XMQuaternionNormalize(rotationQuatVec));
+
+		// (선택 사항) 오일러 각 멤버 변수도 업데이트합니다.
+		// 이 오일러 각은 주로 ImGui 표시용으로 사용될 수 있습니다.
+		// 정확한 오일러 각 변환 함수 필요 (이전 답변의 예시 참고 또는 직접 구현)
+		// 여기서는 간단히 쿼터니언만 업데이트하고, RenderImGui에서 필요시 변환합니다.
+		
+		// UpdateEulerAnglesFromQuaternion(rotationQuatVec); // 이런 함수를 만들어서 호출 가능
+		DirectX::XMVECTOR xmQuat = XMLoadFloat4(&m_tDesc.qOrientation);
+		DirectX::SimpleMath::Quaternion smQuat(xmQuat); // XMVECTOR를 SimpleMath::Quaternion으로 변환
+		DirectX::SimpleMath::Vector3 eulerAnglesRad = smQuat.ToEuler(); // YXZ 순서의 오일러 각 (Yaw, Pitch, Roll)을 라디안으로 반환
+
+		// XMQuaternionRotationRollPitchYawFromVector는 Roll, Pitch, Yaw 순서를 기대하므로, 값을 올바르게 매핑해야 합니다.
+		// eulerAnglesRad.x 가 Yaw, eulerAnglesRad.y 가 Pitch, eulerAnglesRad.z 가 Roll 인 경우:
+		m_tDesc.fCurRotationX = eulerAnglesRad.x; // Yaw
+		m_tDesc.fCurRotationY = eulerAnglesRad.y; // Pitch
+		m_tDesc.fCurRotationZ = eulerAnglesRad.z; // Roll
+
+		//_float3 eulerRad = SimpleMath::Quaternion::ToEuler(rotationQuatVec); // 직접 구현 또는 라이브러리 함수 사용
+		//m_tDesc.fCurRotationX = eulerRad.x; // Roll에 해당하는 값
+		//m_tDesc.fCurRotationY = eulerRad.y; // Pitch에 해당하는 값
+		//m_tDesc.fCurRotationZ = eulerRad.z; // Yaw에 해당하는 값
+	}
+	else
+	{
+		// 행렬 분해 실패 시 처리 (예: 로그 출력)
+		// 이 경우 qOrientation은 이전 값을 유지하거나, 기본값으로 설정할 수 있습니다.
+		OutputDebugStringA("CTransform::Set_WorldMatrix - XMMatrixDecompose failed.\n");
+	}
+}
+
 _float3 CTransform::Get_Scaled()
 {	
 	return _float3(XMVectorGetX(XMVector3Length(Get_State(STATE::RIGHT))),
@@ -158,83 +198,115 @@ HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstant
 
 HRESULT CTransform::RenderImGui()
 {
-	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) // 기본적으로 열려있도록 플래그 추가
+	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		// 현재 월드 행렬을 가져옵니다.
 		_matrix worldMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix);
-		_vector scaleVec, rotationQuatVec, translationVec;
+		_vector scaleVec, currentRotationQuatVec, translationVec;
 
-		// 1. 월드 행렬 분해 (스케일, 회전 사원수, 위치)
-		if (XMMatrixDecompose(&scaleVec, &rotationQuatVec, &translationVec, worldMatrix))
+		// 1. 월드 행렬 분해 (주로 스케일과 위치를 가져오고, 회전은 m_tDesc.qOrientation 사용)
+		//    또는, m_tDesc.qOrientation을 직접 사용하고, 스케일/위치만 행렬에서 가져올 수도 있습니다.
+		//    여기서는 일관성을 위해 분해 후 m_tDesc.qOrientation으로 다시 로드합니다.
+		if (XMMatrixDecompose(&scaleVec, &currentRotationQuatVec, &translationVec, worldMatrix))
 		{
-			// XMVECTOR를 _float3 또는 _float4로 변환하여 ImGui 위젯에 사용
-			_float3 position, scale;
-			_float4 rotationQuat; // 사원수는 _float4 (x, y, z, w)
+			// 저장된 쿼터니언을 사용 (ImGuizmo에 의해 업데이트되었을 수 있으므로)
+			currentRotationQuatVec = XMLoadFloat4(&m_tDesc.qOrientation);
 
+			_float3 position, scale;
 			XMStoreFloat3(&position, translationVec);
 			XMStoreFloat3(&scale, scaleVec);
-			XMStoreFloat4(&rotationQuat, rotationQuatVec);
 
 			bool changed = false;
 
 			// --- 위치 (Position) ---
-			if (ImGui::DragFloat3("Position", &position.x, 1.0f)) // 속도 조절 가능
+			if (ImGui::DragFloat3("Position", &position.x, 1.0f))
 			{
 				translationVec = XMLoadFloat3(&position);
 				changed = true;
 			}
 
-			// --- 회전 (Rotation) ---
-			// 옵션 1: 오일러 각 사용 (기존 fCurRotationX, Y, Z 와 연동)
-			_float3 eulerAnglesDegrees = {
-				XMConvertToDegrees(m_tDesc.fCurRotationX), // 현재는 라디안 값일 수 있으므로 확인 필요
+			// --- 회전 (Rotation) - 오일러 각으로 표시 및 편집 ---
+			// 현재 쿼터니언(m_tDesc.qOrientation)을 오일러 각(도)으로 변환하여 UI에 표시
+			_float3 eulerAnglesDegrees;
+			// 여기에 쿼터니언 -> 오일러 각(도) 변환 로직 필요
+			// 예시: (정확한 변환 함수를 사용해야 합니다)
+			//    auto quatToEuler = [](const _float4& q) -> _float3 {
+			//        _float3 angles; // 라디안
+			//        // ... (쿼터니언 q로부터 오일러 각 angles.x, angles.y, angles.z 계산) ...
+			//        // 예: ZYX 순서 (DirectXMath의 Roll, Pitch, Yaw에 대응되도록)
+			//        // Roll (x-axis rotation)
+			//        double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+			//        double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+			//        angles.x = std::atan2(sinr_cosp, cosr_cosp);
+			//        // Pitch (y-axis rotation)
+			//        double sinp = 2 * (q.w * q.y - q.z * q.x);
+			//        if (std::abs(sinp) >= 1)
+			//            angles.y = std::copysign(XM_PI / 2, sinp); // use 90 degrees if out of range
+			//        else
+			//            angles.y = std::asin(sinp);
+			//        // Yaw (z-axis rotation)
+			//        double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
+			//        double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
+			//        angles.z = std::atan2(siny_cosp, cosy_cosp);
+			//        return angles;
+			//    };
+			// _float3 eulerAnglesRadians = quatToEuler(m_tDesc.qOrientation);
+
+			// 임시: 오일러 각 변환이 복잡하므로, 이전처럼 fCurRotationX, Y, Z를 사용하되,
+			// ImGuizmo 변경 시 이 값들이 업데이트되도록 Set_WorldMatrix에서 처리해야 합니다.
+			// 가장 좋은 방법은 m_tDesc.qOrientation에서 직접 오일러 각을 계산하는 것입니다.
+			// 아래는 임시로 fCurRotationX,Y,Z를 계속 사용하는 방식입니다.
+			// **이 방식은 Set_WorldMatrix에서 fCurRotationX,Y,Z도 함께 업데이트한다는 가정하에 동작합니다.**
+			// **쿼터니언으로 완전 동기화하려면 m_tDesc.qOrientation -> 오일러 각 변환이 필요합니다.**
+
+			// 여기서는 m_tDesc.qOrientation을 오일러 각(라디안)으로 변환한다고 가정합니다.
+			// (실제 변환 함수는 프로젝트에 맞게 구현 필요)
+			// 예를 들어, `GetEulerAnglesFromQuaternion(XMLoadFloat4(&m_tDesc.qOrientation))` 함수가 있다고 가정하고,
+			// 이 함수가 라디안 단위의 _float3(roll, pitch, yaw)를 반환한다고 가정합니다.
+
+			// --- 쿼터니언을 오일러 각으로 변환 (표시용) ---
+			// 이 부분은 정확한 변환 함수가 필요합니다. (예: DirectX Tool Kit의 SimpleMath::Quaternion::ToEuler)
+			// 여기서는 임시로 fCurRotationX,Y,Z를 사용하지만, 이상적으로는 m_tDesc.qOrientation에서 변환해야 합니다.
+			// 만약 fCurRotationX,Y,Z가 Set_WorldMatrix에서 qOrientation과 동기화된다면 이대로 사용 가능.
+			XMVECTOR tempQuatForEuler = XMLoadFloat4(&m_tDesc.qOrientation);
+			// 오일러 각 추출 (예시 - 정확한 함수로 대체 필요)
+			// 다음은 DirectX::SimpleMath (DirectX Tool Kit)의 예시입니다.
+			// DirectX::SimpleMath::Vector3 eulerRad = DirectX::SimpleMath::Quaternion(tempQuatForEuler).ToEuler();
+			// eulerAnglesDegrees.x = XMConvertToDegrees(eulerRad.x); // Roll
+			// eulerAnglesDegrees.y = XMConvertToDegrees(eulerRad.y); // Pitch
+			// eulerAnglesDegrees.z = XMConvertToDegrees(eulerRad.z); // Yaw
+			// 지금은 fCurRotationX, Y, Z가 qOrientation과 동기화된다고 가정하고 사용합니다.
+			eulerAnglesDegrees = {
+				XMConvertToDegrees(m_tDesc.fCurRotationX),
 				XMConvertToDegrees(m_tDesc.fCurRotationY),
 				XMConvertToDegrees(m_tDesc.fCurRotationZ)
 			};
-			// 만약 m_tDesc.fCurRotationX,Y,Z가 이미 도(degree) 단위라면 XMConvertToDegrees 불필요.
-			// 여기서는 현재 라디안이라고 가정하고 UI는 도로 표시.
-			// 또는 사원수에서 직접 오일러 각을 계산하여 표시할 수도 있습니다.
-			// 예: rotationQuat를 오일러 각으로 변환 (DirectXMath에는 직접적인 함수가 없으므로 구현 필요 또는 행렬 변환 후 각도 추출)
 
-			if (ImGui::DragFloat3("Rotation (Euler °)", &eulerAnglesDegrees.x, 1.0f, -360.0f, 360.0f))
+
+			if (ImGui::DragFloat3(u8"Rotation (Euler °)", &eulerAnglesDegrees.x, 1.0f, -360.0f, 360.0f))
 			{
-				// UI에서 변경된 오일러 각(도)을 라디안으로 변환
 				_float3 eulerAnglesRadians = {
 					XMConvertToRadians(eulerAnglesDegrees.x),
 					XMConvertToRadians(eulerAnglesDegrees.y),
 					XMConvertToRadians(eulerAnglesDegrees.z)
 				};
-				// 오일러 각으로부터 새로운 사원수 생성
-				rotationQuatVec = XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&eulerAnglesRadians)); // 순서 주의: Roll (X), Pitch (Y), Yaw (Z)
+				// 오일러 각(라디안)으로부터 새로운 쿼터니언 생성 (X, Y, Z 순서로 Roll, Pitch, Yaw)
+				currentRotationQuatVec = XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&eulerAnglesRadians));
+				XMStoreFloat4(&m_tDesc.qOrientation, XMQuaternionNormalize(currentRotationQuatVec)); // 쿼터니언 업데이트
 
-				// CTransform의 fCurRotationX, Y, Z도 업데이트 (라디안으로 저장한다고 가정)
+				// fCurRotationX,Y,Z도 동기화 (UI 표시용)
 				m_tDesc.fCurRotationX = eulerAnglesRadians.x;
 				m_tDesc.fCurRotationY = eulerAnglesRadians.y;
 				m_tDesc.fCurRotationZ = eulerAnglesRadians.z;
-				XMStoreFloat4(&m_tDesc.qOrientation, rotationQuatVec); // 내부 사원수 멤버도 업데이트
 
 				changed = true;
 			}
 
-			// 옵션 2: 사원수 직접 편집 (고급 사용자용, 보통은 오일러 각이 더 직관적)
-			// if (ImGui::DragFloat4("Rotation (Quaternion)", &rotationQuat.x, 0.01f, -1.0f, 1.0f))
-			// {
-			//     rotationQuatVec = XMLoadFloat4(&rotationQuat);
-			//     // 사원수 정규화 중요
-			//     rotationQuatVec = XMQuaternionNormalize(rotationQuatVec);
-			//     XMStoreFloat4(&m_tDesc.qOrientation, rotationQuatVec); // 내부 사원수 멤버 업데이트
-			//     // 사원수가 변경되면 오일러 각(fCurRotationX 등)도 업데이트 필요
-			//     changed = true;
-			// }
-
-
 			// --- 크기 (Scale) ---
-			if (ImGui::DragFloat3("Scale", &scale.x, 0.01f, 0.001f, 1000.0f)) // 최소/최대값 설정 가능
+			if (ImGui::DragFloat3("Scale", &scale.x, 0.01f, 0.001f, 1000.0f))
 			{
-				// 스케일 값은 음수가 되지 않도록 주의 (필요시)
-				if (scale.x < 0.001f) scale.x = 0.001f;
+				/*if (scale.x < 0.001f) scale.x = 0.001f;
 				if (scale.y < 0.001f) scale.y = 0.001f;
-				if (scale.z < 0.001f) scale.z = 0.001f;
+				if (scale.z < 0.001f) scale.z = 0.001f;*/
 				scaleVec = XMLoadFloat3(&scale);
 				changed = true;
 			}
@@ -242,47 +314,21 @@ HRESULT CTransform::RenderImGui()
 			// 2. 변경 사항이 있다면 월드 행렬 재구성 및 업데이트
 			if (changed)
 			{
-				// XMMatrixAffineTransformation 사용 (Scale, RotationOrigin, RotationQuaternion, Translation)
-				// RotationOrigin은 보통 (0,0,0)이므로 생략하거나 XMVectorZero() 사용 가능
 				_matrix newWorldMatrix = XMMatrixScalingFromVector(scaleVec) *
-					XMMatrixRotationQuaternion(rotationQuatVec) *
+					XMMatrixRotationQuaternion(currentRotationQuatVec) * // 업데이트된 쿼터니언 사용
 					XMMatrixTranslationFromVector(translationVec);
 
-				// 또는 XMMatrixMultiply 순서대로
-				// _matrix matScale = XMMatrixScalingFromVector(scaleVec);
-				// _matrix matRotation = XMMatrixRotationQuaternion(rotationQuatVec);
-				// _matrix matTranslation = XMMatrixTranslationFromVector(translationVec);
-				// _matrix newWorldMatrix = matScale * matRotation * matTranslation;
-
-
 				XMStoreFloat4x4(&m_tDesc.WorldMatrix, newWorldMatrix);
-
-				// 만약 CTransform 내부에 Set_WorldMatrix 같은 함수가 있어서
-				// 추가적인 작업(예: 자식 트랜스폼 업데이트)을 한다면 해당 함수 호출
-				// Set_WorldMatrix(newWorldMatrix);
-
-				// 또는 CTransform 내의 Update_WorldMatrix_From_SQT() 같은 함수를 호출하여
-				// m_tDesc.qOrientation, position, scale 값들을 사용하여 월드 행렬 업데이트
-				// Set_State(STATE::POSITION, translationVec); // 위치 업데이트
-				// XMStoreFloat4(&m_tDesc.qOrientation, rotationQuatVec); // 회전 업데이트
-				// Scaling(scale); // 스케일 업데이트 (내부적으로 m_tDesc.WorldMatrix를 수정)
-				// Update_WorldMatrix_From_SQT(); // SQT 정보로 최종 월드 행렬 업데이트
+				// Set_WorldMatrix를 호출하여 qOrientation 등도 다시 업데이트할 필요는 없음 (이미 changed 플래그에서 직접 처리)
 			}
 		}
 		else
 		{
 			ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "XMMatrixDecompose failed. Matrix might be non-affine.");
-			// 비상 상황: 월드 행렬 직접 편집 (위치만이라도)
-			// 기존 코드의 ImGui::DragFloat3("Position", &m_tDesc.WorldMatrix.m[ENUM_CLASS(STATE::POSITION)][0]); 사용
-			float* positionPtr = &m_tDesc.WorldMatrix.m[ENUM_CLASS(STATE::POSITION)][0];
-			if (ImGui::DragFloat3("Position (Raw Matrix)", positionPtr, 0.1f))
-			{
-				// 변경됨, 필요시 추가 처리
-			}
+			// ... (기존 오류 처리) ...
 		}
 	}
 	return S_OK;
-
 }
 
 void* CTransform::Dump()

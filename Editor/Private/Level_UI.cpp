@@ -10,7 +10,7 @@ CLevel_UI::CLevel_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_UI::Initialize()
 {
-    m_iLevel = ENUM_CLASS(LEVEL::LEVEL_UI);
+    m_iLevel = ENUM_CLASS(LEVEL::UI);
     if(FAILED(Ready_Layer_ImGui()))
         return E_FAIL;
 
@@ -43,7 +43,7 @@ HRESULT CLevel_UI::Ready_Layer_Background(const wstring strLayerTag)
     BackGroundDesc.fSizeX = 200.0f;
     BackGroundDesc.fSizeY = 200.0f;
 
-    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::LEVEL_UI), TEXT("Prototype_GameObject_BackGround"),
+    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::UI), TEXT("Prototype_GameObject_BackGround"),
         m_iLevel, strLayerTag, &BackGroundDesc)))
         return E_FAIL;
     return S_OK;
@@ -51,7 +51,7 @@ HRESULT CLevel_UI::Ready_Layer_Background(const wstring strLayerTag)
 
 HRESULT CLevel_UI::Ready_Layer_Camera(const wstring strLayerTag)
 {
-    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::LEVEL_UI), TEXT("Prototype_GameObject_Camera_Free"),
+    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::UI), TEXT("Prototype_GameObject_Camera_Free"),
         m_iLevel, strLayerTag)))
         return E_FAIL;
 

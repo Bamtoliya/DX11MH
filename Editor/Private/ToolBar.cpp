@@ -89,20 +89,20 @@ HRESULT CToolBar::Render()
             if (ImGui::BeginMenu("Levels")) {
                 // 도움말 메뉴 아이템들
                 if (ImGui::MenuItem("UI Tool")) {
-                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LEVEL_LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LEVEL_UI))))
+                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::UI))))
                         return E_FAIL;
                     //m_pGameInstance->Change_Level()
                     printf("Clicked Help->About\n");
                     // open_about_popup = true; // 예시
                 }
                 if (ImGui::MenuItem("Map Tool")) {
-                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LEVEL_LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LEVEL_MAP))))
+                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::MAP))))
                         return E_FAIL;
                     printf("Clicked Help->About\n");
                     // open_about_popup = true; // 예시
                 }
                 if (ImGui::MenuItem("Effect Tool")) {
-                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LEVEL_LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LEVEL_EFFECT))))
+                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::EFFECT))))
                         return E_FAIL;
                     printf("Clicked Help->About\n");
                     // open_about_popup = true; // 예시

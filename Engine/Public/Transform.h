@@ -47,7 +47,8 @@ public:
 	void Scaling(_float fX = 1.f, _float fY = 1.f, _float fZ = 1.f);
 	void Scaling(const _float3& vScale);
 
-	void Set_WorldMatrix(_matrix mWorldMatrix) { XMStoreFloat4x4(&m_tDesc.WorldMatrix, mWorldMatrix); }
+	//void Set_WorldMatrix(_matrix mWorldMatrix) { XMStoreFloat4x4(&m_tDesc.WorldMatrix, mWorldMatrix); }
+	void Set_WorldMatrix(const _matrix& WorldMatrix);
 	_float3 Get_Scaled();
 	_vector Get_Scale_Vector() const;
 	_float Get_Scale(STATE eState) { return XMVectorGetX(XMVector3Length(XMLoadFloat4x4(&m_tDesc.WorldMatrix).r[ENUM_CLASS(eState)])); }

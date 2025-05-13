@@ -13,6 +13,7 @@
 #include "Effects.h"
 #include "d3dx11effect.h"
 #include "d3dcompiler.h"
+#include "SimpleMath.h"
 using namespace DirectX;
 #pragma endregion
 

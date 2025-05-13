@@ -26,6 +26,7 @@ public:
 
 private:
 	HRESULT PopUpComponents();
+	HRESULT AddComponentButton();
 
 private:
 	CGameObject* m_pGameObject = { nullptr };

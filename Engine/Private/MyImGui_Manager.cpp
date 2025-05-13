@@ -31,6 +31,9 @@ HRESULT CMyImGui_Manager::Initialize(HWND hwnd)
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable Docking
 
+    //io.Fonts->AddFontDefault();
+    io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/YES24.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesKorean());
+
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
     //ImGui::StyleColorsLight();

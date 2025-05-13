@@ -41,6 +41,7 @@ HRESULT CInspector::Render()
                     ImGui::OpenPopup("my popup");
                 }
                 PopUpComponents();
+                AddComponentButton();
             }
 
             ImGui::End();
@@ -62,6 +63,15 @@ HRESULT CInspector::PopUpComponents()
 
         }
         ImGui::EndPopup();
+    }
+    return S_OK;
+}
+
+HRESULT CInspector::AddComponentButton()
+{
+    if (ImGui::Button("Add Component"))
+    {
+
     }
     return S_OK;
 }

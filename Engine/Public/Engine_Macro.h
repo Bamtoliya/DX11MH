@@ -46,9 +46,9 @@ unsigned int ClassName::Destroy_Instance()				\
 	return iRefCnt;										\
 }
 
-#define BANKPATH L""
+#define BANKPATH ""
 
-#define ASSETPATH L"../../Assets/"
+#define ASSETPATH "../../Assets/"
 
 #define KEY_DOWN(eKey) m_pGameInstance->Key_Down(eKey)
 #define KEY_UP(eKey) m_pGameInstance->Key_Up(eKey)

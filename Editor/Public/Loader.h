@@ -32,7 +32,7 @@ public:
 private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
-	LEVEL						m_eNextLevelID = { LEVEL::LEVEL_END };
+	LEVEL						m_eNextLevelID = { LEVEL::END };
 	_bool						m_isFinished = { false };
 	CGameInstance*				m_pGameInstance = { nullptr };
 
@@ -44,6 +44,7 @@ private:
 public:
 	HRESULT Loading_For_Logo();
 	HRESULT Loading_For_UI();
+	HRESULT Loading_For_Map();
 
 
 public:

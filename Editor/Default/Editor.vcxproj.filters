@@ -73,6 +73,9 @@
     <Filter Include="02.GameObject\02.Camera">
       <UniqueIdentifier>{6c343bba-2825-4de6-90cc-621e80077e35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="00.Levels\GamePlay">
+      <UniqueIdentifier>{affe5e44-9579-4944-bb8d-bd02ce6b190c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -122,6 +125,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Free.cpp">
       <Filter>02.GameObject\02.Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Terrain.cpp">
+      <Filter>02.GameObject\01.Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_GamePlay.cpp">
+      <Filter>00.Levels\GamePlay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +202,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Free.h">
       <Filter>02.GameObject\02.Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Terrain.h">
+      <Filter>02.GameObject\01.Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_GamePlay.h">
+      <Filter>00.Levels\GamePlay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
