@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{e6549a29-7a97-4c29-af47-47cac692efb5}</ProjectGuid>
+    <RootNamespace>Engine</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
+    <EnableUnitySupport>true</EnableUnitySupport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <EnableUnitySupport>true</EnableUnitySupport>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PropertySheet.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>../Bin/</OutDir>
+    <ExternalIncludePath>$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\ImGuizmo\;$(SolutionDir)External Libraries\imgui\;$(WWISESDK)\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>$(WWISESDK)\x64_vc170\$(Configuration)\lib\;$(LibraryPath)</LibraryPath>
+    <CopyLocalProjectReference>true</CopyLocalProjectReference>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>../Bin/</OutDir>
+    <ExternalIncludePath>$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\ImGuizmo\;$(SolutionDir)External Libraries\imgui\;$(WWISESDK)\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>$(WWISESDK)\x64_vc170\$(Configuration)\lib\;$(LibraryPath)</LibraryPath>
+    <CopyLocalProjectReference>true</CopyLocalProjectReference>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>../public/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\wwise\include\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\imgui\backends;$(SolutionDir)External Libraries\imGuizmo\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;fmod_vc.lib;fsbank_vc.lib;fmodstudio_vc.lib;AkSoundEngine.lib;AkMemoryMgr.lib;AkStreamMgr.lib;AkMusicEngine.lib;AkSpatialAudio.lib;AkAudioInputSource.lib;CommunicationCentral.lib;GameInput.lib;DirectXTK_Debug.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)External Libraries\fmod\core\lib\x64\;$(SolutionDir)External Libraries\fmod\studio\lib\x64\;$(SolutionDir)External Libraries\fmod\fsbank\lib\x64\;$(SolutionDir)External Libraries\wwise\x64\$(Configuration)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../ThirdPartyLib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>CD "$(SolutionDir)"
+
+CALL "$(SolutionDir)\UpdateLib.bat"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>../public/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\wwise\include\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\imgui\backends;$(SolutionDir)External Libraries\imGuizmo\</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>d3d11.lib;dinput8.lib;dxguid.lib;fmod_vc.lib;fsbank_vc.lib;fmodstudio_vc.lib;AkSoundEngine.lib;AkMemoryMgr.lib;AkStreamMgr.lib;AkMusicEngine.lib;AkSpatialAudio.lib;AkAudioInputSource.lib;CommunicationCentral.lib;GameInput.lib;DirectXTK_Release.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)External Libraries\fmod\core\lib\x64\;$(SolutionDir)External Libraries\fmod\studio\lib\x64\;$(SolutionDir)External Libraries\fmod\fsbank\lib\x64\;$(SolutionDir)External Libraries\wwise\x64\$(Configuration)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../ThirdPartyLib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <PostBuildEvent>
+      <Command>CD "$(SolutionDir)"
+
+CALL "$(SolutionDir)\UpdateLib.bat"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\GraphEditor.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImGradient.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImGuizmo.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImSequencer.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuizmo\ImZoomSlider.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\backends\imgui_impl_win32.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\imconfig.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\imgui.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\imgui_internal.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_rectpack.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_textedit.h" />
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\..\External Libraries\simdjson.h" />
+    <ClInclude Include="..\public\Audio_Manager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\Base.h" />
+    <ClInclude Include="..\Public\Bounding_Box.h" />
+    <ClInclude Include="..\Public\Bounding_Sphere.h" />
+    <ClInclude Include="..\public\GameObject_Camera.h" />
+    <ClInclude Include="..\public\Camera_Manager.h" />
+    <ClInclude Include="..\Public\Component.h" />
+    <ClInclude Include="..\Public\Devices.h" />
+    <ClInclude Include="..\Public\Engine_Defines.h" />
+    <ClInclude Include="..\Public\Engine_Enum.h" />
+    <ClInclude Include="..\Public\Engine_Function.h" />
+    <ClInclude Include="..\Public\Engine_Macro.h" />
+    <ClInclude Include="..\Public\Engine_Struct.h" />
+    <ClInclude Include="..\Public\Engine_Typedef.h" />
+    <ClInclude Include="..\Public\GameInstance.h" />
+    <ClInclude Include="..\Public\GameObject.h" />
+    <ClInclude Include="..\public\GameObject_Capsule.h" />
+    <ClInclude Include="..\public\GameObject_Cube.h" />
+    <ClInclude Include="..\public\GameObject_Plane.h" />
+    <ClInclude Include="..\public\GameObject_Sphere.h" />
+    <ClInclude Include="..\Public\Graphic_Device.h" />
+    <ClInclude Include="..\public\GameInput_Device.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\public\Input_Device.h" />
+    <ClInclude Include="..\Public\Layer.h" />
+    <ClInclude Include="..\Public\Level.h" />
+    <ClInclude Include="..\Public\Level_Manager.h" />
+    <ClInclude Include="..\Public\Light.h" />
+    <ClInclude Include="..\public\Light_Manager.h" />
+    <ClInclude Include="..\Public\Managers.h" />
+    <ClInclude Include="..\Public\Material.h" />
+    <ClInclude Include="..\public\MyCamera.h" />
+    <ClInclude Include="..\Public\MyMaterial.h" />
+    <ClInclude Include="..\Public\MyImGui.h" />
+    <ClInclude Include="..\public\MyImGui_Manager.h" />
+    <ClInclude Include="..\public\Panel.h" />
+    <ClInclude Include="..\Public\Particle_Manager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\Particle_System.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\public\Physics_System.h" />
+    <ClInclude Include="..\public\Picking_System.h" />
+    <ClInclude Include="..\public\Ray.h" />
+    <ClInclude Include="..\public\RectTransform.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\public\RenderTarget.h" />
+    <ClInclude Include="..\Public\Sound_Event.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sound_Listener.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sound_Manager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sound_Source.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\public\Mesh.h" />
+    <ClInclude Include="..\public\Model.h" />
+    <ClInclude Include="..\Public\Object_Manager.h" />
+    <ClInclude Include="..\public\PipeLine.h" />
+    <ClInclude Include="..\Public\Prototype_Manager.h" />
+    <ClInclude Include="..\Public\Renderer.h" />
+    <ClInclude Include="..\Public\Systems.h" />
+    <ClInclude Include="..\public\Shader.h" />
+    <ClInclude Include="..\public\Target_Manager.h" />
+    <ClInclude Include="..\public\Texture.h" />
+    <ClInclude Include="..\Public\Timer.h" />
+    <ClInclude Include="..\Public\Timer_Manager.h" />
+    <ClInclude Include="..\public\UI_Element.h" />
+    <ClInclude Include="..\public\UI_Manager.h" />
+    <ClInclude Include="..\public\Transform.h" />
+    <ClInclude Include="..\public\VIBuffer.h" />
+    <ClInclude Include="..\public\UIObject.h" />
+    <ClInclude Include="..\Public\VIBuffer_Rect.h" />
+    <ClInclude Include="..\Public\VIBuffer_Terrain.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\GraphEditor.cpp" />
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.cpp" />
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImGradient.cpp" />
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImGuizmo.cpp" />
+    <ClCompile Include="..\..\External Libraries\ImGuizmo\ImSequencer.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\backends\imgui_impl_win32.cpp">
+      <IncludeInUnityFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</IncludeInUnityFile>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\External Libraries\simdjson.cpp" />
+    <ClCompile Include="..\private\Audio_Manager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\Base.cpp" />
+    <ClCompile Include="..\private\GameObject_Camera.cpp" />
+    <ClCompile Include="..\private\Camera_Manager.cpp" />
+    <ClCompile Include="..\Private\Component.cpp" />
+    <ClCompile Include="..\Private\Engine_Struct.cpp" />
+    <ClCompile Include="..\Private\GameInstance.cpp" />
+    <ClCompile Include="..\Private\GameObject.cpp" />
+    <ClCompile Include="..\private\GameObject_Capsule.cpp" />
+    <ClCompile Include="..\private\GameObject_Cube.cpp" />
+    <ClCompile Include="..\private\GameObject_Plane.cpp" />
+    <ClCompile Include="..\private\GameObject_Sphere.cpp" />
+    <ClCompile Include="..\Private\Graphic_Device.cpp" />
+    <ClCompile Include="..\private\GameInput_Device.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\Input_Device.cpp" />
+    <ClCompile Include="..\Private\Layer.cpp" />
+    <ClCompile Include="..\Private\Level.cpp" />
+    <ClCompile Include="..\Private\Level_Manager.cpp" />
+    <ClCompile Include="..\Private\Light.cpp" />
+    <ClCompile Include="..\private\Light_Manager.cpp" />
+    <ClCompile Include="..\Private\Material.cpp" />
+    <ClCompile Include="..\private\MyCamera.cpp" />
+    <ClCompile Include="..\Private\MyMaterial.cpp" />
+    <ClCompile Include="..\Private\MyImGui.cpp" />
+    <ClCompile Include="..\private\MyImGui_Manager.cpp" />
+    <ClCompile Include="..\private\Panel.cpp" />
+    <ClCompile Include="..\Private\Particle_Manager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\Particle_System.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\private\Physics_System.cpp" />
+    <ClCompile Include="..\private\Picking_System.cpp" />
+    <ClCompile Include="..\private\Ray.cpp" />
+    <ClCompile Include="..\private\RectTransform.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\private\RenderTarget.cpp" />
+    <ClCompile Include="..\Private\Sound_Event.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sound_Listener.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sound_Manager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sound_Source.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\private\Mesh.cpp" />
+    <ClCompile Include="..\private\Model.cpp" />
+    <ClCompile Include="..\Private\Object_Manager.cpp" />
+    <ClCompile Include="..\private\PipeLine.cpp" />
+    <ClCompile Include="..\Private\Prototype_Manager.cpp" />
+    <ClCompile Include="..\Private\Renderer.cpp" />
+    <ClCompile Include="..\private\Shader.cpp" />
+    <ClCompile Include="..\private\Target_Manager.cpp" />
+    <ClCompile Include="..\private\Texture.cpp" />
+    <ClCompile Include="..\Private\Timer.cpp" />
+    <ClCompile Include="..\Private\Timer_Manager.cpp" />
+    <ClCompile Include="..\private\UI_Element.cpp" />
+    <ClCompile Include="..\private\UI_Manager.cpp" />
+    <ClCompile Include="..\private\Transform.cpp" />
+    <ClCompile Include="..\private\VIBuffer.cpp" />
+    <ClCompile Include="..\private\UIObject.cpp" />
+    <ClCompile Include="..\Private\VIBuffer_Rect.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <ClCompile Include="..\Private\VIBuffer_Terrain.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\..\packages\Microsoft.GameInput.1.2.26100.4782\build\native\targets\Microsoft.GameInput.targets" Condition="Exists('..\..\packages\Microsoft.GameInput.1.2.26100.4782\build\native\targets\Microsoft.GameInput.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>이 프로젝트는 이 컴퓨터에 없는 NuGet 패키지를 참조합니다. 해당 패키지를 다운로드하려면 NuGet 패키지 복원을 사용하십시오. 자세한 내용은 http://go.microsoft.com/fwlink/?LinkID=322105를 참조하십시오. 누락된 파일은 {0}입니다.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\..\packages\Microsoft.GameInput.1.2.26100.4782\build\native\targets\Microsoft.GameInput.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.GameInput.1.2.26100.4782\build\native\targets\Microsoft.GameInput.targets'))" />
+  </Target>
+</Project>

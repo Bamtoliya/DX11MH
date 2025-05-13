@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Editor_Defines.h"
 #include "Level.h"
 NS_BEGIN(Editor)

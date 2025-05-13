@@ -109,7 +109,6 @@ HRESULT CGameObject::RenderImGuiObjects()
 	{
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			m_pGameInstance->PickObjectById(m_oID);
-		ImGui::Text("Hello!");
 		ImGui::TreePop();
 	}
 	

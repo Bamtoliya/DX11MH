@@ -27,14 +27,14 @@ HRESULT CRenderTarget::Initialize(const _wstring& strName, _uint iWidth, _uint i
     D3D11_TEXTURE2D_DESC textureDesc = {};
     textureDesc.Width = iWidth;
     textureDesc.Height = iHeight;
-    textureDesc.MipLevels = 1;
+    textureDesc.MipLevels = 0;
     textureDesc.ArraySize = 1;
     textureDesc.Format = eFormat;
     textureDesc.SampleDesc.Count = 1;
     textureDesc.Usage = D3D11_USAGE_DEFAULT;
     textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE; // RTV, SRV로 바인딩 가능해야 함
     textureDesc.CPUAccessFlags = 0;
-    textureDesc.MiscFlags = 0;
+    textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
     if (FAILED(m_pDevice->CreateTexture2D(&textureDesc, nullptr, &m_pTexture)))
     {
@@ -59,7 +59,7 @@ HRESULT CRenderTarget::Initialize(const _wstring& strName, _uint iWidth, _uint i
     srvDesc.Format = eFormat;
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     srvDesc.Texture2D.MostDetailedMip = 0;
-    srvDesc.Texture2D.MipLevels = 1;
+    srvDesc.Texture2D.MipLevels = -1;
 
     if (FAILED(m_pDevice->CreateShaderResourceView(m_pTexture, &srvDesc, &m_pSRV)))
     {

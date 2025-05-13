@@ -2,13 +2,13 @@
 #include "GameInstance.h"
 
 CCamera_Free::CCamera_Free(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CCamera { pDevice, pContext }
+	: CGameObject_Camera{ pDevice, pContext }
 {
 
 }
 
 CCamera_Free::CCamera_Free(const CCamera_Free& Prototype)
-	: CCamera { Prototype }
+	: CGameObject_Camera{ Prototype }
 {
 
 }
@@ -20,7 +20,7 @@ HRESULT CCamera_Free::Initialize_Prototype()
 
 HRESULT CCamera_Free::Initialize(void* pArg)
 {
-	CCamera::CAMERA_DESC			Desc{};
+	CGameObject_Camera::CAMERA_DESC			Desc{};
 
 	Desc.vEye = _float4(0.f, 20.f, -15.f, 1.0f);
 	Desc.vAt = _float4(0.f, 0.f, 0.f, 1.0f);
@@ -29,6 +29,7 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 	Desc.fFar = 500.f;
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.0f;
+	Desc.bOrthographic = false;
 	lstrcpy(Desc.szName, TEXT("Camera"));
 
 	m_fSensor = 0.1f;
@@ -40,45 +41,46 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 }
 
 void CCamera_Free::Priority_Update(_float fTimeDelta)
-{	
-	if(KEY_PRESSING(DIK_A))
+{
+	if (m_bCamraControl)
 	{
-		m_pTransformCom->Go_Left(fTimeDelta);
+		if (KEY_PRESSING(DIK_A))
+		{
+			m_pTransformCom->Go_Left(fTimeDelta);
+		}
+
+		if (KEY_PRESSING(DIK_D))
+		{
+			m_pTransformCom->Go_Right(fTimeDelta);
+		}
+		if (KEY_PRESSING(DIK_W))
+		{
+			m_pTransformCom->Go_Straight(fTimeDelta);
+		}
+		if (KEY_PRESSING(DIK_S))
+		{
+			m_pTransformCom->Go_Backward(fTimeDelta);
+		}
+
+		_long			MouseMove = {};
+
+		if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::X))
+		{
+			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), MouseMove * fTimeDelta * m_fSensor);
+		}
+
+		if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::Y))
+		{
+			m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), MouseMove * fTimeDelta * m_fSensor);
+		}
 	}
-
-	if (KEY_PRESSING(DIK_D))
-	{
-		m_pTransformCom->Go_Right(fTimeDelta);
-	}
-	if (KEY_PRESSING(DIK_W))
-	{
-		m_pTransformCom->Go_Straight(fTimeDelta);
-	}
-	if (KEY_PRESSING(DIK_S))
-	{
-		m_pTransformCom->Go_Backward(fTimeDelta);
-	}
-
-	_long			MouseMove = {};
-
-	if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::X))
-	{
-		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), MouseMove * fTimeDelta * m_fSensor);
-	}
-
-	if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::Y))
-	{
-		m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), MouseMove * fTimeDelta * m_fSensor);
-	}
-
-
-
 	__super::Bind_Matrices();
 }
 
 void CCamera_Free::Update(_float fTimeDelta)
 {
-
+	if (KEY_DOWN(DIK_TAB))
+		m_bCamraControl = !m_bCamraControl;
 }
 
 void CCamera_Free::Late_Update(_float fTimeDelta)

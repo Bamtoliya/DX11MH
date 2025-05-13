@@ -25,13 +25,12 @@ private:
 
 private:
 	HRESULT Ready_NonAnim_Mesh(const aiMesh* pAIMesh, _fmatrix PreTransformMatrix);
-	HRESULT Ready_Anim_Mesh(const aiMesh* pAIMesh);
+	HRESULT Ready_Anim_Mesh(const aiMesh* pAIMesh, _fmatrix PreTransformMatrix);
 
 public:
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const aiMesh* pAIMesh, _fmatrix PreTransformMatrix);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
-
 };
 
 NS_END

@@ -21,7 +21,7 @@ HRESULT CMesh::Initialize_Prototype(MODEL eType, const aiMesh* pAIMesh, _fmatrix
 	m_ePrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 
-	HRESULT hr = eType == MODEL::NONANIM ? Ready_NonAnim_Mesh(pAIMesh, PreTransformMatrix) : Ready_Anim_Mesh(pAIMesh);
+	HRESULT hr = eType == MODEL::NONANIM ? Ready_NonAnim_Mesh(pAIMesh, PreTransformMatrix) : Ready_Anim_Mesh(pAIMesh, PreTransformMatrix);
 
 	if (FAILED(hr))
 		return E_FAIL;
@@ -110,7 +110,7 @@ HRESULT CMesh::Ready_NonAnim_Mesh(const aiMesh* pAIMesh, _fmatrix PreTransformMa
 	return S_OK;
 }
 
-HRESULT CMesh::Ready_Anim_Mesh(const aiMesh* pAIMesh)
+HRESULT CMesh::Ready_Anim_Mesh(const aiMesh* pAIMesh, _fmatrix PreTransformMatrix)
 {
 	m_iVertexStride = sizeof(VTXANIMMESH);
 	D3D11_BUFFER_DESC			VBBufferDesc{};

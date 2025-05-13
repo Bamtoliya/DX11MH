@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "GameObject.h"
 NS_BEGIN(Engine)
-class ENGINE_DLL CCamera abstract :public CGameObject
+class ENGINE_DLL CGameObject_Camera abstract :public CGameObject
 {
 public:
 	typedef struct tagCameraDesc : public GAMEOBJECT_DESC
@@ -13,13 +13,14 @@ public:
 		_float				fFovy;
 		_float				fNear;
 		_float				fFar;
+		_bool				bOrthographic = false;
 	}CAMERA_DESC;
 protected:
 #pragma region Constructor/Destructor
 protected:
-	CCamera(ID3D11Device* m_pDevice, ID3D11DeviceContext* m_pContext);
-	CCamera(const CCamera& Prototype);
-	virtual ~CCamera() = default;
+	CGameObject_Camera(ID3D11Device* m_pDevice, ID3D11DeviceContext* m_pContext);
+	CGameObject_Camera(const CGameObject_Camera& Prototype);
+	virtual ~CGameObject_Camera() = default;
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
@@ -40,8 +41,9 @@ public:
 	virtual HRESULT Render() = 0;
 public:
 	virtual void Bind_Matrices();
+#pragma endregion
+
 protected:
 	CAMERA_DESC			m_tDesc;
-#pragma endregion
 };
 NS_END

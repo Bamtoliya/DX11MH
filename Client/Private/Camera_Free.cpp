@@ -2,13 +2,13 @@
 #include "GameInstance.h"
 
 CCamera_Free::CCamera_Free(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CCamera { pDevice, pContext }
+	: CGameObject_Camera{ pDevice, pContext }
 {
 
 }
 
 CCamera_Free::CCamera_Free(const CCamera_Free& Prototype)
-	: CCamera { Prototype }
+	: CGameObject_Camera{ Prototype }
 {
 
 }
@@ -20,7 +20,7 @@ HRESULT CCamera_Free::Initialize_Prototype()
 
 HRESULT CCamera_Free::Initialize(void* pArg)
 {
-	CCamera::CAMERA_DESC			Desc{};
+	CGameObject_Camera::CAMERA_DESC			Desc{};
 
 	Desc.vEye = _float4(0.f, 20.f, -15.f, 1.0f);
 	Desc.vAt = _float4(0.f, 0.f, 0.f, 1.0f);
@@ -29,6 +29,7 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 	Desc.fFar = 500.f;
 	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
 	Desc.fSpeedPerSec = 10.0f;
+	Desc.bOrthographic = false;
 	lstrcpy(Desc.szName, TEXT("Camera"));
 
 	m_fSensor = 0.1f;

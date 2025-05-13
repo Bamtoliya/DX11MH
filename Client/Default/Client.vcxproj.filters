@@ -155,5 +155,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxCubeTex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

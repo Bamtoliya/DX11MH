@@ -1,14 +1,14 @@
 ﻿#pragma once
 
 #include "Client_Defines.h"
-#include "Camera.h"
+#include "GameObject_Camera.h"
 
 NS_BEGIN(Client)
 
-class CCamera_Free final : public CCamera
+class CCamera_Free final : public CGameObject_Camera
 {
 public:
-	typedef struct tagCameraFreeDesc : public CCamera::CAMERA_DESC
+	typedef struct tagCameraFreeDesc : public CGameObject_Camera::CAMERA_DESC
 	{
 		_float			fSensor;
 	}CAMERA_FREE_DESC;

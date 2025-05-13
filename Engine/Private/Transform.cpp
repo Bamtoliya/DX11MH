@@ -747,17 +747,15 @@ void CTransform::Set_RotationY(_float fAngleY)
 
 void CTransform::LookAt(_fvector vAt)
 {
-	_vector		vPosition = Get_State(STATE::POSITION);
+	_float3		vScaled = Get_Scaled();
 
-	_vector		vLook = vAt - vPosition;
-	_vector		vAxisY = XMVectorSet(0.f, 1.f, 0.f, 0.f);
-
-	_vector		vRight = XMVector3Cross(vAxisY, vLook);
+	_vector		vLook = vAt - Get_State(STATE::POSITION);
+	_vector		vRight = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), vLook);
 	_vector		vUp = XMVector3Cross(vLook, vRight);
 
-	Set_State(STATE::RIGHT, XMVector3Normalize(vRight) * Get_Scale(STATE::RIGHT));
-	Set_State(STATE::UP, XMVector3Normalize(vUp) * Get_Scale(STATE::UP));
-	Set_State(STATE::LOOK, XMVector3Normalize(vLook) * Get_Scale(STATE::LOOK));
+	Set_State(STATE::RIGHT, XMVector3Normalize(vRight) * vScaled.x);
+	Set_State(STATE::UP, XMVector3Normalize(vUp) * vScaled.y);
+	Set_State(STATE::LOOK, XMVector3Normalize(vLook) * vScaled.z);
 }
 
 void CTransform::LookDir(_fvector vDir)

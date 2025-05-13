@@ -24,16 +24,12 @@ CViewport_2D* CViewport_2D::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 void CViewport_2D::Free()
 {
     __super::Free();
-    Safe_Release(m_pTextureCom);
 }
 
 HRESULT CViewport_2D::Initialize(void* pArg)
 {
     m_bShow = true;
     m_bShowImage = true;
-    m_pTextureCom = CTexture::Create(m_pDevice, m_pContext, L"../../Assets/Texture/ui_common/uiRANGE_img_hologram3.dds", 1);
-    if (m_pTextureCom == nullptr)
-        return E_FAIL;
     m_vImageGridPosition = { -(g_iWinSizeX/2.f), -(g_iWinSizeY / 2.f)}; // 그리드 (0,0) 기준 좌상단 좌표
     m_vImageGridSize = { g_iWinSizeX, g_iWinSizeY };   // 그리드 단위 크기
     return S_OK;
@@ -160,27 +156,23 @@ HRESULT CViewport_2D::Render()
         DrawTexture(draw_list, canvas_center, zoom);
 
 #pragma region Widgets
-        // --- UI 위젯 (상태 표시 및 제어) ---
-        // 커서 위치를 창 좌상단 기준으로 설정 (정보 표시용)
-        ImGui::SetCursorPos(ImVec2(content_min_rel.x + 10, content_min_rel.y + 10));
-        ImGui::BeginGroup(); // 정보 텍스트 그룹화 (배경 추가 등에 용이)
-        ImGui::Text("Interactive Grid");
-        ImGui::Text("Zoom: %.2f (Mouse Wheel)", zoom);
-        ImGui::Text("Pan Offset: (%.1f, %.1f) (Right Mouse Click & Drag)", panning.x, panning.y); // 패닝 정보 표시 추가
-        ImGui::TextUnformatted(mouse_cursor); // 클릭 정보 표시
-        ImGui::TextUnformatted(click_info); // 클릭 정보 표시
-        ImGui::TextUnformatted(click_color); // 클릭 정보 표시
-        if (ImGui::Button("Reset View")) { // 리셋 버튼 추가
-            zoom = 1.0f;
-            panning = ImVec2(0.0f, 0.0f);
-            snprintf(click_info, sizeof(click_info), "View Reset");
+        ImGuiWindowFlags widget_window_flags = ImGuiWindowFlags_AlwaysAutoResize;
+    if (ImGui::Begin("Widget Window", nullptr, widget_window_flags)) // p_open 인자를 nullptr로 전달하면 닫기 버튼이 생기지 않습니다. 필요하다면 bool 변수를 전달하세요.
+    {
+        ImGui::Text("Pan Offset: (%.1f, %.1f) (Right Mouse Click & Drag)", panning.x, panning.y);
+        /*ImGui::TextUnformatted(mouse_cursor);
+        ImGui::TextUnformatted(click_color);*/
+        ImGui::TextUnformatted(click_info);
+        if (ImGui::Button("Reset View")) {
+            zoom = 1.0f; // 실제 zoom 변수 사용 시 주석 해제
+            panning = ImVec2(0.0f, 0.0f); // 실제 panning 변수 사용 시 주석 해제
+            snprintf(click_info, sizeof(click_info), "View Reset"); // 실제 click_info 변수 사용 시 주석 해제
         }
-        ImGui::EndGroup();
-
-        // 줌 슬라이더는 정보 텍스트와 분리하여 다른 곳에 배치할 수도 있음
-        ImGui::SetCursorPosX(content_min_rel.x + 10); // 예시
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10); // 예시
+        ImGui::SameLine();
         ImGui::SliderFloat("Zoom Slider", &zoom, min_zoom, max_zoom);
+
+    }
+    ImGui::End(); // "Widget Window" 창 끝
 #pragma endregion
 
         DrawImGuizmo2D(zoom, panning);

@@ -96,6 +96,15 @@ HRESULT CRenderer::Draw()
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
+	ID3D11ShaderResourceView* pFinalSceneSRV = m_pGameInstance->Get_SRV(L"RT_FinalScene");
+	if (pFinalSceneSRV)
+	{
+		// 중요: GenerateMips는 SRV에 대해 호출하는 것이 아니라, DeviceContext에 대해 SRV를 인자로 전달합니다.
+		m_pContext->GenerateMips(pFinalSceneSRV);
+	}
+
+	
+	// Picking 타겟도 필요하다면 동일하게 처리
 	if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_FinalScene")))
 		return E_FAIL;
 

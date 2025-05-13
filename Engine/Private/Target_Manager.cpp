@@ -193,91 +193,70 @@ CRenderTarget* CTarget_Manager::Get_RenderTarget(const _wstring& strTargetTag) c
 
 HRESULT CTarget_Manager::Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTag)
 {
-    // 백업된 RTV가 유효한지 확인 (보통 배열의 첫 번째 요소 사용)
-    if (!m_pBackupRTVs[0])
+    // 1. 대상 리소스 (백버퍼) 가져오기
+    ID3D11RenderTargetView* pBackBufferRTV = m_pBackupRTVs[0];
+    if (!pBackBufferRTV)
     {
-        MSG_BOX("Backup Render Target View [0] is null. Did you call Begin_MRT before?");
-        return E_FAIL; // 또는 다른 적절한 에러 코드
+        MSG_BOX("Failed to get BackBuffer RTV from GameInstance.");
+        return E_FAIL;
     }
 
-    // 1. 원본 RenderTarget 찾기
+    ID3D11Resource* pDestResource = nullptr;
+    pBackBufferRTV->GetResource(&pDestResource); // AddRef됨
+    if (!pDestResource)
+    {
+        MSG_BOX("Failed to get Resource from BackBuffer RTV.");
+        return E_FAIL;
+    }
+
+    // 2. 원본 RenderTarget 찾기 및 리소스 가져오기
     CRenderTarget* pSourceRT = Find_RenderTarget(strSourceRenderTargetTag);
     if (!pSourceRT)
     {
         MSG_BOX("Source Render Target not found for copy.");
+        Safe_Release(pDestResource);
         return E_FAIL;
     }
 
-    // 2. 원본 RenderTarget에서 리소스(텍스처) 가져오기
     ID3D11Resource* pSourceResource = nullptr;
-    ID3D11RenderTargetView* pSourceRTV = pSourceRT->Get_RTV();
-    if (!pSourceRTV)
+    ID3D11Texture2D* pSourceTexture = pSourceRT->Get_Texture(); // CRenderTarget에 Get_Texture()가 있다고 가정
+    if (!pSourceTexture)
     {
-        MSG_BOX("Failed to get RTV from source Render Target.");
+        MSG_BOX("Failed to get Texture from source Render Target.");
+        Safe_Release(pDestResource);
         return E_FAIL;
     }
-    pSourceRTV->GetResource(&pSourceResource); // AddRef됨
-    if (!pSourceResource)
-    {
-        MSG_BOX("Failed to get Resource from source RTV.");
-        return E_FAIL;
-    }
+    // GetResource 대신 직접 텍스처를 가져와서 QueryInterface를 사용하거나,
+    // CRenderTarget이 ID3D11Resource*를 반환하는 함수를 제공해야 할 수도 있습니다.
+    // 여기서는 pSourceTexture가 ID3D11Resource로 캐스팅 가능하다고 가정합니다.
+    pSourceResource = static_cast<ID3D11Resource*>(pSourceTexture);
+    Safe_AddRef(pSourceResource); // 직접 캐스팅 시 수동 AddRef 필요할 수 있음 (Get_Texture가 AddRef 안 해준다면)
 
-    // 3. 대상 리소스(백업된 RTV[0]의 텍스처) 가져오기
-    ID3D11Resource* pDestResource = nullptr;
-    m_pBackupRTVs[0]->GetResource(&pDestResource); // AddRef됨
-    if (!pDestResource)
-    {
-        MSG_BOX("Failed to get Resource from backup RTV[0].");
-        Safe_Release(pSourceResource); // 이전에 얻은 리소스 해제
-        return E_FAIL;
-    }
 
-    // --- (선택 사항) 리소스 호환성 검사 ---
-    // 복사하려면 두 리소스의 크기와 포맷이 같아야 합니다.
-    // 디버깅 목적으로 검사 코드를 추가할 수 있습니다.
-#ifdef _DEBUG
-    {
-        D3D11_RESOURCE_DIMENSION srcDim, destDim;
-        pSourceResource->GetType(&srcDim);
-        pDestResource->GetType(&destDim);
+    // 3. 서브리소스 인덱스 계산
+    D3D11_TEXTURE2D_DESC sourceDesc;
+    pSourceTexture->GetDesc(&sourceDesc); // 원본 텍스처의 설명 가져오기
 
-        if (srcDim == D3D11_RESOURCE_DIMENSION_TEXTURE2D && destDim == D3D11_RESOURCE_DIMENSION_TEXTURE2D)
-        {
-            ID3D11Texture2D* pSrcTex = nullptr;
-            ID3D11Texture2D* pDestTex = nullptr;
-            if (SUCCEEDED(pSourceResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&pSrcTex)) &&
-                SUCCEEDED(pDestResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&pDestTex)))
-            {
-                D3D11_TEXTURE2D_DESC srcDesc, destDesc;
-                pSrcTex->GetDesc(&srcDesc);
-                pDestTex->GetDesc(&destDesc);
+    UINT uiSrcMipLevels = sourceDesc.MipLevels; // 원본의 실제 밉맵 레벨 수
+    // 만약 Initialize 시 MipLevels = 0 으로 설정했다면, 여기서 실제 생성된 밉 레벨 수를 가져와야 합니다.
+    // D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc; pSourceRT->Get_SRV()->GetDesc(&srvDesc); 와 같은 방식으로 SRV에서 유추하거나,
+    // 텍스처 생성 시 실제 계산된 밉 레벨 수를 저장해두는 것이 좋습니다.
+    // 여기서는 sourceDesc.MipLevels가 올바른 총 밉맵 수를 가지고 있다고 가정합니다.
 
-                if (srcDesc.Width != destDesc.Width || srcDesc.Height != destDesc.Height || srcDesc.Format != destDesc.Format)
-                {
-                    OutputDebugStringA("Warning: CopyResource source and destination dimensions or format mismatch.\n");
-                    // 필요시 여기서 에러 처리 (return E_FAIL)
-                }
-            }
-            Safe_Release(pSrcTex);
-            Safe_Release(pDestTex);
-        }
-        else
-        {
-            OutputDebugStringA("Warning: CopyResource source or destination is not a Texture2D.\n");
-            // 다른 리소스 타입 처리 또는 에러
-        }
-    }
-#endif // _DEBUG
+    UINT uiSrcSubresource = D3D11CalcSubresource(0, 0, uiSrcMipLevels); // 원본의 밉 레벨 0
+    UINT uiDstSubresource = D3D11CalcSubresource(0, 0, 1);          // 대상(백버퍼)의 밉 레벨 0
 
-    // 4. 리소스 복사 (Source -> Destination)
-    // 복사할 내용(pSourceResource)을 대상(pDestResource)으로 복사합니다.
-    m_pContext->CopyResource(pDestResource, pSourceResource);
+    // 4. CopySubresourceRegion 호출
+    m_pContext->CopySubresourceRegion(
+        pDestResource,      // 대상 리소스 (백버퍼 텍스처)
+        uiDstSubresource,   // 대상 서브리소스 인덱스
+        0, 0, 0,            // 대상의 복사 시작 위치 (x, y, z)
+        pSourceResource,    // 원본 리소스 (RT_FinalScene 텍스처)
+        uiSrcSubresource,   // 원본 서브리소스 인덱스
+        nullptr             // 원본의 복사할 영역 (nullptr은 전체 서브리소스)
+    );
 
-    ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
-    m_pContext->PSSetShaderResources(0, 1, nullSRV); // 사용한 슬롯을 명시적으로 NULL로 설정
-
-    // 5. 사용한 리소스 참조 해제 (GetResource로 AddRef된 것들)
+    // 5. 사용한 리소스 참조 해제
     Safe_Release(pSourceResource);
     Safe_Release(pDestResource);
 
