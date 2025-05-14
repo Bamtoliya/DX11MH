@@ -25,10 +25,9 @@ private:
 	ID3D11ShaderResourceView* m_pSRV = nullptr; // 실제 렌더링에 사용할 SRV
 
 private:
-	HRESULT DrawGrid(ImDrawList* pList, ImVec2& p0, ImVec2& p1, ImVec2& center, _float fZoom);
-	HRESULT DrawTexture(ImDrawList* pList, ImVec2& center, _float fZoom);
+	HRESULT DrawGrid(ImVec2& p0, ImVec2& size, _float fZoom);
+	HRESULT DrawTexture(ImDrawList* pList, const _wstring& strRTKey, ImVec2& center, _float fZoom);
 	HRESULT DrawImGuizmo3D(_float fZoom, ImVec2& vPanning);
-	HRESULT DrawImGuizmo3D();
 
 	wstring			m_strRenderTargetKey = {};
 

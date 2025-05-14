@@ -41,11 +41,6 @@ namespace Engine
 		XMFLOAT3		vPosition;
 		XMFLOAT2		vTextureCoord;
 	}VTXTEX;
-
-	typedef struct tagVertexCubeTexture {
-		XMFLOAT3		vPosition;
-		XMFLOAT3		vTextureCoord;
-	}VTXCUBETEX;
 #pragma endregion
 
 
@@ -77,6 +72,15 @@ namespace Engine
 
 		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	}VTXPOSTEX;
+
+	typedef struct ENGINE_DLL tagVertexCubePositionTexcoord
+	{
+		XMFLOAT3		vPosition;
+		XMFLOAT3		vTexcoord;
+
+		static const unsigned int					iNumElements = { 2 };
+		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
+	}VTXCUBETEX;
 
 	typedef struct ENGINE_DLL tagVertexPositionNormalTexcoord
 	{

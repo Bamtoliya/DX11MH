@@ -139,6 +139,7 @@ void CGameInstance::Clear(_uint iLevelIndex)
 	/* 특정 레벨의 자원을 삭제한다. */
 	
 	/* 특정 레벨의 객체을 삭제한다. */
+	m_pPicking_System->Clear();
 	m_pObject_Manager->Clear(iLevelIndex);
 	m_pSound_Manager->Stop_All_Event();
 	/* 특정 레벨의 원형객을 삭제한다. */

@@ -53,6 +53,8 @@ void CGameObject_Skybox::Late_Update(_float fTimeDelta)
 
 HRESULT CGameObject_Skybox::Render()
 {
+	
+
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
 	/* dx9 : 장치에 뷰, 투영행렬을 저장해두면 렌더링시 알아서 정점에 Transform해주었다. */
@@ -75,6 +77,9 @@ HRESULT CGameObject_Skybox::Render()
 
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
+
+
+	
 
 	return S_OK;
 }

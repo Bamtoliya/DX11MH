@@ -30,10 +30,7 @@ PS_OUT PS_MAIN(PS_CUBE_IN In)
     PS_OUT Out;    
     
     Out.vColor = g_TextureCube.Sample(DefaultSampler, In.vTexcoord);
-    float r = (float) ((objectId >> 16) & 0xFF) / 255.0f;
-    float g = (float) ((objectId >> 8) & 0xFF) / 255.0f;
-    float b = (float) (objectId & 0xFF) / 255.0f;
-    Out.vPick = float4(r, g, b, 1.0f);
+    Out.vPick = g_TextureCube.Sample(DefaultSampler, In.vTexcoord);
     
     return Out;    
 }

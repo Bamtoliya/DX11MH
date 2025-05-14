@@ -31,7 +31,7 @@ void CViewport_3D::Free()
 HRESULT CViewport_3D::Initialize(void* pArg)
 {
     m_bShow = true;
-    m_strRenderTargetKey = L"RT_FinalScene";
+    m_strRenderTargetKey = L"RT_Skybox";
     m_vImageGridPosition = { -(g_iWinSizeX / 2.f), -(g_iWinSizeY / 2.f) }; // 그리드 (0,0) 기준 좌상단 좌표
     m_vImageGridSize = { g_iWinSizeX, g_iWinSizeY };   // 그리드 단위 크기
     return S_OK;
@@ -58,7 +58,6 @@ HRESULT CViewport_3D::Render()
             ImGui::End();
             return E_FAIL;
         }
-
         // --- 상태 변수 (줌, 패닝, 클릭 정보) ---
         // static 변수는 이 함수가 여러 뷰포트에서 재사용될 경우 문제가 될 수 있습니다.
         // 실제 앱에서는 이 상태를 뷰포트별로 관리하는 것이 좋습니다. (예: 클래스 멤버)
@@ -93,15 +92,22 @@ HRESULT CViewport_3D::Render()
         }
         // --- 좌표 및 그리기 준비 ---
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
-        ImVec2 win_pos = ImGui::GetWindowPos(); // 현재 Begin된 창의 위치
-        ImVec2 content_min_rel = ImGui::GetWindowContentRegionMin();
-        ImVec2 content_max_rel = ImGui::GetWindowContentRegionMax();
-        ImVec2 canvas_p0 = ImVec2(win_pos.x + content_min_rel.x, win_pos.y + content_min_rel.y);
-        ImVec2 canvas_p1 = ImVec2(win_pos.x + content_max_rel.x, win_pos.y + content_max_rel.y);
-        ImVec2 canvas_size = ImVec2(canvas_p1.x - canvas_p0.x, canvas_p1.y - canvas_p0.y);
+        // 현재 ImGui 창의 내용 영역 계산 (ImGuizmo SetRect 및 2D 그리드 표시에 사용 가능)
+        ImVec2 windowPos = ImGui::GetWindowPos();
+        ImVec2 contentMinRel = ImGui::GetWindowContentRegionMin();
+        ImVec2 contentMaxRel = ImGui::GetWindowContentRegionMax();
+        float contentWidth = contentMaxRel.x - contentMinRel.x;
+        float contentHeight = contentMaxRel.y - contentMinRel.y;
+
+        ImVec2 canvas_p0 = ImVec2(windowPos.x + contentMinRel.x, windowPos.y + contentMinRel.y); // 내용 영역의 화면 절대 좌표 (좌상단)
+        ImVec2 canvas_p1 = ImVec2(canvas_p0.x + contentWidth, canvas_p0.y + contentHeight);       // 내용 영역의 화면 절대 좌표 (우하단)
+        ImVec2 canvas_size = ImVec2(contentWidth, contentHeight);
+
         ImVec2 initial_center = ImVec2(canvas_p0.x + canvas_size.x * 0.5f, canvas_p0.y + canvas_size.y * 0.5f);
         ImVec2 canvas_center = ImVec2(initial_center.x + panning.x, initial_center.y + panning.y); // 패닝 적용된 중심
-
+        DrawTexture(draw_list, L"RT_Skybox", canvas_center, zoom);
+        DrawGrid(canvas_p0, canvas_size, zoom);
+        
         // --- 클릭 처리 및 좌표 변환 ---
         if (is_window_hovered) {
             ImVec2 mouse_pos_in_screen = io.MousePos;
@@ -129,27 +135,10 @@ HRESULT CViewport_3D::Render()
             }
         }
 
+        
         //렌더링 결과물
-        DrawTexture(draw_list, canvas_center, zoom);
-        DrawGrid(draw_list, canvas_p0, canvas_p1, canvas_center, zoom);
-
+#pragma region RectForTargetRatio
         // --- 그리드 및 경계선 그리기 ---
-        // (이전 코드와 거의 동일, canvas_center 사용)
-        const float grid_base_spacing = 25.0f;
-        const float apparent_spacing = grid_base_spacing * zoom;
-        const ImU32 grid_color = IM_COL32(128, 128, 128, 40); // 색상 약간 변경
-        const ImU32 grid_thick_color = IM_COL32(128, 128, 128, 80);
-        const int thick_line_interval = 4;
-
-        if (apparent_spacing > 1.5f) { // 최소 간격 조정
-            // 수직선, 수평선, 중앙선 그리기... (이전 코드 내용 붙여넣기)
-            for (float x = canvas_center.x; x <= canvas_p1.x; x += apparent_spacing) { /* ... */ }
-            for (float x = canvas_center.x - apparent_spacing; x >= canvas_p0.x; x -= apparent_spacing) { /* ... */ }
-            for (float y = canvas_center.y; y <= canvas_p1.y; y += apparent_spacing) { /* ... */ }
-            for (float y = canvas_center.y - apparent_spacing; y >= canvas_p0.y; y -= apparent_spacing) { /* ... */ }
-            draw_list->AddLine(ImVec2(canvas_center.x, canvas_p0.y), ImVec2(canvas_center.x, canvas_p1.y), grid_thick_color);
-            draw_list->AddLine(ImVec2(canvas_p0.x, canvas_center.y), ImVec2(canvas_p1.x, canvas_center.y), grid_thick_color);
-        }
         // 해상도 경계선 그리기... (이전 코드 내용 붙여넣기)
         const float targetResolutionWidth = 1920.0f;
         const float targetResolutionHeight = 1080.0f;
@@ -160,10 +149,12 @@ HRESULT CViewport_3D::Render()
         const ImU32 rectColor = IM_COL32(0, 255, 0, 100); // 약간 투명하게 변경
         const float rectThickness = 1.5f;
         draw_list->AddRect(rectP0, rectP1, rectColor, 0.0f, ImDrawFlags_None, rectThickness);
-
-
         // --- 이 함수 호출 이후에 3D 렌더 결과(ImGui::Image)나 ImGuizmo 등을 그리면 ---
         // --- 이 그리드 위에 겹쳐서 보이게 됩니다. ---
+#pragma endregion
+
+        DrawTexture(draw_list, L"RT_ObjectsOnly", canvas_center, zoom);
+
 #pragma region Widgets
         ImGuiWindowFlags widget_window_flags = ImGuiWindowFlags_AlwaysAutoResize;
         if (ImGui::Begin("Widget Window", nullptr, widget_window_flags)) // p_open 인자를 nullptr로 전달하면 닫기 버튼이 생기지 않습니다. 필요하다면 bool 변수를 전달하세요.
@@ -184,7 +175,8 @@ HRESULT CViewport_3D::Render()
         ImGui::End(); // "Widget Window" 창 끝
 #pragma endregion
         
-        DrawImGuizmo3D();
+        DrawImGuizmo3D(zoom, panning);
+        
 
         ImGui::End(); // 뷰포트 창 끝
     }
@@ -197,28 +189,36 @@ ImVec2 CViewport_3D::GridToScreen(const ImVec2& gridPos, const ImVec2& canvas_ce
     return ImVec2(canvas_center.x + gridPos.x * zoom, canvas_center.y + gridPos.y * zoom);
 }
 
-
-HRESULT CViewport_3D::DrawGrid(ImDrawList* pList, ImVec2& p0, ImVec2& p1, ImVec2& center, _float fZoom)
+HRESULT CViewport_3D::DrawGrid(ImVec2& p0, ImVec2& size, _float fZoom)
 {
-    _matrix viewMatrix = m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW);
-    _matrix projMatrix = m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ);
+    if (size.x <= 1.0f || size.y <= 1.0f)
+    {
+        return S_OK;
+    }
+    ImGuizmo::SetRect(p0.x, p0.y, size.x, size.y);
+
+    // 실제 3D 카메라의 뷰 및 투영 행렬 가져오기
+    _matrix dxViewMatrix = m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW);
+    _matrix dxProjMatrix = m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ);
+
+    float viewPtr[16], projPtr[16];
+    XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(viewPtr), dxViewMatrix);
+    XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(projPtr), dxProjMatrix);
     
     // 6. 그리드 그리기 (월드 원점에 고정)
     float identityMatrixFloat[16];
     _matrix identityMatrix = XMMatrixIdentity(); // 단위 행렬 (월드 원점)
-    float viewPtr[16], projPtr[16];
     XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(identityMatrixFloat), identityMatrix);
-    XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(viewPtr), viewMatrix);
-    XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(projPtr), projMatrix);
     float gridSize = 100.0f; // 원하는 그리드 크기
-
+    ImGuizmo::SetOrthographic(false); // 원근 투영이므로 false
+    ImGuizmo::SetDrawlist(); // 명시적 DrawList 설정
     ImGuizmo::DrawGrid(viewPtr, projPtr, identityMatrixFloat, gridSize);
     return S_OK;
 }
 
-HRESULT CViewport_3D::DrawTexture(ImDrawList* pList, ImVec2& center, _float fZoom)
+HRESULT CViewport_3D::DrawTexture(ImDrawList* pList, const _wstring& strRTKey, ImVec2& center, _float fZoom)
 {
-    m_pSRV = m_pGameInstance->Get_SRV(m_strRenderTargetKey);
+    m_pSRV = m_pGameInstance->Get_SRV(strRTKey);
     if (m_bShowImage && m_pSRV) // 이미지를 표시하고 SRV가 유효할 때만
     {
         // 1. 이미지의 그리드 좌표 계산 (m_vImageGridPosition이 좌상단이라고 가정)
@@ -260,11 +260,7 @@ HRESULT CViewport_3D::DrawImGuizmo3D(_float fZoom, ImVec2& vPanning)
             // 최종 View 행렬: 이동 -> 스케일 순서 적용
             //_matrix viewMatrix = panMatrix * scaleMatrix;
 
-            
-
-
             // 3. ImGuizmo 설정
-            // ImGuizmo::BeginFrame(); // Pre_Render에서 호출됨
             ImGuizmo::SetOrthographic(false); // 원근 투영이므로 false
             ImGuizmo::SetDrawlist();
 
@@ -300,15 +296,10 @@ HRESULT CViewport_3D::DrawImGuizmo3D(_float fZoom, ImVec2& vPanning)
                     _matrix updatedMatrix = XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4*>(matrixPtr));
                     pTransform->Set_WorldMatrix(updatedMatrix);
                 }
-
-                // (선택 사항) 그리드 및 큐브 그리기
-                //float identityMatrixPtr[16];
-                //XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(identityMatrixPtr), XMMatrixIdentity());
-                //ImGuizmo::DrawGrid(viewPtr, projPtr, identityMatrixPtr, 10.0f); // 필요 시 활성화
-                // ImGuizmo::DrawCubes(viewPtr, projPtr, matrixPtr, 1); // 필요 시 활성화
             }
             else
             {
+                int a = 10;
                 // 내용 영역이 너무 작거나 유효하지 않으면 기즈모를 그리지 않음
                 // ImGui::Text("Viewport too small for Gizmo"); // 디버깅 메시지
             }
@@ -340,106 +331,5 @@ HRESULT CViewport_3D::DrawImGuizmo3D(_float fZoom, ImVec2& vPanning)
 #pragma endregion
         }
     }
-    return S_OK;
-}
-
-HRESULT CViewport_3D::DrawImGuizmo3D() // 파라미터에서 fZoom, vPanning 제거
-{
-    if (!m_bShow) // 뷰포트 창이 보이지 않으면 기즈모도 그리지 않음
-        return S_OK;
-
-    m_pGameObject = m_pGameInstance->Get_PickedObject(); // 선택된 게임 객체를 가져옴
-    if (!m_pGameObject)
-        return S_OK; // 선택된 객체가 없으면 아무것도 하지 않음
-
-    CTransform* pTransform = static_cast<CTransform*>(m_pGameObject->Get_Component(g_strTransformTag));
-    if (!pTransform)
-        return S_OK; // 트랜스폼 컴포넌트가 없으면 아무것도 하지 않음
-
-    // 1. 실제 3D 카메라의 뷰 행렬과 투영 행렬 가져오기
-    _matrix actualViewMatrix = m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW);
-    _matrix actualProjMatrix = m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ);
-
-    // 2. ImGuizmo 설정
-    ImGuizmo::SetOrthographic(false);
-    ImGuizmo::SetDrawlist();
-
-    // 3. ImGuizmo가 그려질 영역(Rect) 설정
-    ImVec2 windowPos = ImGui::GetWindowPos();
-    ImVec2 contentMin = ImGui::GetWindowContentRegionMin();
-    ImVec2 contentMax = ImGui::GetWindowContentRegionMax();
-    float contentWidth = contentMax.x - contentMin.x;
-    float contentHeight = contentMax.y - contentMin.y;
-    float viewManipulateLeft = windowPos.x + contentMin.x;
-    float viewManipulateTop = windowPos.y + contentMin.y;
-
-    if (contentWidth <= 1.0f || contentHeight <= 1.0f)
-    {
-        return S_OK;
-    }
-    ImGuizmo::SetRect(viewManipulateLeft, viewManipulateTop, contentWidth, contentHeight);
-
-    // 4. 행렬들을 float[16] 배열로 준비
-    float viewPtr[16], projPtr[16];
-    XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(viewPtr), actualViewMatrix);
-    XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(projPtr), actualProjMatrix);
-
-    // 5. 객체 조작 기즈모 (Manipulate)
-    if (m_pGameObject && pTransform) // m_pGameObject 와 pTransform 유효성 재확인
-    {
-        _matrix objectMatrix = pTransform->Get_WorldMatrix();
-        float matrixPtr[16];
-        XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(matrixPtr), objectMatrix);
-
-        float* pSnap = m_bUseSnap ? m_fSnapValue : nullptr;
-        if (ImGuizmo::Manipulate(viewPtr, projPtr, m_currentGizmoOperation, m_currentGizmoMode, matrixPtr, nullptr, pSnap))
-        {
-            _matrix updatedMatrix = XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4*>(matrixPtr));
-            pTransform->Set_WorldMatrix(updatedMatrix);
-        }
-    }
-
-    // 6. 그리드 그리기 (월드 원점에 고정)
-    //float identityMatrixFloat[16];
-    //_matrix identityMatrix = XMMatrixIdentity(); // 단위 행렬 (월드 원점)
-    //XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(identityMatrixFloat), identityMatrix);
-
-    //float gridSize = 100.0f; // 원하는 그리드 크기
-
-    //ImGuizmo::DrawGrid(viewPtr, projPtr, identityMatrixFloat, gridSize);
-    // ImGuizmo::DrawCubes(viewPtr, projPtr, matrixPtr, 1);
-
-#pragma region Widgets
-    // --- ImGui 윈도우 내에 조작 모드 변경 버튼 추가 ---
-    // "Gizmo Controls 3D" 와 같이 창 이름을 구분하거나, Inspector 창 등으로 옮기는 것을 권장합니다.
-    if (ImGui::Begin("Gizmo Controls 3D")) // 창 이름에 "3D" 추가하여 구분
-    {
-        if (ImGui::RadioButton("Translate##Gizmo3D", m_currentGizmoOperation == ImGuizmo::TRANSLATE)) m_currentGizmoOperation = ImGuizmo::TRANSLATE; ImGui::SameLine();
-        if (ImGui::RadioButton("Rotate##Gizmo3D", m_currentGizmoOperation == ImGuizmo::ROTATE)) m_currentGizmoOperation = ImGuizmo::ROTATE; ImGui::SameLine();
-        if (ImGui::RadioButton("Scale##Gizmo3D", m_currentGizmoOperation == ImGuizmo::SCALE)) m_currentGizmoOperation = ImGuizmo::SCALE; ImGui::SameLine();
-        if (ImGui::RadioButton("Universal##Gizmo3D", m_currentGizmoOperation == ImGuizmo::UNIVERSAL)) m_currentGizmoOperation = ImGuizmo::UNIVERSAL;
-
-
-        if (m_currentGizmoOperation != ImGuizmo::SCALE)
-        {
-            if (ImGui::RadioButton("World##Gizmo3D", m_currentGizmoMode == ImGuizmo::WORLD)) m_currentGizmoMode = ImGuizmo::WORLD; ImGui::SameLine();
-            if (ImGui::RadioButton("Local##Gizmo3D", m_currentGizmoMode == ImGuizmo::LOCAL)) m_currentGizmoMode = ImGuizmo::LOCAL;
-        }
-        else
-        {
-            m_currentGizmoMode = ImGuizmo::LOCAL; // Scale은 보통 Local 모드 사용
-        }
-
-        ImGui::Checkbox("Snap##Gizmo3D", &m_bUseSnap); ImGui::SameLine();
-        switch (m_currentGizmoOperation)
-        {
-        case ImGuizmo::TRANSLATE: ImGui::InputFloat3("Snap T##Gizmo3D", &m_fSnapValue[0]); break;
-        case ImGuizmo::ROTATE:    ImGui::InputFloat("Snap R##Gizmo3D", &m_fSnapValue[0]); break;
-        case ImGuizmo::SCALE:     ImGui::InputFloat("Snap S##Gizmo3D", &m_fSnapValue[0]); break;
-            // UNIVERSAL 스냅은 각 모드에 따라 다르게 처리하거나 공통 값을 사용할 수 있습니다.
-        }
-        ImGui::End();
-    }
-#pragma endregion
     return S_OK;
 }

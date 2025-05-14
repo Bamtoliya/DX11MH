@@ -162,3 +162,8 @@ void CPicking_System::Late_Update(_float fTimeDelta)
 {
 
 }
+
+void CPicking_System::Clear()
+{
+	m_pPickedObject = nullptr;
+}

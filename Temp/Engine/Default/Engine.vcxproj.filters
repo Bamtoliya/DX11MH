@@ -320,6 +320,18 @@
     <ClInclude Include="..\public\MyCamera.h">
       <Filter>01.Utility\04.Components\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer_Sphere.h">
+      <Filter>01.Utility\04.Components\VIBuffer\Sphere</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VIBuffer_Cube.h">
+      <Filter>01.Utility\04.Components\VIBuffer\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GameObject_Skybox.h">
+      <Filter>01.Utility\03.GameObject\Base\Skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="Base_Objects.h">
+      <Filter>01.Utility\03.GameObject\Base</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -593,6 +605,15 @@
     <ClCompile Include="..\private\MyCamera.cpp">
       <Filter>01.Utility\04.Components\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer_Sphere.cpp">
+      <Filter>01.Utility\04.Components\VIBuffer\Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VIBuffer_Cube.cpp">
+      <Filter>01.Utility\04.Components\VIBuffer\Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GameObject_Skybox.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Skybox</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -813,6 +834,15 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Camera">
       <UniqueIdentifier>{ae32599e-f652-44ef-86a3-e319641f11e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\VIBuffer\Cube">
+      <UniqueIdentifier>{059328b4-6c9d-4f6e-b3aa-051db953b9cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\VIBuffer\Sphere">
+      <UniqueIdentifier>{1f71be52-0c06-4ba5-8aaa-b30a05bc2e92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Skybox">
+      <UniqueIdentifier>{675ed5bf-284e-46df-b00d-d31818e69cf1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

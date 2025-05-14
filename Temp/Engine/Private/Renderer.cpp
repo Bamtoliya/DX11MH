@@ -31,6 +31,30 @@ HRESULT CRenderer::Initialize()
 	}
 
 	if (FAILED(m_pGameInstance->Add_RenderTarget(
+		L"RT_Skybox",                // 렌더 타겟 고유 태그
+		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
+		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		DXGI_FORMAT_R8G8B8A8_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
+		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
+	)))
+	{
+		MSG_BOX("Failed to create RT_Skybox Render Target");
+		return E_FAIL; // 또는 적절한 에러 처리
+	}
+
+	if (FAILED(m_pGameInstance->Add_RenderTarget(
+		L"RT_ObjectsOnly",                // 렌더 타겟 고유 태그
+		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
+		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		DXGI_FORMAT_R8G8B8A8_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
+		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
+	)))
+	{
+		MSG_BOX("Failed to create RT_FinalScene Render Target");
+		return E_FAIL; // 또는 적절한 에러 처리
+	}
+
+	if (FAILED(m_pGameInstance->Add_RenderTarget(
 		L"RT_Picking",                // 렌더 타겟 고유 태그
 		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
 		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
@@ -42,7 +66,14 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 
-	vector<wstring> FinalTargets = { L"RT_FinalScene", L"RT_Picking"};
+	vector<wstring> SkyboxTargets = { L"RT_Skybox", L"RT_FinalScene" };
+	if (FAILED(m_pGameInstance->Add_MRT(L"RT_Skybox_Group", SkyboxTargets)))
+	{
+		MSG_BOX("Failed to create RT_Skybox group");
+		return E_FAIL;
+	}
+
+	vector<wstring> FinalTargets = { L"RT_ObjectsOnly", L"RT_Picking"};
 	if (FAILED(m_pGameInstance->Add_MRT(L"RT_FinalScene_Group", FinalTargets)))
 	{
 		MSG_BOX("Failed to create RT_FinalScene group");
@@ -76,19 +107,28 @@ HRESULT CRenderer::Draw()
 
 	ID3D11DepthStencilView* pMainDSV = m_pGameInstance->Get_DSV(); // Get main DSV
 
+	//// 1. Switch to Off-Screen Target (TargetManager handles backup)
+	if (FAILED(m_pGameInstance->Begin_MRT(L"RT_Skybox_Group", pMainDSV))) // Group name example
+		return E_FAIL;
+	_float4 tempColor = { 0.0f, 0.0f, 0.0f, 0.0f };
+	m_pGameInstance->Clear_RenderTarget(L"RT_Skybox", &tempColor);
+	m_pGameInstance->Clear_RenderTarget(L"RT_FinalScene", &tempColor);
+	m_pContext->ClearDepthStencilView(pMainDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+ 	if (FAILED(Render_Priority()))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->End_MRT(nullptr, nullptr, {})))
+		return E_FAIL;
 
 	//// 1. Switch to Off-Screen Target (TargetManager handles backup)
-	//if (FAILED(m_pGameInstance->Begin_MRT(L"RT_FinalScene_Group", pMainDSV))) // Group name example
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Begin_MRT(L"RT_FinalScene_Group", pMainDSV))) // Group name example
+		return E_FAIL;
 
 	// 2. Clear the Off-Screen Target
-	_float4 tempColor = { 0.0f, 0.0f, 0.0f, 0.0f };
-	m_pGameInstance->Clear_RenderTarget(L"RT_FinalScene", &tempColor);
+	
+	m_pGameInstance->Clear_RenderTarget(L"RT_ObjectsOnly", &tempColor);
 	m_pGameInstance->Clear_RenderTarget(L"RT_Picking", &tempColor);
-	m_pContext->ClearDepthStencilView(pMainDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
-
-	if (FAILED(Render_Priority()))
-		return E_FAIL;
+	/*if (FAILED(Render_Priority()))
+		return E_FAIL;*/
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
@@ -96,20 +136,20 @@ HRESULT CRenderer::Draw()
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
-	//ID3D11ShaderResourceView* pFinalSceneSRV = m_pGameInstance->Get_SRV(L"RT_FinalScene");
-	//if (pFinalSceneSRV)
-	//{
-	//	// 중요: GenerateMips는 SRV에 대해 호출하는 것이 아니라, DeviceContext에 대해 SRV를 인자로 전달합니다.
-	//	m_pContext->GenerateMips(pFinalSceneSRV);
-	//}
+	ID3D11ShaderResourceView* pFinalSceneSRV = m_pGameInstance->Get_SRV(L"RT_FinalScene");
+	if (pFinalSceneSRV)
+	{
+		// 중요: GenerateMips는 SRV에 대해 호출하는 것이 아니라, DeviceContext에 대해 SRV를 인자로 전달합니다.
+		m_pContext->GenerateMips(pFinalSceneSRV);
+	}
 
 	
 	// Picking 타겟도 필요하다면 동일하게 처리
-	/*if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_FinalScene")))
-		return E_FAIL;*/
+	if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_FinalScene")))
+		return E_FAIL;
 
-	/*if (FAILED(m_pGameInstance->End_MRT(nullptr, nullptr, {})))
-		return E_FAIL;*/
+	if (FAILED(m_pGameInstance->End_MRT(nullptr, nullptr, {})))
+		return E_FAIL;
 
 	
 
@@ -118,6 +158,14 @@ HRESULT CRenderer::Draw()
 
 HRESULT CRenderer::Render_Priority()
 {
+	ID3D11RasterizerState* pOldRasterizerState = nullptr;
+	ID3D11DepthStencilState* pOldDepthStencilState = nullptr;
+	UINT oldStencilRef;
+
+	// 현재 상태 백업
+	m_pContext->RSGetState(&pOldRasterizerState);
+	m_pContext->OMGetDepthStencilState(&pOldDepthStencilState, &oldStencilRef);
+
 	for (auto& pGameObject : m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_PRIORITY)])
 	{
 		if (nullptr != pGameObject)
@@ -126,6 +174,12 @@ HRESULT CRenderer::Render_Priority()
 		Safe_Release(pGameObject);
 	}
 	m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_PRIORITY)].clear();
+
+	m_pContext->RSSetState(pOldRasterizerState);
+	m_pContext->OMSetDepthStencilState(pOldDepthStencilState, oldStencilRef);
+
+	if (pOldRasterizerState) pOldRasterizerState->Release();
+	if (pOldDepthStencilState) pOldDepthStencilState->Release();
 
 	return S_OK;
 }

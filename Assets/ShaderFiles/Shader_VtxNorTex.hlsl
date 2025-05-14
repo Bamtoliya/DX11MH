@@ -21,7 +21,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;    
     
-    Out.vColor = g_Texture.Sample(TiledSampler, In.vTexcoord);
+    Out.vColor = g_Texture.Sample(TiledSampler, In.vTexcoord * 50.f);
     float r = (float) ((objectId >> 16) & 0xFF) / 255.0f;
     float g = (float) ((objectId >> 8) & 0xFF) / 255.0f;
     float b = (float) (objectId & 0xFF) / 255.0f;

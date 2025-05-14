@@ -30,6 +30,7 @@ HRESULT CViewport_2D::Initialize(void* pArg)
 {
     m_bShow = true;
     m_bShowImage = true;
+    m_strRenderTargetKey = L"RT_Skybox";
     m_vImageGridPosition = { -(g_iWinSizeX/2.f), -(g_iWinSizeY / 2.f)}; // 그리드 (0,0) 기준 좌상단 좌표
     m_vImageGridSize = { g_iWinSizeX, g_iWinSizeY };   // 그리드 단위 크기
     return S_OK;
@@ -48,7 +49,6 @@ void CViewport_2D::Update(_float fTimeDelta)
 
 void CViewport_2D::Late_Update(_float fTimeDelta)
 {
-    
     //// DPI 스케일링을 사용하지 않는 경우 보통 1.0f
     //io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
 }
@@ -239,7 +239,7 @@ HRESULT CViewport_2D::DrawResolutionRect(ImDrawList* pList, ImVec2& center, _flo
 
 HRESULT CViewport_2D::DrawTexture(ImDrawList* pList, ImVec2& center, _float fZoom)
 {
-    m_pSRV = m_pGameInstance->Get_SRV(L"RT_FinalScene");
+    m_pSRV = m_pGameInstance->Get_SRV(m_strRenderTargetKey);
     if (m_bShowImage && m_pSRV) // 이미지를 표시하고 SRV가 유효할 때만
     {
         // 1. 이미지의 그리드 좌표 계산 (m_vImageGridPosition이 좌상단이라고 가정)
