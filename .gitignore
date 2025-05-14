@@ -31,6 +31,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+[Tt]emp/
 
 !External Libraries/fmod/core/lib/x64/
 !External Libraries/fmod/studio/lib/x64/
@@ -415,3 +416,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+Temp

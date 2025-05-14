@@ -18,12 +18,14 @@ public:
 private:
 	_uint			m_iNumVerticesX = {};
 	_uint			m_iNumVerticesZ = {};
+	_wstring		m_strHeightMapFilePath = {};
 
 public:
 	static CVIBuffer_Terrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
-
+public:
+	virtual HRESULT RenderImGui() override;
 };
 
 NS_END

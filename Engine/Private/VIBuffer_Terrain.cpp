@@ -57,13 +57,24 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	m_pVertexPositions = new _float3[m_iNumVertices];
 	ZeroMemory(m_pVertexPositions, sizeof(_float3) * m_iNumVertices);
 
+	// 지형의 전체 너비와 깊이 (정점 간 간격이 1.0f라고 가정)
+	_float terrainActualWidth = static_cast<_float>(m_iNumVerticesX - 1);
+	_float terrainActualDepth = static_cast<_float>(m_iNumVerticesZ - 1);
+
+	// 지형의 절반 너비와 절반 깊이
+	_float halfWidth = terrainActualWidth / 2.0f;
+	_float halfDepth = terrainActualDepth / 2.0f;
+
 	for (size_t i = 0; i < m_iNumVerticesZ; i++)
 	{
 		for (size_t j = 0; j < m_iNumVerticesX; j++)
 		{
 			_uint		iIndex = (_uint)i * m_iNumVerticesX + (_uint)j;
 
-			pVertices[iIndex].vPosition = _float3((_float)j, (pPixels[iIndex] & 0x000000ff) / 10.0f, (_float)i);
+			_float xPos = static_cast<_float>(j) - halfWidth;
+			_float zPos = static_cast<_float>(i) - halfDepth;
+
+			pVertices[iIndex].vPosition = _float3(xPos, (pPixels[iIndex] & 0x000000ff) / 10.0f, zPos);
 			pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			pVertices[iIndex].vTexcoord = _float2(j / (m_iNumVerticesX - 1.f), i / (m_iNumVerticesX - 1.f));
 		}
@@ -169,4 +180,19 @@ void CVIBuffer_Terrain::Free()
     __super::Free();
 
 
+}
+
+HRESULT CVIBuffer_Terrain::RenderImGui()
+{
+	if (ImGui::CollapsingHeader("VIBuffer_Terrain", ImGuiTreeNodeFlags_DefaultOpen)) // 기본적으로 열려있도록 플래그 추가
+	{
+		ImGui::DragScalar("NumVerticesX", ImGuiDataType_U32, &m_iNumVerticesX);
+		ImGui::DragScalar("NumVerticesZ", ImGuiDataType_U32, &m_iNumVerticesZ);
+		ImGui::DragFloat3("Size", &m_vLocalSize.x);
+		if (ImGui::Button("Apply"))
+		{
+
+		}
+	}
+	return S_OK;
 }

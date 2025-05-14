@@ -293,9 +293,6 @@
     <ClInclude Include="..\Public\Graphic_Device.h">
       <Filter>00.System\01.Device\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Camera.h">
-      <Filter>01.Utility\03.GameObject\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Graphic_Device.h">
       <Filter>00.System\01.Device\Graphic</Filter>
     </ClInclude>
@@ -331,6 +328,12 @@
     </ClInclude>
     <ClInclude Include="Base_Objects.h">
       <Filter>01.Utility\03.GameObject\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imFileDialog\ImFileDialog.h">
+      <Filter>External Libraries\imFileDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imFileDialog\stb_image.h">
+      <Filter>External Libraries\imFileDialog</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -578,9 +581,6 @@
     <ClCompile Include="..\Private\Graphic_Device.cpp">
       <Filter>00.System\01.Device\Graphic</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Camera.cpp">
-      <Filter>01.Utility\03.GameObject\Camera</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Graphic_Device.cpp">
       <Filter>00.System\01.Device\Graphic</Filter>
     </ClCompile>
@@ -613,6 +613,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\GameObject_Skybox.cpp">
       <Filter>01.Utility\03.GameObject\Base\Skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imFileDialog\ImFileDialog.cpp">
+      <Filter>External Libraries\imFileDialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -843,6 +846,9 @@
     </Filter>
     <Filter Include="01.Utility\03.GameObject\Base\Skybox">
       <UniqueIdentifier>{675ed5bf-284e-46df-b00d-d31818e69cf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External Libraries\imFileDialog">
+      <UniqueIdentifier>{37eb19a2-14e2-48e0-84c4-b3d44170467f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

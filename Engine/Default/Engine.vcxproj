@@ -175,6 +175,8 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\External Libraries\imFileDialog\ImFileDialog.h" />
+    <ClInclude Include="..\..\External Libraries\imFileDialog\stb_image.h" />
     <ClInclude Include="..\..\External Libraries\ImGuizmo\GraphEditor.h" />
     <ClInclude Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.h" />
     <ClInclude Include="..\..\External Libraries\ImGuizmo\ImGradient.h" />
@@ -285,6 +287,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="Base_Objects.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\External Libraries\imFileDialog\ImFileDialog.cpp" />
     <ClCompile Include="..\..\External Libraries\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.cpp" />
     <ClCompile Include="..\..\External Libraries\ImGuizmo\ImGradient.cpp" />

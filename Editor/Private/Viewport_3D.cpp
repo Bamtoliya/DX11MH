@@ -84,10 +84,10 @@ HRESULT CViewport_3D::Render()
                     zoom = fmaxf(min_zoom, fminf(zoom, max_zoom));
                 }
 
-                // 패닝 (우클릭 드래그)
-                if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
-                    panning += io.MouseDelta;
-                }
+                //// 패닝 (우클릭 드래그)
+                //if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
+                //    panning += io.MouseDelta;
+                //}
             }
         }
         // --- 좌표 및 그리기 준비 ---
@@ -213,6 +213,7 @@ HRESULT CViewport_3D::DrawGrid(ImVec2& p0, ImVec2& size, _float fZoom)
     ImGuizmo::SetOrthographic(false); // 원근 투영이므로 false
     ImGuizmo::SetDrawlist(); // 명시적 DrawList 설정
     ImGuizmo::DrawGrid(viewPtr, projPtr, identityMatrixFloat, gridSize);
+    
     return S_OK;
 }
 
@@ -296,6 +297,7 @@ HRESULT CViewport_3D::DrawImGuizmo3D(_float fZoom, ImVec2& vPanning)
                     _matrix updatedMatrix = XMLoadFloat4x4(reinterpret_cast<XMFLOAT4X4*>(matrixPtr));
                     pTransform->Set_WorldMatrix(updatedMatrix);
                 }
+                ImGuizmo::DrawCubes(viewPtr, projPtr, matrixPtr, 1); // 필요 시 활성화
             }
             else
             {
