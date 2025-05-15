@@ -1,6 +1,8 @@
-﻿#include "ToolBar.h"
+﻿#pragma once
+#include "ToolBar.h"
 #include "GameInstance.h"
 #include "Level_Loading.h"
+
 CToolBar::CToolBar(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMyImGui { pDevice, pContext }
 {
@@ -9,6 +11,7 @@ CToolBar::CToolBar(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 HRESULT CToolBar::Initialize(void* pArg)
 {
     m_bShow = true;
+    IntializeFileDialogCallBack();
     return S_OK;
 }
 
@@ -19,12 +22,21 @@ void CToolBar::Update(_float fTimeDelta)
 
 HRESULT CToolBar::Render()
 {
+    if (ifd::FileDialog::Instance().IsDone("TextureOpenDialog")) {
+        if (ifd::FileDialog::Instance().HasResult()) {
+            std::string res = ifd::FileDialog::Instance().GetResult().u8string();
+            printf("OPEN[%s]\n", res.c_str());
+        }
+        ifd::FileDialog::Instance().Close();
+    }
     if (m_bShow)
     {
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
                 // 파일 메뉴 아이템들
                 if (ImGui::MenuItem("New Scene", "Ctrl+N")) {
+                    ifd::FileDialog::Instance().Open("TextureOpenDialog", "Open a texture", "Image file (*.png;*.jpg;*.jpeg;*.bmp;*.tga;*.dds){.png,.jpg,.jpeg,.bmp,.tga,.dds},.*", true);
+                    
                     // 새 씬 로직
                     printf("Clicked File->New Scene\n");
                 }
@@ -130,6 +142,58 @@ HRESULT CToolBar::Render()
     }
 
     return S_OK;
+}
+
+void CToolBar::IntializeFileDialogCallBack()
+{
+    ifd::FileDialog::Instance().CreateTexture =
+        [this](uint8_t* data, int w, int h, char fmt) -> void* {
+
+        if (!m_pDevice) return nullptr;
+
+        D3D11_TEXTURE2D_DESC desc;
+        ZeroMemory(&desc, sizeof(desc));
+        desc.Width = w;
+        desc.Height = h;
+        desc.MipLevels = 1;
+        desc.ArraySize = 1;
+        desc.Format = (fmt == 0) ? DXGI_FORMAT_B8G8R8A8_UNORM : DXGI_FORMAT_R8G8B8A8_UNORM;
+        desc.SampleDesc.Count = 1;
+        desc.Usage = D3D11_USAGE_DEFAULT;
+        desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+        desc.CPUAccessFlags = 0;
+
+        ID3D11Texture2D* pTexture = nullptr;
+        D3D11_SUBRESOURCE_DATA subResource;
+        subResource.pSysMem = data;
+        subResource.SysMemPitch = desc.Width * 4;
+        subResource.SysMemSlicePitch = 0;
+        if (FAILED(m_pDevice->CreateTexture2D(&desc, &subResource, &pTexture))) {
+            return nullptr;
+        }
+
+        ID3D11ShaderResourceView* pSRV = nullptr;
+        D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+        ZeroMemory(&srvDesc, sizeof(srvDesc));
+        srvDesc.Format = desc.Format;
+        srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+        srvDesc.Texture2D.MostDetailedMip = 0;
+        srvDesc.Texture2D.MipLevels = 1;
+        if (FAILED(m_pDevice->CreateShaderResourceView(pTexture, &srvDesc, &pSRV))) {
+            return nullptr;
+        }
+        pTexture->Release();
+
+        return (void*)pSRV;
+        };
+
+    ifd::FileDialog::Instance().DeleteTexture =
+        [](void* tex) {
+        if (tex) {
+            ID3D11ShaderResourceView* pSRV = reinterpret_cast<ID3D11ShaderResourceView*>(tex);
+            pSRV->Release();
+        }
+        };
 }
 
 HRESULT CToolBar::Save_Scene()

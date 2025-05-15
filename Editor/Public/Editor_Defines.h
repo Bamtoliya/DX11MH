@@ -12,11 +12,13 @@ namespace Editor
 {
 	const unsigned int			g_iWinSizeX = 1920;
 	const unsigned int			g_iWinSizeY = 1080;
+	
 }
 
 extern unsigned int iWinResizeX;
 extern unsigned int iWinResizeY;
 extern bool g_SwapChainNeedsResize;
+extern bool	g_bCameraControl;
 extern HWND g_hWnd;
 extern HINSTANCE g_hInst;
 

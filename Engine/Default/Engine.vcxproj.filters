@@ -335,6 +335,21 @@
     <ClInclude Include="..\..\External Libraries\imFileDialog\stb_image.h">
       <Filter>External Libraries\imFileDialog</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuiFileDialog\ImGuiFileDialog.h">
+      <Filter>External Libraries\ImGuiFileDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuiFileDialog\ImGuiFileDialogConfig.h">
+      <Filter>External Libraries\ImGuiFileDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuiFileDialog\stb\stb_image.h">
+      <Filter>External Libraries\ImGuiFileDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuiFileDialog\stb\stb_image_resize.h">
+      <Filter>External Libraries\ImGuiFileDialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Bone.h">
+      <Filter>01.Utility\04.Components\Model\Bone</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -617,6 +632,12 @@
     <ClCompile Include="..\..\External Libraries\imFileDialog\ImFileDialog.cpp">
       <Filter>External Libraries\imFileDialog</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuiFileDialog\ImGuiFileDialog.cpp">
+      <Filter>External Libraries\ImGuiFileDialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bone.cpp">
+      <Filter>01.Utility\04.Components\Model\Bone</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -850,6 +871,9 @@
     <Filter Include="External Libraries\imFileDialog">
       <UniqueIdentifier>{37eb19a2-14e2-48e0-84c4-b3d44170467f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="External Libraries\ImGuiFileDialog">
+      <UniqueIdentifier>{14a297d6-aefb-4f28-b1a4-edb33aae0dd1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -888,6 +912,9 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Model\Material">
       <UniqueIdentifier>{ae85330d-538b-4ff9-82b3-a93aac9dfa82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Model\Bone">
+      <UniqueIdentifier>{bb005ca7-998f-4eed-ae41-ad6da8e05cdc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

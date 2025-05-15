@@ -14,7 +14,6 @@ HRESULT CInspector::Initialize(void* pArg)
 
 void CInspector::Update(_float fTimeDelta)
 {
-    m_pGameObject = m_pGameInstance->Get_PickedObject();
 }
 
 HRESULT CInspector::Render()
@@ -23,9 +22,10 @@ HRESULT CInspector::Render()
     {
         if (ImGui::Begin("Inspector", &m_bShow))
         {
-            if (m_pGameObject)
+            CGameObject* pGameObject = m_pGameInstance->Get_PickedObject();
+            if (pGameObject)
             {
-                string tmp = WideToUtf8(m_pGameObject->Get_Name().c_str());
+                string tmp = WideToUtf8(pGameObject->Get_Name().c_str());
                 ImGui::Text(tmp.c_str());
             }
             else
@@ -33,9 +33,9 @@ HRESULT CInspector::Render()
                 ImGui::Text("Intentionaly Blank");
             }
 
-            if (m_pGameObject)
+            if (pGameObject)
             {
-                m_pGameObject->RenderImGuiComponents();
+                pGameObject->RenderImGuiComponents();
                 if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
                 {
                     ImGui::OpenPopup("my popup");

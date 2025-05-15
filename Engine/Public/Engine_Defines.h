@@ -76,10 +76,12 @@ using namespace Engine;
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
-#include "ImFileDialog.h"
 #pragma endregion
-#pragma region imGuizmo
+#pragma region ImGuizmo
 #include "ImGuizmo.h"
+#pragma endregion
+#pragma region ImFileDialog
+#include "ImFileDialog.h"
 #pragma endregion
 
 #pragma region DirectInput
@@ -99,8 +101,6 @@ using namespace v1;
 #include "PxPhysicsAPI.h"
 using namespace physx;
 #pragma endregion
-
-//#include ""
 
 #ifdef _DEBUG
 

@@ -175,8 +175,24 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\External Libraries\imFileDialog\ImFileDialog.h" />
-    <ClInclude Include="..\..\External Libraries\imFileDialog\stb_image.h" />
+    <ClInclude Include="..\..\External Libraries\imFileDialog\ImFileDialog.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imFileDialog\stb_image.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuiFileDialog\ImGuiFileDialog.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuiFileDialog\ImGuiFileDialogConfig.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuiFileDialog\stb\stb_image.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuiFileDialog\stb\stb_image_resize.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\External Libraries\ImGuizmo\GraphEditor.h" />
     <ClInclude Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.h" />
     <ClInclude Include="..\..\External Libraries\ImGuizmo\ImGradient.h" />
@@ -198,6 +214,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\Public\Bounding_Box.h" />
     <ClInclude Include="..\Public\Bounding_Sphere.h" />
+    <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\public\GameObject_Camera.h" />
     <ClInclude Include="..\public\Camera_Manager.h" />
     <ClInclude Include="..\Public\Component.h" />
@@ -287,7 +304,12 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="Base_Objects.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\External Libraries\imFileDialog\ImFileDialog.cpp" />
+    <ClCompile Include="..\..\External Libraries\imFileDialog\ImFileDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuiFileDialog\ImGuiFileDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\External Libraries\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.cpp" />
     <ClCompile Include="..\..\External Libraries\ImGuizmo\ImGradient.cpp" />
@@ -307,6 +329,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Private\Base.cpp" />
+    <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\private\GameObject_Camera.cpp" />
     <ClCompile Include="..\private\Camera_Manager.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />

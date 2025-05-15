@@ -30,7 +30,7 @@ HRESULT CViewport_2D::Initialize(void* pArg)
 {
     m_bShow = true;
     m_bShowImage = true;
-    m_strRenderTargetKey = L"RT_Skybox";
+    m_strRenderTargetKey = L"RT_ObjectsOnly";
     m_vImageGridPosition = { -(g_iWinSizeX/2.f), -(g_iWinSizeY / 2.f)}; // 그리드 (0,0) 기준 좌상단 좌표
     m_vImageGridSize = { g_iWinSizeX, g_iWinSizeY };   // 그리드 단위 크기
     return S_OK;
@@ -42,7 +42,6 @@ void CViewport_2D::Priority_Update(_float fTimeDelta)
 
 void CViewport_2D::Update(_float fTimeDelta)
 {
-    m_pGameObject = m_pGameInstance->Get_PickedObject();
     //m_vImageGridPosition = { -(io.DisplaySize.x / 2.f), -(io.DisplaySize.y / 2.f) }; // 그리드 (0,0) 기준 좌상단 좌표
     //m_vImageGridSize = { io.DisplaySize.x, io.DisplaySize.y };   // 그리드 단위 크기
 }
@@ -151,7 +150,6 @@ HRESULT CViewport_2D::Render()
 
         // 해상도 영역 그리기 (canvas_center가 패닝을 반영하므로 로직 자체는 동일)
         DrawResolutionRect(draw_list, canvas_center, zoom);
-
         //렌더링 결과물
         DrawTexture(draw_list, canvas_center, zoom);
 
@@ -268,9 +266,10 @@ HRESULT CViewport_2D::DrawTexture(ImDrawList* pList, ImVec2& center, _float fZoo
 
 HRESULT CViewport_2D::DrawImGuizmo2D(_float fZoom, ImVec2& vPanning)
 {
-    if (m_pGameObject)
+    CGameObject* pGameObject = m_pGameInstance->Get_PickedObject();
+    if (pGameObject)
     {
-        CTransform* pTransform = static_cast<CTransform*>(m_pGameObject->Get_Component(g_strTransformTag));
+        CTransform* pTransform = static_cast<CTransform*>(pGameObject->Get_Component(g_strTransformTag));
         if (pTransform)
         {
             // 2. 실제 카메라 행렬 가져오기 (GameInstance 사용)

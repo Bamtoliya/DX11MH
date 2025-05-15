@@ -64,7 +64,6 @@ HRESULT CLevel_UI::Ready_Layer_ImGui()
     m_pGameInstance->Add_ImGui(L"Hierarchy", CHierarchy::Create(m_pDevice, m_pContext));
     m_pGameInstance->Add_ImGui(L"Asset Browser", CAsset_Browser::Create(m_pDevice, m_pContext));
     m_pGameInstance->Add_ImGui(L"Viewport2D", CViewport_2D::Create(m_pDevice, m_pContext));
-    m_pGameInstance->Add_ImGui(L"Viewport3D", CViewport_3D::Create(m_pDevice, m_pContext));
     return S_OK;
 }
 

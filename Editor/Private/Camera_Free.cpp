@@ -1,6 +1,8 @@
 ﻿#include "Camera_Free.h"
 #include "GameInstance.h"
 
+_bool g_bCameraControl = false;
+
 CCamera_Free::CCamera_Free(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject_Camera{ pDevice, pContext }
 {
@@ -42,13 +44,12 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
-	if (m_bCamraControl)
+	if (g_bCameraControl)
 	{
 		if (KEY_PRESSING(DIK_A))
 		{
 			m_pTransformCom->Go_Left(fTimeDelta);
 		}
-
 		if (KEY_PRESSING(DIK_D))
 		{
 			m_pTransformCom->Go_Right(fTimeDelta);
@@ -79,13 +80,26 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 
 void CCamera_Free::Update(_float fTimeDelta)
 {
+
 	if (KEY_DOWN(DIK_TAB))
-		m_bCamraControl = !m_bCamraControl;
+	{
+		m_bChanged = true;
+		g_bCameraControl = !g_bCameraControl;
+	}
 }
 
 void CCamera_Free::Late_Update(_float fTimeDelta)
 {
-
+	if (g_bCameraControl && m_bChanged)
+	{
+		m_bChanged == false;
+		ShowCursor(FALSE);
+	}
+	else if (!g_bCameraControl && m_bChanged)
+	{
+		m_bChanged == false;
+		ShowCursor(TRUE);
+	}
 }
 
 HRESULT CCamera_Free::Render()

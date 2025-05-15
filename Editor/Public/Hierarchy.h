@@ -22,5 +22,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 
+public:
+	HRESULT Add_GameObject_Popup();
 };
 NS_END

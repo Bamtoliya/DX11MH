@@ -9,12 +9,20 @@
 #include <unordered_map>
 #include <algorithm> // std::min, std::max
 
+
+// ImFileDialog.h
+#ifdef ENGINE_EXPORTS // ENGINE_EXPORTS는 Engine 프로젝트를 빌드할 때 정의
+#define IFD_API __declspec(dllexport)
+#else // Editor 프로젝트 등 Engine.dll을 사용하는 프로젝트에서 정의되지 않음
+#define IFD_API __declspec(dllimport)
+#endif
+
 #define IFD_DIALOG_FILE			0
 #define IFD_DIALOG_DIRECTORY	1
 #define IFD_DIALOG_SAVE			2
 
 namespace ifd {
-	class FileDialog {
+	class IFD_API FileDialog {
 	public:
 		static inline FileDialog& Instance()
 		{
@@ -50,7 +58,7 @@ namespace ifd {
 		std::function<void*(uint8_t*, int, int, char)> CreateTexture; // char -> fmt -> { 0 = BGRA, 1 = RGBA }
 		std::function<void(void*)> DeleteTexture;
 
-		class FileTreeNode {
+		class IFD_API FileTreeNode {
 		public:
 #ifdef _WIN32
 			FileTreeNode(const std::wstring& path) {
@@ -68,7 +76,7 @@ namespace ifd {
 			bool Read;
 			std::vector<FileTreeNode*> Children;
 		};
-		class FileData {
+		class IFD_API FileData {
 		public:
 			FileData(const std::filesystem::path& path);
 
@@ -137,5 +145,6 @@ namespace ifd {
 
 		void m_renderPopups();
 		void m_renderFileDialog();
+
 	};
 }

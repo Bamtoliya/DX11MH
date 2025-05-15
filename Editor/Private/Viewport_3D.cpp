@@ -40,9 +40,6 @@ HRESULT CViewport_3D::Initialize(void* pArg)
 
 void CViewport_3D::Update(_float fTimeDelta)
 {
-    m_pGameObject = m_pGameInstance->Get_PickedObject();
-    if (KEY_DOWN(DIK_TAB))
-        m_bCameraControl = !m_bCameraControl;
 }
 
 HRESULT CViewport_3D::Render()
@@ -73,7 +70,7 @@ HRESULT CViewport_3D::Render()
         const float max_zoom = 10.0f;
         ImGuiIO& io = ImGui::GetIO();
         bool is_window_hovered = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup | ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
-        if (m_bCameraControl)
+        if (g_bCameraControl)
         {
             if (is_window_hovered) {
                 // 줌 (마우스 휠)
@@ -83,7 +80,7 @@ HRESULT CViewport_3D::Render()
                     zoom += scale_delta;
                     zoom = fmaxf(min_zoom, fminf(zoom, max_zoom));
                 }
-
+                
                 //// 패닝 (우클릭 드래그)
                 //if (ImGui::IsMouseDragging(ImGuiMouseButton_Right)) {
                 //    panning += io.MouseDelta;
@@ -105,6 +102,9 @@ HRESULT CViewport_3D::Render()
 
         ImVec2 initial_center = ImVec2(canvas_p0.x + canvas_size.x * 0.5f, canvas_p0.y + canvas_size.y * 0.5f);
         ImVec2 canvas_center = ImVec2(initial_center.x + panning.x, initial_center.y + panning.y); // 패닝 적용된 중심
+        if (g_bCameraControl)
+            SetCursorPos(initial_center.x, initial_center.y);
+
         DrawTexture(draw_list, L"RT_Skybox", canvas_center, zoom);
         DrawGrid(canvas_p0, canvas_size, zoom);
         
@@ -245,9 +245,10 @@ HRESULT CViewport_3D::DrawTexture(ImDrawList* pList, const _wstring& strRTKey, I
 
 HRESULT CViewport_3D::DrawImGuizmo3D(_float fZoom, ImVec2& vPanning)
 {
-    if (m_pGameObject)
+    CGameObject* pGameObject = m_pGameInstance->Get_PickedObject();
+    if (pGameObject)
     {
-        CTransform* pTransform = static_cast<CTransform*>(m_pGameObject->Get_Component(g_strTransformTag));
+        CTransform* pTransform = static_cast<CTransform*>(pGameObject->Get_Component(g_strTransformTag));
         if (pTransform)
         {
             // 2. 실제 카메라 행렬 가져오기 (GameInstance 사용)

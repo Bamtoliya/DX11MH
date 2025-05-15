@@ -445,6 +445,7 @@ namespace ifd {
 		for (auto fn : m_treeCache)
 			m_clearTree(fn);
 		m_treeCache.clear();
+		
 	}
 	bool FileDialog::Save(const std::string& key, const std::string& title, const std::string& filter, const std::string& startingDir)
 	{
@@ -885,7 +886,7 @@ namespace ifd {
 
 			if (data.Path.has_extension()) {
 				std::string ext = data.Path.extension().u8string();
-				if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".bmp" || ext == ".tga") {
+				if (ext == ".png" || ext == ".jpg" || ext == ".jpeg" || ext == ".bmp" || ext == ".tga" || ext == ".dds") {
 					int width, height, nrChannels;
 					unsigned char* image = stbi_load(data.Path.u8string().c_str(), &width, &height, &nrChannels, STBI_rgb_alpha);
 
@@ -896,6 +897,10 @@ namespace ifd {
 					data.IconPreviewData = image;
 					data.IconPreviewWidth = width;
 					data.IconPreviewHeight = height;
+				}
+				else if (ext == ".dds")
+				{
+					//this->loadDDSPreview;
 				}
 			}
 		}
@@ -1177,7 +1182,7 @@ namespace ifd {
 
 				bool isSelected = std::count(m_selections.begin(), m_selections.end(), entry.Path);
 
-				if (FileIcon(filename.c_str(), isSelected, entry.HasIconPreview ? entry.IconPreview : (ImTextureID)m_getIcon(entry.Path), ImVec2(32 + 16 * m_zoom, 32 + 16 * m_zoom), entry.HasIconPreview, entry.IconPreviewWidth, entry.IconPreviewHeight)) {
+				if (FileIcon(filename.c_str(), isSelected, entry.HasIconPreview ? (ImTextureID)entry.IconPreview : (ImTextureID)m_getIcon(entry.Path), ImVec2(32 + 16 * m_zoom, 32 + 16 * m_zoom), entry.HasIconPreview, entry.IconPreviewWidth, entry.IconPreviewHeight)) {
 					std::error_code ec;
 					bool isDir = std::filesystem::is_directory(entry.Path, ec);
 
