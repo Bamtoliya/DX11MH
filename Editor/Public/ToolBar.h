@@ -17,10 +17,19 @@ public:
 	virtual void Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
 private:
+	void	IntializeFileDialogCallBack();
+
+	HRESULT Save_Level();
 	HRESULT Save_Scene();
 	HRESULT Save_Map();
 	HRESULT Save_Prefab();
 
+	HRESULT Import_Level();
+	HRESULT Import_Scene();
+	HRESULT Import_Map();
+	HRESULT Import_Prefab();
+
+	HRESULT Load_Level();
 	HRESULT Load_Scene();
 	HRESULT Load_Map();
 	HRESULT Load_Prefab();

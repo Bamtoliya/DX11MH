@@ -27,7 +27,8 @@ public:
 
 private:
 	_float				m_fSensor{};
-	_bool				m_bCamraControl = { true };
+
+	_bool				m_bChanged = { false };
 
 public:
 	static CCamera_Free* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

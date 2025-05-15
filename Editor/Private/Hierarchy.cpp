@@ -47,9 +47,19 @@ HRESULT CHierarchy::Render()
     if (m_bShow)
     {
         ImGui::Begin("Hierarchy");
+        if (ImGui::Button("Add GameObject"))
+        {
+
+        }
         m_pGameInstance->Object_Manager_RenderImGui();
         ImGui::End();
     }
+
+    return S_OK;
+}
+
+HRESULT CHierarchy::Add_GameObject_Popup()
+{
 
     return S_OK;
 }

@@ -164,25 +164,25 @@ HRESULT CMesh::Ready_Anim_Mesh(const aiMesh* pAIMesh, _fmatrix PreTransformMatri
 
 			if (0.f == pVertices[AIWeight.mVertexId].vBlendWeights.x)
 			{
-				pVertices[AIWeight.mVertexId].vBlendIndices.x = i;
+				pVertices[AIWeight.mVertexId].vBlendIndices.x = (_uint)i;
 				pVertices[AIWeight.mVertexId].vBlendWeights.x = AIWeight.mWeight;
 			}
 
 			else if (0.f == pVertices[AIWeight.mVertexId].vBlendWeights.y)
 			{
-				pVertices[AIWeight.mVertexId].vBlendIndices.y = i;
+				pVertices[AIWeight.mVertexId].vBlendIndices.y = (_uint)i;
 				pVertices[AIWeight.mVertexId].vBlendWeights.y = AIWeight.mWeight;
 			}
 
 			else if (0.f == pVertices[AIWeight.mVertexId].vBlendWeights.z)
 			{
-				pVertices[AIWeight.mVertexId].vBlendIndices.z = i;
+				pVertices[AIWeight.mVertexId].vBlendIndices.z = (_uint)i;
 				pVertices[AIWeight.mVertexId].vBlendWeights.z = AIWeight.mWeight;
 			}
 
 			else if (0.f == pVertices[AIWeight.mVertexId].vBlendWeights.w)
 			{
-				pVertices[AIWeight.mVertexId].vBlendIndices.w = i;
+				pVertices[AIWeight.mVertexId].vBlendIndices.w = (_uint)i;
 				pVertices[AIWeight.mVertexId].vBlendWeights.w = AIWeight.mWeight;
 			}
 		}

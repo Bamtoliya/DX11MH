@@ -36,7 +36,6 @@ private:
 
 private:
 	wstring				m_strRenderTargetKey = {};
-	CGameObject*		m_pGameObject = { nullptr };
 	// 이미지 렌더링을 위한 멤버 변수 추가
 	ID3D11ShaderResourceView* m_pSRV = nullptr; // 실제 렌더링에 사용할 SRV
 
