@@ -137,5 +137,6 @@ namespace ifd {
 
 		void m_renderPopups();
 		void m_renderFileDialog();
+
 	};
 }
