@@ -1,4 +1,4 @@
-#pragma once
+О╩©#pragma once
 #include <ctime>
 #include <stack>
 #include <string>
@@ -11,9 +11,9 @@
 
 
 // ImFileDialog.h
-#ifdef ENGINE_EXPORTS // ENGINE_EXPORTS╢б Engine га╥на╖ф╝╦╕ ╨Т╣Егр ╤╖ а╓юг
+#ifdef ENGINE_EXPORTS // ENGINE_EXPORTSК┼■ Engine М■└К║°Л═²М┼╦К╔╪ К╧▄К⌠°М∙═ К∙▄ Л═∙Л²≤
 #define IFD_API __declspec(dllexport)
-#else // Editor га╥на╖ф╝ ╣Н Engine.dllю╩ ╩Г©Кго╢б га╥на╖ф╝©║╪╜ а╓юг╣гаЖ ╬йю╫
+#else // Editor М■└К║°Л═²М┼╦ К⌠╠ Engine.dllЛ²└ Л┌╛Л ╘М∙≤К┼■ М■└К║°Л═²М┼╦Л≈░Л└° Л═∙Л²≤К░≤Л╖─ Л∙┼Л²▄
 #define IFD_API __declspec(dllimport)
 #endif
 

@@ -36,9 +36,9 @@ HRESULT CLevel_Map::Render()
 
 HRESULT CLevel_Map::Ready_Layer_GameObjects(const _wstring& strLayerTag)
 {
-    /*if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Cube"),
+    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Monster"),
         m_iLevel, strLayerTag)))
-        return E_FAIL;*/
+        return E_FAIL;
     return S_OK;
 }
 

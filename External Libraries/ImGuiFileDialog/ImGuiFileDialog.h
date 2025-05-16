@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #if defined(__clang__)
 #pragma clang diagnostic ignored "-Wunknown-pragmas"

@@ -205,10 +205,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxCubeTex.hlsl" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxMesh.hlsl" />
-    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxNorTex.hlsl" />
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Struct.hlsl" />
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Test.hlsl" />
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxCubeTex.hlsl" />
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxMesh.hlsl" />
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxPosTex.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

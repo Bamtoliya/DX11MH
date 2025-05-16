@@ -76,6 +76,9 @@
     <Filter Include="02.GameObject\00.BackGround">
       <UniqueIdentifier>{0034ba79-dc85-446c-afa8-a812c072601f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\03.Monster">
+      <UniqueIdentifier>{0bd0b8ac-62f8-4339-b1b4-179e13291f87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -131,6 +134,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Level_GamePlay.cpp">
       <Filter>00.Levels\GamePlay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Monster.cpp">
+      <Filter>02.GameObject\03.Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +214,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Level_GamePlay.h">
       <Filter>00.Levels\GamePlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Monster.h">
+      <Filter>02.GameObject\03.Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

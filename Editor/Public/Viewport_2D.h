@@ -57,6 +57,6 @@ private: //IMGUIZMO Variable
 	ImGuizmo::OPERATION                 m_currentGizmoOperation = ImGuizmo::TRANSLATE;
 	ImGuizmo::MODE                      m_currentGizmoMode = ImGuizmo::WORLD;
 	bool                                m_bUseSnap = true;
-	float                               m_fSnapValue[3] = { 0.1f, 0.1f, 0.1f };
+	float                               m_fSnapValue[3] = { 1.0f, 1.0f, 1.0f };
 };
 NS_END

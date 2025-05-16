@@ -56,6 +56,8 @@ public:
 	void Set_Name(const wstring& str) { lstrcpy(m_szName, str.c_str()); }
 	_bool Get_Picked() { return m_bPicked; }
 	void Set_Picked(_bool bPicked) { m_bPicked = bPicked; }
+	_bool Get_Visible() { return m_bVisible; }
+	void Set_Visible(_bool bVisible) { m_bVisible = bVisible; }
 protected:
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr);
 
@@ -73,6 +75,7 @@ protected:
 	_tchar		m_szName[MAX_PATH];
 
 
+	_bool									m_bVisible = { true };	
 	_bool									m_bRelative = { false };
 	_bool									m_bAbsolute = { false };
 #pragma endregion

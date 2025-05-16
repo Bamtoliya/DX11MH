@@ -27,7 +27,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Prototype_Components()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::UI)))
+	if (FAILED(Start_Level(LEVEL::MAP)))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Add_ImGui(L"ToolBar", CToolBar::Create(m_pDevice, m_pContext)))) return E_FAIL;

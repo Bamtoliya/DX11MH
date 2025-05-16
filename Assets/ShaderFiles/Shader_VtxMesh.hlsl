@@ -1,28 +1,13 @@
+#include "Shader_Struct.hlsl"
+#include "Shader_Test.hlsl"
+texture2D g_DiffuseTexture;
 
-matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
-texture2D g_Texture;
-
-sampler DefaultSampler = sampler_state
-{
-    filter = min_mag_mip_linear;
-    AddressU = wrap;
-    AddressV = wrap;
-
-};
-
-struct VS_IN
+struct VS_MESH_IN
 {
     float3 vPosition : POSITION;
     float3 vNormal : NORMAL;
     float3 vTangent : TANGENT;
     float2 vTexcoord : TEXCOORD0;
-};
-
-struct VS_OUT
-{      
-    float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;    
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -36,29 +21,25 @@ VS_OUT VS_MAIN(VS_IN In)
     matWVP = mul(matWV, g_ProjMatrix);
     
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-    Out.vTexcoord = In.vTexcoord;    
+    Out.vTexcoord = In.vTexcoord;
     
     return Out;
 }
 
-struct PS_IN
-{
-    float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;
-};
-
-struct PS_OUT
-{
-    vector vColor : SV_TARGET0;
-};
-
 PS_OUT PS_MAIN(PS_IN In)
 {
-    PS_OUT Out;    
+    PS_OUT Out;
     
-    Out.vColor = 1.f;
+    Out.vColor = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    float r = (float) ((objectId >> 16) & 0xFF) / 255.0f;
+    float g = (float) ((objectId >> 8) & 0xFF) / 255.0f;
+    float b = (float) (objectId & 0xFF) / 255.0f;
+    Out.vPick = float4(r, g, b, 1.0f);
     
-    return Out;    
+    if (Out.vColor.a < 0.3f)
+        discard;
+    
+    return Out;
 }
 
 
@@ -68,8 +49,14 @@ technique11 DefaultTechnique
    
     pass Default
     {
-        VertexShader = compile vs_5_0 VS_MAIN();        
-        PixelShader = compile ps_5_0 PS_MAIN();      
+        VertexShader = compile vs_5_0 VS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass Picking
+    {
+        VertexShader = compile vs_5_0 VS_MAIN();
+        PixelShader = compile ps_5_0 PS_PICKING();
     }
    
 }

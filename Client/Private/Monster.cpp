@@ -46,7 +46,7 @@ void CMonster::Update(_float fTimeDelta)
 	
 }
 
-void CMonster::Late_Update(_float fTimeDelta)
+void CMonster::Late_Update(_float fTimeDelta)	
 {
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
 }

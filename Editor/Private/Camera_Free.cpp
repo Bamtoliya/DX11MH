@@ -1,5 +1,6 @@
 ﻿#include "Camera_Free.h"
 #include "GameInstance.h"
+#include "GameObject.h"
 
 _bool g_bCameraControl = false;
 
@@ -46,6 +47,10 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
 	if (g_bCameraControl)
 	{
+		if (KEY_PRESSING(DIK_F))
+		{
+			Focus_OnPickedObject();
+		}
 		if (KEY_PRESSING(DIK_A))
 		{
 			m_pTransformCom->Go_Left(fTimeDelta);
@@ -92,13 +97,11 @@ void CCamera_Free::Late_Update(_float fTimeDelta)
 {
 	if (g_bCameraControl && m_bChanged)
 	{
-		m_bChanged == false;
-		ShowCursor(FALSE);
+		m_bChanged = false;
 	}
 	else if (!g_bCameraControl && m_bChanged)
 	{
-		m_bChanged == false;
-		ShowCursor(TRUE);
+		m_bChanged = false;
 	}
 }
 
@@ -106,6 +109,47 @@ HRESULT CCamera_Free::Render()
 {
 	
 	return S_OK;
+}
+
+void CCamera_Free::Focus_OnPickedObject()
+{
+	CGameObject* pGameObject = m_pGameInstance->Get_PickedObject();
+	if (pGameObject)
+	{
+		CTransform* pTargetTransform = static_cast<CTransform*>(pGameObject->Get_Component(g_strTransformTag));
+		if (pTargetTransform)
+		{
+			// 현재 객체의 Transform 컴포넌트 (m_pTransformCom)
+			if (m_pTransformCom)
+			{
+				// 1. 타겟 객체의 위치와 현재 객체의 위치 가져오기
+				_vector vTargetPosition = pTargetTransform->Get_State(STATE::POSITION);
+				_vector vMyCurrentPosition = m_pTransformCom->Get_State(STATE::POSITION); // 현재 위치도 필요
+
+				// 2. 현재 객체에서 타겟을 향하는 방향 벡터 계산
+				_vector vDirectionFromMeToTarget = vTargetPosition - vMyCurrentPosition;
+
+				// 3. 방향 벡터 정규화 (이동 방향 결정)
+				//    타겟으로부터 '멀어지는' 방향은 (나의 위치 - 타겟 위치) 또는 -(타겟 위치 - 나의 위치) 입니다.
+				//    즉, vDirectionFromMeToTarget 에 -1을 곱한 방향입니다.
+				_vector vDirectionToMove = XMVectorScale(vDirectionFromMeToTarget, -1.f);
+				_vector vNormalizedDirectionToMove = XMVector3Normalize(vDirectionToMove);
+
+				// 4. 떨어질 거리 설정
+				_float fDistance = 10.f; // 여기에 원하는 거리 값을 입력하세요. 예: 10.f
+
+				// 5. 새로운 위치 계산: 타겟의 위치에서 (정규화된 멀어지는 방향 벡터 * 거리) 만큼 이동
+				_vector vNewPosition = XMVectorMultiplyAdd(vNormalizedDirectionToMove, XMVectorReplicate(fDistance), vTargetPosition);
+				// vNewPosition = vTargetPosition + (vNormalizedDirectionToMove * fDistance); 와 동일
+
+				// 6. 계산된 위치로 현재 객체 이동
+				m_pTransformCom->Set_State(STATE::POSITION, vNewPosition);
+
+				// 7. (선택 사항) 이동 후 타겟을 다시 바라보도록 설정
+				m_pTransformCom->LookAt(vTargetPosition);
+			}
+		}
+	}
 }
 
 CCamera_Free* CCamera_Free::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

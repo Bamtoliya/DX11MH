@@ -97,6 +97,7 @@ HRESULT CGameObject::RenderImGuiComponents()
 
 HRESULT CGameObject::RenderImGuiObjects()
 {
+	ImGui::PushID(m_oID);
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	static bool align_label_with_current_x_position = false;
 	static bool test_drag_and_drop = false;
@@ -104,7 +105,8 @@ HRESULT CGameObject::RenderImGuiObjects()
 	ImGui::Indent();
 	if (m_bPicked)
 		node_flags |= ImGuiTreeNodeFlags_Selected;
-
+	ImGui::Checkbox("##Visible", &m_bVisible);
+	ImGui::SameLine();
 	if (ImGui::TreeNodeEx(WideToUtf8(m_szName).c_str(), base_flags | node_flags))
 	{
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
@@ -117,6 +119,7 @@ HRESULT CGameObject::RenderImGuiObjects()
 	{
 		c.second->RenderImGuiObjects();
 	}
+	ImGui::PopID();
 	return S_OK;
 }
 
