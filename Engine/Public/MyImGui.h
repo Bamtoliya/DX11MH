@@ -19,6 +19,7 @@ public:
 public:
 	void Show() { m_bShow = true; }
 	void Hide() { m_bShow = false; }
+	void ToggleShow() { m_bShow = !m_bShow; }
 public:
 	static CMyImGui* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr);
 	void Free();

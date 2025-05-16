@@ -80,19 +80,19 @@ HRESULT CToolBar::Render()
                 // 창 메뉴 아이템들 (각 창의 표시 여부를 토글)
                 // ImGui::MenuItem의 세 번째 인자로 bool 포인터를 전달하면 체크박스처럼 동작합니다.
                 if (ImGui::MenuItem("Asset Browser", NULL /* 단축키 없음 */ /*, &show_asset_browser */)) {
-                    m_pGameInstance->ShowImGui(L"Asset Browser");
+                    m_pGameInstance->ToggleShowImGui(L"Asset Browser");
                 }
                 if (ImGui::MenuItem("Inspector", NULL /*, &show_inspector */)) {
-                    m_pGameInstance->ShowImGui(L"Inspector");
+                    m_pGameInstance->ToggleShowImGui(L"Inspector");
                 }
                 if (ImGui::MenuItem("Hierarchy", NULL /*, &show_inspector */)) {
-                    m_pGameInstance->ShowImGui(L"Hierarchy");
+                    m_pGameInstance->ToggleShowImGui(L"Hierarchy");
                 }
                 if (ImGui::MenuItem("Viewport2D", NULL /*, &show_inspector */)) {
-                    m_pGameInstance->ShowImGui(L"Viewport2D");
+                    m_pGameInstance->ToggleShowImGui(L"Viewport2D");
                 }
                 if (ImGui::MenuItem("Viewport3D", NULL /*, &show_inspector */)) {
-                    m_pGameInstance->ShowImGui(L"Viewport3D");
+                    m_pGameInstance->ToggleShowImGui(L"Viewport3D");
                 }
                 ImGui::Separator();
                 ImGui::EndMenu(); // Window 메뉴 끝

@@ -50,6 +50,8 @@ public:
 public:
 #pragma region LEVEL_MANAGER
 	HRESULT Change_Level(_uint iLevelIndex, class CLevel* pNewLevel);
+	_uint Get_CurrentLevelIndex();
+	class CLevel* Get_CurrentLevel();
 #pragma endregion
 
 #pragma region PROTOTYPE_MANAGER
@@ -112,8 +114,11 @@ public:
 #pragma region Imgui
 	void SetEditor(_bool b) { m_bIsEditor = b; }
 	HRESULT Add_ImGui(const _wstring& strKey, class CMyImGui* pMyImGui);
+	HRESULT ToggleShowImGui(const _wstring& key);
 	HRESULT ShowImGui(const _wstring& key);
 	HRESULT HideImGui(const _wstring& key);
+	HRESULT HideAll();
+	HRESULT ShowAll();
 #pragma endregion
 
 

@@ -79,6 +79,15 @@
     <Filter Include="02.GameObject\03.Monster">
       <UniqueIdentifier>{0bd0b8ac-62f8-4339-b1b4-179e13291f87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Imgui\ToolBar\Models">
+      <UniqueIdentifier>{a1e680c7-ab79-4a29-b0ac-0d870d39e169}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\ToolBar\Models\Importer">
+      <UniqueIdentifier>{4fc7a0a8-6137-4084-952f-3beb5b6e7f54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Imgui\ToolBar\Models\Exporter">
+      <UniqueIdentifier>{363d9a36-a337-41b3-92d9-64dd47eec20a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">

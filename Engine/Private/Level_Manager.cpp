@@ -39,6 +39,11 @@ HRESULT CLevel_Manager::Render()
     return S_OK;
 }
 
+_uint CLevel_Manager::Get_CurrentLevelIndex()
+{
+    return m_pCurrentLevel->Get_LevelIndex();
+}
+
 CLevel_Manager* CLevel_Manager::Create()
 {
 	return new CLevel_Manager();

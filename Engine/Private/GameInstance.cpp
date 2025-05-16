@@ -200,6 +200,14 @@ HRESULT CGameInstance::Change_Level(_uint iLevelIndex, CLevel* pNewLevel)
 	return m_pLevel_Manager->Change_Level(iLevelIndex, pNewLevel);
 
 }
+_uint CGameInstance::Get_CurrentLevelIndex()
+{
+	return m_pLevel_Manager->Get_CurrentLevelIndex();
+}
+CLevel* CGameInstance::Get_CurrentLevel()
+{
+	return m_pLevel_Manager->Get_CurrentLevel();
+}
 #pragma endregion
 
 #pragma region PROTOTYPE_MANAGER
@@ -312,6 +320,11 @@ HRESULT CGameInstance::Add_ImGui(const _wstring& strKey, CMyImGui* pMyImGui)
 	return m_pMyImGui_Manager->Add_ImGui(strKey, pMyImGui);
 }
 
+HRESULT CGameInstance::ToggleShowImGui(const _wstring& key)
+{
+	return m_pMyImGui_Manager->ToggleShowImGui(key);
+}
+
 HRESULT CGameInstance::ShowImGui(const _wstring& key)
 {
 	return m_pMyImGui_Manager->ShowImGui(key);
@@ -320,6 +333,16 @@ HRESULT CGameInstance::ShowImGui(const _wstring& key)
 HRESULT CGameInstance::HideImGui(const _wstring& key)
 {
 	return m_pMyImGui_Manager->HideImGui(key);
+}
+
+HRESULT CGameInstance::HideAll()
+{
+	return m_pMyImGui_Manager->HideAll();
+}
+
+HRESULT CGameInstance::ShowAll()
+{
+	return m_pMyImGui_Manager->ShowAll();
 }
 
 #pragma endregion

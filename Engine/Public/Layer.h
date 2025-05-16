@@ -22,8 +22,11 @@ public:
 	void Update(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
 	HRESULT RenderImGui(const wstring& strLayerTag);
+	HRESULT ToggleVisible();
 private:
+	_wstring							m_strTagName = {};
 	list<class CGameObject*>			m_GameObjects;
+	_bool								m_bVisible = { true };
 
 public:
 	static CLayer* Create();

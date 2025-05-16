@@ -191,32 +191,14 @@ HRESULT CMyImGui_Manager::Clear()
                 ++it;
             }
         }
-
-        // 만약 첫 번째 요소를 남겨두고 나머지만 제거하고 싶다면,
-        // 위 코드에서 it = m_MyImGuis.erase(it); 로 처리했으므로
-        // m_MyImGuis.clear()를 호출하면 첫 번째 요소도 지워집니다.
-        // 첫 번째 요소를 남기려면 m_MyImGuis.clear()를 호출하지 않거나,
-        // 아래와 같이 첫 번째 요소를 제외하고 clear하는 로직을 추가해야 합니다.
-
-        // 첫 번째 요소만 남기고 나머지 모두 제거 후 clear (원래 요청대로라면)
-        // 위의 while 루프가 이미 첫 번째를 제외하고 제거했으므로,
-        // 만약 첫 번째 요소를 보존하고 싶다면, 이 부분은 다르게 처리해야 합니다.
-        // 현재 코드는 첫 번째를 제외하고 나머지를 release 및 erase하고,
-        // 이후에 m_MyImGuis.clear()로 전체를 비웁니다.
-
-        // 만약 첫 번째 요소를 **남겨두고 싶다면** 다음과 같이 수정할 수 있습니다:
-        // 1. 첫 번째 요소를 임시 변수에 저장
-        // 2. 전체 맵 클리어
-        // 3. 임시 변수에 저장했던 첫 번째 요소 다시 삽입 (Safe_Release 안 된 상태로)
-
-        // 하지만 원래 요청 "첫번째만 건너뛰고 릴리즈하기"는
-        // 첫 번째 요소는 릴리즈하지 않고, 나머지만 릴리즈 후 전체 맵을 비우는 것으로 해석됩니다.
-        // 그래서 현재 제공된 코드는 '첫 번째를 제외한 모든 요소'를 릴리즈 한 후,
-        // 최종적으로 `m_MyImGuis.clear()`를 통해 맵 자체를 비웁니다.
-        // 만약 첫 번째 요소를 맵에 남겨두고 싶다면 이 부분을 수정해야 합니다.
     }
+    return S_OK;
+}
 
-    //m_MyImGuis.clear(); // 모든 요소를 제거합니다. (첫 번째 요소 포함)
+HRESULT CMyImGui_Manager::ToggleShowImGui(const _wstring& key)
+{
+    if (m_MyImGuis.find(key) != m_MyImGuis.end())
+        m_MyImGuis[key]->ToggleShow();
     return S_OK;
 }
 
@@ -231,5 +213,23 @@ HRESULT CMyImGui_Manager::HideImGui(const _wstring& key)
 {
     if (m_MyImGuis.find(key) != m_MyImGuis.end())
         m_MyImGuis[key]->Hide();
+    return S_OK;
+}
+
+HRESULT CMyImGui_Manager::ShowAll()
+{
+    for (auto& iter : m_MyImGuis)
+    {
+        iter.second->Show();
+    }
+    return S_OK;
+}
+
+HRESULT CMyImGui_Manager::HideAll()
+{
+    for (auto& iter : m_MyImGuis)
+    {
+        iter.second->Hide();    
+    }
     return S_OK;
 }

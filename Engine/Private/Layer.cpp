@@ -78,12 +78,30 @@ void CLayer::Late_Update(_float fTimeDelta)
 
 HRESULT CLayer::RenderImGui(const wstring& strLayerTag)
 {
+	ImGui::PushID(strLayerTag.c_str());
+	if ((ImGui::Checkbox("##Visible", &m_bVisible)))
+	{
+		ToggleVisible();
+	}
+	ImGui::SameLine();
 	if (ImGui::CollapsingHeader(WideToUtf8(strLayerTag.c_str()).c_str()))
 	{
 		for (auto& pGameObject : m_GameObjects)
 		{
 			pGameObject->RenderImGuiObjects();
 		}
+	}
+	ImGui::PopID();
+	return S_OK;
+}
+
+HRESULT CLayer::ToggleVisible()
+{
+	for (auto& pGameObject : m_GameObjects)
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Set_Visible(m_bVisible);
+
 	}
 	return S_OK;
 }

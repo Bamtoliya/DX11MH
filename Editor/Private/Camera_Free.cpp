@@ -136,7 +136,7 @@ void CCamera_Free::Focus_OnPickedObject()
 				_vector vNormalizedDirectionToMove = XMVector3Normalize(vDirectionToMove);
 
 				// 4. 떨어질 거리 설정
-				_float fDistance = 10.f; // 여기에 원하는 거리 값을 입력하세요. 예: 10.f
+				_float fDistance = 5.f; // 여기에 원하는 거리 값을 입력하세요. 예: 10.f
 
 				// 5. 새로운 위치 계산: 타겟의 위치에서 (정규화된 멀어지는 방향 벡터 * 거리) 만큼 이동
 				_vector vNewPosition = XMVectorMultiplyAdd(vNormalizedDirectionToMove, XMVectorReplicate(fDistance), vTargetPosition);

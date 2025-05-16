@@ -2,7 +2,7 @@
 #include "MainApp.h"
 #include "GameInstance.h"
 #include "Sound_Manager.h"
-#include "ToolBar.h"
+#include "Tools.h"
 
 CMainApp::CMainApp()
 	: m_pGameInstance{ CGameInstance::Get_Instance() }
@@ -27,10 +27,11 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Prototype_Components()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::MAP)))
+	if (FAILED(CreateImGui()))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_ImGui(L"ToolBar", CToolBar::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	if (FAILED(Start_Level(LEVEL::MAP)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -82,6 +83,17 @@ HRESULT CMainApp::Ready_Prototype_Components()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements))))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CMainApp::CreateImGui()
+{
+	if (FAILED(m_pGameInstance->Add_ImGui(L"ToolBar", CToolBar::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_ImGui(L"Inspector", CInspector::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_ImGui(L"Hierarchy", CHierarchy::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_ImGui(L"Asset Browser", CAsset_Browser::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_ImGui(L"Viewport2D", CViewport_2D::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_ImGui(L"Viewport3D", CViewport_3D::Create(m_pDevice, m_pContext)))) return E_FAIL;
 	return S_OK;
 }
 

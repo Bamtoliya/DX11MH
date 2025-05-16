@@ -60,10 +60,12 @@ HRESULT CLevel_UI::Ready_Layer_Camera(const wstring strLayerTag)
 
 HRESULT CLevel_UI::Ready_Layer_ImGui()
 {
-    m_pGameInstance->Add_ImGui(L"Inspector", CInspector::Create(m_pDevice, m_pContext));
-    m_pGameInstance->Add_ImGui(L"Hierarchy", CHierarchy::Create(m_pDevice, m_pContext));
-    m_pGameInstance->Add_ImGui(L"Asset Browser", CAsset_Browser::Create(m_pDevice, m_pContext));
-    m_pGameInstance->Add_ImGui(L"Viewport2D", CViewport_2D::Create(m_pDevice, m_pContext));
+    m_pGameInstance->HideAll();
+    m_pGameInstance->ShowImGui(L"ToolBar");
+    m_pGameInstance->ShowImGui(L"Inspector");
+    m_pGameInstance->ShowImGui(L"Hierarchy");
+    m_pGameInstance->ShowImGui(L"Browser");
+    m_pGameInstance->ShowImGui(L"Viewport2D");
     return S_OK;
 }
 

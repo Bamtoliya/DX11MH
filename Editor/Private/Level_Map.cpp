@@ -69,10 +69,12 @@ HRESULT CLevel_Map::Ready_Layer_Sky(const _wstring& strLayerTag)
 
 HRESULT CLevel_Map::Ready_Layer_ImGui()
 {
-    m_pGameInstance->Add_ImGui(L"Inspector", CInspector::Create(m_pDevice, m_pContext));
-    m_pGameInstance->Add_ImGui(L"Hierarchy", CHierarchy::Create(m_pDevice, m_pContext));
-    m_pGameInstance->Add_ImGui(L"Asset Browser", CAsset_Browser::Create(m_pDevice, m_pContext));
-    m_pGameInstance->Add_ImGui(L"Viewport3D", CViewport_3D::Create(m_pDevice, m_pContext));
+    m_pGameInstance->HideAll();
+    m_pGameInstance->ShowImGui(L"ToolBar");
+    m_pGameInstance->ShowImGui(L"Inspector");
+    m_pGameInstance->ShowImGui(L"Hierarchy");
+    m_pGameInstance->ShowImGui(L"Asset Browser");
+    m_pGameInstance->ShowImGui(L"Viewport3D");
     return S_OK;
 }
 

@@ -60,8 +60,7 @@ HRESULT CViewport_3D::Render()
             return E_FAIL;
         }
 
-        if(m_bLockPicked)
-            ImGui::Text("Picked Object Locked");
+        
         // --- 상태 변수 (줌, 패닝, 클릭 정보) ---
         // static 변수는 이 함수가 여러 뷰포트에서 재사용될 경우 문제가 될 수 있습니다.
         // 실제 앱에서는 이 상태를 뷰포트별로 관리하는 것이 좋습니다. (예: 클래스 멤버)
@@ -145,8 +144,10 @@ HRESULT CViewport_3D::Render()
                 snprintf(click_info, sizeof(click_info), "Right Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);
                 // 여기서 last_right_click_grid_pos 같은 변수에 저장하거나 다른 작업 수행 가능
             }
-        }
 
+            if (m_bLockPicked)
+                ImGui::Text("Picked Object Locked");
+        }
         //렌더링 결과물
 #pragma region RectForTargetRatio
         // --- 그리드 및 경계선 그리기 ---

@@ -32,8 +32,11 @@ public:
 	HRESULT Resize(_uint iWinSizeX, _uint iWinSizeY);
 	HRESULT Add_ImGui(const _wstring& key, CMyImGui* pMyImGui);
 	HRESULT Clear();
+	HRESULT ToggleShowImGui(const _wstring& key);
 	HRESULT ShowImGui(const _wstring& key);
 	HRESULT HideImGui(const _wstring& key);
+	HRESULT ShowAll();
+	HRESULT HideAll();
 private:
 	class CGameObject* m_pGameObject = { nullptr };
 private:

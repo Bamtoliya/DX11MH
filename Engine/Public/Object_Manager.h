@@ -22,10 +22,12 @@ public:
 	void Priority_Update(_float fTimeDelta);
 	void Update(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
+public:
 	void Clear(_uint iLevelIndex);
 	class CGameObject* Get_GameObjectById(_uint iId);
-
+public:
 	HRESULT RenderImGui();
+	HRESULT ToggleLayerVisible(_uint iLevelIndex, const _wstring& strLayerTag);
 private:
 	static _uint						m_oID;
 	_uint								m_iNumLevels = {};
