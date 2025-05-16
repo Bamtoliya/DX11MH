@@ -114,7 +114,7 @@ HRESULT CMesh::Ready_NonAnim_Mesh(const aiMesh* pAIMesh, _fmatrix PreTransformMa
 	return S_OK;
 }
 
-HRESULT CMesh::Ready_Anim_Mesh(const aiMesh* pAIMesh, _fmatrix PreTransformMatrix)
+HRESULT CMesh::Ready_Anim_Mesh(const aiMesh* pAIMesh, const vector<CBone*>& Bones)
 {
 	m_iVertexStride = sizeof(VTXANIMMESH);
 	D3D11_BUFFER_DESC			VBBufferDesc{};
