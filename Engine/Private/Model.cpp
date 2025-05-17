@@ -1,5 +1,4 @@
-﻿#include "Component.h"
-
+﻿#pragma once
 #include "Material.h"
 #include "Model.h"
 #include "Mesh.h"

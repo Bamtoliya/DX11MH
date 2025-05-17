@@ -1,4 +1,5 @@
-﻿#include "Prototype_Manager.h"
+﻿#pragma once
+#include "Prototype_Manager.h"
 
 #include "GameObject.h"
 #include "Component.h"
@@ -51,6 +52,30 @@ void CPrototype_Manager::Clear(_uint iLevelIndex)
 		Safe_Release(Pair.second);
 
 	m_pPrototypes[iLevelIndex].clear();	
+}
+
+HRESULT CPrototype_Manager::RenderImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag)
+{
+	static _wstring selected_key = L"";
+	static bool item_highlight = false;
+	int item_highlighted_idx = -1;
+	for (auto& Pair : m_pPrototypes[iLevelIndex])
+	{	
+		if (Pair.first.find(PrototypeType) != _wstring::npos)
+		{
+			const _bool is_selected = (selected_key == Pair.first);
+			if (ImGui::Selectable(WideToUtf8(Pair.first.c_str()).c_str(), is_selected))
+			{
+				selected_key = Pair.first;
+				strSelectedTag = Pair.first;
+			}
+
+			if (is_selected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+	}
+	return S_OK;
 }
 
 CBase* CPrototype_Manager::Find_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag)

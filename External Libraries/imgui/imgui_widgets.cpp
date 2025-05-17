@@ -2147,6 +2147,7 @@ bool ImGui::Combo(const char* label, int* current_item, const char* items_separa
     return value_changed;
 }
 
+
 #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 
 struct ImGuiGetNameFromIndexOldToNewCallbackData { void* UserData; bool (*OldCallback)(void*, int, const char**); };

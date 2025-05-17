@@ -76,24 +76,6 @@
     <ClInclude Include="..\Public\Renderer.h">
       <Filter>01.Utility\05.Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\External Libraries\imgui\imconfig.h">
-      <Filter>External Libraries\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\External Libraries\imgui\imgui.h">
-      <Filter>External Libraries\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\External Libraries\imgui\imgui_internal.h">
-      <Filter>External Libraries\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\External Libraries\imgui\imstb_rectpack.h">
-      <Filter>External Libraries\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\External Libraries\imgui\imstb_textedit.h">
-      <Filter>External Libraries\Imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\External Libraries\imgui\imstb_truetype.h">
-      <Filter>External Libraries\Imgui</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\External Libraries\imgui\backends\imgui_impl_dx11.h">
       <Filter>External Libraries\Imgui\backends</Filter>
     </ClInclude>
@@ -335,23 +317,29 @@
     <ClInclude Include="..\..\External Libraries\imFileDialog\stb_image.h">
       <Filter>External Libraries\imFileDialog</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\External Libraries\ImGuiFileDialog\ImGuiFileDialog.h">
-      <Filter>External Libraries\ImGuiFileDialog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\External Libraries\ImGuiFileDialog\ImGuiFileDialogConfig.h">
-      <Filter>External Libraries\ImGuiFileDialog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\External Libraries\ImGuiFileDialog\stb\stb_image.h">
-      <Filter>External Libraries\ImGuiFileDialog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\External Libraries\ImGuiFileDialog\stb\stb_image_resize.h">
-      <Filter>External Libraries\ImGuiFileDialog</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Bone.h">
       <Filter>01.Utility\04.Components\Model\Bone</Filter>
     </ClInclude>
     <ClInclude Include="..\public\GameObject_ModelTest.h">
       <Filter>01.Utility\03.GameObject\Base\ModelTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imconfig.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imgui.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imgui_internal.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_rectpack.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_textedit.h">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\External Libraries\imgui\imstb_truetype.h">
+      <Filter>External Libraries\Imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -411,21 +399,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Renderer.cpp">
       <Filter>01.Utility\05.Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\External Libraries\imgui\imgui.cpp">
-      <Filter>External Libraries\Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\External Libraries\imgui\imgui_demo.cpp">
-      <Filter>External Libraries\Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\External Libraries\imgui\imgui_draw.cpp">
-      <Filter>External Libraries\Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\External Libraries\imgui\imgui_tables.cpp">
-      <Filter>External Libraries\Imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\External Libraries\imgui\imgui_widgets.cpp">
-      <Filter>External Libraries\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\External Libraries\imgui\backends\imgui_impl_dx11.cpp">
       <Filter>External Libraries\Imgui\backends</Filter>
@@ -635,14 +608,29 @@
     <ClCompile Include="..\..\External Libraries\imFileDialog\ImFileDialog.cpp">
       <Filter>External Libraries\imFileDialog</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\External Libraries\ImGuiFileDialog\ImGuiFileDialog.cpp">
-      <Filter>External Libraries\ImGuiFileDialog</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Bone.cpp">
       <Filter>01.Utility\04.Components\Model\Bone</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GameObject_ModelTest.cpp">
       <Filter>01.Utility\03.GameObject\Base\ModelTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_demo.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_draw.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_tables.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\imgui_widgets.cpp">
+      <Filter>External Libraries\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\imgui\Imgui_textinputcombobox.cpp">
+      <Filter>External Libraries\Imgui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -876,9 +864,6 @@
     </Filter>
     <Filter Include="External Libraries\imFileDialog">
       <UniqueIdentifier>{37eb19a2-14e2-48e0-84c4-b3d44170467f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="External Libraries\ImGuiFileDialog">
-      <UniqueIdentifier>{14a297d6-aefb-4f28-b1a4-edb33aae0dd1}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.GameObject\Base\ModelTest">
       <UniqueIdentifier>{dde1aa86-8ddc-4d34-b362-98c4e92f04be}</UniqueIdentifier>

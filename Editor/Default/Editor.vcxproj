@@ -45,6 +45,7 @@
     <ClInclude Include="..\Public\Camera_Free.h" />
     <ClInclude Include="..\Public\Editor_Defines.h" />
     <ClInclude Include="..\Public\Editor_Enum.h" />
+    <ClInclude Include="..\Public\Editor_Macro.h" />
     <ClInclude Include="..\public\Hierarchy.h" />
     <ClInclude Include="..\public\Inspector.h" />
     <ClInclude Include="..\Public\Levels.h" />
@@ -88,6 +89,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_PICKING</EntryPointName>
     </FxCompile>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxMesh.hlsl" />
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxNorTex.hlsl" />

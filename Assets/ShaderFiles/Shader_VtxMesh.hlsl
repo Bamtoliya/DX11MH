@@ -36,8 +36,8 @@ PS_OUT PS_MAIN(PS_IN In)
     float b = (float) (objectId & 0xFF) / 255.0f;
     Out.vPick = float4(r, g, b, 1.0f);
     
-    if (Out.vColor.a < 0.3f)
-        discard;
+    /*if (Out.vColor.a < 0.3f)
+        discard;*/
     
     return Out;
 }

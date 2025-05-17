@@ -220,6 +220,11 @@ CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototype
 {
 	return m_pPrototype_Manager->Clone_Prototype(ePrototypeType, iPrototypeLevelIndex, strPrototypeTag, pArg);
 }
+
+HRESULT CGameInstance::Render_PrototypeManagerImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag)
+{
+	return m_pPrototype_Manager->RenderImGui(iLevelIndex, PrototypeType, strSelectedTag);
+}
 #pragma endregion
 
 #pragma region TARGET_MANAGER
@@ -281,6 +286,11 @@ CGameObject* CGameInstance::Get_GameObjectById(_uint iId)
 HRESULT CGameInstance::Object_Manager_RenderImGui()
 {
 	return m_pObject_Manager->RenderImGui();
+}
+
+HRESULT CGameInstance::Render_ImGuiLayerList(_uint iLevelIndex, _char* szBuffer, _uint iBufferSize)
+{
+	return m_pObject_Manager->Render_ImGuiLayerList(iLevelIndex, szBuffer, iBufferSize);
 }
 
 #pragma endregion

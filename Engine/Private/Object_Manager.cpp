@@ -129,6 +129,53 @@ HRESULT CObject_Manager::ToggleLayerVisible(_uint iLevelIndex, const _wstring& s
 	return S_OK;
 }
 
+static int MyCallback(ImGuiInputTextCallbackData* data)
+{
+	if (data->EventFlag == ImGuiInputTextFlags_CallbackCompletion)
+	{
+		data->InsertChars(data->CursorPos, "Layer_");
+	}
+	return 0;
+}
+
+HRESULT CObject_Manager::Render_ImGuiLayerList(_uint iLevelIndex, _char* szBuffer, _uint iBufferSize)
+{
+	static _wstring selected_key = L"";
+	ImGuiComboFlags flags = ImGuiComboFlags_HeightRegular;
+	if (ImGui::BeginCombo("Layer", WideToUtf8(selected_key.c_str()).c_str(), flags))
+	{
+		static ImGuiTextFilter filter;
+		if (ImGui::IsWindowAppearing())
+		{
+			ImGui::SetKeyboardFocusHere();
+			filter.Clear();
+		}
+		ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_F);
+		filter.Draw("##Filter", -FLT_MIN);
+
+
+		for (auto& Pair : m_pLayers[iLevelIndex])
+		{
+			const _bool is_selected = (selected_key == Pair.first);
+			if (filter.PassFilter(WideToUtf8(Pair.first.c_str()).c_str()))
+				if (ImGui::Selectable(WideToUtf8(Pair.first.c_str()).c_str(), is_selected))
+				{
+					selected_key = Pair.first;
+					strncpy_s(szBuffer, iBufferSize, WideToUtf8(selected_key.c_str()).c_str(), _TRUNCATE);
+				}
+		}
+		ImGui::EndCombo();
+	}
+
+	
+
+	if (ImGui::InputTextWithHint("##Layer_Text_Input: ", "Layer_", szBuffer, iBufferSize, ImGuiInputTextFlags_CallbackCompletion, MyCallback))
+	{
+
+	}
+	return S_OK;
+}
+
 CLayer* CObject_Manager::Find_Layer(_uint iLevelIndex, const _wstring& strLayerTag)
 {
 	auto	iter = m_pLayers[iLevelIndex].find(strLayerTag);

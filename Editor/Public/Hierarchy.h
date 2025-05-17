@@ -24,5 +24,8 @@ public:
 
 public:
 	HRESULT Add_GameObject_Popup();
+	HRESULT Delete_GameObject_Popup();
+private:
+	LEVEL			m_eCurSelLevel = { LEVEL::STATIC };
 };
 NS_END

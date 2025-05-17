@@ -57,6 +57,7 @@ public:
 #pragma region PROTOTYPE_MANAGER
 	HRESULT Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
+	HRESULT Render_PrototypeManagerImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag);
 #pragma endregion
 
 #pragma region TARGET_MANAGER
@@ -81,6 +82,7 @@ public:
 	class CGameObject* Get_GameObjectById(_uint iId);
 
 	HRESULT Object_Manager_RenderImGui();
+	HRESULT Render_ImGuiLayerList(_uint iLevelIndex, _char* szBuffer, _uint iBufferSize);
 #pragma endregion
 
 #pragma region RENDERER

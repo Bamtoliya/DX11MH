@@ -125,7 +125,7 @@ static void FitNodes(Delegate& delegate, ViewState& viewState, const ImVec2 view
 
     bool validNode = false;
     ImVec2 min(FLT_MAX, FLT_MAX);
-    ImVec2 max(-FLT_MAX, -FLT_MAX);
+    ImVec2 max{ -FLT_MAX, -FLT_MAX };
     for (NodeIndex nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
     {
         const Node& node = delegate.GetNode(nodeIndex);
@@ -730,7 +730,7 @@ bool DrawMiniMap(ImDrawList* drawList, Delegate& delegate, ViewState& viewState,
     }
 
     ImVec2 min(FLT_MAX, FLT_MAX);
-    ImVec2 max(-FLT_MAX, -FLT_MAX);
+    ImVec2 max{ -FLT_MAX, -FLT_MAX };
     const ImVec2 margin(50, 50);
     for (NodeIndex nodeIndex = 0; nodeIndex < nodeCount; nodeIndex++)
     {

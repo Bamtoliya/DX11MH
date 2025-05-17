@@ -227,6 +227,9 @@
     <ClInclude Include="..\Public\Monster.h">
       <Filter>02.GameObject\03.Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Editor_Macro.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Editor.ico">
@@ -261,6 +264,9 @@
       <Filter>ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxCubeTex.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxAnimMesh.hlsl">
       <Filter>ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

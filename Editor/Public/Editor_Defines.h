@@ -7,6 +7,7 @@
 #include "../Default/framework.h"
 #include <process.h>
 #include "Editor_Enum.h"
+#include "Editor_Macro.h"
 
 namespace Editor
 {

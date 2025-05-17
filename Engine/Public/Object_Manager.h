@@ -28,6 +28,7 @@ public:
 public:
 	HRESULT RenderImGui();
 	HRESULT ToggleLayerVisible(_uint iLevelIndex, const _wstring& strLayerTag);
+	HRESULT Render_ImGuiLayerList(_uint iLevelIndex, _char* szBuffer, _uint iBufferSize);
 private:
 	static _uint						m_oID;
 	_uint								m_iNumLevels = {};
