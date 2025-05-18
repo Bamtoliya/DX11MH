@@ -1,26 +1,26 @@
-#pragma once    
+ï»¿#pragma once    
 #include <imgui.h>
-#include <imgui_internal.h> // ImGui::InputTextEx ¿Í °°Àº ³»ºÎ ÇÔ¼ö Á¢±ÙÀÌ ÇÊ¿äÇÒ ¼ö ÀÖÀ¸³ª, ÇöÀç ÄÚµå´Â Á÷Á¢ »ç¿ë X
+#include <imgui_internal.h> // ImGui::InputTextEx ì™€ ê°™ì€ ë‚´ë¶€ í•¨ìˆ˜ ì ‘ê·¼ì´ í•„ìš”í•  ìˆ˜ ìˆìœ¼ë‚˜, í˜„ì¬ ì½”ë“œëŠ” ì§ì ‘ ì‚¬ìš© X
 #include <string>
-#include <vector>   // std::pair »ç¿ë ½Ã ÇÊ¿äÇÒ ¼ö ÀÖÀ½ (ÇöÀç ÄÚµå¿¡¼­´Â UserData·Î const char** ¿Í size_t¸¦ Á÷Á¢ Ä³½ºÆÃ)
-#include <cstring>  // strlen, strcpy_s µî
+#include <vector>   // std::pair ì‚¬ìš© ì‹œ í•„ìš”í•  ìˆ˜ ìˆìŒ (í˜„ì¬ ì½”ë“œì—ì„œëŠ” UserDataë¡œ const char** ì™€ size_të¥¼ ì§ì ‘ ìºìŠ¤íŒ…)
+#include <cstring>  // strlen, strcpy_s ë“±
 #include <utility>  // std::pair
 
-namespace ImGui { // ¶Ç´Â ¿øÇÏ´Â ´Ù¸¥ ³×ÀÓ½ºÆäÀÌ½º »ç¿ë (¿¹: namespace MyCustomWidgets {)
-// SFML ÀÇÁ¸¼º Á¦°Å: ¾Æ·¡ ÁÙ »èÁ¦
+namespace ImGui { // ë˜ëŠ” ì›í•˜ëŠ” ë‹¤ë¥¸ ë„¤ì„ìŠ¤í˜ì´ìŠ¤ ì‚¬ìš© (ì˜ˆ: namespace MyCustomWidgets {)
+// SFML ì˜ì¡´ì„± ì œê±°: ì•„ë˜ ì¤„ ì‚­ì œ
 // extern sf::Keyboard::Key key;
 
     bool identical(const char* buf, const char* item) {
-        if (!buf || !item) return false; // ³Î Æ÷ÀÎÅÍ Ã¼Å©
+        if (!buf || !item) return false; // ë„ í¬ì¸í„° ì²´í¬
         size_t buf_size = strlen(buf);
         size_t item_size = strlen(item);
-        if (buf_size == 0) return false; // ÀÔ·Â ¹öÆÛ°¡ ºñ¾îÀÖÀ¸¸é Á¦¾ÈÇÏÁö ¾ÊÀ½
-        if (buf_size > item_size) return false; // ¾ÆÀÌÅÛ ±æÀÌ°¡ ´õ ÂªÀ¸¸é ºÎºĞ ÀÏÄ¡°¡ ¾Æ´Ô
+        if (buf_size == 0) return false; // ì…ë ¥ ë²„í¼ê°€ ë¹„ì–´ìˆìœ¼ë©´ ì œì•ˆí•˜ì§€ ì•ŠìŒ
+        if (buf_size > item_size) return false; // ì•„ì´í…œ ê¸¸ì´ê°€ ë” ì§§ìœ¼ë©´ ë¶€ë¶„ ì¼ì¹˜ê°€ ì•„ë‹˜
 
-        // strncmp¸¦ »ç¿ëÇÏ¸é ´õ °£°áÇÏ°Ô Ç¥Çö °¡´É
+        // strncmpë¥¼ ì‚¬ìš©í•˜ë©´ ë” ê°„ê²°í•˜ê²Œ í‘œí˜„ ê°€ëŠ¥
         return strncmp(buf, item, buf_size) == 0;
         /*
-        // ±âÁ¸ ·ÎÁ÷:
+        // ê¸°ì¡´ ë¡œì§:
         for (size_t i = 0; i < buf_size; ++i) {
             if (buf[i] != item[i]) return false;
         }
@@ -29,95 +29,95 @@ namespace ImGui { // ¶Ç´Â ¿øÇÏ´Â ´Ù¸¥ ³×ÀÓ½ºÆäÀÌ½º »ç¿ë (¿¹: namespace MyCustomW
     }
 
     int propose(ImGuiInputTextCallbackData* data) {
-        // ÀÔ·Â ¹öÆÛ°¡ ºñ¾îÀÖÀ¸¸é "¹Ì¸® ¼±ÅÃ"ÇÏÁö ¾ÊÀ½
+        // ì…ë ¥ ë²„í¼ê°€ ë¹„ì–´ìˆìœ¼ë©´ "ë¯¸ë¦¬ ì„ íƒ"í•˜ì§€ ì•ŠìŒ
         if (data->BufTextLen == 0) return 0;
 
-        // UserData¿¡¼­ ¾ÆÀÌÅÛ ¸ñ·Ï°ú ±æÀÌ¸¦ °¡Á®¿È
+        // UserDataì—ì„œ ì•„ì´í…œ ëª©ë¡ê³¼ ê¸¸ì´ë¥¼ ê°€ì ¸ì˜´
         auto* M_userData = static_cast<std::pair<const char**, size_t>*>(data->UserData);
         const char** items = M_userData->first;
         size_t length = M_userData->second;
 
-        // ImGuiInputTextFlags_CallbackEdit ÇÃ·¡±×´Â ImGui::InputTextEx ³»ºÎ¿¡¼­ »ç¿ëÀÚ°¡ ¹öÆÛ¸¦ ¼öÁ¤ÇßÀ» ¶§ ¼³Á¤µÊ
-        // Backspace³ª Delete Å°·Î ÀÎÇÑ ¼öÁ¤µµ ¿©±â¿¡ ÇØ´çµÉ ¼ö ÀÖÀ½
-        // ¸¸¾à data->EventKey¸¦ »ç¿ëÇÏ°í ½Í´Ù¸é, InputText È£Ãâ ½Ã ImGuiInputTextFlags_CallbackCompletion,
-        // ImGuiInputTextFlags_CallbackHistory, ImGuiInputTextFlags_CallbackCharFilter Áß ÇÏ³ª ÀÌ»óÀÌ ÇÊ¿äÇÔ.
-        // ImGuiInputTextFlags_CallbackAlways´Â ¸ğµç ÆíÁı ½Ã Äİ¹éÀ» È£ÃâÇÏÁö¸¸ EventKey¸¦ Ç×»ó Ã¤¿ìÁö´Â ¾ÊÀ½.
+        // ImGuiInputTextFlags_CallbackEdit í”Œë˜ê·¸ëŠ” ImGui::InputTextEx ë‚´ë¶€ì—ì„œ ì‚¬ìš©ìê°€ ë²„í¼ë¥¼ ìˆ˜ì •í–ˆì„ ë•Œ ì„¤ì •ë¨
+        // Backspaceë‚˜ Delete í‚¤ë¡œ ì¸í•œ ìˆ˜ì •ë„ ì—¬ê¸°ì— í•´ë‹¹ë  ìˆ˜ ìˆìŒ
+        // ë§Œì•½ data->EventKeyë¥¼ ì‚¬ìš©í•˜ê³  ì‹¶ë‹¤ë©´, InputText í˜¸ì¶œ ì‹œ ImGuiInputTextFlags_CallbackCompletion,
+        // ImGuiInputTextFlags_CallbackHistory, ImGuiInputTextFlags_CallbackCharFilter ì¤‘ í•˜ë‚˜ ì´ìƒì´ í•„ìš”í•¨.
+        // ImGuiInputTextFlags_CallbackAlwaysëŠ” ëª¨ë“  í¸ì§‘ ì‹œ ì½œë°±ì„ í˜¸ì¶œí•˜ì§€ë§Œ EventKeyë¥¼ í•­ìƒ ì±„ìš°ì§€ëŠ” ì•ŠìŒ.
 
-        // ¿©±â¼­´Â »ç¿ëÀÚ°¡ Backspace/Delete¸¦ ´­·¯ ÅØ½ºÆ®¸¦ ¼öÁ¤ÇÏ¸é,
-        // ÀÏ´Ü ImGui°¡ ÇØ´ç ÀÛ¾÷À» ¼öÇàÇÏµµ·Ï µÎ°í, ¼öÁ¤µÈ Buf¸¦ ±â¹İÀ¸·Î ´Ù½Ã Á¦¾ÈÀ» ½ÃµµÇÔ.
-        // °ø°İÀûÀÎ ÀÚµ¿ ¿Ï¼ºÀ» ÇÇÇÏ±â À§ÇØ, »ç¿ëÀÚ°¡ ¸í½ÃÀûÀ¸·Î Á¦¾ÈÀ» ¼±ÅÃÇÏµµ·Ï À¯µµÇÒ ¼öµµ ÀÖÀ½.
+        // ì—¬ê¸°ì„œëŠ” ì‚¬ìš©ìê°€ Backspace/Deleteë¥¼ ëˆŒëŸ¬ í…ìŠ¤íŠ¸ë¥¼ ìˆ˜ì •í•˜ë©´,
+        // ì¼ë‹¨ ImGuiê°€ í•´ë‹¹ ì‘ì—…ì„ ìˆ˜í–‰í•˜ë„ë¡ ë‘ê³ , ìˆ˜ì •ëœ Bufë¥¼ ê¸°ë°˜ìœ¼ë¡œ ë‹¤ì‹œ ì œì•ˆì„ ì‹œë„í•¨.
+        // ê³µê²©ì ì¸ ìë™ ì™„ì„±ì„ í”¼í•˜ê¸° ìœ„í•´, ì‚¬ìš©ìê°€ ëª…ì‹œì ìœ¼ë¡œ ì œì•ˆì„ ì„ íƒí•˜ë„ë¡ ìœ ë„í•  ìˆ˜ë„ ìˆìŒ.
 
         for (size_t i = 0; i < length; i++) {
-            if (items[i] && data->Buf && identical(data->Buf, items[i])) { // ³Î Æ÷ÀÎÅÍ Ã¼Å© Ãß°¡
-                // ÇöÀç ÀÔ·ÂµÈ ³»¿ë°ú ¾ÆÀÌÅÛÀÇ ¾ÕºÎºĞÀÌ ÀÏÄ¡ÇÏ´Â °æ¿ì
-                if (strcmp(data->Buf, items[i]) == 0) { // ÀÌ¹Ì ¿ÏÀüÈ÷ ÀÏÄ¡ÇÏ¸é Ãß°¡ ÀÛ¾÷ ºÒÇÊ¿ä
-                    data->SelectionStart = data->BufTextLen; // ¼±ÅÃ ¿µ¿ª Á¦°Å
+            if (items[i] && data->Buf && identical(data->Buf, items[i])) { // ë„ í¬ì¸í„° ì²´í¬ ì¶”ê°€
+                // í˜„ì¬ ì…ë ¥ëœ ë‚´ìš©ê³¼ ì•„ì´í…œì˜ ì•ë¶€ë¶„ì´ ì¼ì¹˜í•˜ëŠ” ê²½ìš°
+                if (strcmp(data->Buf, items[i]) == 0) { // ì´ë¯¸ ì™„ì „íˆ ì¼ì¹˜í•˜ë©´ ì¶”ê°€ ì‘ì—… ë¶ˆí•„ìš”
+                    data->SelectionStart = data->BufTextLen; // ì„ íƒ ì˜ì—­ ì œê±°
                     data->SelectionEnd = data->BufTextLen;
                     return 0;
                 }
 
-                const int cursor_pos = data->CursorPos; // ÇöÀç Ä¿¼­ À§Ä¡ ÀúÀå
-                const int old_len = data->BufTextLen;   // ÀÌÀü ¹öÆÛ ±æÀÌ (ÇöÀç ÀÔ·ÂµÈ ºÎºĞ)
+                const int cursor_pos = data->CursorPos; // í˜„ì¬ ì»¤ì„œ ìœ„ì¹˜ ì €ì¥
+                const int old_len = data->BufTextLen;   // ì´ì „ ë²„í¼ ê¸¸ì´ (í˜„ì¬ ì…ë ¥ëœ ë¶€ë¶„)
 
-                // ±âÁ¸ ¹öÆÛ ³»¿ëÀ» »èÁ¦ÇÏ°í ¸ÅÄªµÈ ¾ÆÀÌÅÛÀ¸·Î Ã¤¿ò
+                // ê¸°ì¡´ ë²„í¼ ë‚´ìš©ì„ ì‚­ì œí•˜ê³  ë§¤ì¹­ëœ ì•„ì´í…œìœ¼ë¡œ ì±„ì›€
                 data->DeleteChars(0, old_len);
                 data->InsertChars(0, items[i]);
 
-                // Ä¿¼­ À§Ä¡¸¦ »ç¿ëÀÚ°¡ ÀÔ·ÂÇß´ø ºÎºĞÀÇ ³¡À¸·Î ¼³Á¤
-                data->CursorPos = old_len; // ¶Ç´Â cursor_pos (ÀÌÀü Ä¿¼­ À§Ä¡)
+                // ì»¤ì„œ ìœ„ì¹˜ë¥¼ ì‚¬ìš©ìê°€ ì…ë ¥í–ˆë˜ ë¶€ë¶„ì˜ ëìœ¼ë¡œ ì„¤ì •
+                data->CursorPos = old_len; // ë˜ëŠ” cursor_pos (ì´ì „ ì»¤ì„œ ìœ„ì¹˜)
 
-                // ³ª¸ÓÁö Á¦¾ÈµÈ ºÎºĞÀ» ¼±ÅÃ »óÅÂ·Î ¸¸µê
-                data->SelectionStart = old_len; // ¶Ç´Â cursor_pos
+                // ë‚˜ë¨¸ì§€ ì œì•ˆëœ ë¶€ë¶„ì„ ì„ íƒ ìƒíƒœë¡œ ë§Œë“¦
+                data->SelectionStart = old_len; // ë˜ëŠ” cursor_pos
                 data->SelectionEnd = strlen(items[i]);
-                break; // Ã¹ ¹øÂ° ¸ÅÄªµÇ´Â ¾ÆÀÌÅÛÀ¸·Î Á¦¾ÈÇÏ°í Á¾·á
+                break; // ì²« ë²ˆì§¸ ë§¤ì¹­ë˜ëŠ” ì•„ì´í…œìœ¼ë¡œ ì œì•ˆí•˜ê³  ì¢…ë£Œ
             }
         }
         return 0;
     }
 
-    // std::stringÀ» »ç¿ëÇÏ´Â ¿À¹ö·Îµå
+    // std::stringì„ ì‚¬ìš©í•˜ëŠ” ì˜¤ë²„ë¡œë“œ
     bool TextInputComboBox(const char* id, std::string& str, size_t maxInputSize, const char* items[], size_t item_len, short showMaxItems) {
-        if (str.length() > maxInputSize) { // ³Ê¹« ±æ¸é ÆíÁı ºÒ°¡ (Ç¥½Ã¸¸)
-            ImGui::Text("%s", str.c_str()); // ImGui::Text´Â Æ÷¸Ë ¹®ÀÚ¿­À» »ç¿ë
+        if (str.length() > maxInputSize) { // ë„ˆë¬´ ê¸¸ë©´ í¸ì§‘ ë¶ˆê°€ (í‘œì‹œë§Œ)
+            ImGui::Text("%s", str.c_str()); // ImGui::TextëŠ” í¬ë§· ë¬¸ìì—´ì„ ì‚¬ìš©
             return false;
         }
 
-        // std::stringÀº ³»ºÎÀûÀ¸·Î nullÀ» Æ÷ÇÔÇÒ ¼ö ÀÖÁö¸¸, ImGui InputText´Â C-style ¹®ÀÚ¿­·Î ´Ù·ë
-        // µû¶ó¼­ std::stringÀÇ ³»¿ëÀ» char ¹è¿­·Î º¹»çÇØ¼­ »ç¿ë
-        std::vector<char> buffer(maxInputSize + 1, 0); // null Á¾·á ¹®ÀÚ °ø°£ Æ÷ÇÔ
+        // std::stringì€ ë‚´ë¶€ì ìœ¼ë¡œ nullì„ í¬í•¨í•  ìˆ˜ ìˆì§€ë§Œ, ImGui InputTextëŠ” C-style ë¬¸ìì—´ë¡œ ë‹¤ë£¸
+        // ë”°ë¼ì„œ std::stringì˜ ë‚´ìš©ì„ char ë°°ì—´ë¡œ ë³µì‚¬í•´ì„œ ì‚¬ìš©
+        std::vector<char> buffer(maxInputSize + 1, 0); // null ì¢…ë£Œ ë¬¸ì ê³µê°„ í¬í•¨
         strncpy_s(buffer.data(), buffer.size(), str.c_str(), str.length());
 
-        // char* »ç¿ëÇÏ´Â ¸ŞÀÎ ÇÔ¼ö È£Ãâ
-        // ImGui::TextInputComboBox´Â ÇöÀç ³×ÀÓ½ºÆäÀÌ½º¿¡ Á¤ÀÇµÇ¾î ÀÖ´Ù°í °¡Á¤
+        // char* ì‚¬ìš©í•˜ëŠ” ë©”ì¸ í•¨ìˆ˜ í˜¸ì¶œ
+        // ImGui::TextInputComboBoxëŠ” í˜„ì¬ ë„¤ì„ìŠ¤í˜ì´ìŠ¤ì— ì •ì˜ë˜ì–´ ìˆë‹¤ê³  ê°€ì •
         bool changed = TextInputComboBox(id, buffer.data(), maxInputSize, items, item_len, showMaxItems);
 
         if (changed) {
-            // º¯°æµÈ char ¹è¿­ ³»¿ëÀ» ´Ù½Ã std::stringÀ¸·Î ¾÷µ¥ÀÌÆ®
-            // buffer.data()´Â null·Î ³¡³ª´Â °ÍÀÌ º¸ÀåµÊ (InputText ¶Ç´Â strcpy_s¿¡ ÀÇÇØ)
+            // ë³€ê²½ëœ char ë°°ì—´ ë‚´ìš©ì„ ë‹¤ì‹œ std::stringìœ¼ë¡œ ì—…ë°ì´íŠ¸
+            // buffer.data()ëŠ” nullë¡œ ëë‚˜ëŠ” ê²ƒì´ ë³´ì¥ë¨ (InputText ë˜ëŠ” strcpy_sì— ì˜í•´)
             str = buffer.data();
         }
         return changed;
     }
 
 
-    // char* ¹öÆÛ¸¦ »ç¿ëÇÏ´Â ¸ŞÀÎ À§Á¬ ÇÔ¼ö
+    // char* ë²„í¼ë¥¼ ì‚¬ìš©í•˜ëŠ” ë©”ì¸ ìœ„ì ¯ í•¨ìˆ˜
     bool TextInputComboBox(const char* id, char* buffer, size_t maxInputSize, const char* items[], size_t item_len, short showMaxItems) {
-        if (showMaxItems == 0 && item_len > 0) { // item_len > 0 Á¶°Ç Ãß°¡
-            showMaxItems = static_cast<short>(item_len); // ¸ğµç ¾ÆÀÌÅÛ Ç¥½Ã
+        if (showMaxItems == 0 && item_len > 0) { // item_len > 0 ì¡°ê±´ ì¶”ê°€
+            showMaxItems = static_cast<short>(item_len); // ëª¨ë“  ì•„ì´í…œ í‘œì‹œ
         }
         else if (item_len == 0 && showMaxItems != 0) {
-            showMaxItems = 0; // ¾ÆÀÌÅÛÀÌ ¾øÀ¸¸é Ç¥½ÃÇÒ °Íµµ ¾øÀ½
+            showMaxItems = 0; // ì•„ì´í…œì´ ì—†ìœ¼ë©´ í‘œì‹œí•  ê²ƒë„ ì—†ìŒ
         }
 
 
         ImGui::PushID(id);
         std::pair<const char**, size_t> pass_data(items, item_len);
 
-        // InputText À§Á¬. ImGuiInputTextFlags_CallbackAlways ÇÃ·¡±×·Î Ç×»ó propose Äİ¹é È£Ãâ
+        // InputText ìœ„ì ¯. ImGuiInputTextFlags_CallbackAlways í”Œë˜ê·¸ë¡œ í•­ìƒ propose ì½œë°± í˜¸ì¶œ
         bool value_changed = ImGui::InputText("##in", buffer, maxInputSize, ImGuiInputTextFlags_CallbackAlways, propose, static_cast<void*>(&pass_data));
 
-        // ÆË¾÷ °ü·Ã ·ÎÁ÷Àº ´ëºÎºĞ À¯Áö
-        ImGui::OpenPopupOnItemClick("combobox", ImGuiPopupFlags_MouseButtonRight); // ¿À¸¥ÂÊ Å¬¸¯ ½Ã ÆË¾÷ (ImGuiPopupFlags Ãß°¡ °¡´É)
+        // íŒì—… ê´€ë ¨ ë¡œì§ì€ ëŒ€ë¶€ë¶„ ìœ ì§€
+        ImGui::OpenPopupOnItemClick("combobox", ImGuiPopupFlags_MouseButtonRight); // ì˜¤ë¥¸ìª½ í´ë¦­ ì‹œ íŒì—… (ImGuiPopupFlags ì¶”ê°€ ê°€ëŠ¥)
         ImVec2 input_rect_min = ImGui::GetItemRectMin();
         ImVec2 input_rect_size = ImGui::GetItemRectSize();
 
@@ -125,34 +125,34 @@ namespace ImGui { // ¶Ç´Â ¿øÇÏ´Â ´Ù¸¥ ³×ÀÓ½ºÆäÀÌ½º »ç¿ë (¿¹: namespace MyCustomW
         if (ImGui::ArrowButton("##openCombo", ImGuiDir_Down)) {
             ImGui::OpenPopup("combobox");
         }
-        // Áßº¹µÈ OpenPopupOnItemClick Á¦°Å °¡´É (¸¸¾à ArrowButtonÀ¸·Î¸¸ ¿­°í ½Í´Ù¸é)
-        // ¶Ç´Â InputText ¿µ¿ª Å¬¸¯ ½Ã¿¡µµ ¿­¸®°Ô ÇÏ·Á¸é À¯Áö (À§ÀÇ ¿À¸¥ÂÊ Å¬¸¯°ú ±â´ÉÀÌ ´Ù¸§)
-        // ¸¸¾à ÀÏ¹İ Å¬¸¯À¸·Îµµ ¿­°í ½Í´Ù¸é:
+        // ì¤‘ë³µëœ OpenPopupOnItemClick ì œê±° ê°€ëŠ¥ (ë§Œì•½ ArrowButtonìœ¼ë¡œë§Œ ì—´ê³  ì‹¶ë‹¤ë©´)
+        // ë˜ëŠ” InputText ì˜ì—­ í´ë¦­ ì‹œì—ë„ ì—´ë¦¬ê²Œ í•˜ë ¤ë©´ ìœ ì§€ (ìœ„ì˜ ì˜¤ë¥¸ìª½ í´ë¦­ê³¼ ê¸°ëŠ¥ì´ ë‹¤ë¦„)
+        // ë§Œì•½ ì¼ë°˜ í´ë¦­ìœ¼ë¡œë„ ì—´ê³  ì‹¶ë‹¤ë©´:
         // if (ImGui::IsItemClicked()) ImGui::OpenPopup("combobox");
 
         ImVec2 popup_pos = input_rect_min;
-        popup_pos.y += input_rect_size.y; // InputText ¹Ù·Î ¾Æ·¡¿¡ À§Ä¡
+        popup_pos.y += input_rect_size.y; // InputText ë°”ë¡œ ì•„ë˜ì— ìœ„ì¹˜
 
-        // ÆË¾÷ Å©±â µ¿Àû °è»ê °³¼±
-        float popup_width = input_rect_size.x + ImGui::GetItemRectSize().x; // InputText ³Êºñ + È­»ìÇ¥ ¹öÆ° ³Êºñ
-        if (ImGui::GetStyle().WindowPadding.x * 2 < popup_width) { // ÃÖ¼Ò ³Êºñ º¸Àå
+        // íŒì—… í¬ê¸° ë™ì  ê³„ì‚° ê°œì„ 
+        float popup_width = input_rect_size.x + ImGui::GetItemRectSize().x; // InputText ë„ˆë¹„ + í™”ì‚´í‘œ ë²„íŠ¼ ë„ˆë¹„
+        if (ImGui::GetStyle().WindowPadding.x * 2 < popup_width) { // ìµœì†Œ ë„ˆë¹„ ë³´ì¥
             popup_width += ImGui::GetStyle().WindowPadding.x * 2;
         }
 
         ImGui::SetNextWindowPos(popup_pos);
         ImGui::SetNextWindowSizeConstraints(ImVec2(popup_width, 0), ImVec2(popup_width, ImGui::GetTextLineHeightWithSpacing() * (showMaxItems + 2))); // +2 for header/separator
 
-        if (ImGui::BeginPopup("combobox", ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize)) { // ImGuiWindowFlags_NoResize Ãß°¡ °í·Á
-            ImGui::Text("Ç×¸ñÀ» ¼±ÅÃÇÏ°Å³ª ÀÔ·ÂÇÏ¼¼¿ä.");
+        if (ImGui::BeginPopup("combobox", ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize)) { // ImGuiWindowFlags_NoResize ì¶”ê°€ ê³ ë ¤
+            ImGui::Text("í•­ëª©ì„ ì„ íƒí•˜ê±°ë‚˜ ì…ë ¥í•˜ì„¸ìš”.");
             ImGui::Separator();
             for (size_t i = 0; i < item_len; i++) {
-                if (items[i]) { // ³Î Æ÷ÀÎÅÍ ¾ÆÀÌÅÛ ¹æÁö
-                    if (ImGui::Selectable(items[i], false)) { // 'selected' »óÅÂ´Â InputText¿Í µ¿±âÈ­ÇÏ±â ¾î·Á¿ò
-                        // ¾ÆÀÌÅÛ ¼±ÅÃ ½Ã ¹öÆÛ ³»¿ë º¯°æ
-                        strncpy_s(buffer, maxInputSize, items[i], _TRUNCATE); // maxInputSize ´ë½Å ½ÇÁ¦ º¹»ç ±æÀÌ Á¦ÇÑ °¡´É
-                        // buffer[maxInputSize -1] = '\0'; // strncpy_s´Â ¾Ë¾Æ¼­ null Á¾·áÇÏ³ª, _TRUNCATE½Ã È®ÀÎ ÇÊ¿ä
-                        value_changed = true; // ¼±ÅÃÀ¸·Î ÀÎÇØ °ªÀÌ º¯°æµÇ¾úÀ½À» ¾Ë¸²
-                        ImGui::CloseCurrentPopup(); // ¼±ÅÃ ÈÄ ÆË¾÷ ´İ±â
+                if (items[i]) { // ë„ í¬ì¸í„° ì•„ì´í…œ ë°©ì§€
+                    if (ImGui::Selectable(items[i], false)) { // 'selected' ìƒíƒœëŠ” InputTextì™€ ë™ê¸°í™”í•˜ê¸° ì–´ë ¤ì›€
+                        // ì•„ì´í…œ ì„ íƒ ì‹œ ë²„í¼ ë‚´ìš© ë³€ê²½
+                        strncpy_s(buffer, maxInputSize, items[i], _TRUNCATE); // maxInputSize ëŒ€ì‹  ì‹¤ì œ ë³µì‚¬ ê¸¸ì´ ì œí•œ ê°€ëŠ¥
+                        // buffer[maxInputSize -1] = '\0'; // strncpy_sëŠ” ì•Œì•„ì„œ null ì¢…ë£Œí•˜ë‚˜, _TRUNCATEì‹œ í™•ì¸ í•„ìš”
+                        value_changed = true; // ì„ íƒìœ¼ë¡œ ì¸í•´ ê°’ì´ ë³€ê²½ë˜ì—ˆìŒì„ ì•Œë¦¼
+                        ImGui::CloseCurrentPopup(); // ì„ íƒ í›„ íŒì—… ë‹«ê¸°
                     }
                 }
             }
@@ -161,8 +161,8 @@ namespace ImGui { // ¶Ç´Â ¿øÇÏ´Â ´Ù¸¥ ³×ÀÓ½ºÆäÀÌ½º »ç¿ë (¿¹: namespace MyCustomW
         ImGui::PopID();
 
         ImGui::SameLine(0, ImGui::GetStyle().ItemInnerSpacing.x);
-        ImGui::TextUnformatted(id); // ·¹ÀÌºí Ç¥½Ã (ImGui::Text´Â Æ÷¸Ë ¹®ÀÚ¿­·Î ÇØ¼®ÇÏ¹Ç·Î TextUnformatted°¡ ´õ ¾ÈÀü)
+        ImGui::TextUnformatted(id); // ë ˆì´ë¸” í‘œì‹œ (ImGui::TextëŠ” í¬ë§· ë¬¸ìì—´ë¡œ í•´ì„í•˜ë¯€ë¡œ TextUnformattedê°€ ë” ì•ˆì „)
 
         return value_changed;
     }
-} // ³×ÀÓ½ºÆäÀÌ½º ³¡ (»ç¿ëÇß´Ù¸é)
+} // ë„¤ì„ìŠ¤í˜ì´ìŠ¤ ë (ì‚¬ìš©í–ˆë‹¤ë©´)

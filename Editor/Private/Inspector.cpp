@@ -26,7 +26,8 @@ HRESULT CInspector::Render()
             if (pGameObject)
             {
                 string tmp = WideToUtf8(pGameObject->Get_Name().c_str());
-                ImGui::Text(tmp.c_str());
+                ImGui::Text("Object Name: %s | Object ID: %d", tmp.c_str());
+                ImGui::Text("Object ID: %d", pGameObject->Get_ID());
             }
             else
             {
@@ -40,8 +41,9 @@ HRESULT CInspector::Render()
                 {
                     ImGui::OpenPopup("my popup");
                 }
-                PopUpComponents();
-                AddComponentButton();
+                PopUp_Components();
+                Add_Component_Button();
+                Add_Component_PopUp();
             }
 
             ImGui::End();
@@ -50,14 +52,72 @@ HRESULT CInspector::Render()
     return S_OK;
 }
 
-HRESULT CInspector::PopUpComponents()
+static int MyCallback(ImGuiInputTextCallbackData* data)
+{
+    if (data->EventFlag == ImGuiInputTextFlags_CallbackCompletion)
+    {
+        data->InsertChars(data->CursorPos, "Com_");
+    }
+    return 0;
+}
+
+HRESULT CInspector::Add_Component_PopUp()
+{
+    static _wstring strCurSelPrototype = {};
+    
+    if (ImGui::BeginPopup("Add Component", ImGuiWindowFlags_AlwaysAutoResize)) {
+        for (_uint i = 0; i < ENUM_CLASS(LEVEL::END); ++i)
+        {
+            ImGui::SameLine();
+            if (ImGui::Button(ToString(i)))
+            {
+                m_eCurSelLevel = ENUM_LEVEL(i);
+            }
+        }
+        ImGui::Separator();
+
+        if (ImGui::BeginListBox(ToString(m_eCurSelLevel)))
+        {
+            m_pGameInstance->Render_PrototypeManagerImGui(ENUM_CLASS(m_eCurSelLevel), L"Component", strCurSelPrototype);
+            ImGui::EndListBox();
+        }
+        ImGui::Separator();
+
+        ImGui::Spacing(); // 약간의 공백 추가
+
+        static wstring strComponentTag = {};
+
+        /*if (ImGui::InputTextWithHint("##Layer_Text_Input: ", "Layer_", szBuffer, iBufferSize, ImGuiInputTextFlags_CallbackCompletion, MyCallback))
+        {
+
+        }*/
+
+        if (ImGui::Button("Add", ImVec2(120, 0)))
+        {
+            if (FAILED(m_pGameInstance->Get_PickedObject()->Add_Component(ENUM_CLASS(m_eCurSelLevel), strCurSelPrototype,
+                strComponentTag, nullptr, nullptr)))
+            {
+                return E_FAIL;
+            }
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel", ImVec2(120, 0)))
+        {
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SetItemDefaultFocus(); // '닫기' 버튼에 기본 포커스
+
+        ImGui::EndPopup();
+    }
+    return S_OK;
+}
+
+HRESULT CInspector::PopUp_Components()
 {
     if (ImGui::BeginPopupContextItem("my popup"))
     {
-        if (ImGui::Button("Add Component"))
-        {
-
-        }
+        Add_Component_Button();
         if (ImGui::Button("Delete Component"))
         {
 
@@ -67,11 +127,11 @@ HRESULT CInspector::PopUpComponents()
     return S_OK;
 }
 
-HRESULT CInspector::AddComponentButton()
+HRESULT CInspector::Add_Component_Button()
 {
     if (ImGui::Button("Add Component"))
     {
-
+        ImGui::OpenPopup("Add Component");
     }
     return S_OK;
 }

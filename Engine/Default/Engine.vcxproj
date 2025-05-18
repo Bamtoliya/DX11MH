@@ -256,6 +256,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     </ClInclude>
     <ClInclude Include="..\public\RenderTarget.h" />
     <ClInclude Include="..\Public\GameObject_Skybox.h" />
+    <ClInclude Include="..\public\RigidBody.h" />
     <ClInclude Include="..\Public\Sound_Event.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -366,6 +367,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     </ClCompile>
     <ClCompile Include="..\private\RenderTarget.cpp" />
     <ClCompile Include="..\Private\GameObject_Skybox.cpp" />
+    <ClCompile Include="..\private\RigidBody.cpp" />
     <ClCompile Include="..\Private\Sound_Event.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

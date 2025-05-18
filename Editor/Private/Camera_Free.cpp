@@ -34,7 +34,6 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 	Desc.fSpeedPerSec = 10.0f;
 	Desc.bOrthographic = false;
 	lstrcpy(Desc.szName, TEXT("Camera"));
-
 	m_fSensor = 0.1f;
 
 	if (FAILED(__super::Initialize(&Desc)))

@@ -19,16 +19,20 @@ public:
 public:
 	HRESULT Initialize(_uint iNumLevels);
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, void* pArg);
+	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, _uint iGameObjectID, void* pArg = nullptr);
 	void Priority_Update(_float fTimeDelta);
 	void Update(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
 public:
 	void Clear(_uint iLevelIndex);
 	class CGameObject* Get_GameObjectById(_uint iId);
+	class CGmaeObject* Find_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName);
+public:
+
 public:
 	HRESULT RenderImGui();
 	HRESULT ToggleLayerVisible(_uint iLevelIndex, const _wstring& strLayerTag);
-	HRESULT Render_ImGuiLayerList(_uint iLevelIndex, _char* szBuffer, _uint iBufferSize);
+	HRESULT Render_ImGuiLayerList(_uint iLevelIndex, _char* szBuffer, _uint& iGameObjectID, _uint iBufferSize);
 private:
 	static _uint						m_oID;
 	_uint								m_iNumLevels = {};

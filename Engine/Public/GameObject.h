@@ -19,6 +19,7 @@ protected:
 	virtual ~CGameObject() = default;
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
+	virtual CGameObject* Clone(CGameObject* pGameObject, void* pArg = nullptr);
 	virtual void Free() override;
 protected:
 	ID3D11Device*				m_pDevice = { nullptr };
@@ -47,6 +48,7 @@ public:
 	virtual HRESULT RenderImGuiObjects();
 #pragma endregion
 
+
 #pragma region Functions
 public:
 	CComponent* Get_Component(const _wstring& strComponentTag);
@@ -58,23 +60,27 @@ public:
 	void Set_Picked(_bool bPicked) { m_bPicked = bPicked; }
 	_bool Get_Visible() { return m_bVisible; }
 	void Set_Visible(_bool bVisible) { m_bVisible = bVisible; }
-protected:
+public:
+	CGameObject* Get_Parent() { return m_pParent; };
+	HRESULT Add_Child(const _wstring& strChildTag, CGameObject* pChild);
+public:
+
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr);
+	//HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CGameObject* pOwner, void* pArg = nullptr);
 
 #pragma endregion
 
 #pragma region Variables
+protected:
 	_bool									m_bPicked = { false };
 	_uint									m_oID = { 0 };
 	CTransform*								m_pTransformCom = { nullptr };
 	CGameObject*							m_pParent = { nullptr };
-	_wstring								m_strTag = {};
 	map<const _wstring, class CComponent*>	m_Components	= {};
 	map<const _wstring, class CGameObject*> m_Childs		= {};
-	_wstring 	m_strLayerTag;
-	_tchar		m_szName[MAX_PATH];
-
-
+	_wstring 								m_strLayerTag = {};
+	_tchar									m_szName[MAX_PATH] = {};
+protected:
 	_bool									m_bVisible = { true };	
 	_bool									m_bRelative = { false };
 	_bool									m_bAbsolute = { false };

@@ -22,7 +22,9 @@ public:
 	void Update(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
 	HRESULT RenderImGui(const wstring& strLayerTag);
+	HRESULT Render_ImGui_ComboBox(_uint& iGameObjectID);
 	HRESULT ToggleVisible();
+	class CGameObject* Find_GameObjectByName(const _wstring& strName);
 private:
 	_wstring							m_strTagName = {};
 	list<class CGameObject*>			m_GameObjects;

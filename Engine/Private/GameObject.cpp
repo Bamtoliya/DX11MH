@@ -48,6 +48,8 @@ HRESULT CGameObject::Initialize(void* pArg)
 	if (nullptr == m_pTransformCom)
 		return E_FAIL;	
 
+	m_pTransformCom->Set_OwnerGameObject(this);
+
 	if (FAILED(m_pTransformCom->Initialize(pArg)))
 		return E_FAIL;
 
@@ -59,16 +61,60 @@ HRESULT CGameObject::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CGameObject::Free()
+{
+	__super::Free();
+
+	Safe_Release(m_pParent);
+	Safe_Release(m_pGameInstance);
+	Safe_Release(m_pTransformCom);
+
+	for (auto& Pair : m_Components)
+		Safe_Release(Pair.second);
+	m_Components.clear();
+
+	for(auto& Pair:m_Childs)
+		Safe_Release(Pair.second);
+	m_Childs.clear();
+
+	Safe_Release(m_pContext);
+	Safe_Release(m_pDevice);
+}
+
+CGameObject* CGameObject::Clone(CGameObject* pGameObject, void* pArg)
+{
+	CGameObject* pInstance = Clone(pArg);
+	if (pGameObject)
+	{
+		pInstance->m_pParent = pGameObject;
+		Safe_AddRef(m_pParent);
+		pInstance->m_pParent->Add_Child(pInstance->m_szName, pInstance);
+	}
+	return pInstance;
+}
+
 void CGameObject::Priority_Update(_float fTimeDelta)
 {
+	for (auto& iter : m_Components)
+	{
+		iter.second->Priority_Update(fTimeDelta);
+	}
 }
 
 void CGameObject::Update(_float fTimeDelta)
 {
+	for (auto& iter : m_Components)
+	{
+		iter.second->Update(fTimeDelta);
+	}
 }
 
 void CGameObject::Late_Update(_float fTimeDelta)
 {
+	for (auto& iter : m_Components)
+	{
+		iter.second->Late_Update(fTimeDelta);
+	}
 }
 
 HRESULT CGameObject::Pre_Render()
@@ -99,7 +145,7 @@ HRESULT CGameObject::RenderImGuiObjects()
 {
 	ImGui::PushID(m_oID);
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-	static bool align_label_with_current_x_position = false;
+	static bool align_label_with_current_x_position = false;	
 	static bool test_drag_and_drop = false;
 	ImGuiTreeNodeFlags node_flags = 0;
 	ImGui::Indent();
@@ -112,43 +158,39 @@ HRESULT CGameObject::RenderImGuiObjects()
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			m_pGameInstance->PickObjectById(m_oID);
 		ImGui::TreePop();
-	}
-	
-	ImGui::Unindent();
-	for (auto& c : m_Childs)
-	{
-		c.second->RenderImGuiObjects();
+		for (auto& c : m_Childs)
+		{
+			c.second->RenderImGuiObjects();
+		}
 	}
 	ImGui::PopID();
+	
+	ImGui::Unindent();
+	
+	return S_OK;
+}
+
+HRESULT CGameObject::Add_Child(const _wstring& strChildTag, CGameObject* pChild)
+{
+	if (nullptr == pChild)
+		return E_FAIL;
+	m_Childs.emplace(strChildTag, pChild);
+	Safe_AddRef(pChild);
 	return S_OK;
 }
 
 HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg)
 {
-	CComponent*	pComponent = static_cast<CComponent*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::TYPE_COMPONENT, iPrototypeLevelIndex, strPrototypeTag, pArg));
+	CComponent*	pComponent = static_cast<CComponent*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::TYPE_COMPONENT, iPrototypeLevelIndex, strPrototypeTag, this, pArg));
 	if (nullptr == pComponent)
 		return E_FAIL;
 
 	m_Components.emplace(strComponentTag, pComponent);
-
-	*ppOut = pComponent;
+	
+	if(ppOut)
+		*ppOut = pComponent;
 
 	Safe_AddRef(pComponent);
 
 	return S_OK;
-}
-
-void CGameObject::Free()
-{
-	__super::Free();
-
-	Safe_Release(m_pGameInstance);
-	Safe_Release(m_pTransformCom);
-
-	for (auto& Pair : m_Components)
-		Safe_Release(Pair.second);
-	m_Components.clear();
-
-	Safe_Release(m_pContext);
-	Safe_Release(m_pDevice);
 }

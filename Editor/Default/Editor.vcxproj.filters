@@ -49,9 +49,6 @@
     <Filter Include="Imgui\Viewport\3D">
       <UniqueIdentifier>{c911ec9d-70aa-42b2-8a14-30f4915151b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Imgui\DockSpace">
-      <UniqueIdentifier>{4cd92866-04bf-4a08-a549-3b9fd7ede63b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Imgui\ToolBar">
       <UniqueIdentifier>{9a6541de-f74f-4ba8-b501-1997999e457e}</UniqueIdentifier>
     </Filter>

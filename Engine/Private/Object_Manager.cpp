@@ -56,6 +56,32 @@ HRESULT CObject_Manager::Add_GameObject(_uint iPrototypeLevelIndex, const _wstri
 	return S_OK;
 }
 
+HRESULT CObject_Manager::Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, _uint iGameObjectID, void* pArg)
+{
+	/* 사본객체를 오브젝트 매니져에 추가한다. */
+	/* 원형 매니져에게 복제하여 내놔!! */
+
+	CGameObject* pGameObject = dynamic_cast<CGameObject*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::TYPE_GAMEOBJECT, iPrototypeLevelIndex, strPrototypeTag, m_pGameInstance->Get_GameObjectById(iGameObjectID), pArg));
+	if (nullptr == pGameObject)
+		return E_FAIL;
+
+	pGameObject->Set_ID(m_oID++);
+	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerTag);
+
+	if (nullptr == pLayer)
+	{
+		pLayer = CLayer::Create();
+
+		pLayer->Add_GameObject(pGameObject);
+
+		m_pLayers[iLevelIndex].emplace(strLayerTag, pLayer);
+	}
+	else
+		pLayer->Add_GameObject(pGameObject);
+
+	return S_OK;
+}
+
 void CObject_Manager::Priority_Update(_float fTimeDelta)
 {
 	for (size_t i = 0; i < m_iNumLevels; i++)
@@ -109,6 +135,12 @@ CGameObject* CObject_Manager::Get_GameObjectById(_uint iId)
 	return nullptr;
 }
 
+CGmaeObject* CObject_Manager::Find_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName)
+{
+
+	return S_OK;
+}
+
 HRESULT CObject_Manager::RenderImGui()
 {
 	for (size_t i = 0; i < m_iNumLevels; i++)
@@ -138,7 +170,7 @@ static int MyCallback(ImGuiInputTextCallbackData* data)
 	return 0;
 }
 
-HRESULT CObject_Manager::Render_ImGuiLayerList(_uint iLevelIndex, _char* szBuffer, _uint iBufferSize)
+HRESULT CObject_Manager::Render_ImGuiLayerList(_uint iLevelIndex, _char* szLayerBuffer, _uint& iGameObjectID, _uint iBufferSize)
 {
 	static _wstring selected_key = L"";
 	ImGuiComboFlags flags = ImGuiComboFlags_HeightRegular;
@@ -161,18 +193,34 @@ HRESULT CObject_Manager::Render_ImGuiLayerList(_uint iLevelIndex, _char* szBuffe
 				if (ImGui::Selectable(WideToUtf8(Pair.first.c_str()).c_str(), is_selected))
 				{
 					selected_key = Pair.first;
-					strncpy_s(szBuffer, iBufferSize, WideToUtf8(selected_key.c_str()).c_str(), _TRUNCATE);
+					strncpy_s(szLayerBuffer, iBufferSize, WideToUtf8(selected_key.c_str()).c_str(), _TRUNCATE);
 				}
 		}
 		ImGui::EndCombo();
 	}
-
+	
 	
 
-	if (ImGui::InputTextWithHint("##Layer_Text_Input: ", "Layer_", szBuffer, iBufferSize, ImGuiInputTextFlags_CallbackCompletion, MyCallback))
+	if (ImGui::InputTextWithHint("##Layer_Text_Input: ", "Layer_", szLayerBuffer, iBufferSize, ImGuiInputTextFlags_CallbackCompletion, MyCallback))
 	{
 
 	}
+
+	
+	auto iter = m_pLayers[iLevelIndex].find(Utf8ToWide(szLayerBuffer));
+	if (iter != m_pLayers[iLevelIndex].end())
+	{
+		static char temp[MAX_PATH] = {};
+		(*iter).second->Render_ImGui_ComboBox(iGameObjectID);
+		CGameObject* pGameObject = m_pGameInstance->Get_GameObjectById(iGameObjectID);
+		if(pGameObject)
+			strncpy_s(temp, iBufferSize, WideToUtf8(pGameObject->Get_Name().c_str()).c_str(), _TRUNCATE);
+		if (ImGui::InputTextWithHint("##GameObject_Text_Input: ", "GameObject_", temp, iBufferSize))
+		{
+
+		}
+	}
+
 	return S_OK;
 }
 

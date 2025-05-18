@@ -221,6 +221,11 @@ CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototype
 	return m_pPrototype_Manager->Clone_Prototype(ePrototypeType, iPrototypeLevelIndex, strPrototypeTag, pArg);
 }
 
+CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, CGameObject* pGameObject, void* pArg)
+{
+	return m_pPrototype_Manager->Clone_Prototype(ePrototypeType, iPrototypeLevelIndex, strPrototypeTag, pGameObject, pArg);
+}
+
 HRESULT CGameInstance::Render_PrototypeManagerImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag)
 {
 	return m_pPrototype_Manager->RenderImGui(iLevelIndex, PrototypeType, strSelectedTag);
@@ -272,6 +277,11 @@ HRESULT CGameInstance::Add_GameObject(_uint iPrototypeLevelIndex, const _wstring
 	return m_pObject_Manager->Add_GameObject(iPrototypeLevelIndex, strPrototypeTag, iLevelIndex, strLayerTag, pArg);
 }
 
+HRESULT CGameInstance::Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, _uint iGameObjectID, void* pArg)
+{
+	return m_pObject_Manager->Add_GameObject(iPrototypeLevelIndex, strPrototypeTag, iLevelIndex, strLayerTag, iGameObjectID, pArg);
+}
+
 CComponent* CGameInstance::Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex)
 {
 	return m_pObject_Manager->Get_Component(iLevelIndex, strLayerTag, strComponentTag, iIndex);
@@ -288,9 +298,9 @@ HRESULT CGameInstance::Object_Manager_RenderImGui()
 	return m_pObject_Manager->RenderImGui();
 }
 
-HRESULT CGameInstance::Render_ImGuiLayerList(_uint iLevelIndex, _char* szBuffer, _uint iBufferSize)
+HRESULT CGameInstance::Render_ImGuiLayerList(_uint iLevelIndex, _char* szLayerBuffer, _uint& iGameObjectID, _uint iBufferSize)
 {
-	return m_pObject_Manager->Render_ImGuiLayerList(iLevelIndex, szBuffer, iBufferSize);
+	return m_pObject_Manager->Render_ImGuiLayerList(iLevelIndex, szLayerBuffer, iGameObjectID, iBufferSize);
 }
 
 #pragma endregion
@@ -353,6 +363,14 @@ HRESULT CGameInstance::HideAll()
 HRESULT CGameInstance::ShowAll()
 {
 	return m_pMyImGui_Manager->ShowAll();
+}
+void CGameInstance::Add_RenderObjectID(const _uint& iID)
+{
+	m_pMyImGui_Manager->Add_RenderObjectID(iID);
+}
+size_t CGameInstance::Get_RenderObjectIDCount(const _uint& iID)
+{
+	return m_pMyImGui_Manager->Get_RenderObjectIDCount(iID);
 }
 
 #pragma endregion

@@ -1,5 +1,6 @@
 ﻿#include "Hierarchy.h"
 #include "GameInstance.h"
+#include "GameObject.h"
 
 CHierarchy::CHierarchy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMyImGui {pDevice, pContext}
@@ -61,15 +62,6 @@ HRESULT CHierarchy::Render()
 
 HRESULT CHierarchy::Add_GameObject_Popup()
 {
-    //if(ImGui::Begin("Add GameObject"))
-    //{
-    //    //눌렀을때 프로토타입에있는 목록을 가져와서 표시하기
-    //    //팝업위에는 카테고리주기 어떻게? 현재 레벨에 선언된 애들
-    //    //현재 존재하는 레이어 드랍박스
-    //    //없으면 텍스트 입력 받아서 새로 생성
-    //    // 
-    //    ImGui::End();
-    //}
     static _wstring strCurSelPrototype = {};
     if (ImGui::BeginPopupModal("Add GameObject", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
         for (_uint i = 0; i < ENUM_CLASS(LEVEL::END); ++i)
@@ -82,33 +74,45 @@ HRESULT CHierarchy::Add_GameObject_Popup()
         }
         ImGui::Separator();
 
+#pragma region GameObject Prototype Lists
         if (ImGui::BeginListBox(ToString(m_eCurSelLevel)))
         {
             m_pGameInstance->Render_PrototypeManagerImGui(ENUM_CLASS(m_eCurSelLevel), L"GameObject", strCurSelPrototype);
             ImGui::EndListBox();
         }
+#pragma endregion
+
         ImGui::Separator();
 
-        static char szBuffer[MAX_PATH] = {};
+		static char szGameObjectName[MAX_PATH] = {};
 
-        m_pGameInstance->Render_ImGuiLayerList(m_pGameInstance->Get_CurrentLevelIndex(), szBuffer, MAX_PATH);
+		ImGui::InputText("GameObject Name", szGameObjectName, MAX_PATH, ImGuiInputTextFlags_EnterReturnsTrue);
+        CGameObject::GAMEOBJECT_DESC tempDesc = {};
+		lstrcpy(tempDesc.szName, Utf8ToWide(szGameObjectName).c_str());
+
+        static char szLayerBuffer[MAX_PATH] = {};
+        static _uint iGameObjectID = {};
+        static char szGameObjectBuffer[MAX_PATH] = {};
+
+        m_pGameInstance->Render_ImGuiLayerList(m_pGameInstance->Get_CurrentLevelIndex(), szLayerBuffer, iGameObjectID, MAX_PATH);
 
         ImGui::Spacing(); // 약간의 공백 추가
 
-        if (ImGui::Button("Add", ImVec2(120, 0))) 
+#pragma region Buttons
+        if (ImGui::Button("Add", ImVec2(120, 0)))
         {
             if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(m_eCurSelLevel), strCurSelPrototype,
-                m_pGameInstance->Get_CurrentLevelIndex(), Utf8ToWide(szBuffer))))
+                m_pGameInstance->Get_CurrentLevelIndex(), Utf8ToWide(szLayerBuffer), iGameObjectID, &tempDesc)))
                 return E_FAIL;
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
-        if (ImGui::Button("Cancel", ImVec2(120, 0))) 
+        if (ImGui::Button("Cancel", ImVec2(120, 0)))
         {
             ImGui::CloseCurrentPopup();
         }
         ImGui::SetItemDefaultFocus(); // '닫기' 버튼에 기본 포커스
-
+#pragma endregion
         ImGui::EndPopup();
     }
     return S_OK;

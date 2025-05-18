@@ -22,9 +22,10 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	HRESULT PopUpComponents();
-	HRESULT AddComponentButton();
-
+	HRESULT PopUp_Components();
+	HRESULT Add_Component_Button();
+	HRESULT Add_Component_PopUp();
 private:
+	LEVEL			m_eCurSelLevel = { LEVEL::STATIC };
 };
 NS_END

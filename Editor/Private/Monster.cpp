@@ -22,10 +22,16 @@ HRESULT CMonster::Initialize_Prototype()
 HRESULT CMonster::Initialize(void* pArg)
 {
 	GAMEOBJECT_DESC			Desc{};
-
 	Desc.fRotationPerSec = 0.f;
 	Desc.fSpeedPerSec = 0.f;
-	lstrcpy(Desc.szName, TEXT("Monster"));
+	if (nullptr == pArg)
+	{
+		lstrcpy(Desc.szName, TEXT("Monster"));
+	}
+	else
+	{
+		lstrcpy(Desc.szName, static_cast<GAMEOBJECT_DESC*>(pArg)->szName);
+	}
 
 	if (FAILED(__super::Initialize(&Desc)))
 		return E_FAIL;

@@ -15,19 +15,30 @@ public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
 public:
+	virtual void Priority_Update(_float fTimeDelta) { if (!m_bActive) return; }
+	virtual void Update(_float fTimeDelta) { if (!m_bActive) return; }
+	virtual void Late_Update(_float fTimeDelta) { if (!m_bActive) return; }
+	virtual HRESULT Render() { return S_OK; }
+public:
 	virtual CComponent* Clone(void* pArg) = 0;
+	virtual CComponent* Clone(class CGameObject* pGameObject, void* pArg);
 	virtual void Free();
+public:
+	void Set_OwnerGameObject(class CGameObject* pGameObject); 
 #pragma endregion
 public:
-	virtual HRESULT RenderImGui();
+	virtual HRESULT RenderImGui() { return S_OK; }
 	virtual void* Dump() { return nullptr; }
 #pragma region Variables
 protected:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
 	class CGameInstance* m_pGameInstance = { nullptr };
+protected:
+	class CGameObject* m_pOwner = { nullptr };
 #pragma endregion
 protected:
 	_bool m_bIsCloned = { false };
+	_bool m_bActive = { true };
 };
 NS_END

@@ -341,6 +341,9 @@
     <ClInclude Include="..\..\External Libraries\imgui\imstb_truetype.h">
       <Filter>External Libraries\Imgui</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\RigidBody.h">
+      <Filter>01.Utility\04.Components\RigidBody</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -632,6 +635,9 @@
     <ClCompile Include="..\..\External Libraries\imgui\Imgui_textinputcombobox.cpp">
       <Filter>External Libraries\Imgui</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\RigidBody.cpp">
+      <Filter>01.Utility\04.Components\RigidBody</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -867,6 +873,9 @@
     </Filter>
     <Filter Include="01.Utility\03.GameObject\Base\ModelTest">
       <UniqueIdentifier>{dde1aa86-8ddc-4d34-b362-98c4e92f04be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\RigidBody">
+      <UniqueIdentifier>{61231d60-51c2-4df8-ba3f-ee8a0f84faf3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

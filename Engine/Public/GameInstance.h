@@ -57,6 +57,7 @@ public:
 #pragma region PROTOTYPE_MANAGER
 	HRESULT Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
+	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CGameObject* pGameObject = nullptr, void* pArg = nullptr);
 	HRESULT Render_PrototypeManagerImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag);
 #pragma endregion
 
@@ -78,11 +79,12 @@ public:
 
 #pragma region OBJECT_MANAGER
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
+	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, _uint iGameObjectID, void* pArg = nullptr);
 	CComponent* Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex = 0);
 	class CGameObject* Get_GameObjectById(_uint iId);
 
 	HRESULT Object_Manager_RenderImGui();
-	HRESULT Render_ImGuiLayerList(_uint iLevelIndex, _char* szBuffer, _uint iBufferSize);
+	HRESULT Render_ImGuiLayerList(_uint iLevelIndex, _char* szLayerBuffer, _uint& iGameObjectID, _uint iBufferSize);
 #pragma endregion
 
 #pragma region RENDERER
@@ -121,6 +123,8 @@ public:
 	HRESULT HideImGui(const _wstring& key);
 	HRESULT HideAll();
 	HRESULT ShowAll();
+	void Add_RenderObjectID(const _uint& iID);
+	size_t Get_RenderObjectIDCount(const _uint& iID);
 #pragma endregion
 
 

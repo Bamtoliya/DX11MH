@@ -101,6 +101,7 @@ HRESULT CMyImGui_Manager::Pre_Render()
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
+    renderedObjectIDsThisFrame.clear();
     return S_OK;
 }
 

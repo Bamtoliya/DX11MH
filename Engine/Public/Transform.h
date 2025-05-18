@@ -33,6 +33,13 @@ public:
 
 #pragma endregion
 
+#pragma region Loops
+public:
+	virtual void Priority_Update(_float fTimeDelta) override;
+	virtual void Update(_float fTimeDelta) override;
+	virtual void Late_Update(_float fTimeDelta) override;
+	virtual HRESULT Render() override;
+#pragma endregion
 #pragma region Get/Set
 	//Matrix
 public:

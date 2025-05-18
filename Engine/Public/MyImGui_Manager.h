@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Base.h"
+
 NS_BEGIN(Engine)
 class CGameInstance;
 class CMyImGui;
@@ -22,6 +23,9 @@ public:
 	virtual HRESULT Pre_Render();
 	virtual HRESULT Render();
 	virtual HRESULT Post_Render();
+public:
+	void Add_RenderObjectID(const _uint& iID) { renderedObjectIDsThisFrame.insert(iID); }
+	size_t Get_RenderObjectIDCount(const _uint& iID) { return renderedObjectIDsThisFrame.count(iID); }
 private:
 	CGameInstance* m_pGameInstance = { nullptr };
 	ID3D11Device* m_pDevice = { nullptr };
@@ -40,6 +44,7 @@ public:
 private:
 	class CGameObject* m_pGameObject = { nullptr };
 private:
+	set<_uint>							renderedObjectIDsThisFrame = {};
 	map<const _wstring, CMyImGui*>		m_MyImGuis = {};
 	_bool								m_bDockingSpace = { true };
 };

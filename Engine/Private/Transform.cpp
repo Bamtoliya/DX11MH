@@ -72,6 +72,25 @@ HRESULT CTransform::Initialize(void* pArg)
 
 #pragma endregion
 
+#pragma region Loops
+void CTransform::Priority_Update(_float fTimeDelta)
+{
+	__super::Priority_Update(fTimeDelta);
+}
+void CTransform::Update(_float fTimeDelta) 
+{
+	__super::Update(fTimeDelta);
+}
+void CTransform::Late_Update(_float fTimeDelta) 
+{
+	__super::Late_Update(fTimeDelta);
+}
+HRESULT CTransform::Render()
+{ 
+	return S_OK;
+}
+#pragma endregion
+
 _vector CTransform::Get_Scale_Vector() const
 {
 	// 1. 월드 행렬을 XMMATRIX 타입으로 로드합니다.

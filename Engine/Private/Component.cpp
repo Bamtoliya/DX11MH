@@ -1,4 +1,5 @@
 ﻿#include "Component.h"
+#include "GameObject.h"
 #include "GameInstance.h"
 CComponent::CComponent(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice			{ pDevice }
@@ -31,15 +32,25 @@ HRESULT CComponent::Initialize(void* pArg)
 {
 	return S_OK;
 }
+CComponent* CComponent::Clone(CGameObject* pGameObject, void* pArg)
+{
+	CComponent* pInstance = Clone(pArg);
+	pInstance->m_pOwner = pGameObject;
+	Safe_AddRef(m_pOwner);
+	return pInstance;
+}
 void CComponent::Free()
 {
 	__super::Free();
+	Safe_Release(m_pOwner);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pGameInstance);
 }
 
-HRESULT CComponent::RenderImGui()
+void CComponent::Set_OwnerGameObject(CGameObject* pGameObject)
 {
-	return S_OK;
+	Safe_Release(m_pOwner);
+	m_pOwner = pGameObject;
+	Safe_AddRef(m_pOwner);
 }

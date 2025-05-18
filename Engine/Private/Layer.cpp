@@ -88,10 +88,49 @@ HRESULT CLayer::RenderImGui(const wstring& strLayerTag)
 	{
 		for (auto& pGameObject : m_GameObjects)
 		{
-			pGameObject->RenderImGuiObjects();
+			if(!pGameObject->Get_Parent())
+				pGameObject->RenderImGuiObjects();
 		}
 	}
 	ImGui::PopID();
+	return S_OK;
+}
+
+HRESULT CLayer::Render_ImGui_ComboBox(_uint& iGameObjectID)
+{
+	static _wstring selected_key = L"";
+	static _wstring selected_key_with_ID = L"";
+	ImGuiComboFlags flags = ImGuiComboFlags_HeightRegular;
+	if (ImGui::BeginCombo("Parent GameObject", WideToUtf8(selected_key_with_ID.c_str()).c_str(), flags))
+	{
+		static ImGuiTextFilter filter;
+		if (ImGui::IsWindowAppearing())
+		{
+			ImGui::SetKeyboardFocusHere();
+			filter.Clear();\
+		}
+		ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_F);
+		filter.Draw("##Filter", -FLT_MIN);
+
+
+		for (auto& pGameObject : m_GameObjects)
+		{
+			wstring szBuffer = pGameObject->Get_Name();
+			const _bool is_selected = (selected_key == szBuffer);
+			ImGui::PushID(pGameObject->Get_ID());
+			selected_key_with_ID = to_wstring(pGameObject->Get_ID()) + L" | " + pGameObject->Get_Name();
+			ImGui::Text("%d | ", pGameObject->Get_ID());
+			ImGui::SameLine();
+			if (filter.PassFilter(WideToUtf8(szBuffer.c_str()).c_str()))
+				if (ImGui::Selectable(WideToUtf8(szBuffer.c_str()).c_str(), is_selected))
+				{
+					selected_key = szBuffer;
+					iGameObjectID = pGameObject->Get_ID();
+				}
+			ImGui::PopID();
+		}
+		ImGui::EndCombo();
+	}
 	return S_OK;
 }
 
@@ -104,6 +143,15 @@ HRESULT CLayer::ToggleVisible()
 
 	}
 	return S_OK;
+}
+
+CGameObject* CLayer::Find_GameObjectByName(const _wstring& strName)
+{
+	auto &iter = find_if(m_GameObjects.begin(), m_GameObjects.end(), [&strName](CGameObject* pGameObject) {
+		pGameObject->Get_Name();
+		return true;
+		});
+	return nullptr;
 }
 
 CLayer* CLayer::Create()
