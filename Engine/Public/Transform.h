@@ -15,6 +15,7 @@ public:
 		_float			fCurRotationZ = 0.f;
 
 		_float4			qOrientation = { 0.f, 0.f, 0.f, 1.f }; // 단위 쿼터니언으로 초기화
+		_bool			bRelative = { false }; // 상대좌표계인지 여부
 	}TRANSFORM_DESC;
 #pragma region Constructor/Destructor
 private:
@@ -44,7 +45,9 @@ public:
 	//Matrix
 public:
 	_vector Get_State(STATE eState) { return XMLoadFloat4x4(&m_tDesc.WorldMatrix).r[ENUM_CLASS(eState)]; }
-	_matrix Get_WorldMatrix() const { return XMLoadFloat4x4(&m_tDesc.WorldMatrix); }
+	//_matrix Get_WorldMatrix() const { return XMLoadFloat4x4(&m_tDesc.WorldMatrix); }
+	_matrix Get_WorldMatrix() const;
+	_matrix Get_LocalMatrix() const { return XMLoadFloat4x4(&m_tDesc.WorldMatrix); }
 	_matrix Get_WorldMatrix_Inverse() { return XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_tDesc.WorldMatrix));}
 	_float4x4 Get_World4x4() const { return m_tDesc.WorldMatrix; }
 	const _float4x4* Get_World4x4Ptr() const { return &m_tDesc.WorldMatrix; }
@@ -68,6 +71,8 @@ public:
 	_float Get_CurrentRotationX() { return m_tDesc.fCurRotationX; }
 	_float Get_CurrentRotationY() { return m_tDesc.fCurRotationY; }
 	_float Get_CurrentRotationZ() { return m_tDesc.fCurRotationZ; }
+
+	_bool  Get_Relative() { return m_tDesc.bRelative; }
 #pragma endregion
 
 #pragma region Movement

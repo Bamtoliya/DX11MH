@@ -2,6 +2,7 @@
 #include "Transform.h"
 #include "Shader.h"
 #include "VIBuffer.h"
+#include "GameObject.h"
 
 #pragma region Constructor/Destructor
 CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -90,7 +91,18 @@ HRESULT CTransform::Render()
 	return S_OK;
 }
 #pragma endregion
-
+_matrix CTransform::Get_WorldMatrix() const
+{
+	if (m_tDesc.bRelative && nullptr != m_pOwner->Get_Parent())
+	{
+		return XMMatrixMultiply(XMLoadFloat4x4(&m_tDesc.WorldMatrix),
+								static_cast<CTransform*>(m_pOwner->Get_Parent()->Get_Component(g_strTransformTag))->Get_WorldMatrix());
+	}
+	else
+	{
+		return XMLoadFloat4x4(&m_tDesc.WorldMatrix);
+	}
+}
 _vector CTransform::Get_Scale_Vector() const
 {
 	// 1. 월드 행렬을 XMMATRIX 타입으로 로드합니다.
@@ -135,8 +147,18 @@ void CTransform::Scaling(const _float3& vScale)
 
 void CTransform::Set_WorldMatrix(const _matrix& WorldMatrix)
 {
-	XMStoreFloat4x4(&m_tDesc.WorldMatrix, WorldMatrix);
+	if (m_tDesc.bRelative && nullptr != m_pOwner->Get_Parent())
+	{
+		XMStoreFloat4x4(&m_tDesc.WorldMatrix, 
+			XMMatrixMultiply(WorldMatrix, static_cast<CTransform*>(m_pOwner->Get_Parent()->Get_Component(g_strTransformTag))->Get_WorldMatrix_Inverse()));
+	}
+	else
+	{
+		XMStoreFloat4x4(&m_tDesc.WorldMatrix, WorldMatrix);
+	}
+	
 
+	
 	// 월드 행렬로부터 스케일, 회전(쿼터니언), 위치를 분해합니다.
 	_vector scaleVec, rotationQuatVec, translationVec;
 	if (XMMatrixDecompose(&scaleVec, &rotationQuatVec, &translationVec, WorldMatrix))
@@ -191,7 +213,19 @@ void CTransform::Set_Scale(STATE eState, _float fScale)
 
 HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstantName)
 {
-	return pShader->Bind_Matrix(pConstantName, &m_tDesc.WorldMatrix);	
+	if (m_tDesc.bRelative && nullptr != m_pOwner->Get_Parent())
+	{
+		_float4x4 finalMatrixToBind = {};
+		XMStoreFloat4x4(&finalMatrixToBind,
+			XMMatrixMultiply(XMLoadFloat4x4(&m_tDesc.WorldMatrix),
+			static_cast<CTransform*>(m_pOwner->Get_Parent()->Get_Component(g_strTransformTag))->Get_WorldMatrix()));
+		return pShader->Bind_Matrix(pConstantName, &finalMatrixToBind);
+	}
+	else
+	{
+		return pShader->Bind_Matrix(pConstantName, &m_tDesc.WorldMatrix);
+	}
+	
 }
 
 HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstantName, CVIBuffer* pVIBuffer)
@@ -219,6 +253,7 @@ HRESULT CTransform::RenderImGui()
 {
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 	{
+		ImGui::Checkbox("Releative(Local)", &m_tDesc.bRelative);
 		_matrix worldMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix);
 		_vector scaleVec, currentRotationQuatVec, translationVec;
 

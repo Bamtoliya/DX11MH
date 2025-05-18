@@ -82,8 +82,6 @@ protected:
 	_tchar									m_szName[MAX_PATH] = {};
 protected:
 	_bool									m_bVisible = { true };	
-	_bool									m_bRelative = { false };
-	_bool									m_bAbsolute = { false };
 #pragma endregion
 
 };

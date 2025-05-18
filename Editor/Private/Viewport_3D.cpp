@@ -334,7 +334,9 @@ HRESULT CViewport_3D::DrawImGuizmo3D(_float fZoom, ImVec2& vPanning)
             {
                 // 4. 행렬 준비 (float[16] 배열)
                 _matrix objectMatrix = pTransform->Get_WorldMatrix();
-                float matrixPtr[16], viewPtr[16], projPtr[16];
+                _matrix localMatrix = pTransform->Get_LocalMatrix();
+                float localMatrixPtr[16], matrixPtr[16], viewPtr[16], projPtr[16];
+                XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(localMatrixPtr), localMatrix);
                 XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(matrixPtr), objectMatrix);
                 XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(viewPtr), viewMatrix);
                 XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(projPtr), projMatrix);
