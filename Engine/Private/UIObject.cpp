@@ -1,4 +1,6 @@
-﻿#include "UIObject.h"
+﻿#pragma once
+#include "UIObject.h"
+#include "GameObject.h"
 #include "GameInstance.h"
 CUIObject::CUIObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject { pDevice, pContext }
@@ -26,6 +28,7 @@ HRESULT CUIObject::Initialize(void* pArg)
 	m_fY = pDesc->vPos.y;
 	m_fSizeX = pDesc->vSize.x;
 	m_fSizeY = pDesc->vSize.y;
+	
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -46,6 +49,17 @@ HRESULT CUIObject::Initialize(void* pArg)
 	return S_OK;
 }
 
+CGameObject* CUIObject::Clone(CGameObject* pGameObject, void* pArg)
+{
+	CUIObject* pInstance = reinterpret_cast<CUIObject*>(__super::Clone(pGameObject, pArg));
+	if (pGameObject)
+	{
+		CUIObject* pParentUIObject = static_cast<CUIObject*>(pGameObject);
+		static_cast<CUIObject*>(pInstance)->m_pTransformCom->Set_State(STATE::POSITION, XMVectorSet(pInstance->m_fX, pInstance->m_fY, 0.f, 1.f));
+	}
+	return pInstance;
+}
+
 void CUIObject::Priority_Update(_float fTimeDelta)
 {
 }
@@ -60,7 +74,6 @@ void CUIObject::Late_Update(_float fTimeDelta)
 
 HRESULT CUIObject::Render()
 {
-
 	return S_OK;
 }
 

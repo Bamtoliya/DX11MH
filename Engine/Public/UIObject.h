@@ -36,7 +36,7 @@ protected:
 	_float4x4		m_ViewMatrix{}, m_ProjMatrix{};
 
 public:
-	virtual CGameObject* Clone(void* pArg) = 0;
+	virtual CGameObject* Clone(CGameObject* pGameObject = nullptr, void* pArg = nullptr) override;
 	virtual void Free() override;
 };
 

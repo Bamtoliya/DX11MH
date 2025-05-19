@@ -64,9 +64,12 @@ HRESULT CTransform::Initialize(void* pArg)
 		return S_OK;
 
 	TRANSFORM_DESC* pDesc = static_cast<TRANSFORM_DESC*>(pArg);
-
+	pDesc->WorldMatrix._44 = 1.f;
+	if (pArg != nullptr)
+		Set_State(STATE::POSITION, XMLoadFloat4(reinterpret_cast<_float4*>(pDesc->WorldMatrix.m[3])));
 	m_tDesc.fSpeedPerSec = pDesc->fSpeedPerSec;
 	m_tDesc.fRotationPerSec = pDesc->fRotationPerSec;
+	m_tDesc.bRelative = pDesc->bRelative;
 
 	return S_OK;
 }

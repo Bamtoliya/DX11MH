@@ -62,6 +62,15 @@ namespace Engine
 	} ATTRIBUTE;
 
 	
+	typedef struct tagKeyFrame
+	{
+		XMFLOAT3		vScale;
+		XMFLOAT4		vRotation;
+		XMFLOAT3		vTranslation;
+
+		float			fTime;
+	}KEYFRAME;
+
 
 	typedef struct ENGINE_DLL tagVertexPositionTexcoord
 	{

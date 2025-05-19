@@ -22,6 +22,8 @@ HRESULT CMonster::Initialize_Prototype()
 HRESULT CMonster::Initialize(void* pArg)
 {
 	GAMEOBJECT_DESC			Desc{};
+	if(pArg != nullptr)
+		memcpy(&Desc, pArg, sizeof(GAMEOBJECT_DESC));
 	Desc.fRotationPerSec = 0.f;
 	Desc.fSpeedPerSec = 0.f;
 	if (nullptr == pArg)

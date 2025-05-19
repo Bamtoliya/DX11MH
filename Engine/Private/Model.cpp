@@ -3,6 +3,7 @@
 #include "Model.h"
 #include "Mesh.h"
 #include "Bone.h"
+#include "Animation.h"
 
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent{ pDevice, pContext }
@@ -75,6 +76,10 @@ HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _
 	if (FAILED(Ready_Materials(pModelFilePath)))
 		return E_FAIL;
 
+	/* 각 애니메이션 마다 이용하고 있는 뼈대들의 시간에 맞는 상태값들을 미리 읽어서 저장해둔다. */
+	if (FAILED(Ready_Animations()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -94,7 +99,6 @@ HRESULT CModel::Render(_uint iMeshIndex)
 HRESULT CModel::Play_Animation(_float fTimeDelta)
 {
 	/* 1. ㅎ녀재 애니메이션에 맞는 뼈의 상태를 읽어와서 뼈의 TrnasformationMatrix를 갱신해준다. */
-
 
 	/* 2. 전체 뼐르 순회하면서 뼈들의 ColmbinedTransformationMatixf를 부모에서부터 자식으로 갱신해주낟. */
 	for (auto& pBone : m_Bones)
@@ -152,6 +156,22 @@ HRESULT CModel::Ready_Materials(const _char* pModelFilePath)
 
 		m_Materials.push_back(pMaterial);
 	}
+	return S_OK;
+}
+
+HRESULT CModel::Ready_Animations()
+{
+	m_iNumAnimations = m_pAIScene->mNumAnimations;
+
+	for (size_t i = 0; i < m_iNumAnimations; i++)
+	{
+		CAnimation* pAnimation = CAnimation::Create(m_pAIScene->mAnimations[i]);
+		if (nullptr == pAnimation)
+			return E_FAIL;
+
+		m_Animations.push_back(pAnimation);
+	}
+
 	return S_OK;
 }
 

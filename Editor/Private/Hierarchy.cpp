@@ -85,15 +85,25 @@ HRESULT CHierarchy::Add_GameObject_Popup()
 
         ImGui::Separator();
 
-		static char szGameObjectName[MAX_PATH] = {};
+		static _char szGameObjectName[MAX_PATH] = {};
+        static _bool b2D = { false };
         static CUIObject::UIOBJECT_DESC tempDesc = {};
-		ImGui::InputText("GameObject Name", szGameObjectName, MAX_PATH, ImGuiInputTextFlags_EnterReturnsTrue);
+        ImGui::Checkbox("2D | 3D", &b2D);
+        ImGui::InputText("GameObject Name", szGameObjectName, MAX_PATH, ImGuiInputTextFlags_EnterReturnsTrue);
         ImGui::Checkbox("Relative Transform", &tempDesc.bRelative);
-
-        ImGui::DragFloat2("Postion(X, Y)", reinterpret_cast<_float*>(&tempDesc.vPos), 1.0f);
-        ImGui::DragFloat2("Size(X, Y)", reinterpret_cast<_float*>(&tempDesc.vSize), 1.0f);
-       
-		lstrcpy(tempDesc.szName, Utf8ToWide(szGameObjectName).c_str());
+        if (b2D)
+        {
+            ImGui::DragFloat2("Postion(X, Y)", reinterpret_cast<_float*>(&tempDesc.vPos), 1.0f);
+            ImGui::DragFloat2("Size(X, Y)", reinterpret_cast<_float*>(&tempDesc.vSize), 1.0f);
+        }
+        else
+        {
+            ImGui::DragFloat3("Postion(X, Y, Z)", reinterpret_cast<_float*>(tempDesc.WorldMatrix.m[3]), 1.0f);
+            tempDesc.WorldMatrix._44 = 1.0f;
+            
+        }
+        lstrcpy(tempDesc.szName, Utf8ToWide(szGameObjectName).c_str());
+		
 
         static char szLayerBuffer[MAX_PATH] = {};
         static _uint iGameObjectID = {};

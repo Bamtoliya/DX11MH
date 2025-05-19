@@ -202,11 +202,13 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\public\Audio_Manager.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\Public\Bounding_Box.h" />
     <ClInclude Include="..\Public\Bounding_Sphere.h" />
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\public\GameObject_Camera.h" />
+    <ClInclude Include="..\public\Channel.h" />
     <ClInclude Include="..\public\Camera_Manager.h" />
     <ClInclude Include="..\Public\Component.h" />
     <ClInclude Include="..\Public\Devices.h" />
@@ -322,9 +324,11 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\private\Audio_Manager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\private\Animation.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\private\GameObject_Camera.cpp" />
+    <ClCompile Include="..\private\Channel.cpp" />
     <ClCompile Include="..\private\Camera_Manager.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\Engine_Struct.cpp" />
