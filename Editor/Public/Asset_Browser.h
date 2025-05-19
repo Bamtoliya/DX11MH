@@ -18,5 +18,9 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual void Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+public:
+	void Convert_FbxToBinary();
+	void Create_PrototypeTexture();
+	void Create_PrototypeModel();
 };
 NS_END

@@ -6,6 +6,13 @@ NS_BEGIN(Engine)
 
 class CMaterial final : public CBase
 {
+public:
+	typedef struct tagMaterialFromModel
+	{
+		_uint iNumTexture = {};
+		const _char* szTextureName[MAX_PATH] = {};
+		_uint* iTypeTexture = {};
+	} MODEL_MAT;
 private:
 	CMaterial(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CMaterial() = default;
@@ -18,7 +25,6 @@ private:
 	ID3D11Device*								m_pDevice = { nullptr };
 	ID3D11DeviceContext*						m_pContext = { nullptr };
 	vector<ID3D11ShaderResourceView*>			m_SRVs[AI_TEXTURE_TYPE_MAX] = {};
-
 
 public:
 	static CMaterial* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* pModelFilePath, const aiMaterial* pAIMaterial);

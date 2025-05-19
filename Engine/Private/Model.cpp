@@ -50,6 +50,56 @@ HRESULT CModel::Bind_Bone_Matrices(CShader* pShader, const _char* pConstantName,
 	return m_Meshes[iMeshIndex]->Bind_Bone_Matrices(pShader, pConstantName, m_Bones);	
 }
 
+HRESULT CModel::Initialize_Bin_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
+{
+	_uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
+	ifstream inputFile(pModelFilePath, ios::binary);
+
+	if (inputFile.is_open()) {
+		//// MyData 구조체 크기만큼 파일에서 읽어옴
+		//inputFile.read(reinterpret_cast<char*>(&outData), sizeof(MyData));
+
+		//if (inputFile.gcount() != sizeof(MyData)) { // 실제로 읽은 바이트 수 확인
+		//	std::cerr << "파일 읽기 오류: 예상한 크기만큼 읽지 못했습니다." << std::endl;
+		//	inputFile.close();
+		//	return false;
+		//}
+		//inputFile.close();
+		//return true;
+	}
+	else {
+		std::cerr << "파일을 열 수 없습니다: " << pModelFilePath << std::endl;
+		return E_FAIL;
+	}
+
+	if (MODEL::NONANIM == eType)
+		iFlag |= aiProcess_PreTransformVertices;
+
+	m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
+
+	if (nullptr == m_pAIScene)
+		return E_FAIL;
+
+	XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
+
+	m_eType = eType;
+
+	if (FAILED(Ready_Bones(m_pAIScene->mRootNode, -1)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Meshes()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Materials(pModelFilePath)))
+		return E_FAIL;
+
+	/* 각 애니메이션 마다 이용하고 있는 뼈대들의 시간에 맞는 상태값들을 미리 읽어서 저장해둔다. */
+	if (FAILED(Ready_Animations()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {	
 
@@ -108,8 +158,6 @@ HRESULT CModel::Play_Animation(_float fTimeDelta)
 
 	return S_OK;
 }
-
-
 
 HRESULT CModel::Ready_Bones(const aiNode* pAINode, _int iParentBoneIndex)
 {	
@@ -175,6 +223,36 @@ HRESULT CModel::Ready_Animations()
 	return S_OK;
 }
 
+HRESULT CModel::Ready_Bin_Bones(const aiNode* pAINode, _int iParentBoneIndex)
+{
+	return S_OK;
+}
+
+HRESULT CModel::Ready_Bin_Meshes()
+{
+	return S_OK;
+}
+
+HRESULT CModel::Ready_Bin_Materials(const _char* pModelFilePath)
+{
+	return S_OK;
+}
+
+HRESULT CModel::Ready_Bin_Animations()
+{
+	return S_OK;
+}
+
+
+HRESULT CModel::RenderImGui()
+{
+	if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+
+	}
+	return S_OK;
+}
+
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {
 	CModel* pInstance = new CModel(pDevice, pContext);
@@ -182,6 +260,19 @@ CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MOD
 	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PreTransformMatrix)))
 	{
 		MSG_BOX("Failed to Created : CModel");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CModel* CModel::Create_Bin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
+{
+	CModel* pInstance = new CModel(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PreTransformMatrix)))
+	{
+		MSG_BOX("Failed to Created with Binary : CModel");
 		Safe_Release(pInstance);
 	}
 

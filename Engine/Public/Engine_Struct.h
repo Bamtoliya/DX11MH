@@ -72,12 +72,13 @@ namespace Engine
 	}KEYFRAME;
 
 
+#pragma region VTX Structures
 	typedef struct ENGINE_DLL tagVertexPositionTexcoord
 	{
 		XMFLOAT3		vPosition;
 		XMFLOAT2		vTexcoord;
 
-		static const unsigned int					iNumElements = {2};
+		static const unsigned int					iNumElements = { 2 };
 
 		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	}VTXPOSTEX;
@@ -124,5 +125,5 @@ namespace Engine
 		static const unsigned int					iNumElements = { 6 };
 		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	}VTXANIMMESH;
-
+#pragma endregion
 }

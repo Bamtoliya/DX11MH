@@ -29,6 +29,8 @@ private:
 	HRESULT Import_Map();
 	HRESULT Import_Prefab();
 
+	HRESULT Convert_Model(const _tchar* pFilePath);
+
 	HRESULT Load_Level();
 	HRESULT Load_Scene();
 	HRESULT Load_Map();

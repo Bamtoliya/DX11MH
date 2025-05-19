@@ -33,6 +33,7 @@ HRESULT CAsset_Browser::Initialize(void* pArg)
 
 void CAsset_Browser::Update(_float fTimeDelta)
 {
+
 }
 
 HRESULT CAsset_Browser::Render()
@@ -70,6 +71,9 @@ HRESULT CAsset_Browser::Render()
                 }
             }
         }
+
+
+        
 
         // 현재 경로의 디렉토리와 파일 목록 읽기
         std::vector<fs::path> directories;
@@ -136,5 +140,7 @@ HRESULT CAsset_Browser::Render()
         ImGui::Text("Selected: %s", selectedAsset.empty() ? "None" : selectedAsset.c_str());
         ImGui::End();
     }
+
+    
     return S_OK;
 }

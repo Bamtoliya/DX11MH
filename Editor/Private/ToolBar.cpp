@@ -3,6 +3,16 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 
+#pragma region For Converting 
+#include "Material.h"
+#include "Mesh.h";
+#include "Bone.h"
+#include "Animation.h"
+#include "Model.h"
+#pragma endregion
+
+namespace fs = std::filesystem;
+
 CToolBar::CToolBar(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMyImGui { pDevice, pContext }
 {
@@ -25,6 +35,17 @@ HRESULT CToolBar::Render()
     if (ifd::FileDialog::Instance().IsDone("TextureOpenDialog")) {
         if (ifd::FileDialog::Instance().HasResult()) {
             std::string res = ifd::FileDialog::Instance().GetResult().u8string();
+            fs::path filePath = res;
+            filePath = filePath.relative_path();
+            printf("OPEN[%s]\n", res.c_str());
+        }
+        ifd::FileDialog::Instance().Close();
+    }
+
+    if (ifd::FileDialog::Instance().IsDone("ModelOpenDialog")) {
+        if (ifd::FileDialog::Instance().HasResult()) {
+            std::string res = ifd::FileDialog::Instance().GetResult().u8string();
+            Convert_Model(ifd::FileDialog::Instance().GetResult().wstring().c_str());
             printf("OPEN[%s]\n", res.c_str());
         }
         ifd::FileDialog::Instance().Close();
@@ -35,7 +56,7 @@ HRESULT CToolBar::Render()
             if (ImGui::BeginMenu("File")) {
                 // 파일 메뉴 아이템들
                 if (ImGui::MenuItem("New Scene", "Ctrl+N")) {
-                    ifd::FileDialog::Instance().Open("TextureOpenDialog", "Open a texture", "Image file (*.png;*.jpg;*.jpeg;*.bmp;*.tga;*.dds){.png,.jpg,.jpeg,.bmp,.tga,.dds},.*", true);
+                    ifd::FileDialog::Instance().Open("TextureOpenDialog", "Open a texture", "Image file (*.png;*.jpg;*.jpeg;*.bmp;*.tga;*.dds){.png,.jpg,.jpeg,.bmp,.tga,.dds},.*", true, ASSETPATH);
                     
                     // 새 씬 로직
                     printf("Clicked File->New Scene\n");
@@ -52,6 +73,11 @@ HRESULT CToolBar::Render()
                 if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) {
                     // 다른 이름으로 저장 로직
                     printf("Clicked File->Save As\n");
+                }
+                ImGui::Separator();
+                if (ImGui::MenuItem("Convert Model", "Ctrl+Alt+C")) {
+                    ifd::FileDialog::Instance().Open("ModelOpenDialog", "Open a Model", "model file (*.fbx){.fbx},.*", true, ASSETPATH);
+                    printf("Clicked File->Convert Model\n");
                 }
                 ImGui::Separator();
                 if (ImGui::MenuItem("Exit")) {
@@ -198,6 +224,93 @@ void CToolBar::IntializeFileDialogCallBack()
 
 HRESULT CToolBar::Save_Scene()
 {
+    return S_OK;
+}
+
+HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
+{
+    fs::path pTargetPath = pFilePath;
+    fs::path pBasePath = fs::current_path().parent_path().parent_path();
+    pTargetPath = fs::relative(pTargetPath, pBasePath);
+    fs::path pFinalPath = "../../";
+    pFinalPath.append(pTargetPath.replace_extension(".model").generic_wstring());
+
+    _uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
+    Assimp::Importer asImporter;
+    const aiScene* pAiScene = asImporter.ReadFile(WideToUtf8(pFilePath).c_str(), iFlag);
+
+    ofstream outputFile(pFinalPath, ios::binary);
+    if (outputFile.is_open())
+    {
+        outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumAnimations), sizeof(_uint));
+        outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumMeshes), sizeof(_uint));
+        outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumMaterials), sizeof(_uint));
+        for (_uint i = 0; i < pAiScene->mNumMaterials; ++i)
+        {
+            aiMaterial* pAiMaterial = pAiScene->mMaterials[i];
+            for (size_t j = 1; j < AI_TEXTURE_TYPE_MAX; ++j)
+            {
+                for (_uint k = 0; k < pAiMaterial->GetTextureCount(static_cast<aiTextureType>(j)); ++k)
+                {
+                    aiString strTexturePath = {};
+                    pAiMaterial->GetTexture(static_cast<aiTextureType>(j), k, &strTexturePath);
+                    _uint iNumTextureCount = pAiMaterial->GetTextureCount(static_cast<aiTextureType>(j));
+                    outputFile.write(reinterpret_cast<const char*>(&iNumTextureCount), sizeof(_uint));
+                    outputFile.write(reinterpret_cast<const char*>(&strTexturePath.length), sizeof(_uint));
+                    outputFile.write(reinterpret_cast<const char*>(strTexturePath.C_Str()), sizeof(_char) * strTexturePath.length);
+                    outputFile.write(reinterpret_cast<const char*>(&j), sizeof(_uint));
+                }
+            }
+        }
+        
+
+        for (_uint i = 0; i < pAiScene->mNumMeshes; ++i)
+        {
+            aiMesh* pAiMesh = pAiScene->mMeshes[i];
+            //pAiMesh.
+            //for(int )
+            //pAiMesh->mNumBones;
+            int a = 10;
+        }
+
+        for (_uint i = 0; i < pAiScene->mNumAnimations; ++i)
+        {
+            aiAnimation* pAiAnimation = pAiScene->mAnimations[i];
+            int a = 10;
+        }
+        outputFile.close();
+    }
+
+    _uint testNum[3] = {};
+    ifstream inputFile(pFinalPath, ios::binary);
+    CMaterial::MODEL_MAT* pModelMat = {};
+    if(inputFile.is_open())
+    {
+        inputFile.read(reinterpret_cast<char*>(&testNum[0]), sizeof(_uint));
+        inputFile.read(reinterpret_cast<char*>(&testNum[1]), sizeof(_uint));
+        inputFile.read(reinterpret_cast<char*>(&testNum[2]), sizeof(_uint));
+        pModelMat = new CMaterial::MODEL_MAT[testNum[2]];
+        for (_uint i = 0; i < testNum[2]; ++i)
+        {
+            aiString strTexturePath = {};
+            
+            _uint strLength = {};
+            inputFile.read(reinterpret_cast<char*>(&pModelMat[i].iNumTexture), sizeof(_uint));
+            inputFile.read(reinterpret_cast<char*>(&strLength), sizeof(_uint));
+            strLength += 1;
+            inputFile.read(reinterpret_cast<char*>(&pModelMat[i].szTextureName), sizeof(_char) * strLength);
+            cout << pModelMat[i].szTextureName << endl;
+            inputFile.read(reinterpret_cast<char*>(&pModelMat[i].iTypeTexture), sizeof(_uint));
+        } 
+        //
+        /*inputFile.read(reinterpret_cast<char*>(&testNum[0]), sizeof(_uint));
+        inputFile >> testNum[0];
+        inputFile >> testNum[1];
+        inputFile >> testNum[2];*/
+        Safe_Delete_Array(pModelMat);
+        inputFile.close();
+    }
+
     return S_OK;
 }
 

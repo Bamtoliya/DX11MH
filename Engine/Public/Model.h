@@ -20,6 +20,7 @@ public:
 	HRESULT Bind_Bone_Matrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 
 public:
+	virtual HRESULT Initialize_Bin_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix);
 	virtual HRESULT Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix);
 	virtual HRESULT Initialize(void* pArg);
 	virtual HRESULT Render(_uint iMeshIndex);
@@ -28,7 +29,7 @@ public:
 	HRESULT Play_Animation(_float fTimeDelta);
 
 private:
-	Assimp::Importer			m_Importer;	
+	Assimp::Importer			m_Importer;
 
 	/* 모델에 대한 모든 정보르,ㄹ 담고 있는 구조체. */
 	const aiScene*				m_pAIScene = { nullptr };
@@ -43,7 +44,6 @@ private:
 
 	vector<class CBone*>		m_Bones;
 
-
 	_uint						m_iNumAnimations = {};
 	vector<class CAnimation*>	m_Animations;
 
@@ -54,7 +54,15 @@ public:
 	HRESULT Ready_Materials(const _char* pModelFilePath);
 	HRESULT Ready_Animations();
 public:
+	HRESULT Ready_Bin_Bones(const aiNode* pAINode, _int iParentBoneIndex);
+	HRESULT Ready_Bin_Meshes();
+	HRESULT Ready_Bin_Materials(const _char* pModelFilePath);
+	HRESULT Ready_Bin_Animations();
+public:
+	virtual HRESULT RenderImGui() override;
+public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix = XMMatrixIdentity());
+	static CModel* Create_Bin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix = XMMatrixIdentity());
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 };
