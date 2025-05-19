@@ -243,6 +243,14 @@ HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstant
 
 		_float4x4 finalMatrixToBind;
 		XMStoreFloat4x4(&finalMatrixToBind, finalWorldMatrixForShader);
+		if (m_tDesc.bRelative && nullptr != m_pOwner->Get_Parent())
+		{
+			_float4x4 parentMatrixToBind = {};
+			XMStoreFloat4x4(&parentMatrixToBind,
+				XMMatrixMultiply(XMLoadFloat4x4(&finalMatrixToBind),
+				static_cast<CTransform*>(m_pOwner->Get_Parent()->Get_Component(g_strTransformTag))->Get_WorldMatrix()));
+			return pShader->Bind_Matrix(pConstantName, &parentMatrixToBind);
+		}
 		return pShader->Bind_Matrix(pConstantName, &finalMatrixToBind);
 	}
 	// pVIBuffer가 nullptr이면, CTransform의 월드 행렬만 사용 (기존 방식)

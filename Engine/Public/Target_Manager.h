@@ -38,6 +38,8 @@ public:
 
     HRESULT Resize(_uint iWinResizeX, _uint iWinResizeY);
 
+    map<const _wstring, CRenderTarget*> Get_RenderTargetMap() { return m_RenderTargets; }
+
 private:
     ID3D11Device* m_pDevice = nullptr;
     ID3D11DeviceContext* m_pContext = nullptr;

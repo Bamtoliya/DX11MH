@@ -241,6 +241,10 @@ CRenderTarget* CGameInstance::Get_RenderTarget(const _wstring& strTargetTag) con
 {
 	return m_pTarget_Manager->Get_RenderTarget(strTargetTag);
 }
+map<const _wstring, class CRenderTarget*> CGameInstance::Get_RenderTargetMap() const
+{
+	return m_pTarget_Manager->Get_RenderTargetMap();
+}
 HRESULT CGameInstance::Clear_RenderTarget(const _wstring& strTargetTag, _float4* pClearColor)
 {
 	return m_pTarget_Manager->Clear_RenderTarget(strTargetTag, pClearColor);

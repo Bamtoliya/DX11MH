@@ -125,25 +125,32 @@ HRESULT CViewport_2D::Render()
             ImVec2 mouse_pos_relative_to_center = ImVec2(mouse_pos_in_screen.x - canvas_center.x, mouse_pos_in_screen.y - canvas_center.y);
             ImVec2 mouse_pos_in_grid = ImVec2(mouse_pos_relative_to_center.x / zoom, mouse_pos_relative_to_center.y / zoom);
 
-            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-                snprintf(click_info, sizeof(click_info), "Left Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);
-                // 여기서 last_left_click_grid_pos 같은 변수에 저장하거나 다른 작업 수행 가능
+            if (!m_bLockPicked)
+            {
+                if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+                    snprintf(click_info, sizeof(click_info), "Left Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);
+                    // 여기서 last_left_click_grid_pos 같은 변수에 저장하거나 다른 작업 수행 가능
 
-                _float2 ratio = { io.DisplaySize.x / g_iWinSizeX, io.DisplaySize.y / g_iWinSizeY };
-                ImVec2 TexturePos = ImVec2(mouse_pos_in_grid.x * ratio.x + io.DisplaySize.x * 0.5f, mouse_pos_in_grid.y * ratio.y + io.DisplaySize.y * 0.5f);
-                snprintf(mouse_cursor, sizeof(mouse_cursor), "TexturePos(%.1f, %.1f)", TexturePos.x, TexturePos.y);
-                _float4 testColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-                if (FAILED(m_pGameInstance->ReadPickingTargetPixel((_uint)TexturePos.x, (_uint)TexturePos.y, &testColor)))
-                    return E_FAIL;
-                snprintf(click_color, sizeof(click_color), "Left Clicked Color(%.1f, %.1f, %.1f, %.1f)", testColor.x, testColor.y, testColor.z, testColor.w);
-                m_pGameInstance->PickObjectByColor(&testColor);
+                    _float2 ratio = { io.DisplaySize.x / g_iWinSizeX, io.DisplaySize.y / g_iWinSizeY };
+                    ImVec2 TexturePos = ImVec2(mouse_pos_in_grid.x * ratio.x + io.DisplaySize.x * 0.5f, mouse_pos_in_grid.y * ratio.y + io.DisplaySize.y * 0.5f);
+                    snprintf(mouse_cursor, sizeof(mouse_cursor), "TexturePos(%.1f, %.1f)", TexturePos.x, TexturePos.y);
+                    _float4 testColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+                    if (FAILED(m_pGameInstance->ReadPickingTargetPixel((_uint)TexturePos.x, (_uint)TexturePos.y, &testColor)))
+                        return E_FAIL;
+                    snprintf(click_color, sizeof(click_color), "Left Clicked Color(%.1f, %.1f, %.1f, %.1f)", testColor.x, testColor.y, testColor.z, testColor.w);
+                    m_pGameInstance->PickObjectByColor(&testColor);
 
+                }
+                else if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
+                    snprintf(click_info, sizeof(click_info), "Right Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);
+                    // 여기서 last_right_click_grid_pos 같은 변수에 저장하거나 다른 작업 수행 가능
+                }
             }
-            else if (ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-                snprintf(click_info, sizeof(click_info), "Right Clicked at Grid(%.1f, %.1f)", mouse_pos_in_grid.x, mouse_pos_in_grid.y);
-                // 여기서 last_right_click_grid_pos 같은 변수에 저장하거나 다른 작업 수행 가능
-            }
+
+            if (m_bLockPicked)
+                ImGui::Text("Picked Object Locked");
         }
+
 
         //그리드 그리기
         DrawGrid(draw_list, canvas_p0, canvas_p1, canvas_center, zoom);
@@ -169,6 +176,32 @@ HRESULT CViewport_2D::Render()
         ImGui::SameLine();
         ImGui::SliderFloat("Zoom Slider", &zoom, min_zoom, max_zoom);
 
+        static _wstring selected_key = L"";
+        ImGuiComboFlags flags = ImGuiComboFlags_HeightRegular;
+        if (ImGui::BeginCombo("Render Target Tag", WideToUtf8(m_strRenderTargetKey.c_str()).c_str(), flags))
+        {
+            static ImGuiTextFilter filter;
+            if (ImGui::IsWindowAppearing())
+            {
+                ImGui::SetKeyboardFocusHere();
+                filter.Clear();
+            }
+            ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_F);
+            filter.Draw("##Filter", -FLT_MIN);
+
+            for (auto& Pair : m_pGameInstance->Get_RenderTargetMap())
+            {
+                const _bool is_selected = (selected_key == Pair.first);
+                if (filter.PassFilter(WideToUtf8(Pair.first.c_str()).c_str()))
+                    if (ImGui::Selectable(WideToUtf8(Pair.first.c_str()).c_str(), is_selected))
+                    {
+                        selected_key = Pair.first;
+                        m_strRenderTargetKey = Pair.first;
+                        //strncpy_s(szLayerBuffer, iBufferSize, WideToUtf8(selected_key.c_str()).c_str(), _TRUNCATE);
+                    }
+            }
+            ImGui::EndCombo();
+        }
     }
     ImGui::End(); // "Widget Window" 창 끝
 #pragma endregion

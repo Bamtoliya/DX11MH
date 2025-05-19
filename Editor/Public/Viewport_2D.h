@@ -58,5 +58,6 @@ private: //IMGUIZMO Variable
 	ImGuizmo::MODE                      m_currentGizmoMode = ImGuizmo::WORLD;
 	bool                                m_bUseSnap = true;
 	float                               m_fSnapValue[3] = { 1.0f, 1.0f, 1.0f };
+	_bool								m_bLockPicked = { false };
 };
 NS_END

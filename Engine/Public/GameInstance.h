@@ -65,6 +65,7 @@ public:
 	//Render Target
 	HRESULT Add_RenderTarget(const _wstring& strTargetTag, _uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor);
 	class CRenderTarget* Get_RenderTarget(const _wstring& strTargetTag) const;
+	map<const _wstring, class CRenderTarget*> Get_RenderTargetMap() const;
 	HRESULT Clear_RenderTarget(const _wstring& strTargetTag, _float4* pClearColor = nullptr);
 	//MRT
 	HRESULT Add_MRT(const _wstring& strMRTTag, const std::vector<_wstring>& pTargetTags);

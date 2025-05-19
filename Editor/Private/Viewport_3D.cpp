@@ -31,7 +31,7 @@ void CViewport_3D::Free()
 HRESULT CViewport_3D::Initialize(void* pArg)
 {
     m_bShow = true;
-    m_strRenderTargetKey = L"RT_Skybox";
+    m_strRenderTargetKey = L"RT_ObjectsOnly";
     m_vImageGridPosition = { -(g_iWinSizeX / 2.f), -(g_iWinSizeY / 2.f) }; // 그리드 (0,0) 기준 좌상단 좌표
     m_vImageGridSize = { g_iWinSizeX, g_iWinSizeY };   // 그리드 단위 크기
     return S_OK;
@@ -181,12 +181,39 @@ HRESULT CViewport_3D::Render()
                 snprintf(click_info, sizeof(click_info), "View Reset"); // 실제 click_info 변수 사용 시 주석 해제
             }
             ImGui::SameLine();
-            ImGui::SliderFloat("Zoom Slider", &zoom, min_zoom, max_zoom);
+            //ImGui::SliderFloat("Zoom Slider", &zoom, min_zoom, max_zoom);
+
+            static _wstring selected_key = L"";
+            ImGuiComboFlags flags = ImGuiComboFlags_HeightRegular;
+            if (ImGui::BeginCombo("Render Target Tag", WideToUtf8(m_strRenderTargetKey.c_str()).c_str(), flags))
+            {
+                static ImGuiTextFilter filter;
+                if (ImGui::IsWindowAppearing())
+                {
+                    ImGui::SetKeyboardFocusHere();
+                    filter.Clear();
+                }
+                ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_F);
+                filter.Draw("##Filter", -FLT_MIN);
+
+                for (auto& Pair : m_pGameInstance->Get_RenderTargetMap())
+                {
+                    const _bool is_selected = (selected_key == Pair.first);
+                    if (filter.PassFilter(WideToUtf8(Pair.first.c_str()).c_str()))
+                        if (ImGui::Selectable(WideToUtf8(Pair.first.c_str()).c_str(), is_selected))
+                        {
+                            selected_key = Pair.first;
+                            m_strRenderTargetKey = Pair.first;
+                            //strncpy_s(szLayerBuffer, iBufferSize, WideToUtf8(selected_key.c_str()).c_str(), _TRUNCATE);
+                        }
+                }
+                ImGui::EndCombo();
+            }
 
         }
         ImGui::End(); // "Widget Window" 창 끝
 #pragma endregion
-        DrawTexture(draw_list, L"RT_ObjectsOnly", canvas_p0, canvas_size, canvas_center, zoom);
+        DrawTexture(draw_list, m_strRenderTargetKey, canvas_p0, canvas_size, canvas_center, zoom);
         DrawImGuizmo3D(zoom, panning);
         
 
@@ -334,9 +361,7 @@ HRESULT CViewport_3D::DrawImGuizmo3D(_float fZoom, ImVec2& vPanning)
             {
                 // 4. 행렬 준비 (float[16] 배열)
                 _matrix objectMatrix = pTransform->Get_WorldMatrix();
-                _matrix localMatrix = pTransform->Get_LocalMatrix();
-                float localMatrixPtr[16], matrixPtr[16], viewPtr[16], projPtr[16];
-                XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(localMatrixPtr), localMatrix);
+                float matrixPtr[16], viewPtr[16], projPtr[16];
                 XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(matrixPtr), objectMatrix);
                 XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(viewPtr), viewMatrix);
                 XMStoreFloat4x4(reinterpret_cast<XMFLOAT4X4*>(projPtr), projMatrix);
