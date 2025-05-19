@@ -320,7 +320,7 @@ HRESULT CViewport_2D::DrawImGuizmo2D(_float fZoom, ImVec2& vPanning)
 
             // 3. ImGuizmo 설정
             // ImGuizmo::BeginFrame(); // Pre_Render에서 호출됨
-            ImGuizmo::SetOrthographic(true); // 원근 투영이므로 false
+            ImGuizmo::SetOrthographic(true); // 직교 투영이므로 true
             ImGuizmo::SetDrawlist();
 
             // --- 중요: 현재 ImGui 윈도우("Viewport_2D")의 내용 영역으로 SetRect 설정 ---

@@ -48,7 +48,7 @@ public:
 	//_matrix Get_WorldMatrix() const { return XMLoadFloat4x4(&m_tDesc.WorldMatrix); }
 	_matrix Get_WorldMatrix() const;
 	_matrix Get_LocalMatrix() const { return XMLoadFloat4x4(&m_tDesc.WorldMatrix); }
-	_matrix Get_WorldMatrix_Inverse() { return XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_tDesc.WorldMatrix));}
+	_matrix Get_WorldMatrix_Inverse() { return XMMatrixInverse(nullptr, Get_WorldMatrix());}
 	_float4x4 Get_World4x4() const { return m_tDesc.WorldMatrix; }
 	const _float4x4* Get_World4x4Ptr() const { return &m_tDesc.WorldMatrix; }
 	void Set_State(STATE eState, _fvector vState) { XMStoreFloat4(reinterpret_cast<_float4*>(&m_tDesc.WorldMatrix.m[ENUM_CLASS(eState)]), vState); }

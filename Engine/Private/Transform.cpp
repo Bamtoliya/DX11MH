@@ -95,8 +95,18 @@ _matrix CTransform::Get_WorldMatrix() const
 {
 	if (m_tDesc.bRelative && nullptr != m_pOwner->Get_Parent())
 	{
-		return XMMatrixMultiply(XMLoadFloat4x4(&m_tDesc.WorldMatrix),
-								static_cast<CTransform*>(m_pOwner->Get_Parent()->Get_Component(g_strTransformTag))->Get_WorldMatrix());
+		CGameObject* pParentGameObject = m_pOwner->Get_Parent();
+		_matrix finalMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix);
+		/*while (pParentGameObject)
+		{
+			finalMatrix = XMMatrixMultiply(finalMatrix,
+				static_cast<CTransform*>(pParentGameObject->Get_Component(g_strTransformTag))->Get_WorldMatrix());
+			pParentGameObject = pParentGameObject->Get_Parent();
+		}
+
+		return finalMatrix;*/
+		return XMMatrixMultiply(finalMatrix,
+								static_cast<CTransform*>(pParentGameObject->Get_Component(g_strTransformTag))->Get_WorldMatrix());
 	}
 	else
 	{
@@ -149,15 +159,21 @@ void CTransform::Set_WorldMatrix(const _matrix& WorldMatrix)
 {
 	if (m_tDesc.bRelative && nullptr != m_pOwner->Get_Parent())
 	{
-		XMStoreFloat4x4(&m_tDesc.WorldMatrix, 
-			XMMatrixMultiply(WorldMatrix, static_cast<CTransform*>(m_pOwner->Get_Parent()->Get_Component(g_strTransformTag))->Get_WorldMatrix_Inverse()));
+		CGameObject* pParentGameObject = m_pOwner->Get_Parent();
+		_matrix finalMatrix = WorldMatrix;
+		finalMatrix = XMMatrixMultiply(finalMatrix, static_cast<CTransform*>(pParentGameObject->Get_Component(g_strTransformTag))->Get_WorldMatrix_Inverse());
+		/*while (pParentGameObject)
+		{
+			
+			pParentGameObject = pParentGameObject->Get_Parent();
+		}*/
+		//부모가 없을때까지 반복적으로 월드매트릭스 인버스를 곱하기?
+		XMStoreFloat4x4(&m_tDesc.WorldMatrix, finalMatrix);
 	}
 	else
 	{
 		XMStoreFloat4x4(&m_tDesc.WorldMatrix, WorldMatrix);
 	}
-	
-
 	
 	// 월드 행렬로부터 스케일, 회전(쿼터니언), 위치를 분해합니다.
 	_vector scaleVec, rotationQuatVec, translationVec;
