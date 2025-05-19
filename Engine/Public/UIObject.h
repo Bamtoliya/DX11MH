@@ -12,7 +12,8 @@ class ENGINE_DLL CUIObject abstract : public CGameObject
 public:
 	typedef struct tagUIObjectDesc : public CGameObject::GAMEOBJECT_DESC
 	{
-		_float			fX, fY, fSizeX, fSizeY;
+		_float2			vPos;
+		_float2			vSize;
 	}UIOBJECT_DESC;
 protected:
 	CUIObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

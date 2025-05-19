@@ -26,7 +26,11 @@ HRESULT CInspector::Render()
             if (pGameObject)
             {
                 string tmp = WideToUtf8(pGameObject->Get_Name().c_str());
-                ImGui::Text("Object Name: %s | Object ID: %d", tmp.c_str());
+                char szBuffer[MAX_PATH] = {};
+                strncpy_s(szBuffer, MAX_PATH, tmp.c_str(), _TRUNCATE);
+                //strncpy_s(szBuffer, tmp.c_str());
+                ImGui::InputText("##ObjectName:", szBuffer, MAX_PATH);
+                pGameObject->Set_Name(Utf8ToWide(szBuffer));
                 ImGui::Text("Object ID: %d", pGameObject->Get_ID());
             }
             else

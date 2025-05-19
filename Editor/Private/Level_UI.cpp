@@ -38,10 +38,10 @@ HRESULT CLevel_UI::Ready_Layer_Background(const wstring strLayerTag)
     CBackGround::BACKGROUND_DESC				BackGroundDesc{};
 
     lstrcpy(BackGroundDesc.szName, L"Background");
-    BackGroundDesc.fX = g_iWinSizeX * 0.5f;
-    BackGroundDesc.fY = g_iWinSizeY * 0.5f;
-    BackGroundDesc.fSizeX = 200.0f;
-    BackGroundDesc.fSizeY = 200.0f;
+    BackGroundDesc.vPos.x = g_iWinSizeX * 0.5f;
+    BackGroundDesc.vPos.y = g_iWinSizeY * 0.5f;
+    BackGroundDesc.vSize.x = 200.0f;
+    BackGroundDesc.vSize.y = 200.0f;
 
     if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::UI), TEXT("Prototype_GameObject_BackGround"),
         m_iLevel, strLayerTag, &BackGroundDesc)))

@@ -1,6 +1,7 @@
 ﻿#include "Hierarchy.h"
 #include "GameInstance.h"
 #include "GameObject.h"
+#include "UIObject.h"
 
 CHierarchy::CHierarchy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CMyImGui {pDevice, pContext}
@@ -85,9 +86,13 @@ HRESULT CHierarchy::Add_GameObject_Popup()
         ImGui::Separator();
 
 		static char szGameObjectName[MAX_PATH] = {};
-
+        static CUIObject::UIOBJECT_DESC tempDesc = {};
 		ImGui::InputText("GameObject Name", szGameObjectName, MAX_PATH, ImGuiInputTextFlags_EnterReturnsTrue);
-        CGameObject::GAMEOBJECT_DESC tempDesc = {};
+        ImGui::Checkbox("Relative Transform", &tempDesc.bRelative);
+
+        ImGui::DragFloat2("Postion(X, Y)", reinterpret_cast<_float*>(&tempDesc.vPos), 1.0f);
+        ImGui::DragFloat2("Size(X, Y)", reinterpret_cast<_float*>(&tempDesc.vSize), 1.0f);
+       
 		lstrcpy(tempDesc.szName, Utf8ToWide(szGameObjectName).c_str());
 
         static char szLayerBuffer[MAX_PATH] = {};

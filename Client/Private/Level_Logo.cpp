@@ -40,10 +40,10 @@ HRESULT CLevel_Logo::Ready_Layer_BackGround(const _wstring strLayerTag)
 {
 	CBackGround::BACKGROUND_DESC				BackGroundDesc{};
 
-	BackGroundDesc.fX = g_iWinSizeX * 0.5f;
-	BackGroundDesc.fY = g_iWinSizeY * 0.5f;
-	BackGroundDesc.fSizeX = 200.0f;
-	BackGroundDesc.fSizeY = 200.0f;	
+	BackGroundDesc.vPos.x = g_iWinSizeX * 0.5f;
+	BackGroundDesc.vPos.y = g_iWinSizeY * 0.5f;
+	BackGroundDesc.vSize.x = 200.0f;
+	BackGroundDesc.vSize.x = 200.0f;
 
 	if (FAILED(m_pGameInstance->Add_GameObject(static_cast<_uint>(LEVEL::LOGO), TEXT("Prototype_GameObject_BackGround"),
 		static_cast<_uint>(LEVEL::LOGO), strLayerTag, &BackGroundDesc)))

@@ -22,10 +22,10 @@ HRESULT CUIObject::Initialize(void* pArg)
 
 	UIOBJECT_DESC* pDesc = static_cast<UIOBJECT_DESC*>(pArg);
 
-	m_fX = pDesc->fX;
-	m_fY = pDesc->fY;
-	m_fSizeX = pDesc->fSizeX;
-	m_fSizeY = pDesc->fSizeY;
+	m_fX = pDesc->vPos.x;
+	m_fY = pDesc->vPos.y;
+	m_fSizeX = pDesc->vSize.x;
+	m_fSizeY = pDesc->vSize.y;
 
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;

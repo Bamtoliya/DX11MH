@@ -97,14 +97,6 @@ _matrix CTransform::Get_WorldMatrix() const
 	{
 		CGameObject* pParentGameObject = m_pOwner->Get_Parent();
 		_matrix finalMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix);
-		/*while (pParentGameObject)
-		{
-			finalMatrix = XMMatrixMultiply(finalMatrix,
-				static_cast<CTransform*>(pParentGameObject->Get_Component(g_strTransformTag))->Get_WorldMatrix());
-			pParentGameObject = pParentGameObject->Get_Parent();
-		}
-
-		return finalMatrix;*/
 		return XMMatrixMultiply(finalMatrix,
 								static_cast<CTransform*>(pParentGameObject->Get_Component(g_strTransformTag))->Get_WorldMatrix());
 	}

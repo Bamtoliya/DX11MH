@@ -42,6 +42,10 @@ void CViewport_2D::Priority_Update(_float fTimeDelta)
 
 void CViewport_2D::Update(_float fTimeDelta)
 {
+    if (KEY_DOWN(DIK_L))
+    {
+        m_bLockPicked = !m_bLockPicked;
+    }
     //m_vImageGridPosition = { -(io.DisplaySize.x / 2.f), -(io.DisplaySize.y / 2.f) }; // 그리드 (0,0) 기준 좌상단 좌표
     //m_vImageGridSize = { io.DisplaySize.x, io.DisplaySize.y };   // 그리드 단위 크기
 }
