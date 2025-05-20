@@ -10,13 +10,20 @@ NS_BEGIN(Engine)
 class CBone final : public CBase
 {
 public:
-	typedef struct tagBoneFromModel
+	typedef struct tagBoneNodeFromModel
 	{
 		_char*	szName;
 		_uint	NumWeights;
 		_float4x4 mOffSetMatrix;
-		_uint	vertexIndex;
-		_float	weight;
+		tagBoneNodeFromModel* pParent;
+	} MODEL_BONE_NODE;
+	typedef struct tagBoneFromModel
+	{
+		_char*	szName;
+		_uint	iNumWeights;
+		_float4x4 mOffSetMatrix;
+		_uint	iVertexIndex;
+		_float	fWeight;
 	} MODEL_BONE;
 private:
 	CBone();

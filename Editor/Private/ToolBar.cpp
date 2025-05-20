@@ -3,7 +3,7 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 
-#pragma region For Converting 
+#pragma region For Converting FBX to Model
 #include "Material.h"
 #include "Mesh.h";
 #include "Bone.h"
@@ -242,6 +242,7 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     ofstream outputFile(pFinalPath, ios::binary);
     if (outputFile.is_open())
     {
+        _uint iNumAnimations = pAiScene->mNumAnimations;
         outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumAnimations), sizeof(_uint));
         outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumMeshes), sizeof(_uint));
         outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumMaterials), sizeof(_uint));
@@ -283,9 +284,18 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
             outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTangents[0]), sizeof(_float3) * iNumVertices);
             outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTextureCoords[0]), sizeof(_float2) * iNumVertices);
             //outputFile.write()
-            if (pAiMesh->mNumBones > 0)
+            if (iNumBones > 0)
             {
-                outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mBones)
+                for (_uint j = 0; j < iNumBones; ++j)
+                {
+                    pAiMesh->mBones[j]->mName;
+                    pAiMesh->mBones[j]->mOffsetMatrix;
+                    pAiMesh->mBones[j]->mNode;
+                    pAiMesh->mBones[j]->mNumWeights;
+                    pAiMesh->mBones[j]->mWeights->mWeight;
+					pAiMesh->mBones[j]->mWeights->mVertexId;
+                }
+                //outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mBones, sizeof();
             }
             if (pAiMesh->mNumAnimMeshes > 0)
             {
@@ -298,10 +308,11 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
             int a = 10;
         }
 
+
         for (_uint i = 0; i < pAiScene->mNumAnimations; ++i)
         {
             aiAnimation* pAiAnimation = pAiScene->mAnimations[i];
-            int a = 10;
+            //int a = 10;
         }
         outputFile.close();
     }
