@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Component.h"
 #include "Material.h"
 #include "Model.h"
@@ -61,26 +61,16 @@ HRESULT CModel::Bind_Bone_Matrices(CShader* pShader, const _char* pConstantName,
 HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {	
 	fs::path filePath(pModelFilePath);
+	m_eType = eType;
 	if(filePath.extension() == L".model")
 	{
-
-		fs::path fileTestPath("../../Assets/Resources/Models/Fiona/Fiona.bin");
-		fs::current_path();
-		ifstream testFile(fileTestPath, std::ios::binary);
-		ifstream inputFile;
-		inputFile.open(filePath, std::ios::binary);
-		//inputFile.open(filePath, std::ios::binary);
-		//inputFile.seekg(0, std::ios::beg);
-
-		_uint iNumMesh = {};
-		_uint iNumMaterial = {};
-		_uint iNumAnimation = {};
+		ifstream inputFile(filePath, std::ios::binary);
 
 		if (inputFile.is_open())
 		{
-			inputFile.read(reinterpret_cast<char*>(&iNumAnimation), sizeof(_uint));
-			inputFile.read(reinterpret_cast<char*>(&iNumMesh), sizeof(_uint));
-			inputFile.read(reinterpret_cast<char*>(&iNumMaterial), sizeof(_uint));
+			inputFile.read(reinterpret_cast<char*>(&m_iNumMeshes), sizeof(_uint));
+			inputFile.read(reinterpret_cast<char*>(&m_iNumMaterials), sizeof(_uint));
+			inputFile.read(reinterpret_cast<char*>(&m_iNumAnimations), sizeof(_uint));
 			if (FAILED(Ready_Bin_Bones(inputFile, -1)))
 				return E_FAIL;
 
@@ -224,11 +214,9 @@ HRESULT CModel::Ready_Bin_Bones(ifstream& ifs, _int iParentBoneIndex)
 {
 	_uint szNameLength = { 0 };
 	CBone::MODEL_BONE_NODE ModelBoneNode = {};
-	string tempTest;
 	ifs.read(reinterpret_cast<char*>(&szNameLength), sizeof(_uint));
 	ModelBoneNode.szName = new _char[szNameLength];
-	tempTest.resize(szNameLength);
-	ifs.read(reinterpret_cast<char*>(&tempTest[0]), sizeof(_char) * szNameLength);
+	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.szName[0]), sizeof(_char) * szNameLength);
 	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.mTransformationMatrix), sizeof(_float4x4));
 	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iParentIndex), sizeof(_int));
 	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iNumChildren), sizeof(_uint));

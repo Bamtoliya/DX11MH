@@ -109,6 +109,7 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, ifstream& ifs)
                 return E_FAIL;
 
             m_SRVs[i].push_back(pSRV);
+            Safe_Delete_Array(szTexturePath);
         }
     }
 

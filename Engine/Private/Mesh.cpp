@@ -21,7 +21,6 @@ HRESULT CMesh::Initialize_Prototype(MODEL eType, ifstream& ifs, const vector<cla
 	ifs.read(reinterpret_cast<char*>(&m_szName[0]), sizeof(_char) * iNameLength);
 	ifs.read(reinterpret_cast<char*>(&m_iMaterialIndex), sizeof(_uint));
 	m_iNumVertexBuffers = 1;
-	ifs.read(reinterpret_cast<char*>(&m_ePrimitiveTopology), sizeof(_uint));
 	ifs.read(reinterpret_cast<char*>(&m_iNumVertices), sizeof(_uint));
 	ifs.read(reinterpret_cast<char*>(&m_iNumBones), sizeof(_uint));
 	ifs.read(reinterpret_cast<char*>(&m_iNumIndices), sizeof(_uint));

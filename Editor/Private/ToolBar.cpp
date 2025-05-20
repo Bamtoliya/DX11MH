@@ -246,10 +246,9 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
 		_uint iNumMeshes = pAiScene->mNumMeshes;
 		_uint iNumMaterials = pAiScene->mNumMaterials;
         _uint iNumAnimations = pAiScene->mNumAnimations;
-        outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumMeshes), sizeof(_uint));
-        outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumMaterials), sizeof(_uint));
-        outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumAnimations), sizeof(_uint));
-
+        outputFile.write(reinterpret_cast<const char*>(&iNumMeshes), sizeof(_uint));
+        outputFile.write(reinterpret_cast<const char*>(&iNumMaterials), sizeof(_uint));
+        outputFile.write(reinterpret_cast<const char*>(&iNumAnimations), sizeof(_uint));
 #pragma region WriteBones
         Write_BoneNode(outputFile, pAiScene->mRootNode, -1);
 #pragma endregion
@@ -282,7 +281,7 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
             {
                 aiBone* pAiBone = pAiMesh->mBones[j];
                 outputFile.write(reinterpret_cast<const char*>(&pAiBone->mName.length), sizeof(_uint));
-                outputFile.write(reinterpret_cast<const char*>(pAiBone->mName.C_Str()), sizeof(_char) * pAiBone->mName.length);
+                outputFile.write(reinterpret_cast<const char*>(&pAiBone->mName), sizeof(_char) * pAiBone->mName.length);
                 outputFile.write(reinterpret_cast<const char*>(&pAiBone->mOffsetMatrix), sizeof(_float4x4));
                 outputFile.write(reinterpret_cast<const char*>(&pAiBone->mNumWeights), sizeof(_uint));
                 for (_uint k = 0; k < pAiBone->mNumWeights; ++k)
@@ -335,8 +334,7 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     }
 
     //순서
-    //본
-    //
+    //본노드
     //메쉬
     ////인덱스
     ////버텍스
@@ -347,90 +345,6 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     ////채널
     ////키프레임
 	//////트랜스폼
-
-//    _uint testNum[3] = {};
-//    ifstream inputFile(pFinalPath, ios::binary);
-//    CMaterial::MODEL_MAT* pModelMat = {};
-//	CMesh::MODEL_MESH* pModelMesh = {};
-//    //CBone::MODEL_BONE* pModelBone = {};
-//    CAnimation::MODEL_ANIMATION* pModelAnim = {};
-//    if(inputFile.is_open())
-//    {
-//        inputFile.read(reinterpret_cast<char*>(&testNum[0]), sizeof(_uint) * 3);
-//
-//        Read_BoneNode(inputFile);
-//#pragma region ReadMeshes
-//        //Read Mesh
-//        /*pModelMesh = new CMesh::MODEL_MESH[testNum[0]];
-//        for (_uint i = 0; i < testNum[0]; ++i)
-//        {
-//            _uint istrLength = {};
-//            inputFile.read(reinterpret_cast<char*>(&istrLength), sizeof(_uint));
-//            pModelMesh->szName = new _char[istrLength];
-//
-//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->szName[0]), sizeof(char) * istrLength);
-//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->iMaterialIndex), sizeof(_uint));
-//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->iPrimitiveTypes), sizeof(_uint));
-//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->iNumVertices), sizeof(_uint));
-//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->iNumBones), sizeof(_uint));
-//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->iNumIndices), sizeof(_uint));
-//
-//            _uint iNumVertices = pModelMesh->iNumVertices;
-//            _uint iNumBones = pModelMesh->iNumBones;
-//            _uint iNumIndcies = pModelMesh->iNumIndices;
-//            pModelMesh->pIndices = new _uint[iNumIndcies];
-//            pModelMesh->pVertices = new _float3[pModelMesh->iNumVertices];
-//            pModelMesh->pNormals = new _float3[pModelMesh->iNumVertices];
-//            pModelMesh->pTangents = new _float3[pModelMesh->iNumVertices];
-//            pModelMesh->pTexcoords = new _float2[pModelMesh->iNumVertices];
-//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->pIndices[0]), sizeof(_uint) * iNumIndcies);
-//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->pVertices[0]), sizeof(_float3) * iNumVertices);
-//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->pNormals[0]), sizeof(_float3) * iNumVertices);
-//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->pTangents[0]), sizeof(_float3) * iNumVertices);
-//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->pTexcoords[0]), sizeof(_float2) * iNumVertices);
-//
-//            for (_uint j = 0; j < iNumBones; ++j)
-//            {
-//                CBone::MODEL_BONE_NODE p
-//                CBone::MODEL_BONE pModelBone = {};
-//                _uint strBoneNameLength = {};
-//                inputFile.read(reinterpret_cast<char*>(&strBoneNameLength), sizeof(_uint));
-//                pModelBone.szName = new char[strBoneNameLength];
-//                inputFile.read(reinterpret_cast<char*>(&pModelBone.szName[0]), sizeof(_char) * strBoneNameLength);
-//                inputFile.read(reinterpret_cast<char*>(&pModelBone.mOffSetMatrix), sizeof(_float4x4));
-//                inputFile.read(reinterpret_cast<char*>(&pModelBone.iNumWeights), sizeof(_uint));
-//                inputFile.read(reinterpret_cast<char*>(&pModelBone.fWeight), sizeof(_float));
-//            }
-//
-//        }*/
-//#pragma endregion
-//
-//#pragma region ReadMaterials
-//        //Read Material
-//        /*pModelMat = new CMaterial::MODEL_MAT[testNum[1]];
-//        for (_uint i = 0; i < testNum[1]; ++i)
-//        {
-//            aiString strTexturePath = {};
-//            inputFile.read(reinterpret_cast<char*>(&pModelMat[i].iNumTexture), sizeof(_uint));
-//            pModelMat[i].strTextureName = new string[pModelMat[i].iNumTexture];
-//            for (_uint j = 0; j < pModelMat[i].iNumTexture; ++i)
-//            {
-//                _uint strLength = {};
-//                inputFile.read(reinterpret_cast<char*>(&strLength), sizeof(_uint));
-//                pModelMat[i].strTextureName[j].resize(strLength);
-//                inputFile.read(reinterpret_cast<char*>(&pModelMat[i].strTextureName[j][0]), sizeof(_char) * strLength);
-//            }
-//        }*/
-//#pragma endregion
-//
-//
-//#pragma region ReadAnimations
-//        //Read Animation
-//
-//#pragma endregion
-//        Safe_Delete_Array(pModelMat);
-//        inputFile.close();
-//    }
 
     return S_OK;
 }
