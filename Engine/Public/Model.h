@@ -27,7 +27,6 @@ public:
 	HRESULT Bind_Bone_Matrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);
 
 public:
-	virtual HRESULT Initialize_Bin_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix);
 	virtual HRESULT Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix);
 	virtual HRESULT Initialize(void* pArg);
 	virtual HRESULT Render(_uint iMeshIndex);
@@ -61,10 +60,10 @@ public:
 	HRESULT Ready_Materials(const _char* pModelFilePath);
 	HRESULT Ready_Animations();
 public:
-	HRESULT Ready_Bin_Bones(const aiNode* pAINode, _int iParentBoneIndex);
-	HRESULT Ready_Bin_Meshes();
-	HRESULT Ready_Bin_Materials(const _char* pModelFilePath);
-	HRESULT Ready_Bin_Animations();
+	HRESULT Ready_Bin_Bones(ifstream& ifs, _int iParentBoneIndex);
+	HRESULT Ready_Bin_Meshes(ifstream& ifs);
+	HRESULT Ready_Bin_Materials(const _char* pModelFilePath, ifstream& ifs);
+	HRESULT Ready_Bin_Animations(ifstream& ifs);
 public:
 	virtual HRESULT RenderImGui() override;
 public:

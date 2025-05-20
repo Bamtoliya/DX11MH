@@ -12,19 +12,18 @@ class CBone final : public CBase
 public:
 	typedef struct tagBoneNodeFromModel
 	{
-		_char*	szName;
-		_uint	NumWeights;
-		_float4x4 mOffSetMatrix;
-		tagBoneNodeFromModel* pParent;
+		_char* szName = {};
+		_float4x4 mTransformationMatrix = {};
+		_uint	iParentIndex = {};
+		_uint	iNumChildren = {};
 	} MODEL_BONE_NODE;
-	typedef struct tagBoneFromModel
+	typedef struct tagBoneFromMesh
 	{
 		_char*	szName;
-		_uint	iNumWeights;
 		_float4x4 mOffSetMatrix;
 		_uint	iVertexIndex;
 		_float	fWeight;
-	} MODEL_BONE;
+	} MESH_BONE;
 private:
 	CBone();
 	virtual ~CBone() = default;
@@ -39,6 +38,7 @@ public:
 	}
 
 public:
+	HRESULT Initialize(const MODEL_BONE_NODE& tBoneNode, _int iParentBoneIndex);
 	HRESULT Initialize(const aiNode* pAINode, _int iParentBoneIndex);
 	void Update_TransformationMatrix(_fmatrix TransformationMatrix);
 	void Update_CombinedTransformationMatrix(const vector<CBone*>& Bones, _fmatrix PreTransformMatrix);
@@ -58,6 +58,7 @@ private:
 	_int					m_iParentBoneIndex = { -1 };
 
 public:
+	static CBone* Create(const MODEL_BONE_NODE& tBoneNode, _int iParentBoneIndex);
 	static CBone* Create(const aiNode* pAINode, _int iParentBoneIndex);
 	virtual void Free() override;
 

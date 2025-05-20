@@ -30,6 +30,12 @@ private:
 	HRESULT Import_Prefab();
 
 	HRESULT Convert_Model(const _tchar* pFilePath);
+	HRESULT Write_Mesh(ofstream& ofs, const _uint iNumMesh);
+	HRESULT Write_Material(ofstream& ofs, const _uint iNumMaterial);
+	HRESULT Write_Animation(ofstream& ofs, const _uint iNumAnimation);
+	HRESULT Write_BoneNode(ofstream& ofs, aiNode* pAiNode, _int iParentBoneIndex);
+	HRESULT Read_BoneNode(ifstream& ifs, class CModel* pModel = nullptr);
+	HRESULT Convert_Texture(const _tchar* pFilePath);
 
 	HRESULT Load_Level();
 	HRESULT Load_Scene();

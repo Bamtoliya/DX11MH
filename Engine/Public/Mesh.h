@@ -11,16 +11,19 @@ public:
 	{
 		_char* szName;
 		_uint iMaterialIndex;
+		_uint iPrimitiveTypes;
 		_uint iNumVertices;
-		_uint iNumIndcies;
+		_uint iNumIndices;
 		_uint iNumBones;
 		_uint iVertexStride;
 		_uint iIndexStride;
-		_uint* indicies;
-		_float3* vertices;
-		_float3* normals;
-		_float3* tangents;
-		_float2* texcoords;
+		_uint* pIndices;
+		_float3* pVertices;
+		_float3* pNormals;
+		_float3* pTangents;
+		_float2* pTexcoords;
+		_float4x4* pOffsetMatrices;
+		_float4x4* pBoneMatrices;
 	} MODEL_MESH;
 private:
 	CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -33,6 +36,7 @@ public:
 	}
 
 public:
+	virtual HRESULT Initialize_Prototype(MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix);
 	virtual HRESULT Initialize_Prototype(MODEL eType, const aiMesh* pAIMesh, const vector<class CBone*>& Bones,  _fmatrix PreTransformMatrix);
 	virtual HRESULT Initialize(void* pArg);
 
@@ -55,7 +59,12 @@ private:
 	HRESULT Ready_NonAnim_Mesh(const aiMesh* pAIMesh, _fmatrix PreTransformMatrix);
 	HRESULT Ready_Anim_Mesh(const aiMesh* pAIMesh, const vector<class CBone*>& Bones);
 
+	HRESULT Ready_NonAnim_Mesh(ifstream& ifs, _fmatrix PreTransformMatrix);
+	HRESULT Ready_Anim_Mesh(ifstream& ifs, const vector<class CBone*>& Bones);
+	
+
 public:
+	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix);
 	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const aiMesh* pAIMesh, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;

@@ -6,6 +6,15 @@ NS_BEGIN(Engine)
 
 class CAnimation final : public CBase
 {
+public:
+	typedef struct tagAnimationFromModel
+	{
+		_float fDuration = 0.f;
+		_float fTickPerSecond = 0.f;
+
+		_uint iNumChannels = 0;
+
+	} MODEL_ANIMATION;
 private:
 	CAnimation();
 	virtual ~CAnimation() = default;

@@ -224,7 +224,7 @@ HRESULT CLoader::Loading_For_Map()
 	/* For.Prototype_Component_Model_Fiona */
 	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../../Assets/Resources/Models/Fiona/Fiona.fbx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../../Assets/Resources/Models/Fiona/Fiona.model", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_ForkLift */

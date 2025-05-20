@@ -4,6 +4,20 @@ CBone::CBone()
 {
 }
 
+HRESULT CBone::Initialize(const MODEL_BONE_NODE& tBoneNode, _int iParentBoneIndex)
+{
+	strcpy_s(m_szName, tBoneNode.szName);
+
+	memcpy(&m_TransformationMatrix, &tBoneNode.mTransformationMatrix, sizeof(_float4x4));
+
+	XMStoreFloat4x4(&m_TransformationMatrix, XMMatrixTranspose(XMLoadFloat4x4(&m_TransformationMatrix)));
+
+	XMStoreFloat4x4(&m_CombinedTransformationMatrix, XMMatrixIdentity());
+
+	m_iParentBoneIndex = iParentBoneIndex;
+	return S_OK;
+}
+
 HRESULT CBone::Initialize(const aiNode* pAINode, _int iParentBoneIndex)
 {
 	strcpy_s(m_szName, pAINode->mName.data);
@@ -28,6 +42,19 @@ void CBone::Update_CombinedTransformationMatrix(const vector<CBone*>& Bones, _fm
 		XMStoreFloat4x4(&m_CombinedTransformationMatrix, 
 			XMLoadFloat4x4(&m_TransformationMatrix) * XMLoadFloat4x4(&Bones[m_iParentBoneIndex]->m_CombinedTransformationMatrix));
 
+}
+
+CBone* CBone::Create(const MODEL_BONE_NODE& tBoneNode, _int iParentIndex)
+{
+	CBone* pInstance = new CBone();
+
+	if (FAILED(pInstance->Initialize(tBoneNode, iParentIndex)))
+	{
+		MSG_BOX("Failed to Created in Binary : CBone");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
 
 CBone* CBone::Create(const aiNode* pAINode, _int iParentBoneIndex)

@@ -5,7 +5,7 @@
 
 #pragma region For Converting FBX to Model
 #include "Material.h"
-#include "Mesh.h";
+#include "Mesh.h"
 #include "Bone.h"
 #include "Animation.h"
 #include "Model.h"
@@ -239,7 +239,8 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     Assimp::Importer asImporter;
     const aiScene* pAiScene = asImporter.ReadFile(WideToUtf8(pFilePath).c_str(), iFlag);
 
-    ofstream outputFile(pFinalPath, ios::binary);
+    ofstream outputFile;
+    outputFile.open(pFinalPath, std::ios::binary | std::ios::trunc);
     if (outputFile.is_open())
     {
 		_uint iNumMeshes = pAiScene->mNumMeshes;
@@ -248,50 +249,63 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
         outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumMeshes), sizeof(_uint));
         outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumMaterials), sizeof(_uint));
         outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumAnimations), sizeof(_uint));
-        
+
+#pragma region WriteBones
+        Write_BoneNode(outputFile, pAiScene->mRootNode, -1);
+#pragma endregion
+
+#pragma region WriteMeshes
         for (_uint i = 0; i < iNumMeshes; ++i)
         {
             aiMesh* pAiMesh = pAiScene->mMeshes[i];
             _uint iNumVertices = pAiMesh->mNumVertices;
-			_uint iNumBones = pAiMesh->mNumBones;
+            _uint iNumBones = pAiMesh->mNumBones;
+            outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mName.length), sizeof(_uint));
+            outputFile.write(reinterpret_cast<const char*>(pAiMesh->mName.C_Str()), sizeof(_char) * pAiMesh->mName.length);
             outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mMaterialIndex), sizeof(_uint));
-            outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mPrimitiveTypes), sizeof(_uint));
-            outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mNumBones), sizeof(_uint));
             outputFile.write(reinterpret_cast<const char*>(&iNumVertices), sizeof(_uint));
+            outputFile.write(reinterpret_cast<const char*>(&iNumBones), sizeof(_uint));
             _uint iNumIndcies = pAiMesh->mNumFaces * pAiMesh->mFaces->mNumIndices;
-            
             outputFile.write(reinterpret_cast<const char*>(&iNumIndcies), sizeof(_uint));
-            //outputFile.write(reinterpret_cast<const char*>(pAiMesh->mBones), )
-            outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mFaces->mIndices), sizeof(_uint) * iNumIndcies);
-            outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mVertices[0]), sizeof(_float3) * iNumVertices);
-            outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mNormals[0]), sizeof(_float3) * iNumVertices);
-            outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTangents[0]), sizeof(_float3) * iNumVertices);
-            outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTextureCoords[0]), sizeof(_float2) * iNumVertices);
-            //outputFile.write()
-            if (iNumBones > 0)
-            {
-                for (_uint j = 0; j < iNumBones; ++j)
-                {
-                    pAiMesh->mBones[j]->mName;
-                    pAiMesh->mBones[j]->mOffsetMatrix;
-                    pAiMesh->mBones[j]->mNode;
-                    pAiMesh->mBones[j]->mNumWeights;
-                    pAiMesh->mBones[j]->mWeights->mWeight;
-					pAiMesh->mBones[j]->mWeights->mVertexId;
-                }
-                //outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mBones, sizeof();
-            }
-            if (pAiMesh->mNumAnimMeshes > 0)
-            {
+            
+            //outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mFaces->mIndices[0]), sizeof(_uint) * iNumIndcies);
 
+            for (_uint j = 0; j < pAiMesh->mNumVertices; ++j)
+            {
+                outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mVertices[j]), sizeof(_float3));
+                outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mNormals[j]), sizeof(_float3));
+                outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTangents[j]), sizeof(_float3));
+                outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTextureCoords[0][j]), sizeof(_float2));
             }
-            //outputFile.write(reinterpret_cast<const char*>(pAiMesh->mNum), sizeof(_uint));
-            //pAiMesh.
-            //for(int )
-            //pAiMesh->mNumBones;
-            int a = 10;
+
+            for (_uint j = 0; j < iNumBones; ++j)
+            {
+                aiBone* pAiBone = pAiMesh->mBones[j];
+                outputFile.write(reinterpret_cast<const char*>(&pAiBone->mName.length), sizeof(_uint));
+                outputFile.write(reinterpret_cast<const char*>(pAiBone->mName.C_Str()), sizeof(_char) * pAiBone->mName.length);
+                outputFile.write(reinterpret_cast<const char*>(&pAiBone->mOffsetMatrix), sizeof(_float4x4));
+                outputFile.write(reinterpret_cast<const char*>(&pAiBone->mNumWeights), sizeof(_uint));
+                for (_uint k = 0; k < pAiBone->mNumWeights; ++k)
+                {
+                    outputFile.write(reinterpret_cast<const char*>(&pAiBone->mWeights[k].mVertexId), sizeof(_uint));
+                    outputFile.write(reinterpret_cast<const char*>(&pAiBone->mWeights[k].mWeight), sizeof(_float));
+                }
+            }
+
+#pragma region Indices
+
+            for (_uint j = 0; j < pAiMesh->mNumFaces; ++j)
+            {
+                outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mFaces[j].mIndices[0]), sizeof(_uint) * 3);
+            }
+#pragma endregion
         }
 
+
+#pragma endregion
+
+        
+#pragma region WriteMatrials
         for (_uint i = 0; i < iNumMaterials; ++i)
         {
             aiMaterial* pAiMaterial = pAiScene->mMaterials[i];
@@ -299,34 +313,34 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
             {
                 _uint iNumTextureCount = pAiMaterial->GetTextureCount(static_cast<aiTextureType>(j));
                 outputFile.write(reinterpret_cast<const char*>(&iNumTextureCount), sizeof(_uint));
-                for (_uint k = 0; k < pAiMaterial->GetTextureCount(static_cast<aiTextureType>(j)); ++k)
+                for (_uint k = 0; k < iNumTextureCount; ++k)
                 {
                     aiString strTexturePath = {};
                     pAiMaterial->GetTexture(static_cast<aiTextureType>(j), k, &strTexturePath);
                     outputFile.write(reinterpret_cast<const char*>(&strTexturePath.length), sizeof(_uint));
                     outputFile.write(reinterpret_cast<const char*>(strTexturePath.C_Str()), sizeof(_char) * strTexturePath.length);
-                    outputFile.write(reinterpret_cast<const char*>(&j), sizeof(_uint));
                 }
             }
         }
-
-
-        if (iNumAnimations > 0)
+#pragma endregion
+   
+#pragma region WriteAnimations
+        for (_uint i = 0; i < iNumAnimations; ++i)
         {
-            for (_uint i = 0; i < iNumAnimations; ++i)
-            {
-                aiAnimation* pAiAnimation = pAiScene->mAnimations[i];
-                //int a = 10;
-            }
+            aiAnimation* pAiAnimation = pAiScene->mAnimations[i];
+            //int a = 10;
         }
+#pragma endregion
         outputFile.close();
     }
 
     //순서
+    //본
+    //
     //메쉬
+    ////인덱스
     ////버텍스
-	////인덱스
-    ////본
+    ////본정보
     //마테리얼
     ////텍스쳐
     //애니메이션
@@ -334,34 +348,123 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     ////키프레임
 	//////트랜스폼
 
-    _uint testNum[3] = {};
-    ifstream inputFile(pFinalPath, ios::binary);
-    CMaterial::MODEL_MAT* pModelMat = {};
-    if(inputFile.is_open())
+//    _uint testNum[3] = {};
+//    ifstream inputFile(pFinalPath, ios::binary);
+//    CMaterial::MODEL_MAT* pModelMat = {};
+//	CMesh::MODEL_MESH* pModelMesh = {};
+//    //CBone::MODEL_BONE* pModelBone = {};
+//    CAnimation::MODEL_ANIMATION* pModelAnim = {};
+//    if(inputFile.is_open())
+//    {
+//        inputFile.read(reinterpret_cast<char*>(&testNum[0]), sizeof(_uint) * 3);
+//
+//        Read_BoneNode(inputFile);
+//#pragma region ReadMeshes
+//        //Read Mesh
+//        /*pModelMesh = new CMesh::MODEL_MESH[testNum[0]];
+//        for (_uint i = 0; i < testNum[0]; ++i)
+//        {
+//            _uint istrLength = {};
+//            inputFile.read(reinterpret_cast<char*>(&istrLength), sizeof(_uint));
+//            pModelMesh->szName = new _char[istrLength];
+//
+//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->szName[0]), sizeof(char) * istrLength);
+//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->iMaterialIndex), sizeof(_uint));
+//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->iPrimitiveTypes), sizeof(_uint));
+//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->iNumVertices), sizeof(_uint));
+//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->iNumBones), sizeof(_uint));
+//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->iNumIndices), sizeof(_uint));
+//
+//            _uint iNumVertices = pModelMesh->iNumVertices;
+//            _uint iNumBones = pModelMesh->iNumBones;
+//            _uint iNumIndcies = pModelMesh->iNumIndices;
+//            pModelMesh->pIndices = new _uint[iNumIndcies];
+//            pModelMesh->pVertices = new _float3[pModelMesh->iNumVertices];
+//            pModelMesh->pNormals = new _float3[pModelMesh->iNumVertices];
+//            pModelMesh->pTangents = new _float3[pModelMesh->iNumVertices];
+//            pModelMesh->pTexcoords = new _float2[pModelMesh->iNumVertices];
+//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->pIndices[0]), sizeof(_uint) * iNumIndcies);
+//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->pVertices[0]), sizeof(_float3) * iNumVertices);
+//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->pNormals[0]), sizeof(_float3) * iNumVertices);
+//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->pTangents[0]), sizeof(_float3) * iNumVertices);
+//            inputFile.read(reinterpret_cast<char*>(&pModelMesh->pTexcoords[0]), sizeof(_float2) * iNumVertices);
+//
+//            for (_uint j = 0; j < iNumBones; ++j)
+//            {
+//                CBone::MODEL_BONE_NODE p
+//                CBone::MODEL_BONE pModelBone = {};
+//                _uint strBoneNameLength = {};
+//                inputFile.read(reinterpret_cast<char*>(&strBoneNameLength), sizeof(_uint));
+//                pModelBone.szName = new char[strBoneNameLength];
+//                inputFile.read(reinterpret_cast<char*>(&pModelBone.szName[0]), sizeof(_char) * strBoneNameLength);
+//                inputFile.read(reinterpret_cast<char*>(&pModelBone.mOffSetMatrix), sizeof(_float4x4));
+//                inputFile.read(reinterpret_cast<char*>(&pModelBone.iNumWeights), sizeof(_uint));
+//                inputFile.read(reinterpret_cast<char*>(&pModelBone.fWeight), sizeof(_float));
+//            }
+//
+//        }*/
+//#pragma endregion
+//
+//#pragma region ReadMaterials
+//        //Read Material
+//        /*pModelMat = new CMaterial::MODEL_MAT[testNum[1]];
+//        for (_uint i = 0; i < testNum[1]; ++i)
+//        {
+//            aiString strTexturePath = {};
+//            inputFile.read(reinterpret_cast<char*>(&pModelMat[i].iNumTexture), sizeof(_uint));
+//            pModelMat[i].strTextureName = new string[pModelMat[i].iNumTexture];
+//            for (_uint j = 0; j < pModelMat[i].iNumTexture; ++i)
+//            {
+//                _uint strLength = {};
+//                inputFile.read(reinterpret_cast<char*>(&strLength), sizeof(_uint));
+//                pModelMat[i].strTextureName[j].resize(strLength);
+//                inputFile.read(reinterpret_cast<char*>(&pModelMat[i].strTextureName[j][0]), sizeof(_char) * strLength);
+//            }
+//        }*/
+//#pragma endregion
+//
+//
+//#pragma region ReadAnimations
+//        //Read Animation
+//
+//#pragma endregion
+//        Safe_Delete_Array(pModelMat);
+//        inputFile.close();
+//    }
+
+    return S_OK;
+}
+
+HRESULT CToolBar::Write_BoneNode(ofstream& ofs, aiNode* pAiNode, _int iParentBoneIndex)
+{
+	ofs.write(reinterpret_cast<const char*>(&pAiNode->mName.length), sizeof(_uint));
+	ofs.write(reinterpret_cast<const char*>(pAiNode->mName.C_Str()), sizeof(_char) * pAiNode->mName.length);
+	ofs.write(reinterpret_cast<const char*>(&pAiNode->mTransformation), sizeof(_float4x4));
+	ofs.write(reinterpret_cast<const char*>(&iParentBoneIndex), sizeof(_int));
+	ofs.write(reinterpret_cast<const char*>(&pAiNode->mNumChildren), sizeof(_uint));
+
+    int iParentIndex = iParentBoneIndex + 1;
+    for (_uint i = 0; i < pAiNode->mNumChildren; ++i)
     {
-        inputFile.read(reinterpret_cast<char*>(&testNum[0]), sizeof(_uint) * 3);
-        pModelMat = new CMaterial::MODEL_MAT[testNum[2]];
-        for (_uint i = 0; i < testNum[1]; ++i)
-        {
-            aiString strTexturePath = {};
-            inputFile.read(reinterpret_cast<char*>(&pModelMat[i].iNumTexture), sizeof(_uint));
-            pModelMat[i].strTextureName = new string[pModelMat[i].iNumTexture];
-            pModelMat[i].iTypeTexture = new _uint[pModelMat[i].iNumTexture];
-            for (_uint j = 0; j < pModelMat[i].iNumTexture; ++i)
-            {
-                _uint strLength = {};
-                inputFile.read(reinterpret_cast<char*>(&strLength), sizeof(_uint));
-                pModelMat[i].strTextureName[j].resize(strLength);
-                inputFile.read(reinterpret_cast<char*>(&pModelMat[i].strTextureName[j][0]), sizeof(_char) * strLength);
-                inputFile.read(reinterpret_cast<char*>(&pModelMat[i].iTypeTexture[j]), sizeof(_uint));
-            }
-        } 
-
-
-        Safe_Delete_Array(pModelMat);
-        inputFile.close();
+        Write_BoneNode(ofs, pAiNode->mChildren[i], iParentIndex);
     }
+    return S_OK;
+}
 
+HRESULT CToolBar::Read_BoneNode(ifstream& ifs, CModel* pModel)
+{
+    _uint szNameLength = { 0 };
+    CBone::MODEL_BONE_NODE ModelBoneNode;
+	ifs.read(reinterpret_cast<char*>(&szNameLength), sizeof(_uint));
+	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.szName[0]), sizeof(_char) * szNameLength);
+	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.mTransformationMatrix), sizeof(_float4x4));
+	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iParentIndex), sizeof(_int));
+	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iNumChildren), sizeof(_uint));
+
+    for (_uint i = 0; i < ModelBoneNode.iNumChildren; ++i)
+    {
+        Read_BoneNode(ifs, pModel);
+    }
     return S_OK;
 }
 

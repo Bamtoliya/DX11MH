@@ -8,6 +8,14 @@ NS_BEGIN(Engine)
 
 class CChannel final : public CBase
 {
+public:
+	typedef struct tagChannelFromModel
+	{
+		_char* m_szName;
+		_uint iNumKeyFrames;
+		KEYFRAME* pKeyFrames;
+		_uint iBoneIndex;
+	} MODEL_CHANNEL;
 private:
 	CChannel();
 	virtual ~CChannel() = default;

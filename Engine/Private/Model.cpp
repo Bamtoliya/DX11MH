@@ -6,6 +6,8 @@
 #include "Bone.h"
 #include "Animation.h"
 
+namespace fs = std::filesystem;
+
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent{ pDevice, pContext }
 {
@@ -56,85 +58,73 @@ HRESULT CModel::Bind_Bone_Matrices(CShader* pShader, const _char* pConstantName,
 	return m_Meshes[iMeshIndex]->Bind_Bone_Matrices(pShader, pConstantName, m_Bones);	
 }
 
-HRESULT CModel::Initialize_Bin_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
-{
-	_uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
-	ifstream inputFile(pModelFilePath, ios::binary);
-
-	if (inputFile.is_open()) {
-		//// MyData 구조체 크기만큼 파일에서 읽어옴
-		//inputFile.read(reinterpret_cast<char*>(&outData), sizeof(MyData));
-
-		//if (inputFile.gcount() != sizeof(MyData)) { // 실제로 읽은 바이트 수 확인
-		//	std::cerr << "파일 읽기 오류: 예상한 크기만큼 읽지 못했습니다." << std::endl;
-		//	inputFile.close();
-		//	return false;
-		//}
-		//inputFile.close();
-		//return true;
-	}
-	else {
-		std::cerr << "파일을 열 수 없습니다: " << pModelFilePath << std::endl;
-		return E_FAIL;
-	}
-
-	if (MODEL::NONANIM == eType)
-		iFlag |= aiProcess_PreTransformVertices;
-
-	m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
-
-	if (nullptr == m_pAIScene)
-		return E_FAIL;
-
-	XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
-
-	m_eType = eType;
-
-	if (FAILED(Ready_Bones(m_pAIScene->mRootNode, -1)))
-		return E_FAIL;
-
-	if (FAILED(Ready_Meshes()))
-		return E_FAIL;
-
-	if (FAILED(Ready_Materials(pModelFilePath)))
-		return E_FAIL;
-
-	/* 각 애니메이션 마다 이용하고 있는 뼈대들의 시간에 맞는 상태값들을 미리 읽어서 저장해둔다. */
-	if (FAILED(Ready_Animations()))
-		return E_FAIL;
-
-	return S_OK;
-}
-
 HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {	
+	fs::path filePath(pModelFilePath);
+	if(filePath.extension() == L".model")
+	{
 
-	_uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
-	
-	if (MODEL::NONANIM == eType)
-		iFlag |= aiProcess_PreTransformVertices;
+		fs::path fileTestPath("../../Assets/Resources/Models/Fiona/Fiona.bin");
+		fs::current_path();
+		ifstream testFile(fileTestPath, std::ios::binary);
+		ifstream inputFile;
+		inputFile.open(filePath, std::ios::binary);
+		//inputFile.open(filePath, std::ios::binary);
+		//inputFile.seekg(0, std::ios::beg);
 
-	m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
+		_uint iNumMesh = {};
+		_uint iNumMaterial = {};
+		_uint iNumAnimation = {};
 
-	if (nullptr == m_pAIScene)
-		return E_FAIL;
+		if (inputFile.is_open())
+		{
+			inputFile.read(reinterpret_cast<char*>(&iNumAnimation), sizeof(_uint));
+			inputFile.read(reinterpret_cast<char*>(&iNumMesh), sizeof(_uint));
+			inputFile.read(reinterpret_cast<char*>(&iNumMaterial), sizeof(_uint));
+			if (FAILED(Ready_Bin_Bones(inputFile, -1)))
+				return E_FAIL;
 
-	XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
+			if (FAILED(Ready_Bin_Meshes(inputFile)))
+				return E_FAIL;
 
-	m_eType = eType;
+			if (FAILED(Ready_Bin_Materials(pModelFilePath, inputFile)))
+				return E_FAIL;
 
-	if (FAILED(Ready_Bones(m_pAIScene->mRootNode, -1)))
-		return E_FAIL;
+			/* 각 애니메이션 마다 이용하고 있는 뼈대들의 시간에 맞는 상태값들을 미리 읽어서 저장해둔다. */
+			if (FAILED(Ready_Bin_Animations(inputFile)))
+				return E_FAIL;
+			inputFile.close();
+		}
+	}
+	else
+	{
+		_uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
 
-	if (FAILED(Ready_Meshes()))
-		return E_FAIL;
+		if (MODEL::NONANIM == eType)
+			iFlag |= aiProcess_PreTransformVertices;
 
-	if (FAILED(Ready_Materials(pModelFilePath)))
-		return E_FAIL;
+		m_pAIScene = m_Importer.ReadFile(pModelFilePath, iFlag);
 
-	/* 각 애니메이션 마다 이용하고 있는 뼈대들의 시간에 맞는 상태값들을 미리 읽어서 저장해둔다. */
-	if (FAILED(Ready_Animations()))
-		return E_FAIL;
+		if (nullptr == m_pAIScene)
+			return E_FAIL;
+
+		XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
+
+		m_eType = eType;
+
+		if (FAILED(Ready_Bones(m_pAIScene->mRootNode, -1)))
+			return E_FAIL;
+
+		if (FAILED(Ready_Meshes()))
+			return E_FAIL;
+
+		if (FAILED(Ready_Materials(pModelFilePath)))
+			return E_FAIL;
+
+		/* 각 애니메이션 마다 이용하고 있는 뼈대들의 시간에 맞는 상태값들을 미리 읽어서 저장해둔다. */
+		if (FAILED(Ready_Animations()))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -230,22 +220,58 @@ HRESULT CModel::Ready_Animations()
 	return S_OK;
 }
 
-HRESULT CModel::Ready_Bin_Bones(const aiNode* pAINode, _int iParentBoneIndex)
+HRESULT CModel::Ready_Bin_Bones(ifstream& ifs, _int iParentBoneIndex)
 {
+	_uint szNameLength = { 0 };
+	CBone::MODEL_BONE_NODE ModelBoneNode = {};
+	string tempTest;
+	ifs.read(reinterpret_cast<char*>(&szNameLength), sizeof(_uint));
+	ModelBoneNode.szName = new _char[szNameLength];
+	tempTest.resize(szNameLength);
+	ifs.read(reinterpret_cast<char*>(&tempTest[0]), sizeof(_char) * szNameLength);
+	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.mTransformationMatrix), sizeof(_float4x4));
+	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iParentIndex), sizeof(_int));
+	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iNumChildren), sizeof(_uint));
+	CBone* pBone = CBone::Create(ModelBoneNode, iParentBoneIndex);
+	Safe_Delete_Array(ModelBoneNode.szName);
+	m_Bones.push_back(pBone);
+	_int		iParentIndex = m_Bones.size() - 1;
+
+	for (_uint i = 0; i < ModelBoneNode.iNumChildren; ++i)
+	{
+		Ready_Bin_Bones(ifs, iParentIndex);
+	}
 	return S_OK;
 }
 
-HRESULT CModel::Ready_Bin_Meshes()
+HRESULT CModel::Ready_Bin_Meshes(ifstream& ifs)
 {
+	for (_uint i = 0; i < m_iNumMeshes; ++i)
+	{
+		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, ifs, m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix));
+		if (nullptr == pMesh)
+			return E_FAIL;
+
+		m_Meshes.push_back(pMesh);
+	}
 	return S_OK;
 }
 
-HRESULT CModel::Ready_Bin_Materials(const _char* pModelFilePath)
+HRESULT CModel::Ready_Bin_Materials(const _char* pModelFilePath, ifstream& ifs)
 {
+	for (size_t i = 0; i < m_iNumMaterials; i++)
+	{
+		CMaterial* pMaterial = CMaterial::Create(m_pDevice, m_pContext, pModelFilePath, ifs);
+		if (nullptr == pMaterial)
+			return E_FAIL;
+
+		m_Materials.push_back(pMaterial);
+	}
+	return S_OK;
 	return S_OK;
 }
 
-HRESULT CModel::Ready_Bin_Animations()
+HRESULT CModel::Ready_Bin_Animations(ifstream& ifs)
 {
 	return S_OK;
 }
