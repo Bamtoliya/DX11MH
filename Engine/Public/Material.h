@@ -10,7 +10,7 @@ public:
 	typedef struct tagMaterialFromModel
 	{
 		_uint iNumTexture = {};
-		const _char* szTextureName[MAX_PATH] = {};
+		string* strTextureName = {};
 		_uint* iTypeTexture = {};
 	} MODEL_MAT;
 private:

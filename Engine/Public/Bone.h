@@ -9,6 +9,15 @@ NS_BEGIN(Engine)
 
 class CBone final : public CBase
 {
+public:
+	typedef struct tagBoneFromModel
+	{
+		_char*	szName;
+		_uint	NumWeights;
+		_float4x4 mOffSetMatrix;
+		_uint	vertexIndex;
+		_float	weight;
+	} MODEL_BONE;
 private:
 	CBone();
 	virtual ~CBone() = default;

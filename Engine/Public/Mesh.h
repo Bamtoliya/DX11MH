@@ -6,6 +6,22 @@ NS_BEGIN(Engine)
 
 class ENGINE_DLL CMesh final : public CVIBuffer
 {
+public:
+	typedef struct tagMeshFromModel
+	{
+		_char* szName;
+		_uint iMaterialIndex;
+		_uint iNumVertices;
+		_uint iNumIndcies;
+		_uint iNumBones;
+		_uint iVertexStride;
+		_uint iIndexStride;
+		_uint* indicies;
+		_float3* vertices;
+		_float3* normals;
+		_float3* tangents;
+		_float2* texcoords;
+	} MODEL_MESH;
 private:
 	CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CMesh(const CMesh& Prototype);
