@@ -75,9 +75,9 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, ifstream& ifs)
             _uint iTexturePathLength = {};
             
             ifs.read(reinterpret_cast<char*>(&iTexturePathLength), sizeof(_uint));
-            _char* szTexturePath = new _char[iTexturePathLength];
+            _char* szTexturePath = new _char[iTexturePathLength+1];
             ifs.read(reinterpret_cast<char*>(&szTexturePath[0]), sizeof(_char) * iTexturePathLength);
-            filesystem::path tempPath(pModelFilePath);
+            szTexturePath[iTexturePathLength] = '\0';
 
             _char       szFullPath[MAX_PATH] = {};
             _char       szDrive[MAX_PATH] = {};

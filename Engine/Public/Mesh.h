@@ -44,7 +44,8 @@ public:
 	HRESULT Bind_Bone_Matrices(class CShader* pShader, const _char* pConstantName, const vector<class CBone*>& Bones);
 
 private:
-	_char			m_szName[MAX_PATH] = {};	_uint			m_iMaterialIndex = {};
+	_char			m_szName[MAX_PATH] = {};
+	_uint			m_iMaterialIndex = {};
 
 	/* 모델에 선언된 전체뼈(x) */
 	/* 전체 뼈들 중, 이 메시에 영향을 주는 뼈들만골라서 모아놓은 컨테이너. */

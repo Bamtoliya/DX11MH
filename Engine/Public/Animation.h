@@ -11,7 +11,6 @@ public:
 	{
 		_float fDuration = 0.f;
 		_float fTickPerSecond = 0.f;
-
 		_uint iNumChannels = 0;
 
 	} MODEL_ANIMATION;
@@ -20,6 +19,7 @@ private:
 	virtual ~CAnimation() = default;
 
 public:
+	HRESULT Initialize(ifstream& ifs, const vector<class CBone*>& Bones);
 	HRESULT Initialize(const aiAnimation* pAIAnimation, const vector<class CBone*>& Bones);
 
 	void Update_Bones(_float fTimeDelta, const vector<CBone*>& Bones, _bool isLoop);
@@ -33,7 +33,10 @@ private:
 	_uint					m_iNumChannels;	
 	vector<class CChannel*>	m_Channels;
 
+	_char*					m_szName[MAX_PATH] = {};
+
 public:
+	static CAnimation* Create(ifstream& ifs, const vector<class CBone*>& Bones);
 	static CAnimation* Create(const aiAnimation* pAIAnimation, const vector<class CBone*>& Bones);
 	virtual void Free() override;
 };

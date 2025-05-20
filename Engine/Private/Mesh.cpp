@@ -18,7 +18,9 @@ HRESULT CMesh::Initialize_Prototype(MODEL eType, ifstream& ifs, const vector<cla
 	
 	_uint iNameLength = {};
 	ifs.read(reinterpret_cast<char*>(&iNameLength), sizeof(_uint));
+	ZeroMemory(&m_szName, MAX_PATH);
 	ifs.read(reinterpret_cast<char*>(&m_szName[0]), sizeof(_char) * iNameLength);
+	m_szName[iNameLength] = '\0';
 	ifs.read(reinterpret_cast<char*>(&m_iMaterialIndex), sizeof(_uint));
 	m_iNumVertexBuffers = 1;
 	ifs.read(reinterpret_cast<char*>(&m_iNumVertices), sizeof(_uint));
@@ -384,8 +386,9 @@ HRESULT CMesh::Ready_Anim_Mesh(ifstream& ifs, const vector<class CBone*>& Bones)
 		/* 이 메시에 어떤 정점들게 영향을 줍니다. and 얼마나 영향을 줍니다. */
 		_uint	iNameLength = {};
 		ifs.read(reinterpret_cast<char*>(&iNameLength), sizeof(_uint));
-		_char* szName = new _char[iNameLength];
+		_char* szName = new _char[iNameLength+1];
 		ifs.read(reinterpret_cast<char*>(&szName[0]), sizeof(_char) * iNameLength);
+		szName[iNameLength] = '\0';
 
 		_float4x4		OffsetMatrix = {};
 

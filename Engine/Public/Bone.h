@@ -12,7 +12,7 @@ class CBone final : public CBase
 public:
 	typedef struct tagBoneNodeFromModel
 	{
-		_char szName[MAX_PATH] = {};
+		_char* szName = {};
 		_float4x4 mTransformationMatrix = {};
 		_uint	iParentIndex = {};
 		_uint	iNumChildren = {};

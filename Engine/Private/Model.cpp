@@ -215,8 +215,9 @@ HRESULT CModel::Ready_Bin_Bones(ifstream& ifs, _int iParentBoneIndex)
 	_uint szNameLength = { 0 };
 	CBone::MODEL_BONE_NODE ModelBoneNode = {};
 	ifs.read(reinterpret_cast<char*>(&szNameLength), sizeof(_uint));
-	ModelBoneNode.szName = new _char[szNameLength];
+	ModelBoneNode.szName = new _char[szNameLength+1];
 	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.szName[0]), sizeof(_char) * szNameLength);
+	ModelBoneNode.szName[szNameLength] = '\0';
 	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.mTransformationMatrix), sizeof(_float4x4));
 	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iParentIndex), sizeof(_int));
 	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iNumChildren), sizeof(_uint));
@@ -256,11 +257,19 @@ HRESULT CModel::Ready_Bin_Materials(const _char* pModelFilePath, ifstream& ifs)
 		m_Materials.push_back(pMaterial);
 	}
 	return S_OK;
-	return S_OK;
 }
 
 HRESULT CModel::Ready_Bin_Animations(ifstream& ifs)
 {
+	for (size_t i = 0; i < m_iNumAnimations; i++)
+	{
+		CAnimation* pAnimation = CAnimation::Create(ifs, m_Bones);
+		if (nullptr == pAnimation)
+			return E_FAIL;
+
+		m_Animations.push_back(pAnimation);
+	}
+
 	return S_OK;
 }
 

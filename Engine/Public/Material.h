@@ -10,7 +10,7 @@ public:
 	typedef struct tagMaterialFromModel
 	{
 		_uint iNumTexture = {};
-		string* strTextureName = {};
+		_char* szTextureName = {};
 	} MODEL_MAT;
 
 	enum class TEXTURE_TYPE : _uint

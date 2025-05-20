@@ -21,6 +21,7 @@ private:
 	virtual ~CChannel() = default;
 
 public:
+	HRESULT Initialize(ifstream& ifs, const vector<class CBone*>& Bones);
 	HRESULT Initialize(const aiNodeAnim* pAIChannel, const vector<class CBone*>& Bones);
 	void Update_TransformationMatrix(_float fCurrentTrackPosition, const vector<class CBone*>& Bones);
 
@@ -33,6 +34,7 @@ private:
 	
 
 public:
+	static CChannel* Create(ifstream& ifs, const vector<class CBone*>& Bones);
 	static CChannel* Create(const aiNodeAnim* pAIChannel, const vector<class CBone*>& Bones);
 	virtual void Free() override;
 
