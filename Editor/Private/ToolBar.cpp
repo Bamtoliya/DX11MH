@@ -242,30 +242,14 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     ofstream outputFile(pFinalPath, ios::binary);
     if (outputFile.is_open())
     {
+		_uint iNumMeshes = pAiScene->mNumMeshes;
+		_uint iNumMaterials = pAiScene->mNumMaterials;
         _uint iNumAnimations = pAiScene->mNumAnimations;
-        outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumAnimations), sizeof(_uint));
         outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumMeshes), sizeof(_uint));
         outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumMaterials), sizeof(_uint));
-        for (_uint i = 0; i < pAiScene->mNumMaterials; ++i)
-        {
-            aiMaterial* pAiMaterial = pAiScene->mMaterials[i];
-            for (size_t j = 1; j < AI_TEXTURE_TYPE_MAX; ++j)
-            {
-                _uint iNumTextureCount = pAiMaterial->GetTextureCount(static_cast<aiTextureType>(j));
-                outputFile.write(reinterpret_cast<const char*>(&iNumTextureCount), sizeof(_uint));
-                for (_uint k = 0; k < pAiMaterial->GetTextureCount(static_cast<aiTextureType>(j)); ++k)
-                {
-                    aiString strTexturePath = {};
-                    pAiMaterial->GetTexture(static_cast<aiTextureType>(j), k, &strTexturePath);
-                    outputFile.write(reinterpret_cast<const char*>(&strTexturePath.length), sizeof(_uint));
-                    outputFile.write(reinterpret_cast<const char*>(strTexturePath.C_Str()), sizeof(_char) * strTexturePath.length);
-                    outputFile.write(reinterpret_cast<const char*>(&j), sizeof(_uint));
-                }
-            }
-        }
+        outputFile.write(reinterpret_cast<const char*>(&pAiScene->mNumAnimations), sizeof(_uint));
         
-
-        for (_uint i = 0; i < pAiScene->mNumMeshes; ++i)
+        for (_uint i = 0; i < iNumMeshes; ++i)
         {
             aiMesh* pAiMesh = pAiScene->mMeshes[i];
             _uint iNumVertices = pAiMesh->mNumVertices;
@@ -308,25 +292,56 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
             int a = 10;
         }
 
-
-        for (_uint i = 0; i < pAiScene->mNumAnimations; ++i)
+        for (_uint i = 0; i < iNumMaterials; ++i)
         {
-            aiAnimation* pAiAnimation = pAiScene->mAnimations[i];
-            //int a = 10;
+            aiMaterial* pAiMaterial = pAiScene->mMaterials[i];
+            for (size_t j = 1; j < AI_TEXTURE_TYPE_MAX; ++j)
+            {
+                _uint iNumTextureCount = pAiMaterial->GetTextureCount(static_cast<aiTextureType>(j));
+                outputFile.write(reinterpret_cast<const char*>(&iNumTextureCount), sizeof(_uint));
+                for (_uint k = 0; k < pAiMaterial->GetTextureCount(static_cast<aiTextureType>(j)); ++k)
+                {
+                    aiString strTexturePath = {};
+                    pAiMaterial->GetTexture(static_cast<aiTextureType>(j), k, &strTexturePath);
+                    outputFile.write(reinterpret_cast<const char*>(&strTexturePath.length), sizeof(_uint));
+                    outputFile.write(reinterpret_cast<const char*>(strTexturePath.C_Str()), sizeof(_char) * strTexturePath.length);
+                    outputFile.write(reinterpret_cast<const char*>(&j), sizeof(_uint));
+                }
+            }
+        }
+
+
+        if (iNumAnimations > 0)
+        {
+            for (_uint i = 0; i < iNumAnimations; ++i)
+            {
+                aiAnimation* pAiAnimation = pAiScene->mAnimations[i];
+                //int a = 10;
+            }
         }
         outputFile.close();
     }
+
+    //순서
+    //메쉬
+    ////버텍스
+	////인덱스
+    ////본
+    //마테리얼
+    ////텍스쳐
+    //애니메이션
+    ////채널
+    ////키프레임
+	//////트랜스폼
 
     _uint testNum[3] = {};
     ifstream inputFile(pFinalPath, ios::binary);
     CMaterial::MODEL_MAT* pModelMat = {};
     if(inputFile.is_open())
     {
-        inputFile.read(reinterpret_cast<char*>(&testNum[0]), sizeof(_uint));
-        inputFile.read(reinterpret_cast<char*>(&testNum[1]), sizeof(_uint));
-        inputFile.read(reinterpret_cast<char*>(&testNum[2]), sizeof(_uint));
+        inputFile.read(reinterpret_cast<char*>(&testNum[0]), sizeof(_uint) * 3);
         pModelMat = new CMaterial::MODEL_MAT[testNum[2]];
-        for (_uint i = 0; i < testNum[2]; ++i)
+        for (_uint i = 0; i < testNum[1]; ++i)
         {
             aiString strTexturePath = {};
             inputFile.read(reinterpret_cast<char*>(&pModelMat[i].iNumTexture), sizeof(_uint));
