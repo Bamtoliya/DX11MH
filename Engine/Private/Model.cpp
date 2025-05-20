@@ -71,6 +71,9 @@ HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _
 			inputFile.read(reinterpret_cast<char*>(&m_iNumMeshes), sizeof(_uint));
 			inputFile.read(reinterpret_cast<char*>(&m_iNumMaterials), sizeof(_uint));
 			inputFile.read(reinterpret_cast<char*>(&m_iNumAnimations), sizeof(_uint));
+
+			XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
+
 			if (FAILED(Ready_Bin_Bones(inputFile, -1)))
 				return E_FAIL;
 

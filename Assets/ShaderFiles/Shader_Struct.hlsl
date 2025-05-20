@@ -40,6 +40,16 @@ struct VS_CUBE_IN
     float3 vTexcoord : TEXCOORD0;
 };
 
+struct VS_ANIM_IN
+{
+    float3 vPosition : POSITION;
+    float3 vNormal : NORMAL;
+    float3 vTangent : TANGENT;
+    float2 vTexcoord : TEXCOORD0;
+    uint4 vBlendIndices : BLENDINDEX;
+    float4 vBlendWeights : BLENDWEIGHT;
+};
+
 
 struct VS_OUT
 {

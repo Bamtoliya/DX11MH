@@ -63,7 +63,7 @@ HRESULT CMonster::Render()
 
 	_uint		iNumMesh = m_pModelCom->Get_NumMeshes();
 
-	for (size_t i = 0; i < iNumMesh; i++)
+	for (_uint i = 0; i < iNumMesh; i++)
 	{
 		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;

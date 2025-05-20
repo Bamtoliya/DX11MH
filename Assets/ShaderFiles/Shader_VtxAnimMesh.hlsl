@@ -1,35 +1,9 @@
-
-matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-
+#include "Shader_Struct.hlsl"
+#include "Shader_Test.hlsl"
 matrix g_BoneMatrices[512];
-
 texture2D g_DiffuseTexture;
 
-sampler DefaultSampler = sampler_state
-{
-    filter = min_mag_mip_linear;
-    AddressU = wrap;
-    AddressV = wrap;
-
-};
-
-struct VS_IN
-{
-    float3 vPosition : POSITION;
-    float3 vNormal : NORMAL;
-    float3 vTangent : TANGENT;
-    float2 vTexcoord : TEXCOORD0;
-    uint4  vBlendIndices : BLENDINDEX;
-    float4 vBlendWeights : BLENDWEIGHT;
-};
-
-struct VS_OUT
-{      
-    float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;    
-};
-
-VS_OUT VS_MAIN(VS_IN In)
+VS_OUT VS_MAIN(VS_ANIM_IN In)
 {
     VS_OUT Out;    
     
@@ -54,22 +28,16 @@ VS_OUT VS_MAIN(VS_IN In)
     return Out;
 }
 
-struct PS_IN
-{
-    float4 vPosition : SV_POSITION;
-    float2 vTexcoord : TEXCOORD0;
-};
-
-struct PS_OUT
-{
-    vector vColor : SV_TARGET0;
-};
 
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;    
     
     Out.vColor = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    float r = (float) ((objectId >> 16) & 0xFF) / 255.0f;
+    float g = (float) ((objectId >> 8) & 0xFF) / 255.0f;
+    float b = (float) (objectId & 0xFF) / 255.0f;
+    Out.vPick = float4(r, g, b, 1.0f);
     
     if(Out.vColor.a < 0.3f)
         discard;

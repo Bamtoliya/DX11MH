@@ -12,7 +12,7 @@ HRESULT CAnimation::Initialize(ifstream& ifs, const vector<class CBone*>& Bones)
 	_uint iNameLength = {};
 	ifs.read(reinterpret_cast<char*>(&m_iNumChannels), sizeof(_uint));
 	ifs.read(reinterpret_cast<char*>(&iNameLength), sizeof(_uint));
-	ifs.read(reinterpret_cast<char*>(m_szName[0]), sizeof(_uint) * iNameLength);
+	ifs.read(reinterpret_cast<char*>(&m_szName[0]), sizeof(_char) * iNameLength);
 	m_szName[iNameLength] = '\0';
 	ifs.read(reinterpret_cast<char*>(&m_fDuration), sizeof(_double));
 	ifs.read(reinterpret_cast<char*>(&m_fTickPerSecond), sizeof(_double));
@@ -26,6 +26,7 @@ HRESULT CAnimation::Initialize(ifstream& ifs, const vector<class CBone*>& Bones)
 
 		m_Channels.push_back(pChannel);
 	}
+	return S_OK;
 }
 
 HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const vector<class CBone*>& Bones)
