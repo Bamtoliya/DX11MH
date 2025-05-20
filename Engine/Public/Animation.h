@@ -33,7 +33,7 @@ private:
 	_uint					m_iNumChannels;	
 	vector<class CChannel*>	m_Channels;
 
-	_char*					m_szName[MAX_PATH] = {};
+	_char					m_szName[MAX_PATH] = {};
 
 public:
 	static CAnimation* Create(ifstream& ifs, const vector<class CBone*>& Bones);
