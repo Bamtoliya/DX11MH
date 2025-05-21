@@ -363,12 +363,12 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
                     {
                         if (k < pAiNodeAnim->mNumPositionKeys)
                         {
-                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mPositionKeys[k].mTime), sizeof(_float));
+                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mPositionKeys[k].mTime), sizeof(_double));
                             outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mPositionKeys[k].mValue), sizeof(_float3));
                         }
                         if (k < pAiNodeAnim->mNumRotationKeys)
                         {
-                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mTime), sizeof(_float));
+                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mTime), sizeof(_double));
                             outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mValue.x), sizeof(_float));
                             outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mValue.y), sizeof(_float));
                             outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mValue.z), sizeof(_float));
@@ -376,7 +376,7 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
                         }
                         if (k < pAiNodeAnim->mNumScalingKeys)
                         {
-                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mScalingKeys[k].mTime), sizeof(_float));
+                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mScalingKeys[k].mTime), sizeof(_double));
                             outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mScalingKeys[k].mValue), sizeof(_float3));
                         }
                     }

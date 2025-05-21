@@ -26,16 +26,17 @@ HRESULT CChannel::Initialize(ifstream& ifs, const vector<class CBone*>& Bones)
 	for (size_t i = 0; i < m_iNumKeyFrames; i++)
 	{
 		KEYFRAME		KeyFrame = {};
+		_double trackPosition = {};
 
 		if (i < iNumPositionKeys)
-		{
-			ifs.read(reinterpret_cast<char*>(&KeyFrame.fTrackPosition), sizeof(_float));
+		{	
+			ifs.read(reinterpret_cast<char*>(&trackPosition), sizeof(_double));
 			ifs.read(reinterpret_cast<char*>(&vTranslation), sizeof(_float3));
 		}
 
 		if (i < iNumRotationKeys)
 		{
-			ifs.read(reinterpret_cast<char*>(&KeyFrame.fTrackPosition), sizeof(_float));
+			ifs.read(reinterpret_cast<char*>(&trackPosition), sizeof(_double));
 			ifs.read(reinterpret_cast<char*>(&vRotation.x), sizeof(_float));
 			ifs.read(reinterpret_cast<char*>(&vRotation.y), sizeof(_float));
 			ifs.read(reinterpret_cast<char*>(&vRotation.z), sizeof(_float));
@@ -44,10 +45,11 @@ HRESULT CChannel::Initialize(ifstream& ifs, const vector<class CBone*>& Bones)
 
 		if (i < iNumScalingKeys)
 		{
-			ifs.read(reinterpret_cast<char*>(&KeyFrame.fTrackPosition), sizeof(_float));
+			ifs.read(reinterpret_cast<char*>(&trackPosition), sizeof(_double));
 			ifs.read(reinterpret_cast<char*>(&vScale), sizeof(_float3));
 		}
 
+		KeyFrame.fTrackPosition = static_cast<_float>(trackPosition);
 		KeyFrame.vScale = vScale;
 		KeyFrame.vRotation = vRotation;
 		KeyFrame.vTranslation = vTranslation;

@@ -27,8 +27,15 @@ HRESULT CAnimation::Initialize(ifstream& ifs, const vector<class CBone*>& Bones)
 	ifs.read(reinterpret_cast<char*>(&iNameLength), sizeof(_uint));
 	ifs.read(reinterpret_cast<char*>(&m_szName[0]), sizeof(_char) * iNameLength);
 	m_szName[iNameLength] = '\0';
-	ifs.read(reinterpret_cast<char*>(&m_fDuration), sizeof(_double));
-	ifs.read(reinterpret_cast<char*>(&m_fTickPerSecond), sizeof(_double));
+	_double duration = { 0.0 };
+	_double tick = { 0.0 };
+	ifs.read(reinterpret_cast<char*>(&duration), sizeof(_double));
+	ifs.read(reinterpret_cast<char*>(&tick), sizeof(_double));
+
+	m_fDuration = static_cast<_float>(duration);
+	m_fTickPerSecond = static_cast<_float>(tick);
+
+	m_CurrentKeyFrameIndices.resize(m_iNumChannels);
 
 	/* 각 뼈의 정보를 새엇ㅇ한다. */
 	for (size_t i = 0; i < m_iNumChannels; i++)

@@ -53,7 +53,8 @@ void CMonster::Priority_Update(_float fTimeDelta)
 
 void CMonster::Update(_float fTimeDelta)
 {
-	m_pModelCom->Play_Animation(fTimeDelta);
+	if (m_pModelCom->Play_Animation(fTimeDelta))
+		int a = 10;
 }
 
 void CMonster::Late_Update(_float fTimeDelta)
