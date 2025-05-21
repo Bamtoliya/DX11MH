@@ -60,6 +60,7 @@ private:
 public:
 	static CBone* Create(const MODEL_BONE_NODE& tBoneNode, _int iParentBoneIndex);
 	static CBone* Create(const aiNode* pAINode, _int iParentBoneIndex);
+	CBone* Clone();
 	virtual void Free() override;
 
 };
