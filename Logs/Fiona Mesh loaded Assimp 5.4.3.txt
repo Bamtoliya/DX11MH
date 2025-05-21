@@ -1,0 +1,552 @@
+=====================================================
+Initialize_Prototype for aiMesh: SWORD
+Assimp Version (Manually specify or find a way to get it if possible, e.g., from CModel)
+Model Type: ANIM
+-----------------------------------------------------
+Mesh Name: SWORD
+Material Index: 0
+Num Vertices: 86
+Num Faces: 52
+Num Bones (in aiMesh): 0
+Primitive Types: 4
+Has Positions: Yes
+  Sample Pos[0]: (0.0140416, -0.30921, -0.01805)
+Has Normals: Yes
+  Sample Normal[0]: (0.497865, -0.130748, -0.857342)
+Has Tangents and Bitangents: Yes
+  Sample Tangent[0]: (0.867254, 0.0750632, 0.492174)
+Has Texture Coords (Channel 0): Yes, Components: 2
+  Sample UV[0][0]: (0.346172, 1)
+=====================================================
+
+=====================================================
+Initialize_Prototype for aiMesh: Cake_Mesh
+Assimp Version (Manually specify or find a way to get it if possible, e.g., from CModel)
+Model Type: ANIM
+-----------------------------------------------------
+Mesh Name: Cake_Mesh
+Material Index: 1
+Num Vertices: 963
+Num Faces: 1434
+Num Bones (in aiMesh): 7
+Primitive Types: 4
+Has Positions: Yes
+  Sample Pos[0]: (-0.166577, -0.0369358, 0.0400956)
+Has Normals: Yes
+  Sample Normal[0]: (-0.762247, -0.580924, 0.285494)
+Has Tangents and Bitangents: Yes
+  Sample Tangent[0]: (-0.50457, 0.256992, -0.824235)
+Has Texture Coords (Channel 0): Yes, Components: 2
+  Sample UV[0][0]: (0.168129, 0.33048)
+--- Bones Data (from aiMesh) ---
+  Bone 0: Bone - catBase
+    Num Weights: 361
+    Offset Matrix:
+          0.000000    -0.981691     0.190478     0.860697 
+          0.000000    -0.190478    -0.981692     0.207012 
+          1.000000     0.000000    -0.000000    -0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      2: 0.420000
+      1: 0.560000
+      0: 0.420000
+  Bone 1: Bone - catbody01
+    Num Weights: 313
+    Offset Matrix:
+         -0.000000     0.922403     0.386229    -0.938444 
+         -0.000000    -0.386229     0.922403     0.162699 
+          1.000000     0.000000     0.000000    -0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      2: 0.580000
+      1: 0.440000
+      0: 0.580000
+  Bone 2: Bone - cattail01
+    Num Weights: 52
+    Offset Matrix:
+          0.000000    -0.130653     0.991428    -0.263439 
+         -0.000000    -0.991428    -0.130653     0.920144 
+          1.000000    -0.000000    -0.000000     0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      271: 0.280000
+      273: 0.280000
+      275: 0.280000
+  Bone 3: Bone - catbody02
+    Num Weights: 583
+    Offset Matrix:
+          0.000000     0.997885    -0.064997    -1.073587 
+          0.000000     0.064997     0.997885    -0.352309 
+          1.000000    -0.000000    -0.000000     0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      29: 0.214096
+      30: 0.214096
+      31: 0.600000
+  Bone 4: Bone - cattail02
+    Num Weights: 41
+    Offset Matrix:
+          0.000000     0.027007     0.999635    -0.509887 
+         -0.000000    -0.999635     0.027007     0.850499 
+          1.000000    -0.000000    -0.000000     0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      280: 0.140000
+      281: 0.140000
+      282: 0.140000
+  Bone 5: Bone - cattail03
+    Num Weights: 61
+    Offset Matrix:
+          0.000000     0.090536     0.995893    -0.713757 
+         -0.000000    -0.995893     0.090536     0.806732 
+          1.000000    -0.000000    -0.000000     0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      284: 0.160000
+      285: 0.160000
+      286: 0.160000
+  Bone 6: Bone - cattail04
+    Num Weights: 63
+    Offset Matrix:
+          0.000000     0.321904     0.946772    -1.023529 
+         -0.000000    -0.946772     0.321904     0.582639 
+          1.000000    -0.000000    -0.000000     0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      288: 0.100000
+      289: 0.100000
+      290: 0.100000
+--- End Bones Data ---
+=====================================================
+
+=====================================================
+Initialize_Prototype for aiMesh: Fiona_Mesh
+Assimp Version (Manually specify or find a way to get it if possible, e.g., from CModel)
+Model Type: ANIM
+-----------------------------------------------------
+Mesh Name: Fiona_Mesh
+Material Index: 2
+Num Vertices: 1357
+Num Faces: 1818
+Num Bones (in aiMesh): 26
+Primitive Types: 4
+Has Positions: Yes
+  Sample Pos[0]: (-0.105514, 0.0166261, 0.146592)
+Has Normals: Yes
+  Sample Normal[0]: (-0.661626, 0.497289, -0.561208)
+Has Tangents and Bitangents: Yes
+  Sample Tangent[0]: (0.595686, 0.803162, 0.00941211)
+Has Texture Coords (Channel 0): Yes, Components: 2
+  Sample UV[0][0]: (0.213035, 0.175846)
+--- Bones Data (from aiMesh) ---
+  Bone 0: Bip001 Pelvis
+    Num Weights: 165
+    Offset Matrix:
+          0.000000     1.000000     0.000000    -0.523377 
+          0.000003    -0.000000    -1.000000     0.008940 
+         -1.000000     0.000000    -0.000003     0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      2: 0.699669
+      1: 0.133018
+      0: 0.172238
+  Bone 1: Bip001 Spine
+    Num Weights: 146
+    Offset Matrix:
+          0.000000     0.992238    -0.124353    -0.577605 
+         -0.000001    -0.124353    -0.992238     0.024158 
+         -1.000000     0.000000     0.000001    -0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      2: 0.177517
+      1: 0.845291
+      0: 0.797557
+  Bone 2: Bip001 Spine1
+    Num Weights: 188
+    Offset Matrix:
+          0.000000     0.998811    -0.048757    -0.692989 
+         -0.000001    -0.048757    -0.998811    -0.028379 
+         -1.000000     0.000000     0.000001     0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      1: 0.009698
+      0: 0.014638
+      6: 0.003443
+  Bone 3: Bip001 Spine2
+    Num Weights: 461
+    Offset Matrix:
+          0.000000     0.998811    -0.048757    -0.808537 
+         -0.000001    -0.048757    -0.998811    -0.028287 
+         -1.000000     0.000000     0.000001     0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      2: 0.011200
+      1: 0.011993
+      0: 0.015567
+  Bone 4: Bip001 R Thigh
+    Num Weights: 62
+    Offset Matrix:
+          0.102075    -0.993596    -0.048453     0.529569 
+         -0.201295     0.027069    -0.979156    -0.023380 
+          0.974198     0.109700    -0.197243     0.031300 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      2: 0.111613
+      3: 0.126849
+      4: 0.516445
+  Bone 5: Bip001 R Clavicle
+    Num Weights: 43
+    Offset Matrix:
+         -0.989738    -0.110595     0.090478     0.069135 
+          0.085636     0.047785     0.995180     0.017333 
+         -0.114386     0.992716    -0.037824    -0.876129 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      42: 0.004249
+      50: 0.038933
+      51: 0.000184
+  Bone 6: Bip001 R UpperArm
+    Num Weights: 75
+    Offset Matrix:
+         -0.791244    -0.611225    -0.018379     0.427987 
+         -0.064427     0.053438     0.996491    -0.006561 
+         -0.608097     0.789651    -0.081662    -0.765075 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      42: 0.079544
+      43: 0.000363
+      50: 0.192342
+  Bone 7: Bip001 R Forearm
+    Num Weights: 88
+    Offset Matrix:
+         -0.791879    -0.610627    -0.007875     0.245470 
+         -0.056084     0.059877     0.996629    -0.009149 
+         -0.608097     0.789651    -0.081662    -0.765075 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      89: 0.150000
+      88: 0.150000
+      92: 0.150000
+  Bone 8: Bip001 R Hand
+    Num Weights: 72
+    Offset Matrix:
+         -0.791879    -0.610627    -0.007875     0.088383 
+          0.608053    -0.789603     0.082456     0.765068 
+         -0.056568     0.060506     0.996564    -0.009758 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      141: 1.000000
+      142: 1.000000
+      152: 1.000000
+  Bone 9: Bip001 R Finger0
+    Num Weights: 51
+    Offset Matrix:
+         -0.791879    -0.610627    -0.007875     0.046836 
+          0.608098    -0.789651     0.081662     0.765076 
+         -0.056084     0.059877     0.996629    -0.009149 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      157: 0.363766
+      158: 0.472718
+      159: 0.497277
+  Bone 10: Bip001 Head
+    Num Weights: 268
+    Offset Matrix:
+          0.000000     1.000000    -0.000000    -0.975237 
+         -0.000001    -0.000000    -1.000000    -0.056066 
+         -1.000000     0.000000     0.000001     0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      82: 1.000000
+      83: 1.000000
+      84: 1.000000
+  Bone 11: Bip001 Ponytail2
+    Num Weights: 42
+    Offset Matrix:
+         -0.173648     0.983884    -0.042638    -1.200172 
+          0.000137    -0.043271    -0.999063    -0.002545 
+         -0.984808    -0.173491     0.007379     0.103382 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      274: 1.000000
+      275: 1.000000
+      276: 1.000000
+  Bone 12: Bip001 Neck
+    Num Weights: 12
+    Offset Matrix:
+          0.000000     0.998811    -0.048757    -0.932751 
+         -0.000001    -0.048757    -0.998811    -0.008450 
+         -1.000000     0.000000     0.000001    -0.000000 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      79: 0.113484
+      80: 0.075485
+      81: 0.081260
+  Bone 13: Bip001 L Clavicle
+    Num Weights: 39
+    Offset Matrix:
+          0.989738    -0.110595     0.090481     0.069135 
+         -0.085638     0.047785     0.995180     0.017333 
+         -0.114386    -0.992716     0.037824     0.876129 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      63: 0.000714
+      73: 0.002442
+      690: 0.004247
+  Bone 14: Bip001 R Foot
+    Num Weights: 43
+    Offset Matrix:
+         -0.000000    -1.000000     0.000000     0.028608 
+         -0.201516    -0.000000    -0.979485     0.002132 
+          0.979485    -0.000000    -0.201516     0.034655 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      468: 1.000000
+      469: 1.000000
+      470: 1.000000
+  Bone 15: Bip001 L Calf
+    Num Weights: 45
+    Offset Matrix:
+         -0.121475    -0.991405     0.048583     0.282266 
+          0.190221    -0.071290    -0.979150     0.004547 
+          0.974197    -0.109700     0.197246    -0.031300 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      1042: 0.500000
+      1043: 0.500000
+      1044: 1.000000
+  Bone 16: Bip001 L Foot
+    Num Weights: 43
+    Offset Matrix:
+          0.000000    -1.000000     0.000000     0.028608 
+          0.201519     0.000000    -0.979485     0.002132 
+          0.979485     0.000000     0.201519    -0.034655 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      1085: 1.000000
+      1086: 1.000000
+      1087: 1.000000
+  Bone 17: Bip001 R Calf
+    Num Weights: 45
+    Offset Matrix:
+          0.121474    -0.991405     0.048584     0.282266 
+         -0.190218    -0.071290    -0.979150     0.004547 
+          0.974198     0.109700    -0.197243     0.031300 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      423: 0.500000
+      424: 0.500000
+      425: 1.000000
+  Bone 18: Bip001 L Thigh
+    Num Weights: 62
+    Offset Matrix:
+         -0.102075    -0.993596    -0.048453     0.529569 
+          0.201298     0.027069    -0.979156    -0.023380 
+          0.974197    -0.109700     0.197246    -0.031300 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      650: 0.111613
+      648: 0.126849
+      652: 0.516445
+  Bone 19: Bip001 Hair02
+    Num Weights: 31
+    Offset Matrix:
+         -0.185916    -0.982091    -0.030542     0.967387 
+         -0.002260    -0.030657     0.999527     0.180057 
+         -0.982563     0.185898     0.003480    -0.349928 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      1263: 0.500000
+      1264: 0.500000
+      1271: 1.000000
+  Bone 20: Bip001 L UpperArm
+    Num Weights: 75
+    Offset Matrix:
+          0.791244    -0.611225    -0.018377     0.427987 
+          0.064424     0.053438     0.996491    -0.006561 
+         -0.608098    -0.789651     0.081660     0.765075 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      690: 0.079523
+      691: 0.000363
+      698: 0.192292
+  Bone 21: Bip001 L Forearm
+    Num Weights: 88
+    Offset Matrix:
+          0.791879    -0.610627    -0.007873     0.245470 
+          0.056081     0.059877     0.996629    -0.009149 
+         -0.608098    -0.789651     0.081660     0.765075 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      737: 0.150000
+      739: 0.150000
+      740: 0.150000
+  Bone 22: Bip001 L Hand
+    Num Weights: 72
+    Offset Matrix:
+          0.791879    -0.610627    -0.007873     0.088384 
+         -0.608053    -0.789603     0.082454     0.765068 
+         -0.056565    -0.060506    -0.996564     0.009758 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      797: 1.000000
+      798: 1.000000
+      799: 1.000000
+  Bone 23: Bip001 L Finger0
+    Num Weights: 51
+    Offset Matrix:
+          0.791879    -0.610628    -0.007873     0.046836 
+         -0.608098    -0.789651     0.081660     0.765075 
+         -0.056081    -0.059877    -0.996629     0.009149 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      802: 0.363766
+      803: 0.472718
+      804: 0.497277
+  Bone 24: Bip001 Ponytail1
+    Num Weights: 41
+    Offset Matrix:
+          0.173648     0.983884    -0.042637    -1.200172 
+         -0.000140    -0.043270    -0.999064    -0.002545 
+         -0.984808     0.173491    -0.007376    -0.103382 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      918: 1.000000
+      922: 1.000000
+      924: 1.000000
+  Bone 25: Bip001 Hair
+    Num Weights: 42
+    Offset Matrix:
+         -0.185916    -0.982091    -0.030542     1.086746 
+         -0.002260    -0.030657     0.999527     0.179942 
+         -0.982563     0.185898     0.003480    -0.349928 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      1263: 0.500000
+      1262: 1.000000
+      1261: 1.000000
+--- End Bones Data ---
+=====================================================
+
+=====================================================
+Initialize_Prototype for aiMesh: morningstar
+Assimp Version (Manually specify or find a way to get it if possible, e.g., from CModel)
+Model Type: ANIM
+-----------------------------------------------------
+Mesh Name: morningstar
+Material Index: 1
+Num Vertices: 666
+Num Faces: 938
+Num Bones (in aiMesh): 5
+Primitive Types: 4
+Has Positions: Yes
+  Sample Pos[0]: (-0.0687805, -0.111757, -0.108835)
+Has Normals: Yes
+  Sample Normal[0]: (-0.307105, -0.672302, -0.673571)
+Has Tangents and Bitangents: Yes
+  Sample Tangent[0]: (0.869087, 0.0902734, -0.486351)
+Has Texture Coords (Channel 0): Yes, Components: 2
+  Sample UV[0][0]: (0.478071, 0.328822)
+--- Bones Data (from aiMesh) ---
+  Bone 0: Bone - morningstar05
+    Num Weights: 552
+    Offset Matrix:
+         -0.008843     0.066527    -0.997746    -0.764228 
+          0.999961    -0.000453    -0.008893    -0.433896 
+         -0.001044    -0.997785    -0.066520     0.552885 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      2: 1.000000
+      1: 1.000000
+      0: 1.000000
+  Bone 1: Bone - morningstar01
+    Num Weights: 53
+    Offset Matrix:
+         -0.000000    -0.049400    -0.998779    -0.036099 
+          1.000000     0.000002    -0.000000    -0.427703 
+          0.000002    -0.998779     0.049400     0.629855 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      568: 0.480000
+      569: 0.480000
+      570: 0.480000
+  Bone 2: Bone - morningstar02
+    Num Weights: 56
+    Offset Matrix:
+         -0.000000    -0.049400    -0.998779    -0.201037 
+          1.000000     0.000002    -0.000000    -0.427703 
+          0.000002    -0.998779     0.049400     0.629855 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      558: 0.189200
+      559: 0.189200
+      560: 0.189200
+  Bone 3: Bone - morningstar03
+    Num Weights: 61
+    Offset Matrix:
+          0.011493    -0.049397    -0.998713    -0.385562 
+          0.999934     0.000570     0.011479    -0.423299 
+          0.000002    -0.998779     0.049400     0.629855 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      545: 0.120000
+      547: 0.120000
+      549: 0.120000
+  Bone 4: Bone - morningstar04
+    Num Weights: 51
+    Offset Matrix:
+         -0.009250    -0.005433    -0.999943    -0.545942 
+          0.999957    -0.000455    -0.009248    -0.434157 
+         -0.000405    -0.999985     0.005437     0.606436 
+          0.000000     0.000000    -0.000000     1.000000 
+    Sample Weights (VertexId: Weight):
+      545: 0.880000
+      547: 0.880000
+      549: 0.880000
+--- End Bones Data ---
+=====================================================
+
+=====================================================
+Initialize_Prototype for aiMesh: PlayerShadow
+Assimp Version (Manually specify or find a way to get it if possible, e.g., from CModel)
+Model Type: ANIM
+-----------------------------------------------------
+Mesh Name: PlayerShadow
+Material Index: 3
+Num Vertices: 121
+Num Faces: 200
+Num Bones (in aiMesh): 0
+Primitive Types: 4
+Has Positions: Yes
+  Sample Pos[0]: (-4, -1.11022e-16, -5)
+Has Normals: Yes
+  Sample Normal[0]: (-0, 1, -0)
+Has Tangents and Bitangents: Yes
+  Sample Tangent[0]: (1, 0, -0)
+Has Texture Coords (Channel 0): Yes, Components: 2
+  Sample UV[0][0]: (0.1, 1)
+=====================================================
+
+=====================================================
+Initialize_Prototype for aiMesh: Mesh
+Assimp Version (Manually specify or find a way to get it if possible, e.g., from CModel)
+Model Type: NONANIM
+-----------------------------------------------------
+Mesh Name: Mesh
+Material Index: 0
+Num Vertices: 3431
+Num Faces: 3163
+Num Bones (in aiMesh): 0
+Primitive Types: 4
+Has Positions: Yes
+  Sample Pos[0]: (1.36764, 158.536, 28.0371)
+Has Normals: Yes
+  Sample Normal[0]: (-0.998544, 0.0265051, 0.0469818)
+Has Tangents and Bitangents: Yes
+  Sample Tangent[0]: (0.0265363, -0.516919, 0.855623)
+Has Texture Coords (Channel 0): Yes, Components: 2
+  Sample UV[0][0]: (13.0625, 6.85938)
+Has Texture Coords (Channel 1): Yes, Components: 2
+  Sample UV[1][0]: (0.590332, 0.957031)
+=====================================================
+

@@ -32,6 +32,7 @@ bld/
 [Ll]og/
 [Ll]ogs/
 [Tt]emp/
+!Logs
 
 !External Libraries/fmod/core/lib/x64/
 !External Libraries/fmod/studio/lib/x64/
