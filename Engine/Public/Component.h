@@ -29,6 +29,9 @@ public:
 public:
 	virtual HRESULT RenderImGui() { return S_OK; }
 	virtual void* Dump() { return nullptr; }
+public:
+	virtual HRESULT Serialize();
+	virtual HRESULT Deserialize();
 #pragma region Variables
 protected:
 	ID3D11Device* m_pDevice = { nullptr };

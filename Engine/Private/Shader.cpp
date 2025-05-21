@@ -144,9 +144,7 @@ HRESULT CShader::RenderImGui()
 {
 	if (ImGui::CollapsingHeader("Shader"), ImGuiTreeNodeFlags_DefaultOpen)
 	{
-		
 		ImGui::TextUnformatted(WideToUtf8(m_strShaderFile.c_str()).c_str());
-		ImGui::Text("Shader Example");
 	}
 	return S_OK;
 }

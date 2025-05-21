@@ -233,6 +233,18 @@ HRESULT CToolBar::Save_Scene()
 
 HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
 {
+    //순서
+    //본노드
+    //메쉬
+    ////인덱스
+    ////버텍스
+    ////본정보
+    //마테리얼
+    ////텍스쳐
+    //애니메이션
+    ////채널
+    ////키프레임
+    //////트랜스폼
     fs::path pTargetPath = pFilePath;
     fs::path pBasePath = fs::current_path().parent_path().parent_path();
     pTargetPath = fs::relative(pTargetPath, pBasePath);
@@ -387,18 +399,7 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
         outputFile.close();
     }
 
-    //순서
-    //본노드
-    //메쉬
-    ////인덱스
-    ////버텍스
-    ////본정보
-    //마테리얼
-    ////텍스쳐
-    //애니메이션
-    ////채널
-    ////키프레임
-	//////트랜스폼
+
 
     return S_OK;
 }

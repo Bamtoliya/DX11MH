@@ -54,3 +54,15 @@ void CComponent::Set_OwnerGameObject(CGameObject* pGameObject)
 	m_pOwner = pGameObject;
 	Safe_AddRef(m_pOwner);
 }
+
+
+HRESULT CComponent::Serialize()
+{
+	return S_OK;
+}
+
+
+HRESULT CComponent::Deserialize()
+{
+	return S_OK;
+}

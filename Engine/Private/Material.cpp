@@ -1,12 +1,39 @@
 ﻿#include "Material.h"
 #include "Shader.h"
 
+#pragma region Constructor/Destructor
 CMaterial::CMaterial(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    : m_pDevice { pDevice }
-    , m_pContext { pContext }    
+    : m_pDevice{ pDevice }
+    , m_pContext{ pContext }
 {
     Safe_AddRef(m_pDevice);
     Safe_AddRef(m_pContext);
+}
+
+CMaterial* CMaterial::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* pModelFilePath, ifstream& ifs)
+{
+    CMaterial* pInstance = new CMaterial(pDevice, pContext);
+
+    if (FAILED(pInstance->Initialize(pModelFilePath, ifs)))
+    {
+        MSG_BOX("Failed to Created in Binary: CMaterial");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
+CMaterial* CMaterial::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* pModelFilePath, const aiMaterial* pAIMaterial)
+{
+    CMaterial* pInstance = new CMaterial(pDevice, pContext);
+
+    if (FAILED(pInstance->Initialize(pModelFilePath, pAIMaterial)))
+    {
+        MSG_BOX("Failed to Created : CMaterial");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
 }
 
 HRESULT CMaterial::Initialize(const _char* pModelFilePath, const aiMaterial* pAIMaterial)
@@ -47,7 +74,7 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, const aiMaterial* pAI
 
             if (false == strcmp(szExt, ".dds"))
                 hr = DirectX::CreateDDSTextureFromFile(m_pDevice, szTextureFilePath, nullptr, &pSRV);
-            else           
+            else
                 hr = DirectX::CreateWICTextureFromFile(m_pDevice, szTextureFilePath, nullptr, &pSRV);
 
             if (FAILED(hr))
@@ -64,7 +91,7 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, ifstream& ifs)
 {
     for (size_t i = 1; i < AI_TEXTURE_TYPE_MAX; i++)
     {
-        
+
         _uint       iNumSRVs = {};
         ifs.read(reinterpret_cast<char*>(&iNumSRVs), sizeof(_uint));
 
@@ -73,9 +100,9 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, ifstream& ifs)
         for (size_t j = 0; j < iNumSRVs; j++)
         {
             _uint iTexturePathLength = {};
-            
+
             ifs.read(reinterpret_cast<char*>(&iTexturePathLength), sizeof(_uint));
-            _char* szTexturePath = new _char[iTexturePathLength+1];
+            _char* szTexturePath = new _char[iTexturePathLength + 1];
             ifs.read(reinterpret_cast<char*>(&szTexturePath[0]), sizeof(_char) * iTexturePathLength);
             szTexturePath[iTexturePathLength] = '\0';
 
@@ -116,40 +143,6 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, ifstream& ifs)
     return S_OK;
 }
 
-HRESULT CMaterial::Bind_ShaderResource(CShader* pShader, const _char* pConstantName, aiTextureType eType, _uint iTextureIndex)
-{
-    if (iTextureIndex >= m_SRVs[eType].size())
-        return E_FAIL;
-
-    return pShader->Bind_SRV(pConstantName, m_SRVs[eType][iTextureIndex]);    
-}
-
-CMaterial* CMaterial::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* pModelFilePath, ifstream& ifs)
-{
-    CMaterial* pInstance = new CMaterial(pDevice, pContext);
-
-    if (FAILED(pInstance->Initialize(pModelFilePath, ifs)))
-    {
-        MSG_BOX("Failed to Created in Binary: CMaterial");
-        Safe_Release(pInstance);
-    }
-
-    return pInstance;
-}
-
-CMaterial* CMaterial::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _char* pModelFilePath, const aiMaterial* pAIMaterial)
-{
-    CMaterial* pInstance = new CMaterial(pDevice, pContext);
-
-    if (FAILED(pInstance->Initialize(pModelFilePath, pAIMaterial)))
-    {
-        MSG_BOX("Failed to Created : CMaterial");
-        Safe_Release(pInstance);
-    }
-
-    return pInstance;
-}
-
 void CMaterial::Free()
 {
     __super::Free();
@@ -163,4 +156,18 @@ void CMaterial::Free()
 
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
+}
+#pragma endregion
+
+HRESULT CMaterial::Bind_ShaderResource(CShader* pShader, const _char* pConstantName, aiTextureType eType, _uint iTextureIndex)
+{
+    if (iTextureIndex >= m_SRVs[eType].size())
+        return E_FAIL;
+
+    return pShader->Bind_SRV(pConstantName, m_SRVs[eType][iTextureIndex]);    
+}
+
+HRESULT CMaterial::RenderImGui()
+{
+    return S_OK;
 }

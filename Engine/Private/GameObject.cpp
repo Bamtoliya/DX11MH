@@ -194,3 +194,24 @@ HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& s
 
 	return S_OK;
 }
+
+HRESULT CGameObject::Serialize()
+{
+	for(auto & iter : m_Components)
+	{
+		if(FAILED(iter.second->Serialize()))
+			return E_FAIL;
+	}
+	return S_OK;
+}
+
+
+HRESULT CGameObject::Deserialize()
+{
+	for (auto& iter : m_Components)
+	{
+		if (FAILED(iter.second->Deserialize()))
+			return E_FAIL;
+	}
+	return S_OK;
+}

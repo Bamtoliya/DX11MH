@@ -22,6 +22,7 @@
     <ClCompile Include="..\private\Asset_Browser.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
+    <ClCompile Include="..\private\Sonic.cpp" />
     <ClCompile Include="..\private\Hierarchy.cpp" />
     <ClCompile Include="..\private\Inspector.cpp" />
     <ClCompile Include="..\private\Level_Effect.cpp" />
@@ -46,6 +47,7 @@
     <ClInclude Include="..\Public\Editor_Defines.h" />
     <ClInclude Include="..\Public\Editor_Enum.h" />
     <ClInclude Include="..\Public\Editor_Macro.h" />
+    <ClInclude Include="..\public\Sonic.h" />
     <ClInclude Include="..\public\Hierarchy.h" />
     <ClInclude Include="..\public\Inspector.h" />
     <ClInclude Include="..\Public\Levels.h" />

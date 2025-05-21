@@ -11,13 +11,16 @@ private:
 	CShader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CShader(const CShader& Prototype);
 	virtual ~CShader() = default;
-#pragma endregion
-
-#pragma region Initialize
+public:
+	static CShader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
+	virtual CComponent* Clone(void* pArg) override;
 public:
 	virtual HRESULT Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
 	virtual HRESULT Initialize(void* pArg) override;
+public:
+	virtual void Free() override;
 #pragma endregion
+
 public:
 	HRESULT Begin(_uint iPassIndex);
 	HRESULT Bind_RawValue(const _char* pConstantName, const void* pValue, _uint iLength);
@@ -35,10 +38,7 @@ private:
 	vector<ID3D11InputLayout*>	m_InputLayouts;
 	_wstring					m_strShaderFile = {};
 
-public:
-	static CShader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements);
-	virtual CComponent* Clone(void* pArg) override;
-	virtual void Free() override;
+
 
 };
 

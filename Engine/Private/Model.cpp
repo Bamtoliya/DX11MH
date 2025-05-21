@@ -26,6 +26,7 @@ CModel::CModel(const CModel& Prototype)
 	, m_iNumAnimations { Prototype.m_iNumAnimations }
 	// , m_Animations { Prototype.m_Animations }
 {
+	strcpy_s(m_szModelFilePath, Prototype.m_szModelFilePath);
 	for (auto& pPrototypeBone : Prototype.m_Bones)
 		m_Bones.push_back(pPrototypeBone->Clone());		
 
@@ -60,6 +61,7 @@ HRESULT CModel::Bind_Bone_Matrices(CShader* pShader, const _char* pConstantName,
 
 HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {	
+	strncpy_s(m_szModelFilePath, pModelFilePath, MAX_PATH);
 	fs::path filePath(pModelFilePath);
 	m_eType = eType;
 	XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
@@ -155,7 +157,7 @@ HRESULT CModel::Ready_Bones(const aiNode* pAINode, _int iParentBoneIndex)
 
 	m_Bones.push_back(pBone);	
 
-	_int		iParentIndex = m_Bones.size() - 1;
+	_int		iParentIndex = (_int)m_Bones.size() - 1;
 
 	for (size_t i = 0; i < pAINode->mNumChildren; i++)
 	{
@@ -228,7 +230,7 @@ HRESULT CModel::Ready_Bin_Bones(ifstream& ifs, _int iParentBoneIndex)
 
 	Safe_Delete_Array(ModelBoneNode.szName);
 	m_Bones.push_back(pBone);
-	_int		iParentIndex = m_Bones.size() - 1;
+	_int		iParentIndex = (_int)m_Bones.size() - 1;
 
 	for (_uint i = 0; i < ModelBoneNode.iNumChildren; ++i)
 	{
@@ -281,8 +283,48 @@ HRESULT CModel::RenderImGui()
 {
 	if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-
-	}
+		string strType = "Non Anim";
+		if(m_eType == MODEL::ANIM)
+			strType = "Anim";
+		ImGui::Text("Model Type : %s", strType.c_str());
+		ImGui::InputText("Model File Path", &m_szModelFilePath[0], MAX_PATH, ImGuiInputTextFlags_ElideLeft);
+		
+		ImGui::Indent();
+		if (ImGui::CollapsingHeader(("Meshes (" + std::to_string(m_iNumMeshes) + ")").c_str()))
+		{
+		}
+		ImGui::Unindent();
+		ImGui::Indent();
+		if (ImGui::CollapsingHeader(("Bones (" + std::to_string(m_Bones.size()) + ")").c_str()))
+		{
+		}
+		ImGui::Unindent();
+		ImGui::Indent();
+		if (ImGui::CollapsingHeader(("Materials (" + std::to_string(m_iNumMaterials) + ")").c_str()))
+		{
+			for (auto& pMaterials : m_Materials)
+				pMaterials->RenderImGui();
+		}
+		ImGui::Unindent();
+		
+		if (m_eType == MODEL::ANIM)
+		{
+			ImGui::Indent();
+			if (ImGui::CollapsingHeader(("Animations (" + std::to_string(m_iNumAnimations) + ")").c_str()))
+			{
+				/*for (auto& pAnimations : m_Animations)
+				pAnimations->RenderImGui();*/
+			}
+			ImGui::Button("Play Animation");
+			ImGui::SameLine();
+			if (ImGui::Button("Stop Animation"))
+			{
+				m_iCurrentAnimIndex = 0;
+				m_isLoop = false;
+			}
+			ImGui::Unindent();
+		}
+	} 
 	return S_OK;
 }
 

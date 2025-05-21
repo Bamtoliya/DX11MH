@@ -54,6 +54,9 @@ private:
 	_uint						m_iNumAnimations = {};
 	vector<class CAnimation*>	m_Animations;	
 
+private:
+	_char						m_szModelFilePath[MAX_PATH] = {};
+
 public:
 	HRESULT Ready_Bones(const aiNode* pAINode, _int iParentBoneIndex);
 	HRESULT Ready_Meshes();

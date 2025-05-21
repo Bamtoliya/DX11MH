@@ -70,6 +70,14 @@ public:
 
 #pragma endregion
 
+#pragma region Serialize
+	//Save
+	HRESULT Serialize();
+	//Load
+	HRESULT Deserialize();
+#pragma endregion
+
+
 #pragma region Variables
 protected:
 	_bool									m_bPicked = { false };

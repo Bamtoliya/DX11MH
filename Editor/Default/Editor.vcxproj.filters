@@ -85,6 +85,15 @@
     <Filter Include="01.Levels\GamePlay">
       <UniqueIdentifier>{affe5e44-9579-4944-bb8d-bd02ce6b190c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\NonAnimObject">
+      <UniqueIdentifier>{ba0c82f2-acf8-4b97-aaea-03884fb77b96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\04.Player">
+      <UniqueIdentifier>{a2beb641-35fe-42a0-bb27-5b9761b2332c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\02.Camera\Free">
+      <UniqueIdentifier>{9e906930-7a44-488e-b0cc-ccf90dc917d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -132,9 +141,6 @@
     <ClCompile Include="..\Private\BackGround.cpp">
       <Filter>02.GameObject\00.BackGround</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Camera_Free.cpp">
-      <Filter>02.GameObject\02.Camera</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Terrain.cpp">
       <Filter>02.GameObject\01.Terrain</Filter>
     </ClCompile>
@@ -143,6 +149,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Monster.cpp">
       <Filter>02.GameObject\03.Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sonic.cpp">
+      <Filter>02.GameObject\04.Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Free.cpp">
+      <Filter>02.GameObject\02.Camera\Free</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -212,9 +224,6 @@
     <ClInclude Include="..\Public\BackGround.h">
       <Filter>02.GameObject\00.BackGround</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Camera_Free.h">
-      <Filter>02.GameObject\02.Camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Terrain.h">
       <Filter>02.GameObject\01.Terrain</Filter>
     </ClInclude>
@@ -226,6 +235,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Editor_Macro.h">
       <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sonic.h">
+      <Filter>02.GameObject\04.Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Free.h">
+      <Filter>02.GameObject\02.Camera\Free</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

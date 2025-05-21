@@ -889,6 +889,12 @@
     <Filter Include="01.Utility\04.Components\RigidBody">
       <UniqueIdentifier>{61231d60-51c2-4df8-ba3f-ee8a0f84faf3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Model">
+      <UniqueIdentifier>{b8be777e-4a1d-4b65-9ce3-b6f2ec6dd9e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller">
+      <UniqueIdentifier>{b42fac20-c97a-4426-a367-8b1b961d63a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
