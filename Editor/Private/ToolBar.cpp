@@ -43,6 +43,8 @@ HRESULT CToolBar::Render()
     }
 
     if (ifd::FileDialog::Instance().IsDone("ModelOpenDialog")) {
+        static bool bAnim = false;
+        
         if (ifd::FileDialog::Instance().HasResult()) {
             std::string res = ifd::FileDialog::Instance().GetResult().u8string();
             Convert_Model(ifd::FileDialog::Instance().GetResult().wstring().c_str());
@@ -75,6 +77,8 @@ HRESULT CToolBar::Render()
                     printf("Clicked File->Save As\n");
                 }
                 ImGui::Separator();
+                ImGui::SameLine();
+                ImGui::Checkbox("Animation Model", &m_bConvertAnim);
                 if (ImGui::MenuItem("Convert Model", "Ctrl+Alt+C")) {
                     ifd::FileDialog::Instance().Open("ModelOpenDialog", "Open a Model", "model file (*.fbx){.fbx},.*", true, ASSETPATH);
                     printf("Clicked File->Convert Model\n");
@@ -236,6 +240,8 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     pFinalPath.append(pTargetPath.replace_extension(".model").generic_wstring());
 
     _uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
+    if(!m_bConvertAnim)
+        iFlag |= aiProcess_PreTransformVertices;
     Assimp::Importer asImporter;
     const aiScene* pAiScene = asImporter.ReadFile(WideToUtf8(pFilePath).c_str(), iFlag);
 
@@ -277,25 +283,31 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
                 outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTextureCoords[0][j]), sizeof(_float2));
             }
 
-            for (_uint j = 0; j < iNumBones; ++j)
+            if (m_bConvertAnim)
             {
-                aiBone* pAiBone = pAiMesh->mBones[j];
-                outputFile.write(reinterpret_cast<const char*>(&pAiBone->mName.length), sizeof(_uint));
-                outputFile.write(reinterpret_cast<const char*>(pAiBone->mName.C_Str()), sizeof(_char) * pAiBone->mName.length);
-                outputFile.write(reinterpret_cast<const char*>(&pAiBone->mOffsetMatrix), sizeof(_float4x4));
-                outputFile.write(reinterpret_cast<const char*>(&pAiBone->mNumWeights), sizeof(_uint));
-                for (_uint k = 0; k < pAiBone->mNumWeights; ++k)
+                for (_uint j = 0; j < iNumBones; ++j)
                 {
-                    outputFile.write(reinterpret_cast<const char*>(&pAiBone->mWeights[k].mVertexId), sizeof(_uint));
-                    outputFile.write(reinterpret_cast<const char*>(&pAiBone->mWeights[k].mWeight), sizeof(_float));
+                    aiBone* pAiBone = pAiMesh->mBones[j];
+                    outputFile.write(reinterpret_cast<const char*>(&pAiBone->mName.length), sizeof(_uint));
+                    outputFile.write(reinterpret_cast<const char*>(pAiBone->mName.C_Str()), sizeof(_char) * pAiBone->mName.length);
+                    outputFile.write(reinterpret_cast<const char*>(&pAiBone->mOffsetMatrix), sizeof(_float4x4));
+                    outputFile.write(reinterpret_cast<const char*>(&pAiBone->mNumWeights), sizeof(_uint));
+                    for (_uint k = 0; k < pAiBone->mNumWeights; ++k)
+                    {
+                        outputFile.write(reinterpret_cast<const char*>(&pAiBone->mWeights[k].mVertexId), sizeof(_uint));
+                        outputFile.write(reinterpret_cast<const char*>(&pAiBone->mWeights[k].mWeight), sizeof(_float));
+                    }
                 }
             }
 
 #pragma region Indices
 
+            _uint iIndex = { 0 };
             for (_uint j = 0; j < pAiMesh->mNumFaces; ++j)
             {
-                outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mFaces[j].mIndices[0]), sizeof(_uint) * 3);
+                outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mFaces[j].mIndices[0]), sizeof(_uint));
+                outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mFaces[j].mIndices[1]), sizeof(_uint));
+                outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mFaces[j].mIndices[2]), sizeof(_uint));
             }
 #pragma endregion
         }
@@ -323,46 +335,50 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
         }
 #pragma endregion
    
+      
 #pragma region WriteAnimations
-        for (_uint i = 0; i < iNumAnimations; ++i)
+        if (m_bConvertAnim)
         {
-            aiAnimation* pAiAnimation = pAiScene->mAnimations[i];
-			_uint iNumChannels = pAiAnimation->mNumChannels;
-            outputFile.write(reinterpret_cast<const char*>(&pAiAnimation->mNumChannels), sizeof(_uint));
-            outputFile.write(reinterpret_cast<const char*>(&pAiAnimation->mName.length), sizeof(_uint));
-            outputFile.write(reinterpret_cast<const char*>(pAiAnimation->mName.C_Str()), sizeof(_char) * pAiAnimation->mName.length);
-            outputFile.write(reinterpret_cast<const char*>(&pAiAnimation->mDuration), sizeof(_double));
-            outputFile.write(reinterpret_cast<const char*>(&pAiAnimation->mTicksPerSecond), sizeof(_double));
-            for (_uint j = 0; j < iNumChannels; j++)
+            for (_uint i = 0; i < iNumAnimations; ++i)
             {
-                aiNodeAnim* pAiNodeAnim = pAiAnimation->mChannels[j];
-				outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNodeName.length), sizeof(_uint));
-				outputFile.write(reinterpret_cast<const char*>(pAiNodeAnim->mNodeName.C_Str()), sizeof(_char) * pAiNodeAnim->mNodeName.length);
-                outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNumPositionKeys), sizeof(_uint));
-                outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNumRotationKeys), sizeof(_uint));
-                outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNumScalingKeys), sizeof(_uint));
-                _uint iNumKeyFrames = max(pAiNodeAnim->mNumPositionKeys, pAiNodeAnim->mNumRotationKeys);
-                iNumKeyFrames = max(pAiNodeAnim->mNumScalingKeys, iNumKeyFrames);
-                outputFile.write(reinterpret_cast<const char*>(&iNumKeyFrames), sizeof(_uint));
-                for (_uint k = 0; k < iNumKeyFrames; ++k)
+                aiAnimation* pAiAnimation = pAiScene->mAnimations[i];
+			    _uint iNumChannels = pAiAnimation->mNumChannels;
+                outputFile.write(reinterpret_cast<const char*>(&pAiAnimation->mNumChannels), sizeof(_uint));
+                outputFile.write(reinterpret_cast<const char*>(&pAiAnimation->mName.length), sizeof(_uint));
+                outputFile.write(reinterpret_cast<const char*>(pAiAnimation->mName.C_Str()), sizeof(_char) * pAiAnimation->mName.length);
+                outputFile.write(reinterpret_cast<const char*>(&pAiAnimation->mDuration), sizeof(_double));
+                outputFile.write(reinterpret_cast<const char*>(&pAiAnimation->mTicksPerSecond), sizeof(_double));
+                for (_uint j = 0; j < iNumChannels; j++)
                 {
-                    if (k < pAiNodeAnim->mNumPositionKeys)
+                    aiNodeAnim* pAiNodeAnim = pAiAnimation->mChannels[j];
+				    outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNodeName.length), sizeof(_uint));
+				    outputFile.write(reinterpret_cast<const char*>(pAiNodeAnim->mNodeName.C_Str()), sizeof(_char) * pAiNodeAnim->mNodeName.length);
+                    outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNumPositionKeys), sizeof(_uint));
+                    outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNumRotationKeys), sizeof(_uint));
+                    outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNumScalingKeys), sizeof(_uint));
+                    _uint iNumKeyFrames = max(pAiNodeAnim->mNumPositionKeys, pAiNodeAnim->mNumRotationKeys);
+                    iNumKeyFrames = max(pAiNodeAnim->mNumScalingKeys, iNumKeyFrames);
+                    outputFile.write(reinterpret_cast<const char*>(&iNumKeyFrames), sizeof(_uint));
+                    for (_uint k = 0; k < iNumKeyFrames; ++k)
                     {
-                        outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mPositionKeys[k].mTime), sizeof(_float));
-                        outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mPositionKeys[k].mValue), sizeof(_float3));
-                    }
-                    if (k < pAiNodeAnim->mNumRotationKeys)
-                    {
-                        outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mTime), sizeof(_float));
-                        outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mValue.x), sizeof(_float));
-                        outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mValue.y), sizeof(_float));
-                        outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mValue.z), sizeof(_float));
-                        outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mValue.w), sizeof(_float));
-                    }
-                    if (k < pAiNodeAnim->mNumScalingKeys)
-                    {
-                        outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mScalingKeys[k].mTime), sizeof(_float));
-                        outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mScalingKeys[k].mValue), sizeof(_float3));
+                        if (k < pAiNodeAnim->mNumPositionKeys)
+                        {
+                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mPositionKeys[k].mTime), sizeof(_float));
+                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mPositionKeys[k].mValue), sizeof(_float3));
+                        }
+                        if (k < pAiNodeAnim->mNumRotationKeys)
+                        {
+                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mTime), sizeof(_float));
+                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mValue.x), sizeof(_float));
+                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mValue.y), sizeof(_float));
+                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mValue.z), sizeof(_float));
+                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mRotationKeys[k].mValue.w), sizeof(_float));
+                        }
+                        if (k < pAiNodeAnim->mNumScalingKeys)
+                        {
+                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mScalingKeys[k].mTime), sizeof(_float));
+                            outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mScalingKeys[k].mValue), sizeof(_float3));
+                        }
                     }
                 }
             }

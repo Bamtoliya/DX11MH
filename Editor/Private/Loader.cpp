@@ -224,7 +224,7 @@ HRESULT CLoader::Loading_For_Map()
 	/* For.Prototype_Component_Model_Fiona */
 	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_Fiona"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../../Assets/Models/Fiona/Fiona.model", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../../Assets/Models/Fiona/Fiona.fbx", PreTransformMatrix))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Model_ForkLift */
@@ -235,7 +235,7 @@ HRESULT CLoader::Loading_For_Map()
 
 	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_Test"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../../Assets/Models/Objects/isl_obj_statuegiant/isl_obj_statuegiant2.fbx", PreTransformMatrix))))
+		CModel::Create(m_pDevice, m_pContext, MODEL::NONANIM, "../../Assets/Models/Objects/isl_obj_statuegiant/isl_obj_statuegiant2.model", PreTransformMatrix))))
 		return E_FAIL;
 
 	lstrcpy(m_szLoadingText, TEXT("사운드을(를) 로딩중입니다."));

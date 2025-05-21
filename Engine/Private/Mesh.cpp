@@ -49,15 +49,15 @@ HRESULT CMesh::Initialize_Prototype(MODEL eType, ifstream& ifs, const vector<cla
 	_uint* pIndices = new _uint[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_uint) * m_iNumIndices);
 
-	//_uint	iNumFaces = m_iNumIndices / 3;
-	ifs.read(reinterpret_cast<char*>(&pIndices[0]), sizeof(_uint) * m_iNumIndices);
-	/*for (size_t i = 0; i < iNumFaces; i++)
+	_uint iNumIndices = { 0 };
+	_uint	iNumFaces = m_iNumIndices / 3;
+	//ifs.read(reinterpret_cast<char*>(&pIndices[0]), sizeof(_uint) * m_iNumIndices);
+	for (size_t i = 0; i < iNumFaces; i++)
 	{
-		
-		pIndices[iNumIndices++] = pAIMesh->mFaces[i].mIndices[0];
-		pIndices[iNumIndices++] = pAIMesh->mFaces[i].mIndices[1];
-		pIndices[iNumIndices++] = pAIMesh->mFaces[i].mIndices[2];
-	}*/
+		ifs.read(reinterpret_cast<char*>(&pIndices[iNumIndices++]), sizeof(_uint));
+		ifs.read(reinterpret_cast<char*>(&pIndices[iNumIndices++]), sizeof(_uint));
+		ifs.read(reinterpret_cast<char*>(&pIndices[iNumIndices++]), sizeof(_uint));
+	}
 
 	D3D11_SUBRESOURCE_DATA		IBInitialData{};
 	IBInitialData.pSysMem = pIndices;
@@ -253,19 +253,19 @@ HRESULT CMesh::Ready_Anim_Mesh(const aiMesh* pAIMesh, const vector<CBone*>& Bone
 
 			else if (0.f == pVertices[AIWeight.mVertexId].vBlendWeights.y)
 			{
-				pVertices[AIWeight.mVertexId].vBlendIndices.y = (_uint)i;
+				pVertices[AIWeight.mVertexId].vBlendIndices.y = i;
 				pVertices[AIWeight.mVertexId].vBlendWeights.y = AIWeight.mWeight;
 			}
 
 			else if (0.f == pVertices[AIWeight.mVertexId].vBlendWeights.z)
 			{
-				pVertices[AIWeight.mVertexId].vBlendIndices.z = (_uint)i;
+				pVertices[AIWeight.mVertexId].vBlendIndices.z = i;
 				pVertices[AIWeight.mVertexId].vBlendWeights.z = AIWeight.mWeight;
 			}
 
 			else if (0.f == pVertices[AIWeight.mVertexId].vBlendWeights.w)
 			{
-				pVertices[AIWeight.mVertexId].vBlendIndices.w = (_uint)i;
+				pVertices[AIWeight.mVertexId].vBlendIndices.w = i;
 				pVertices[AIWeight.mVertexId].vBlendWeights.w = AIWeight.mWeight;
 			}
 		}
@@ -427,7 +427,7 @@ HRESULT CMesh::Ready_Anim_Mesh(ifstream& ifs, const vector<class CBone*>& Bones)
 			if (0.f == pVertices[iVertexId].vBlendWeights.x)
 			{
 				/* 이 메시에게 영향을 주는 뼈들 중 i번째 뼈가 이 저젬에게 영향을 주네. */
-				pVertices[iVertexId].vBlendIndices.x = i;
+				pVertices[iVertexId].vBlendIndices.x = (_uint)i;
 				pVertices[iVertexId].vBlendWeights.x = fWeight;
 			}
 

@@ -62,6 +62,7 @@ HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _
 {	
 	fs::path filePath(pModelFilePath);
 	m_eType = eType;
+	XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
 	if(filePath.extension() == L".model")
 	{
 		ifstream inputFile(filePath, std::ios::binary);
@@ -71,8 +72,6 @@ HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _
 			inputFile.read(reinterpret_cast<char*>(&m_iNumMeshes), sizeof(_uint));
 			inputFile.read(reinterpret_cast<char*>(&m_iNumMaterials), sizeof(_uint));
 			inputFile.read(reinterpret_cast<char*>(&m_iNumAnimations), sizeof(_uint));
-
-			XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
 
 			if (FAILED(Ready_Bin_Bones(inputFile, -1)))
 				return E_FAIL;
@@ -100,10 +99,6 @@ HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _
 
 		if (nullptr == m_pAIScene)
 			return E_FAIL;
-
-		XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
-
-		m_eType = eType;
 
 		if (FAILED(Ready_Bones(m_pAIScene->mRootNode, -1)))
 			return E_FAIL;
@@ -225,6 +220,9 @@ HRESULT CModel::Ready_Bin_Bones(ifstream& ifs, _int iParentBoneIndex)
 	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iParentIndex), sizeof(_int));
 	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iNumChildren), sizeof(_uint));
 	CBone* pBone = CBone::Create(ModelBoneNode, iParentBoneIndex);
+	if (nullptr == pBone)
+		return E_FAIL;
+
 	Safe_Delete_Array(ModelBoneNode.szName);
 	m_Bones.push_back(pBone);
 	_int		iParentIndex = m_Bones.size() - 1;
@@ -276,7 +274,6 @@ HRESULT CModel::Ready_Bin_Animations(ifstream& ifs)
 	return S_OK;
 }
 
-
 HRESULT CModel::RenderImGui()
 {
 	if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen))
@@ -293,19 +290,6 @@ CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MOD
 	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PreTransformMatrix)))
 	{
 		MSG_BOX("Failed to Created : CModel");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CModel* CModel::Create_Bin(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
-{
-	CModel* pInstance = new CModel(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PreTransformMatrix)))
-	{
-		MSG_BOX("Failed to Created with Binary : CModel");
 		Safe_Release(pInstance);
 	}
 

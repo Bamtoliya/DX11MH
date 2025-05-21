@@ -406,6 +406,8 @@ namespace ifd {
 			if (d & (1 << i))
 				thisPC->Children.push_back(new FileTreeNode(std::string(1, 'A' + i) + ":"));
 		m_treeCache.push_back(thisPC);
+
+		
 #else
 		std::error_code ec;
 
@@ -1379,6 +1381,7 @@ namespace ifd {
 #else
 			(void)success;
 #endif
+			
 		}
 		if (m_type != IFD_DIALOG_DIRECTORY) {
 			ImGui::SameLine();

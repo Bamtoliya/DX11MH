@@ -41,5 +41,8 @@ private:
 	HRESULT Load_Scene();
 	HRESULT Load_Map();
 	HRESULT Load_Prefab();
+
+private:
+	bool m_bConvertAnim = { false };
 };
 NS_END
