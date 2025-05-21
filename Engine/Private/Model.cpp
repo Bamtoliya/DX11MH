@@ -106,10 +106,10 @@ HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _
 		if (FAILED(Ready_Meshes()))
 			return E_FAIL;
 
-		if (FAILED(Ready_Materials(pModelFilePath)))
+		if (FAILED(Ready_Materials(pModelFilePath)))	
 			return E_FAIL;
 
-		/* 각 애니메이션 마다 이용하고 있는 뼈대들의 시간에 맞는 상태값들을 미리 읽어서 저장해둔다. */
+		///* 각 애니메이션 마다 이용하고 있는 뼈대들의 시간에 맞는 상태값들을 미리 읽어서 저장해둔다. */
 		if (FAILED(Ready_Animations()))
 			return E_FAIL;
 	}

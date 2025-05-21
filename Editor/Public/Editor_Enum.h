@@ -25,7 +25,7 @@ namespace Editor
 		case Editor::LEVEL::END:
 			return "End";
 		default:
-			break;
+			return "Unknown";
 		}
 	}
 	inline const char* ToString(int i)
@@ -49,7 +49,7 @@ namespace Editor
 		case static_cast<unsigned int>(Editor::LEVEL::END):
 			return "End";
 		default:
-			break;
+			return "Unknown";
 		}
 	}
 }
