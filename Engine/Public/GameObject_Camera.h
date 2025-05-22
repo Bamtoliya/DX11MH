@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "GameObject.h"
+#include "Camera.h"
 NS_BEGIN(Engine)
-class CCamera;
 class ENGINE_DLL CGameObject_Camera abstract :public CGameObject
 {
 public:

@@ -14,11 +14,11 @@ HRESULT CLevel_UI::Initialize()
     if(FAILED(Ready_Layer_ImGui()))
         return E_FAIL;
 
-    if (FAILED(Ready_Layer_Background(L"Layer_Background")))
+    /*if (FAILED(Ready_Layer_Background(L"Layer_Background")))
         return E_FAIL;
 
     if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
-        return E_FAIL;
+        return E_FAIL;*/
     return S_OK;
 }
 

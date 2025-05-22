@@ -172,7 +172,74 @@ static int MyCallback(ImGuiInputTextCallbackData* data)
 
 HRESULT CObject_Manager::Render_ImGuiLayerList(_uint iLevelIndex, _char* szLayerBuffer, _uint& iGameObjectID, _uint iBufferSize)
 {
-	static _wstring selected_key = L"";
+	static _wstring selected_key = L""; // 레이어 선택용
+	ImGuiComboFlags flags = ImGuiComboFlags_HeightRegular;
+	if (ImGui::BeginCombo("Layer", WideToUtf8(selected_key.c_str()).c_str(), flags))
+	{
+		static ImGuiTextFilter filter;
+		if (ImGui::IsWindowAppearing())
+		{
+			ImGui::SetKeyboardFocusHere();
+			filter.Clear();
+		}
+		ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_F);
+		filter.Draw("##LayerFilter", -FLT_MIN);
+
+
+		for (auto& Pair : m_pLayers[iLevelIndex])
+		{
+			const _bool is_selected = (selected_key == Pair.first);
+			if (filter.PassFilter(WideToUtf8(Pair.first.c_str()).c_str()))
+				if (ImGui::Selectable(WideToUtf8(Pair.first.c_str()).c_str(), is_selected))
+				{
+					selected_key = Pair.first;
+					strncpy_s(szLayerBuffer, iBufferSize, WideToUtf8(selected_key.c_str()).c_str(), _TRUNCATE);
+				}
+		}
+		ImGui::EndCombo();
+	}
+
+	if (ImGui::InputTextWithHint("##Layer_Text_Input: ", "Layer_", szLayerBuffer, iBufferSize, ImGuiInputTextFlags_CallbackCompletion, MyCallback))
+	{
+
+	}
+
+	auto iter = m_pLayers[iLevelIndex].find(Utf8ToWide(szLayerBuffer));
+	if (iter != m_pLayers[iLevelIndex].end())
+	{
+		static char temp[MAX_PATH] = {}; // 선택된 부모 게임 오브젝트의 이름을 표시하는 버퍼
+		(*iter).second->Render_ImGui_ComboBox(iGameObjectID); // 이 함수는 iGameObjectID를 업데이트합니다.
+
+		CGameObject* pGameObject = nullptr;
+		if (iGameObjectID != 0) // 유효한 부모 ID가 선택되었는지 확인 (0은 "선택 없음"으로 가정)
+		{
+			pGameObject = m_pGameInstance->Get_GameObjectById(iGameObjectID);
+		}
+
+		if (pGameObject) // 부모가 성공적으로 찾아졌다면
+		{
+			strncpy_s(temp, iBufferSize, WideToUtf8(pGameObject->Get_Name().c_str()).c_str(), _TRUNCATE);
+		}
+		else // 부모가 선택되지 않았거나 찾을 수 없다면
+		{
+			temp[0] = '\0'; // 표시되는 이름을 지웁니다.
+		}
+
+		// 선택된 부모 게임 오브젝트의 이름을 표시 (읽기 전용)
+		if (ImGui::InputTextWithHint("##GameObject_Text_Input: ", "Parent GameObject", temp, iBufferSize, ImGuiInputTextFlags_ReadOnly))
+		{
+			// 읽기 전용이므로 이 블록은 일반적으로 실행되지 않음
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear Parent##ParentClearButton")) // 버튼 ID에 접미사 추가
+		{
+			iGameObjectID = 0; // 부모 ID 선택 해제
+			temp[0] = '\0';    // 표시 버퍼 지우기
+		}
+	}
+
+	return S_OK;
+	/*static _wstring selected_key = L"";
 	ImGuiComboFlags flags = ImGuiComboFlags_HeightRegular;
 	if (ImGui::BeginCombo("Layer", WideToUtf8(selected_key.c_str()).c_str(), flags))
 	{
@@ -219,9 +286,15 @@ HRESULT CObject_Manager::Render_ImGuiLayerList(_uint iLevelIndex, _char* szLayer
 		{
 
 		}
+		ImGui::SameLine();
+		if (ImGui::Button("Clear"))
+		{
+			ZeroMemory(temp, MAX_PATH);
+			pGameObject = nullptr;
+		}
 	}
 
-	return S_OK;
+	return S_OK;*/
 }
 
 CLayer* CObject_Manager::Find_Layer(_uint iLevelIndex, const _wstring& strLayerTag)

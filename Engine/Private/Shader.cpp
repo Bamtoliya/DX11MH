@@ -187,6 +187,8 @@ void CShader::Free()
 {
     __super::Free();
 
+	m_strShaderFile.clear();
+
 	for (auto& pInputLayout : m_InputLayouts)
 		Safe_Release(pInputLayout);
 

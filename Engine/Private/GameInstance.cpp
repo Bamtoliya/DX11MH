@@ -39,14 +39,9 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	if (m_bIsEditor)
 	{
 		m_pMyImGui_Manager = CMyImGui_Manager::Create(EngineDesc.hWnd, *ppDeviceOut, *ppContextOut);
-		if (nullptr == m_pGraphic_Device)
+		if (nullptr == m_pMyImGui_Manager)
 			return E_FAIL;
 	}
-
-	m_pInput_Device = CInput_Device::Create(EngineDesc.hInstance, EngineDesc.hWnd);
-	if (nullptr == m_pInput_Device)
-		return E_FAIL;
-
 
 	m_pTimer_Manager = CTimer_Manager::Create();
 	if (nullptr == m_pTimer_Manager)
@@ -514,6 +509,12 @@ HRESULT CGameInstance::Add_Light(CLight* pLight)
 void CGameInstance::Release_Engine()
 {
 	//Safe_Release(m_pPicking);
+
+	Safe_Release(m_pSound_Manager);
+
+	Safe_Release(m_pPicking_System);
+
+	Safe_Release(m_pPhysics_System);
 
 	Safe_Release(m_pLight_Manager);
 
