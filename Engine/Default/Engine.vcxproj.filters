@@ -212,9 +212,6 @@
     <ClInclude Include="..\Public\Systems.h">
       <Filter>00.System</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Light.h">
-      <Filter>01.Utility\07.Light</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Material.h">
       <Filter>01.Utility\08.Material</Filter>
     </ClInclude>
@@ -268,9 +265,6 @@
     </ClInclude>
     <ClInclude Include="..\public\PipeLine.h">
       <Filter>01.Utility\06.PipeLine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Light_Manager.h">
-      <Filter>01.Utility\07.Light\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Graphic_Device.h">
       <Filter>00.System\01.Device\Graphic</Filter>
@@ -355,6 +349,18 @@
     </ClInclude>
     <ClInclude Include="..\Public\Components.h">
       <Filter>01.Utility\04.Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Light.h">
+      <Filter>01.Utility\07.Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Light_Manager.h">
+      <Filter>01.Utility\07.Lights\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Light_Manager.h">
+      <Filter>01.Utility\07.Lights\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Light.h">
+      <Filter>01.Utility\07.Lights</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -521,9 +527,6 @@
     <ClCompile Include="..\private\Texture.cpp">
       <Filter>01.Utility\04.Components\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Light.cpp">
-      <Filter>01.Utility\07.Light</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Particle_System.cpp">
       <Filter>01.Utility\04.Components\Particle</Filter>
     </ClCompile>
@@ -580,9 +583,6 @@
     </ClCompile>
     <ClCompile Include="..\private\PipeLine.cpp">
       <Filter>01.Utility\06.PipeLine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Light_Manager.cpp">
-      <Filter>01.Utility\07.Light\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Graphic_Device.cpp">
       <Filter>00.System\01.Device\Graphic</Filter>
@@ -658,6 +658,18 @@
     </ClCompile>
     <ClCompile Include="..\private\Camera.cpp">
       <Filter>01.Utility\04.Components\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Light.cpp">
+      <Filter>01.Utility\07.Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Light_Manager.cpp">
+      <Filter>01.Utility\07.Lights\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Light.cpp">
+      <Filter>01.Utility\07.Lights</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Light_Manager.cpp">
+      <Filter>01.Utility\07.Lights\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -789,12 +801,6 @@
     </Filter>
     <Filter Include="01.Utility\Ray">
       <UniqueIdentifier>{06d15356-ef44-4d8b-8790-ca678c36a44b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\07.Light">
-      <UniqueIdentifier>{1603318a-1545-498c-87e6-9996514cb97e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\07.Light\Manager">
-      <UniqueIdentifier>{022a3968-4843-4491-8936-4a6de20ac4db}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\98.UI\Text">
       <UniqueIdentifier>{ce1c6cfb-fa25-4996-87fe-c09ce42ffecf}</UniqueIdentifier>
@@ -951,6 +957,12 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Model\Animation\Channel">
       <UniqueIdentifier>{d3bb4783-3bab-476c-8024-a9b506342946}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\07.Lights">
+      <UniqueIdentifier>{0b868d32-6526-41b6-89c3-677c9df8dfc3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\07.Lights\Manager">
+      <UniqueIdentifier>{2d85b3df-b571-4c12-a6d3-1e8db27cc0da}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

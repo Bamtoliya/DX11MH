@@ -5,6 +5,7 @@
 #include "Sound_Manager.h"
 #include "Target_Manager.h"
 //#include "Audio_Manager.h"
+#include "Light_Manager.h"
 #include "Object_Manager.h"
 #include "MyImGui_Manager.h"
 #include "Prototype_Manager.h"

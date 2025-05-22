@@ -105,7 +105,8 @@ public:
 	_matrix Get_Transform_Matrix(D3DTS eState) const;
 	const _float4* Get_CamPosition() const;
 #pragma endregion
-//
+
+
 #pragma region PICKING
 	HRESULT ReadPickingTargetPixel(_int screenX, _int screenY, _float4* pPickedColor);
 	HRESULT PickObjectByColor(_float4* pColor);
@@ -114,6 +115,12 @@ public:
 //	void Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse);
 //	_bool Picking_InWorld(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
 //	_bool Picking_InLocal(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
+#pragma endregion
+
+
+#pragma region LIGHT_MANAGER
+	const LIGHT_DESC* Get_Light(_uint iIndex);
+	HRESULT Add_Light(const LIGHT_DESC& LightDesc);
 #pragma endregion
 
 #pragma region Imgui
@@ -141,6 +148,7 @@ private:
 #pragma endregion
 
 #pragma region Manager
+	class CLight_Manager*		m_pLight_Manager = { nullptr };
 	class CTimer_Manager*		m_pTimer_Manager = { nullptr };
 	class CLevel_Manager*		m_pLevel_Manager = { nullptr };
 	class CSound_Manager*		m_pSound_Manager = { nullptr };
@@ -148,13 +156,12 @@ private:
 	class CObject_Manager*		m_pObject_Manager = { nullptr };
 	class CMyImGui_Manager*		m_pMyImGui_Manager = { nullptr };
 	class CPrototype_Manager*	m_pPrototype_Manager = { nullptr };
-#pragma endregion
-#pragma region 
-	class CRenderer* m_pRenderer = { nullptr };
-	class CPipeLine* m_pPipeLine = { nullptr };
-#pragma endregion
+
+
+	class CRenderer*			m_pRenderer = { nullptr };
+	class CPipeLine*			m_pPipeLine = { nullptr };
 	// class CPicking*				m_pPicking = { nullptr };
-	#pragma region Boolean
+#pragma region Boolean
 	_bool	m_bIsEditor = { true };
 #pragma endregion
 public:

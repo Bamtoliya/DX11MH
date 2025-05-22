@@ -82,6 +82,11 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	if (nullptr == m_pPipeLine)
 		return E_FAIL;
 
+	m_pLight_Manager = CLight_Manager::Create();
+	if (nullptr == m_pLight_Manager)
+		return E_FAIL;
+
+
 	return S_OK;
 }
 
@@ -422,8 +427,7 @@ CGameObject* CGameInstance::Get_PickedObject() const
 }
 #pragma endregion
 
-
-#pragma region Input_Device
+#pragma region INPUT_DEVICE
 
 _byte CGameInstance::Get_DIKeyState(_ubyte byKeyID)
 {
@@ -469,6 +473,19 @@ _bool CGameInstance::Mouse_Pressing(DIM eMouseKeyID)
 {
 	return m_pInput_Device->Mouse_Pressing(eMouseKeyID);
 }
+#pragma endregion
+
+#pragma region LIGHT_MANAGER
+
+const LIGHT_DESC* CGameInstance::Get_Light(_uint iIndex)
+{
+	return m_pLight_Manager->Get_Light(iIndex);
+}
+
+HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc)
+{
+	return m_pLight_Manager->Add_Light(LightDesc);
+}
 
 #pragma endregion
 
@@ -492,7 +509,7 @@ void CGameInstance::Release_Engine()
 {
 	//Safe_Release(m_pPicking);
 
-	
+	Safe_Release(m_pLight_Manager);
 
 	Safe_Release(m_pMyImGui_Manager);
 
