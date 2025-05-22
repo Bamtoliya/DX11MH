@@ -6,6 +6,10 @@ texture2D g_Texture;
 texture2D g_DiffuseTexture;
 TextureCube g_TextureCube;
 
+bool g_bTiling;
+float2 g_vTilingScale;
+float2 g_vTilingOffset;
+
 float4 g_vLightDir;
 float4 g_vLightDiffuse;
 float4 g_vLightAmbient;

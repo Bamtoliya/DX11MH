@@ -55,6 +55,11 @@ HRESULT CHierarchy::Render()
         ImGui::OpenPopup("Add GameObject");
             
     }
+    ImGui::SameLine();
+    if (ImGui::Button("Add Prototype"))
+    {
+        ImGui::OpenPopup("Add Prototype");
+    }
     Add_GameObject_Popup();
     m_pGameInstance->Object_Manager_RenderImGui();
     ImGui::End();

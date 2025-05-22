@@ -72,6 +72,10 @@ HRESULT CShader::Begin(_uint iPassIndex)
 	if (nullptr == pPass)
 		return E_FAIL;
 
+	Bind_RawValue("g_bTiling", &m_bTiling, sizeof(_bool));
+	Bind_RawValue("g_vTilingScale", &m_fScale, sizeof(_float2));
+	Bind_RawValue("g_vTilingOffset", &m_fOffset, sizeof(_float2));
+
 	/* 이 쉐이더에 이 패스로 그린다. */
 	/* Apply() 이전에 쉐이더에 전달해야할 모든 데이터들을 다 전달해놔야한다. */
 	return pPass->Apply(0, m_pContext);
@@ -145,6 +149,9 @@ HRESULT CShader::RenderImGui()
 	if (ImGui::CollapsingHeader("Shader"), ImGuiTreeNodeFlags_DefaultOpen)
 	{
 		ImGui::TextUnformatted(WideToUtf8(m_strShaderFile.c_str()).c_str());
+		ImGui::Checkbox("Tiling", &m_bTiling);
+		ImGui::DragFloat2("Tiling Scale", &m_fScale.x, 0.0f, 100.0f);
+		ImGui::SliderFloat2("Tiling Offset", &m_fOffset.x, -10.0f, 10.0f);
 	}
 	return S_OK;
 }

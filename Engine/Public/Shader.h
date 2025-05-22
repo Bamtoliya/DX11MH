@@ -38,8 +38,11 @@ private:
 	vector<ID3D11InputLayout*>	m_InputLayouts;
 	_wstring					m_strShaderFile = {};
 
+private:
+	_bool						m_bTiling;
 
-
+	_float2						m_fOffset = {};
+	_float2						m_fScale = { 1.f, 1.f };
 };
 
 NS_END

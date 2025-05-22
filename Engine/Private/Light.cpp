@@ -73,7 +73,8 @@ HRESULT CLight::RenderImGui()
 {
 	if(ImGui::CollapsingHeader("Light", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		//ImGui::Combo()
+		ImGui::Combo("Light Type", reinterpret_cast<int*>(&m_tInfo.eType), "Directional\0Point\0\0");
+
 		if (m_tInfo.eType == LIGHT_DESC::TYPE_DIRECTIONAL)
 			ImGui::DragFloat3("Direction", &m_tInfo.vDirection.x, 0.1f, -1.f, 1.f);
 		if (m_tInfo.eType == LIGHT_DESC::TYPE_POINT)
@@ -81,6 +82,7 @@ HRESULT CLight::RenderImGui()
 		ImGui::ColorPicker4("Diffuse", &m_tInfo.vDiffuse.x);
 		ImGui::ColorPicker4("Ambient", &m_tInfo.vAmbient.x);
 		ImGui::ColorPicker4("Specular", &m_tInfo.vSpecular.x);
+		
 	}
 	return S_OK;
 }

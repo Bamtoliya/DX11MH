@@ -192,8 +192,6 @@ CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11Device
 	return pInstance;
 }
 
-
-
 CComponent* CVIBuffer_Terrain::Clone(void* pArg)
 {
 	CVIBuffer_Terrain* pInstance = new CVIBuffer_Terrain(*this);
@@ -218,6 +216,9 @@ HRESULT CVIBuffer_Terrain::RenderImGui()
 {
 	if (ImGui::CollapsingHeader("VIBuffer_Terrain", ImGuiTreeNodeFlags_DefaultOpen)) // 기본적으로 열려있도록 플래그 추가
 	{
+
+		//ImGui::Image()
+		ImGui::Text("HeightMap");
 		ImGui::DragScalar("NumVerticesX", ImGuiDataType_U32, &m_iNumVerticesX);
 		ImGui::DragScalar("NumVerticesZ", ImGuiDataType_U32, &m_iNumVerticesZ);
 		ImGui::DragFloat3("Size", &m_vLocalSize.x);
