@@ -29,6 +29,8 @@ public:
 	const LIGHT_DESC* Get_LightDesc() const { return &m_tInfo; }
 
 public:
+	void Update();
+public:
 	HRESULT RenderImGui();
 	
 private:

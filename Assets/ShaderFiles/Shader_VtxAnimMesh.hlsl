@@ -1,11 +1,10 @@
 #include "Shader_Struct.hlsl"
 #include "Shader_Test.hlsl"
 matrix g_BoneMatrices[512];
-texture2D g_DiffuseTexture;
 
-VS_OUT VS_MAIN(VS_ANIM_IN In)
+VS_NOR_OUT VS_MAIN(VS_ANIM_IN In)
 {
-    VS_OUT Out;    
+    VS_NOR_OUT Out;    
     
     float fWeightW = 1.f - (In.vBlendWeights.x + In.vBlendWeights.y + In.vBlendWeights.z);
         
@@ -14,7 +13,8 @@ VS_OUT VS_MAIN(VS_ANIM_IN In)
         g_BoneMatrices[In.vBlendIndices.z] * In.vBlendWeights.z + 
         g_BoneMatrices[In.vBlendIndices.w] * fWeightW;
     
-    vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);    
+    vector vPosition = mul(vector(In.vPosition, 1.f), BoneMatrix);   
+    vector vNormal = mul(vector(In.vNormal, 0.f), BoneMatrix);
     
     matrix matWV, matWVP;
     
@@ -23,17 +23,24 @@ VS_OUT VS_MAIN(VS_ANIM_IN In)
     matWVP = mul(matWV, g_ProjMatrix);
     
     Out.vPosition = mul(vPosition, matWVP);
+    Out.vNormal = normalize(mul(vNormal, g_WorldMatrix));
     Out.vTexcoord = In.vTexcoord;    
     
     return Out;
 }
 
 
-PS_OUT PS_MAIN(PS_IN In)
+PS_OUT PS_MAIN(PS_NOR_IN In)
 {
     PS_OUT Out;    
     
-    Out.vColor = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.3f)
+        discard;
+    
+    float4 vShade = max(dot(normalize(g_vLightDir) * -1.f, In.vNormal), 0.f) +
+        (g_vLightAmbient * g_vMtrlAmibient);
+    Out.vColor = g_vLightDiffuse * vMtrlDiffuse * vShade;
     float r = (float) ((objectId >> 16) & 0xFF) / 255.0f;
     float g = (float) ((objectId >> 8) & 0xFF) / 255.0f;
     float b = (float) (objectId & 0xFF) / 255.0f;

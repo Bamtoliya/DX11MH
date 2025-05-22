@@ -94,6 +94,9 @@
     <Filter Include="02.GameObject\02.Camera\Free">
       <UniqueIdentifier>{9e906930-7a44-488e-b0cc-ccf90dc917d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\05.Statue">
+      <UniqueIdentifier>{9df9b6d9-4f56-4b26-bc44-30e077eae35a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -155,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Free.cpp">
       <Filter>02.GameObject\02.Camera\Free</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Statue.cpp">
+      <Filter>02.GameObject\05.Statue</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -241,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Free.h">
       <Filter>02.GameObject\02.Camera\Free</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Statue.h">
+      <Filter>02.GameObject\05.Statue</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

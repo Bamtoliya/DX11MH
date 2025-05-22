@@ -51,6 +51,7 @@ public:
 
 #pragma region Functions
 public:
+	_vector		Get_Position() { return m_pTransformCom->Get_State(STATE::POSITION); }
 	CComponent* Get_Component(const _wstring& strComponentTag);
 	_uint Get_ID() const { return m_oID; }
 	void Set_ID(_uint oID) { m_oID = oID; }

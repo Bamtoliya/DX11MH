@@ -16,6 +16,8 @@ HRESULT CLevel_Map::Initialize()
         return E_FAIL;
     if (FAILED(Ready_Layer_Sky(L"Layer_Sky")))
         return E_FAIL;
+    if (FAILED(Ready_Layer_Light(L"Layer_Light")))
+        return E_FAIL;
     if (FAILED(Ready_Layer_GameObjects(L"Layer_GameObjects")))
         return E_FAIL;
     if (FAILED(Ready_Layer_ImGui()))
@@ -62,6 +64,14 @@ HRESULT CLevel_Map::Ready_Layer_Camera(const _wstring& strLayerTag)
 HRESULT CLevel_Map::Ready_Layer_Sky(const _wstring& strLayerTag)
 {
     if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Skybox"),
+        m_iLevel, strLayerTag)))
+        return E_FAIL;
+    return S_OK;
+}
+
+HRESULT CLevel_Map::Ready_Layer_Light(const _wstring& strLayerTag)
+{
+    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Light_Direction"),
         m_iLevel, strLayerTag)))
         return E_FAIL;
     return S_OK;

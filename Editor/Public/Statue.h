@@ -1,0 +1,47 @@
+#pragma once
+#include "Editor_Defines.h"
+#include "GameObject.h"
+
+NS_BEGIN(Engine)
+class CShader;
+class CModel;
+NS_END
+
+NS_BEGIN(Editor)
+
+class CStatue final : public CGameObject
+{
+#pragma region Constructor/Destructor
+private:
+	CStatue(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CStatue(const CStatue& Prototype);
+	virtual ~CStatue() = default;
+public:
+	static CStatue* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CGameObject* Clone(void* pArg) override;
+	virtual void Free() override;
+public:
+	virtual HRESULT Initialize_Prototype();
+	virtual HRESULT Initialize(void* pArg);
+#pragma endregion
+
+#pragma region Variables
+private:
+	CShader* m_pShaderCom = { nullptr };
+	CModel* m_pModelCom = { nullptr };
+#pragma endregion
+
+#pragma region Loops
+
+	virtual void Priority_Update(_float fTimeDelta);
+	virtual void Update(_float fTimeDelta);
+	virtual void Late_Update(_float fTimeDelta);
+	virtual HRESULT Render();
+#pragma endregion
+
+private:
+	HRESULT Ready_Components();
+	HRESULT Bind_ShaderResources();
+};
+
+NS_END

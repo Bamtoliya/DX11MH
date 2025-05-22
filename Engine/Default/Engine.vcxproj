@@ -204,6 +204,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     </ClInclude>
     <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\Public\Base.h" />
+    <ClInclude Include="..\Public\Base_Objects.h" />
     <ClInclude Include="..\Public\Bounding_Box.h" />
     <ClInclude Include="..\Public\Bounding_Sphere.h" />
     <ClInclude Include="..\public\Bone.h" />
@@ -237,6 +238,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\Level.h" />
     <ClInclude Include="..\Public\Level_Manager.h" />
     <ClInclude Include="..\Public\Light.h" />
+    <ClInclude Include="..\public\Light_Direction.h" />
     <ClInclude Include="..\Public\Light_Manager.h" />
     <ClInclude Include="..\Public\Managers.h" />
     <ClInclude Include="..\Public\Material.h" />
@@ -253,6 +255,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     </ClInclude>
     <ClInclude Include="..\public\Physics_System.h" />
     <ClInclude Include="..\public\Picking_System.h" />
+    <ClInclude Include="..\public\Light_Point.h" />
     <ClInclude Include="..\public\Ray.h" />
     <ClInclude Include="..\public\RectTransform.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -298,7 +301,6 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\VIBuffer_Rect.h" />
     <ClInclude Include="..\Public\VIBuffer_Sphere.h" />
     <ClInclude Include="..\Public\VIBuffer_Terrain.h" />
-    <ClInclude Include="Base_Objects.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\External Libraries\imFileDialog\ImFileDialog.cpp">
@@ -352,7 +354,9 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\Level.cpp" />
     <ClCompile Include="..\Private\Level_Manager.cpp" />
     <ClCompile Include="..\Private\Light.cpp" />
+    <ClCompile Include="..\private\Light_Direction.cpp" />
     <ClCompile Include="..\Private\Light_Manager.cpp" />
+    <ClCompile Include="..\private\Light_Point.cpp" />
     <ClCompile Include="..\Private\Material.cpp" />
     <ClCompile Include="..\private\MyCamera.cpp" />
     <ClCompile Include="..\Private\MyMaterial.cpp" />

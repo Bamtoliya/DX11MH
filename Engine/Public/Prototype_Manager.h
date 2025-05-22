@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Components.h"
+#include "Base_Objects.h"
 
 /* 1. 원형객체를 보관한다. */
 /* 1_1. 원형객체의 타입( CGameObject, CComponent )에 크게 영향을 받지 않는다. */

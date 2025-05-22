@@ -302,9 +302,6 @@
     <ClInclude Include="..\Public\GameObject_Skybox.h">
       <Filter>01.Utility\03.GameObject\Base\Skybox</Filter>
     </ClInclude>
-    <ClInclude Include="Base_Objects.h">
-      <Filter>01.Utility\03.GameObject\Base</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\External Libraries\imFileDialog\ImFileDialog.h">
       <Filter>External Libraries\imFileDialog</Filter>
     </ClInclude>
@@ -361,6 +358,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\Light.h">
       <Filter>01.Utility\07.Lights</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Light_Point.h">
+      <Filter>01.Utility\03.GameObject\Base\Lights\Point</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Light_Direction.h">
+      <Filter>01.Utility\03.GameObject\Base\Lights\Direction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Base_Objects.h">
+      <Filter>01.Utility\03.GameObject\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -671,6 +677,12 @@
     <ClCompile Include="..\Private\Light_Manager.cpp">
       <Filter>01.Utility\07.Lights\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Light_Point.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Lights\Point</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Light_Direction.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Lights\Direction</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -909,6 +921,15 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Controller">
       <UniqueIdentifier>{b42fac20-c97a-4426-a367-8b1b961d63a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Lights">
+      <UniqueIdentifier>{cd94573b-4803-4918-89b1-ae0581dbbdae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Lights\Point">
+      <UniqueIdentifier>{9218258c-bf00-4432-8104-f7f72a9d6aa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Lights\Direction">
+      <UniqueIdentifier>{77f6d502-76eb-4094-a3c9-50dadf804359}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

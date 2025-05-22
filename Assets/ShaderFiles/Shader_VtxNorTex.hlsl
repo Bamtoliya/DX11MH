@@ -1,9 +1,9 @@
 #include "Shader_Struct.hlsl"
 #include "Shader_Test.hlsl"
 
-VS_OUT VS_MAIN(VS_NOR_IN In)
+VS_NOR_OUT VS_MAIN(VS_NOR_IN In)
 {
-    VS_OUT Out;
+    VS_NOR_OUT Out;
     
     matrix matWV, matWVP;
     
@@ -12,16 +12,22 @@ VS_OUT VS_MAIN(VS_NOR_IN In)
     matWVP = mul(matWV, g_ProjMatrix);
     
     Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+    Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_WorldMatrix));
     Out.vTexcoord = In.vTexcoord;    
     
     return Out;
 }
 
-PS_OUT PS_MAIN(PS_IN In)
+PS_OUT PS_MAIN(PS_NOR_IN In)
 {
     PS_OUT Out;    
     
-    Out.vColor = g_Texture.Sample(TiledSampler, In.vTexcoord * 50.f);
+    vector vMtrlDiffuse = g_DiffuseTexture.Sample(TiledSampler, In.vTexcoord * 50.f);
+    
+    float4 vShade = max(dot(normalize(g_vLightDir) * -1.f, In.vNormal), 0.f) +
+        (g_vLightAmbient * g_vMtrlAmibient);
+    
+    Out.vColor = g_vLightDiffuse * vMtrlDiffuse * vShade;
     float r = (float) ((objectId >> 16) & 0xFF) / 255.0f;
     float g = (float) ((objectId >> 8) & 0xFF) / 255.0f;
     float b = (float) (objectId & 0xFF) / 255.0f;
@@ -38,10 +44,4 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();        
         PixelShader = compile ps_5_0 PS_MAIN();      
     }
-    pass Picking /* 명암 + 스펙큘러 + 그림자 + ssao + 림라이트 */
-    {
-        VertexShader = compile vs_5_0 VS_MAIN();
-        PixelShader = compile ps_5_0 PS_PICKING();
-    }
-   
 }

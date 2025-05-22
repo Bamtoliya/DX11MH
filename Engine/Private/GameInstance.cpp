@@ -92,6 +92,7 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 
 void CGameInstance::Update_Engine(_float fTimeDelta)
 {
+	m_pLight_Manager->Update();
 	m_pInput_Device->Update(fTimeDelta);
 	m_pObject_Manager->Priority_Update(fTimeDelta);
 	m_pPipeLine->Update();
@@ -485,6 +486,11 @@ const LIGHT_DESC* CGameInstance::Get_Light(_uint iIndex)
 HRESULT CGameInstance::Add_Light(const LIGHT_DESC& LightDesc)
 {
 	return m_pLight_Manager->Add_Light(LightDesc);
+}
+
+HRESULT CGameInstance::Add_Light(CLight* pLight)
+{
+	return m_pLight_Manager->Add_Light(pLight);
 }
 
 #pragma endregion

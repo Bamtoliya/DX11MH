@@ -5,3 +5,6 @@
 #include "GameObject_Sphere.h"
 #include "GameObject_Plane.h"
 #include "GameObject_Skybox.h"
+
+#include "Light_Point.h"
+#include "Light_Direction.h"

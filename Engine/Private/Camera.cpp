@@ -141,7 +141,7 @@ HRESULT CCamera::RenderImGui()
 		ImGui::DragFloat("Near", &m_tDesc.fNear, 0.01f, 0.01f, 1000.f);
 		if (m_tDesc.fNear <= 0.f) m_tDesc.fNear = 0.01f;
 		ImGui::DragFloat("Far", &m_tDesc.fFar, 0.01f, 0.2f, 10000.f);
-		if (m_tDesc.fFar <= 0.f) m_tDesc.fFar = m_tDesc.fNear + 0.01;
+		if (m_tDesc.fFar <= 0.f) m_tDesc.fFar = m_tDesc.fNear + 0.01f;
 		ImGui::DragFloat4("Look At", &m_tDesc.vAt.x, 1.0f);
 		m_tDesc.fFovy = XMConvertToRadians(fFovDegree);
 	}

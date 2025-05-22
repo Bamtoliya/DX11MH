@@ -3,11 +3,21 @@
 /* 상수테이블 ConstantTable */
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_Texture;
+texture2D g_DiffuseTexture;
 TextureCube g_TextureCube;
+
+float4 g_vLightDir;
+float4 g_vLightDiffuse;
+float4 g_vLightAmbient;
+float4 g_vLightSpecular;
+
+float4 g_vMtrlAmibient = float4(0.4f, 0.4f, 0.4f, 1.f);
 
 sampler DefaultSampler = sampler_state
 {
     filter = min_mag_mip_linear;
+    AddressU = wrap;
+    AddressV = wrap;
 };
 
 sampler TiledSampler = sampler_state
@@ -59,6 +69,15 @@ struct VS_OUT
     float2 vTexcoord : TEXCOORD0;
 };
 
+struct VS_NOR_OUT
+{
+    /* SV_ : ShaderValue약자 */
+    /* 내가 해야할 연산은 다 했으니 이제 니(장치)가 알아서 추가적인 연산을 해라. */     
+    float4 vPosition : SV_POSITION;
+    float4 vNormal : NORMAL;
+    float2 vTexcoord : TEXCOORD0;
+};
+
 struct VS_CUBE_OUT
 {
     /* SV_ : ShaderValue약자 */
@@ -70,6 +89,13 @@ struct VS_CUBE_OUT
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
+    float2 vTexcoord : TEXCOORD0;
+};
+
+struct PS_NOR_IN
+{
+    float4 vPosition : SV_POSITION;
+    float4 vNormal : NORMAL;
     float2 vTexcoord : TEXCOORD0;
 };
 

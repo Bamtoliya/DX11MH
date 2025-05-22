@@ -121,6 +121,7 @@ public:
 #pragma region LIGHT_MANAGER
 	const LIGHT_DESC* Get_Light(_uint iIndex);
 	HRESULT Add_Light(const LIGHT_DESC& LightDesc);
+	HRESULT Add_Light(class CLight* pLight);
 #pragma endregion
 
 #pragma region Imgui

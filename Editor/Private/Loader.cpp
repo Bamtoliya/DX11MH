@@ -5,8 +5,8 @@
 #include "Camera_Free.h"
 #include "BackGround.h"
 #include "Terrain.h"
-#include "GameObject_Skybox.h"
 #include "Monster.h"
+#include "Statue.h"
 //#include "player.h"
 //#include "Effect.h"
 
@@ -263,6 +263,21 @@ HRESULT CLoader::Loading_For_Map()
 	/* For.Prototype_GameObject_Monster */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Monster"),
 		CMonster::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Monster */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Statue"),
+		CStatue::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Monster */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Light_Point"),
+		CLight_Point::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Monster */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Light_Direction"),
+		CLight_Direction::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 

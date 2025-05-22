@@ -1,13 +1,44 @@
 ﻿#include "Light_Manager.h"
 #include "Light.h"
 
+#pragma region Constructor/Destructor
 CLight_Manager::CLight_Manager()
 {
 
 }
 
+CLight_Manager* CLight_Manager::Create()
+{
+	return new CLight_Manager;
+}
+
+void CLight_Manager::Free()
+{
+	__super::Free();
+
+	for (auto& pLight : m_Lights)
+		Safe_Release(pLight);
+
+	m_Lights.clear();
+}
+
+#pragma endregion
+
+
+void CLight_Manager::Clear()
+{
+	m_Lights.clear();
+}
+
+void CLight_Manager::Update()
+{
+	Clear();
+}
 const LIGHT_DESC* CLight_Manager::Get_Light(_uint iIndex)
 {
+	if (m_Lights.empty())
+		return nullptr;
+
 	auto	iter = m_Lights.begin();
 
 	for (size_t i = 0; i < iIndex; i++)
@@ -37,17 +68,3 @@ HRESULT CLight_Manager::Add_Light(CLight* pLight)
 }
 
 
-CLight_Manager* CLight_Manager::Create()
-{
-	return new CLight_Manager;
-}
-
-void CLight_Manager::Free()
-{
-	__super::Free();
-
-	for (auto& pLight : m_Lights)	
-		Safe_Release(pLight);
-
-	m_Lights.clear();
-}
