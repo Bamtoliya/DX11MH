@@ -1,4 +1,5 @@
 ﻿#include "MyCamera.h"
+#include "GameObject.h"
 #include "GameInstance.h"
 #include "Transform.h"
 
@@ -20,6 +21,22 @@ HRESULT CMyCamera::Initialize_Prototype()
 
 HRESULT CMyCamera::Initialize(void* pArg)
 {
+	return S_OK;
+}
+
+HRESULT CMyCamera::Late_Initialize()
+{
+	D3D11_VIEWPORT			ViewportDesc{};
+	_uint					iNumViewports = { 1 };
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	m_tDesc.fAspect = static_cast<_float>(ViewportDesc.Width) / ViewportDesc.Height;
+
+	CTransform* pTranform = reinterpret_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+
+	pTranform->Set_State(STATE::POSITION, XMLoadFloat4(&m_tDesc.vEye));
+	pTranform->LookAt(XMLoadFloat4(&m_tDesc.vAt));
+
 	return S_OK;
 }
 
@@ -53,7 +70,7 @@ void CMyCamera::Late_Update(_float fTimeDelta)
 
 HRESULT CMyCamera::Render()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 void CMyCamera::Bind_Matrices(CTransform* pTransformCom)

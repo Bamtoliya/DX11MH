@@ -104,7 +104,7 @@ HRESULT CViewport_3D::Render()
         ImVec2 initial_center = ImVec2(canvas_p0.x + canvas_size.x * 0.5f, canvas_p0.y + canvas_size.y * 0.5f);
         ImVec2 canvas_center = ImVec2(initial_center.x + panning.x, initial_center.y + panning.y); // 패닝 적용된 중심
         if (g_bCameraControl)
-            SetCursorPos(initial_center.x, initial_center.y);
+            SetCursorPos((_int)initial_center.x, (_int) initial_center.y);
 
         DrawTexture(draw_list, L"RT_Skybox", canvas_p0, canvas_size, canvas_center, zoom); 
         DrawGrid(canvas_p0, canvas_size);

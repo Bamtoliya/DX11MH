@@ -23,19 +23,11 @@ HRESULT CCamera_Free::Initialize_Prototype()
 
 HRESULT CCamera_Free::Initialize(void* pArg)
 {
-	CGameObject_Camera::CAMERA_DESC			Desc{};
-
-	Desc.vEye = _float4(0.f, 20.f, -15.f, 1.0f);
-	Desc.vAt = _float4(0.f, 0.f, 0.f, 1.0f);
-	Desc.fFovy = XMConvertToRadians(60.0f);
-	Desc.fNear = 0.1f;
-	Desc.fFar = 500.f;
-	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
-	Desc.fSpeedPerSec = 10.0f;
-	Desc.bOrthographic = false;
+	CGameObject_Camera::CAMERA_DESC Desc{};
+	Desc.fSpeedPerSec = 10.f;
+	Desc.fRotationPerSec = 1.f;
 	lstrcpy(Desc.szName, TEXT("Camera"));
-	m_fSensor = 0.1f;
-
+	m_fSensor = 0.1f;	
 	if (FAILED(__super::Initialize(&Desc)))
 		return E_FAIL;
 
@@ -78,8 +70,23 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 		{
 			m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), MouseMove * fTimeDelta * m_fSensor);
 		}
+
+		//줌인 아웃
+		/*if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::WHEEL))
+		{
+			if (MouseMove > 0)
+			{
+				m_pCameraCom->ZoomIn(fTimeDelta * m_fSensor);
+			}
+			else if(MouseMove < 0)
+			{
+				m_pCameraCom->ZoomOut(fTimeDelta * m_fSensor);
+			}
+			
+		}*/
 	}
-	__super::Bind_Matrices();
+
+	m_pCameraCom->Priority_Update(fTimeDelta);
 }
 
 void CCamera_Free::Update(_float fTimeDelta)

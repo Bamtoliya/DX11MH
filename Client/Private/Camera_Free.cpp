@@ -21,15 +21,6 @@ HRESULT CCamera_Free::Initialize_Prototype()
 HRESULT CCamera_Free::Initialize(void* pArg)
 {
 	CGameObject_Camera::CAMERA_DESC			Desc{};
-
-	Desc.vEye = _float4(0.f, 20.f, -15.f, 1.0f);
-	Desc.vAt = _float4(0.f, 0.f, 0.f, 1.0f);
-	Desc.fFovy = XMConvertToRadians(60.0f);
-	Desc.fNear = 0.1f;
-	Desc.fFar = 500.f;
-	Desc.fRotationPerSec = XMConvertToRadians(180.0f);
-	Desc.fSpeedPerSec = 10.0f;
-	Desc.bOrthographic = false;
 	lstrcpy(Desc.szName, TEXT("Camera"));
 
 	m_fSensor = 0.1f;
@@ -74,8 +65,7 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 	}
 
 
-
-	__super::Bind_Matrices();
+	m_pCameraCom->Bind_Matrices(m_pTransformCom);
 }
 
 void CCamera_Free::Update(_float fTimeDelta)

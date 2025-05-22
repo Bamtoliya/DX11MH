@@ -14,6 +14,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Late_Initialize() { return S_OK; }
 public:
 	virtual void Priority_Update(_float fTimeDelta) { if (!m_bActive) return; }
 	virtual void Update(_float fTimeDelta) { if (!m_bActive) return; }

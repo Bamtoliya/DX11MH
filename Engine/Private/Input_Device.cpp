@@ -64,7 +64,12 @@ void CInput_Device::Update(_float fTimeDelta)
 	memcpy(&m_preKeyState, &m_curKeyState, sizeof(_char) * 256);
 	m_pKeyboard->GetDeviceState(256, m_curKeyState);
 	memcpy(&m_preMouseState, &m_curMouseState, sizeof(DIMOUSESTATE));
-	m_pMouse->GetDeviceState(sizeof(DIMOUSESTATE), &m_curMouseState);
+	HRESULT hr = m_pMouse->GetDeviceState(sizeof(DIMOUSESTATE), &m_curMouseState);
+	if (hr == E_FAIL)
+	{
+		MSG_BOX("WHELL NOT RESET");
+	}
+	int a = 10;
 }
 
 _bool CInput_Device::Key_Down(_ubyte eKeyID)

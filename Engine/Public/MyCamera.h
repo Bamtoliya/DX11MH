@@ -5,6 +5,7 @@ class ENGINE_DLL CMyCamera : public CComponent
 {
 public:
 	typedef struct tagCameraComponentDesc {
+		_float4				vEye;
 		_float4				vAt;
 		_float				fAspect;
 		_float				fFovy;
@@ -20,6 +21,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Late_Initialize() override;
 public:
 	static CMyCamera* Create();
 	virtual CMyCamera* Clone(void* pArg) override;

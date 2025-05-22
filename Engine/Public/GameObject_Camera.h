@@ -1,20 +1,14 @@
 ﻿#pragma once
 #include "GameObject.h"
 NS_BEGIN(Engine)
+class CCamera;
 class ENGINE_DLL CGameObject_Camera abstract :public CGameObject
 {
 public:
-	typedef struct tagCameraDesc : public GAMEOBJECT_DESC
+	typedef struct tagCameraDesc : CGameObject::GAMEOBJECT_DESC, CCamera::CAMERA_COM_DESC
 	{
-		_float4				vEye;
-		_float4				vAt;
 
-		_float				fAspect;
-		_float				fFovy;
-		_float				fNear;
-		_float				fFar;
-		_bool				bOrthographic = false;
-	}CAMERA_DESC;
+	} CAMERA_DESC;
 protected:
 #pragma region Constructor/Destructor
 protected:
@@ -39,11 +33,8 @@ public:
 	virtual void Late_Update(_float fTimeDelta) = 0;
 public:
 	virtual HRESULT Render() = 0;
-public:
-	virtual void Bind_Matrices();
 #pragma endregion
-
 protected:
-	CAMERA_DESC			m_tDesc;
+	CCamera* m_pCameraCom = { nullptr };
 };
 NS_END

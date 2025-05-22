@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Component.h"
-BEGIN(Engine)
+NS_BEGIN(Engine)
 class CCollider abstract : public CComponent
 {
 protected:
@@ -8,4 +8,4 @@ protected:
 public:
 
 };
-END
+NS_END

@@ -59,6 +59,7 @@ using namespace FMOD;
 
 namespace Engine
 {
+	const _wstring	g_strCameraTag = TEXT("Com_Camera");
 	const _wstring	g_strTransformTag = TEXT("Com_Transform");
 	const _uint g_iMaxNumBones = 512;
 }

@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "GameInstance.h"
 
 #pragma region Contructor & Destructor
 
@@ -38,6 +39,11 @@ CCamera* CCamera::Clone(void* pArg)
 	return pInstance;
 }
 
+void CCamera::Free()
+{
+	__super::Free();
+}
+
 HRESULT CCamera::Initialize_Prototype()
 {
 	return S_OK;
@@ -45,29 +51,28 @@ HRESULT CCamera::Initialize_Prototype()
 
 HRESULT CCamera::Initialize(void* pArg)
 {
-	if (pArg != nullptr)
-	{
-		CAMERA_COM_DESC* pDesc = reinterpret_cast<CAMERA_COM_DESC*>(pArg);
-		memcpy(&m_tDesc, pDesc, sizeof(CAMERA_COM_DESC));
-	}
-	else
-	{
-		m_tDesc.
-	}
-		
+	CAMERA_COM_DESC* pDesc = static_cast<CAMERA_COM_DESC*>(pArg);
+	memcpy(&m_tDesc, pDesc, sizeof(CAMERA_COM_DESC));
+	return S_OK;
+}
+
+HRESULT CCamera::Late_Initialize()
+{
 	D3D11_VIEWPORT			ViewportDesc{};
 	_uint					iNumViewports = { 1 };
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
 	m_tDesc.fAspect = static_cast<_float>(ViewportDesc.Width) / ViewportDesc.Height;
 
-	CTransform* pTranform = reinterpret_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+	CTransform* pTransformCom = reinterpret_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
 
-	pTranform->Set_State(STATE::POSITION, XMLoadFloat4(&m_tDesc.vEye));
-	pTranform->LookAt(XMLoadFloat4(&m_tDesc.vAt));
+	if (XMVector3Length(pTransformCom->Get_State(STATE::POSITION)).m128_f32[0] == 0.f)
+	{
+		pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 20.f, -15.f, 1.0f));
+	}
 
-	m_Components.emplace(g_strTransformTag, m_pTransformCom);
-
+	//
+	pTransformCom->LookAt(XMLoadFloat4(&m_tDesc.vAt));
 
 	return S_OK;
 }
@@ -75,8 +80,71 @@ HRESULT CCamera::Initialize(void* pArg)
 
 #pragma region Loops
 
+void CCamera::Priority_Update(_float fTimeDelta)
+{
+	CTransform* pTransformCom = reinterpret_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+
+	if (nullptr == pTransformCom)
+		return;
+
+	Bind_Matrices(pTransformCom);
+}
+
+void CCamera::Update(_float fTimeDelta)
+{
+}
+
+void CCamera::Late_Update(_float fTimeDelta)
+{
+}
+
+HRESULT CCamera::Render()
+{
+	return S_OK;
+}
+
+void CCamera::Bind_Matrices(CTransform* pTransformCom)
+{
+	m_pGameInstance->Set_Transform(D3DTS::VIEW, pTransformCom->Get_WorldMatrix_Inverse());
+	if (m_tDesc.bOrthographic)
+		m_pGameInstance->Set_Transform(D3DTS::PROJ, XMMatrixOrthographicLH(m_tDesc.fFovy, m_tDesc.fAspect, m_tDesc.fNear, m_tDesc.fFar));
+	else
+		m_pGameInstance->Set_Transform(D3DTS::PROJ, XMMatrixPerspectiveFovLH(m_tDesc.fFovy, m_tDesc.fAspect, m_tDesc.fNear, m_tDesc.fFar));
+}
+
+void CCamera::ZoomIn(_float fTimeDelta)
+{
+	m_tDesc.fFovy = max(m_tDesc.fFovy - m_tDesc.fZoomPerSec * fTimeDelta, m_tDesc.fMinFovy);
+}
+
+void CCamera::ZoomOut(_float fTimeDelta)
+{
+	m_tDesc.fFovy = min(m_tDesc.fFovy + m_tDesc.fZoomPerSec * fTimeDelta, m_tDesc.fMaxFovy);
+}
+
+void CCamera::ResetZoom(_float fTimeDelta)
+{
+	m_tDesc.fFovy = m_tDesc.fDefaultFovy;
+}
+
 #pragma endregion
 
 #pragma region ImGui
-
+HRESULT CCamera::RenderImGui()
+{
+	if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
+	{
+		ImGui::Checkbox("OrthGraphic", &m_tDesc.bOrthographic);
+		_float fFovDegree = XMConvertToDegrees(m_tDesc.fFovy);
+		ImGui::DragFloat("ZoomSpeed", &m_tDesc.fZoomPerSec, 0.01f, 0.0f, 10.f);
+		ImGui::DragFloat("FOVy(Zoom)", &fFovDegree, 0.1f, 10.f, 200.f);
+		ImGui::DragFloat("Near", &m_tDesc.fNear, 0.01f, 0.01f, 1000.f);
+		if (m_tDesc.fNear <= 0.f) m_tDesc.fNear = 0.01f;
+		ImGui::DragFloat("Far", &m_tDesc.fFar, 0.01f, 0.2f, 10000.f);
+		if (m_tDesc.fFar <= 0.f) m_tDesc.fFar = m_tDesc.fNear + 0.01;
+		ImGui::DragFloat4("Look At", &m_tDesc.vAt.x, 1.0f);
+		m_tDesc.fFovy = XMConvertToRadians(fFovDegree);
+	}
+	return S_OK;
+}
 #pragma endregion

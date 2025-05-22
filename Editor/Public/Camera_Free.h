@@ -4,7 +4,6 @@
 #include "GameObject_Camera.h"
 
 NS_BEGIN(Editor)
-
 class CCamera_Free final : public CGameObject_Camera
 {
 public:
@@ -27,7 +26,6 @@ public:
 
 private:
 	_float				m_fSensor{};
-
 	_bool				m_bChanged = { false };
 
 public:

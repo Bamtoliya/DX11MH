@@ -353,6 +353,9 @@
     <ClInclude Include="..\public\Camera.h">
       <Filter>01.Utility\04.Components\Camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Components.h">
+      <Filter>01.Utility\04.Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
