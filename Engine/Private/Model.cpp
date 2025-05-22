@@ -8,6 +8,7 @@
 
 namespace fs = std::filesystem;
 
+#pragma region Constructor & Destructor
 CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent{ pDevice, pContext }
 {
@@ -15,20 +16,20 @@ CModel::CModel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 }
 
 CModel::CModel(const CModel& Prototype)
-	: CComponent { Prototype }	
-	, m_iNumMeshes { Prototype.m_iNumMeshes }
-	, m_Meshes { Prototype.m_Meshes }
-	, m_iNumMaterials { Prototype.m_iNumMaterials }
-	, m_Materials { Prototype.m_Materials }
-	, m_eType { Prototype.m_eType }
-	, m_PreTransformMatrix { Prototype.m_PreTransformMatrix }
+	: CComponent{ Prototype }
+	, m_iNumMeshes{ Prototype.m_iNumMeshes }
+	, m_Meshes{ Prototype.m_Meshes }
+	, m_iNumMaterials{ Prototype.m_iNumMaterials }
+	, m_Materials{ Prototype.m_Materials }
+	, m_eType{ Prototype.m_eType }
+	, m_PreTransformMatrix{ Prototype.m_PreTransformMatrix }
 	//, m_Bones { Prototype.m_Bones }
-	, m_iNumAnimations { Prototype.m_iNumAnimations }
+	, m_iNumAnimations{ Prototype.m_iNumAnimations }
 	// , m_Animations { Prototype.m_Animations }
 {
 	strcpy_s(m_szModelFilePath, Prototype.m_szModelFilePath);
 	for (auto& pPrototypeBone : Prototype.m_Bones)
-		m_Bones.push_back(pPrototypeBone->Clone());		
+		m_Bones.push_back(pPrototypeBone->Clone());
 
 	for (auto& pMaterial : m_Materials)
 		Safe_AddRef(pMaterial);
@@ -36,36 +37,17 @@ CModel::CModel(const CModel& Prototype)
 	for (auto& pMesh : m_Meshes)
 		Safe_AddRef(pMesh);
 
-	for (auto& pPrototypeAnim: Prototype.m_Animations)
+	for (auto& pPrototypeAnim : Prototype.m_Animations)
 		m_Animations.push_back(pPrototypeAnim->Clone());
-
-}
-
-HRESULT CModel::Bind_Material(CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eType, _uint iTextureIndex)
-{
-	if (iMeshIndex >= m_iNumMeshes)
-		return E_FAIL;		
-
-	_uint		iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();
-
-	if (iMaterialIndex >= m_iNumMaterials)
-		return E_FAIL;
-
-	return m_Materials[iMaterialIndex]->Bind_ShaderResource(pShader, pConstantName, eType, iTextureIndex);	
-}
-
-HRESULT CModel::Bind_Bone_Matrices(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
-{
-	return m_Meshes[iMeshIndex]->Bind_Bone_Matrices(pShader, pConstantName, m_Bones);	
 }
 
 HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
-{	
+{
 	strncpy_s(m_szModelFilePath, pModelFilePath, MAX_PATH);
 	fs::path filePath(pModelFilePath);
 	m_eType = eType;
 	XMStoreFloat4x4(&m_PreTransformMatrix, PreTransformMatrix);
-	if(filePath.extension() == L".model")
+	if (filePath.extension() == L".model")
 	{
 		ifstream inputFile(filePath, std::ios::binary);
 
@@ -108,7 +90,7 @@ HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _
 		if (FAILED(Ready_Meshes()))
 			return E_FAIL;
 
-		if (FAILED(Ready_Materials(pModelFilePath)))	
+		if (FAILED(Ready_Materials(pModelFilePath)))
 			return E_FAIL;
 
 		///* 각 애니메이션 마다 이용하고 있는 뼈대들의 시간에 맞는 상태값들을 미리 읽어서 저장해둔다. */
@@ -124,38 +106,13 @@ HRESULT CModel::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CModel::Render(_uint iMeshIndex)
-{	
-	m_Meshes[iMeshIndex]->Bind_Buffers();
-	m_Meshes[iMeshIndex]->Render();	
-
-	return S_OK;
-}
-
-_bool CModel::Play_Animation(_float fTimeDelta)
-{
-	_bool		isFinished = { false };
-	/* 1. 현재 애니메이션에 맞는 뼈의 상태를 읽어와서 뼈의 TrnasformationMatrix를 갱신해준다. */
-	isFinished  = m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta, m_Bones, m_isLoop);
-
-	/* 2. 전체 뼐르 순회하면서 뼈들의 ColmbinedTransformationMatixf를 부모에서부터 자식으로 갱신해주낟. */
-	for (auto& pBone : m_Bones)
-	{
-		pBone->Update_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix));
-	}
-
-	/*XMMatrixDecompose()*/
-
-	return isFinished;
-}
-
 HRESULT CModel::Ready_Bones(const aiNode* pAINode, _int iParentBoneIndex)
-{	
+{
 	CBone* pBone = CBone::Create(pAINode, iParentBoneIndex);
 	if (nullptr == pBone)
 		return E_FAIL;
 
-	m_Bones.push_back(pBone);	
+	m_Bones.push_back(pBone);
 
 	_int		iParentIndex = (_int)m_Bones.size() - 1;
 
@@ -215,24 +172,16 @@ HRESULT CModel::Ready_Animations()
 
 HRESULT CModel::Ready_Bin_Bones(ifstream& ifs, _int iParentBoneIndex)
 {
-	_uint szNameLength = { 0 };
-	CBone::MODEL_BONE_NODE ModelBoneNode = {};
-	ifs.read(reinterpret_cast<char*>(&szNameLength), sizeof(_uint));
-	ModelBoneNode.szName = new _char[szNameLength+1];
-	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.szName[0]), sizeof(_char) * szNameLength);
-	ModelBoneNode.szName[szNameLength] = '\0';
-	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.mTransformationMatrix), sizeof(_float4x4));
-	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iParentIndex), sizeof(_int));
-	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iNumChildren), sizeof(_uint));
-	CBone* pBone = CBone::Create(ModelBoneNode, iParentBoneIndex);
+	
+	CBone* pBone = CBone::Create(ifs, iParentBoneIndex);
 	if (nullptr == pBone)
 		return E_FAIL;
-
-	Safe_Delete_Array(ModelBoneNode.szName);
 	m_Bones.push_back(pBone);
+	_uint iNumChildren = {};
+	ifs.read(reinterpret_cast<char*>(&iNumChildren), sizeof(_uint));
 	_int		iParentIndex = (_int)m_Bones.size() - 1;
 
-	for (_uint i = 0; i < ModelBoneNode.iNumChildren; ++i)
+	for (_uint i = 0; i < iNumChildren; ++i)
 	{
 		Ready_Bin_Bones(ifs, iParentIndex);
 	}
@@ -278,6 +227,57 @@ HRESULT CModel::Ready_Bin_Animations(ifstream& ifs)
 
 	return S_OK;
 }
+#pragma endregion
+
+
+
+
+HRESULT CModel::Bind_Material(CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eType, _uint iTextureIndex)
+{
+	if (iMeshIndex >= m_iNumMeshes)
+		return E_FAIL;		
+
+	_uint		iMaterialIndex = m_Meshes[iMeshIndex]->Get_MaterialIndex();
+
+	if (iMaterialIndex >= m_iNumMaterials)
+		return E_FAIL;
+
+	return m_Materials[iMaterialIndex]->Bind_ShaderResource(pShader, pConstantName, eType, iTextureIndex);	
+}
+
+HRESULT CModel::Bind_Bone_Matrices(CShader* pShader, const _char* pConstantName, _uint iMeshIndex)
+{
+	return m_Meshes[iMeshIndex]->Bind_Bone_Matrices(pShader, pConstantName, m_Bones);	
+}
+
+
+
+HRESULT CModel::Render(_uint iMeshIndex)
+{	
+	m_Meshes[iMeshIndex]->Bind_Buffers();
+	m_Meshes[iMeshIndex]->Render();	
+
+	return S_OK;
+}
+
+_bool CModel::Play_Animation(_float fTimeDelta)
+{
+	_bool		isFinished = { false };
+	/* 1. 현재 애니메이션에 맞는 뼈의 상태를 읽어와서 뼈의 TrnasformationMatrix를 갱신해준다. */
+	isFinished  = m_Animations[m_iCurrentAnimIndex]->Update_Bones(fTimeDelta, m_Bones, m_isLoop);
+
+	/* 2. 전체 뼐르 순회하면서 뼈들의 ColmbinedTransformationMatixf를 부모에서부터 자식으로 갱신해주낟. */
+	for (auto& pBone : m_Bones)
+	{
+		pBone->Update_CombinedTransformationMatrix(m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix));
+	}
+
+	/*XMMatrixDecompose()*/
+
+	return isFinished;
+}
+
+
 
 HRESULT CModel::RenderImGui()
 {
@@ -292,11 +292,13 @@ HRESULT CModel::RenderImGui()
 		ImGui::Indent();
 		if (ImGui::CollapsingHeader(("Meshes (" + std::to_string(m_iNumMeshes) + ")").c_str()))
 		{
+
 		}
 		ImGui::Unindent();
 		ImGui::Indent();
 		if (ImGui::CollapsingHeader(("Bones (" + std::to_string(m_Bones.size()) + ")").c_str()))
 		{
+
 		}
 		ImGui::Unindent();
 		ImGui::Indent();

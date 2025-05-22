@@ -43,4 +43,4 @@ protected:
 	CAMERA_COM_DESC m_tDesc = {};
 #pragma endregion
 };
-NS_END;
+NS_END

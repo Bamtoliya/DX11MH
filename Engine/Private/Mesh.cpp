@@ -3,6 +3,7 @@
 #include "Bone.h"
 #include "Shader.h"
 
+#pragma region Constructor & Destructor
 CMesh::CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CVIBuffer{ pDevice, pContext }
 {
@@ -13,9 +14,55 @@ CMesh::CMesh(const CMesh& Prototype)
 {
 }
 
+CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix)
+{
+	CMesh* pInstance = new CMesh(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(eType, ifs, Bones, PreTransformMatrix)))
+	{
+		MSG_BOX("Failed to Created in Binary : CMesh");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const aiMesh* pAIMesh, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix)
+{
+	CMesh* pInstance = new CMesh(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(eType, pAIMesh, Bones, PreTransformMatrix)))
+	{
+		MSG_BOX("Failed to Created : CMesh");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CComponent* CMesh::Clone(void* pArg)
+{
+	CMesh* pInstance = new CMesh(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CMesh");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+void CMesh::Free()
+{
+	__super::Free();
+
+
+}
+
 HRESULT CMesh::Initialize_Prototype(MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix)
 {
-	
+
 	_uint iNameLength = {};
 	ifs.read(reinterpret_cast<char*>(&iNameLength), sizeof(_uint));
 	ZeroMemory(&m_szName, MAX_PATH);
@@ -226,19 +273,19 @@ HRESULT CMesh::Ready_Anim_Mesh(const aiMesh* pAIMesh, const vector<CBone*>& Bone
 
 		auto	iter = find_if(Bones.begin(), Bones.end(), [&](CBone* pBone)->_bool
 			{
-				if(true == pBone->Compare_Name(pAIBone->mName.data))
-					return true;				
+				if (true == pBone->Compare_Name(pAIBone->mName.data))
+					return true;
 
 				++iBoneIndex;
 
 				return false;
 			});
 
-		m_BoneIndices.push_back(iBoneIndex);	
+		m_BoneIndices.push_back(iBoneIndex);
 
 		/* i번째 뼈가 몇개 정점에게 영향을 주는데?*/
 		_uint		iNumWeights = pAIBone->mNumWeights;
-		
+
 		for (_uint j = 0; j < iNumWeights; j++)
 		{
 			/* i번째 뼈가 영향ㅇ르 주는 j번째 정점의 정보 */
@@ -386,7 +433,7 @@ HRESULT CMesh::Ready_Anim_Mesh(ifstream& ifs, const vector<class CBone*>& Bones)
 		/* 이 메시에 어떤 정점들게 영향을 줍니다. and 얼마나 영향을 줍니다. */
 		_uint	iNameLength = {};
 		ifs.read(reinterpret_cast<char*>(&iNameLength), sizeof(_uint));
-		_char* szName = new _char[iNameLength+1];
+		_char* szName = new _char[iNameLength + 1];
 		ifs.read(reinterpret_cast<char*>(&szName[0]), sizeof(_char) * iNameLength);
 		szName[iNameLength] = '\0';
 
@@ -488,6 +535,9 @@ HRESULT CMesh::Ready_Anim_Mesh(ifstream& ifs, const vector<class CBone*>& Bones)
 	return S_OK;
 }
 
+
+#pragma endregion
+
 HRESULT CMesh::Bind_Bone_Matrices(CShader* pShader, const _char* pConstantName, const vector<class CBone*>& Bones)
 {
 	ZeroMemory(m_BoneMatrices, sizeof(_float4x4) * g_iMaxNumBones);
@@ -502,48 +552,7 @@ HRESULT CMesh::Bind_Bone_Matrices(CShader* pShader, const _char* pConstantName, 
 	return pShader->Bind_Matrices(pConstantName, m_BoneMatrices, m_iNumBones);	
 }
 
-CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix)
+HRESULT CMesh::RenderImGui()
 {
-	CMesh* pInstance = new CMesh(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype(eType, ifs, Bones, PreTransformMatrix)))
-	{
-		MSG_BOX("Failed to Created in Binary : CMesh");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const aiMesh* pAIMesh, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix)
-{
-	CMesh* pInstance = new CMesh(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype(eType, pAIMesh, Bones, PreTransformMatrix)))
-	{
-		MSG_BOX("Failed to Created : CMesh");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CComponent* CMesh::Clone(void* pArg)
-{
-	CMesh* pInstance = new CMesh(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned : CMesh");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-void CMesh::Free()
-{
-	__super::Free();
-
-
+	return S_OK;
 }

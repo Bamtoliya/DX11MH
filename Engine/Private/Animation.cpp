@@ -1,23 +1,64 @@
 ﻿#include "Animation.h"
 #include "Channel.h"
 
+#pragma region Constructor & Destructor
 CAnimation::CAnimation()
 {
 
 }
 
 CAnimation::CAnimation(const CAnimation& Prototype)
-	: m_fDuration { Prototype.m_fDuration }
-	, m_fTickPerSecond { Prototype.m_fTickPerSecond }
-	, m_fCurrentTrackPosition { Prototype.m_fCurrentTrackPosition }
-	, m_CurrentKeyFrameIndices { Prototype.m_CurrentKeyFrameIndices }
-	, m_iNumChannels { Prototype.m_iNumChannels }
-	, m_Channels { Prototype.m_Channels }
+	: m_fDuration{ Prototype.m_fDuration }
+	, m_fTickPerSecond{ Prototype.m_fTickPerSecond }
+	, m_fCurrentTrackPosition{ Prototype.m_fCurrentTrackPosition }
+	, m_CurrentKeyFrameIndices{ Prototype.m_CurrentKeyFrameIndices }
+	, m_iNumChannels{ Prototype.m_iNumChannels }
+	, m_Channels{ Prototype.m_Channels }
 {
 	for (auto& pChannel : m_Channels)
 		Safe_AddRef(pChannel);
 }
 
+CAnimation* CAnimation::Create(ifstream& ifs, const vector<class CBone*>& Bones)
+{
+	CAnimation* pInstance = new CAnimation();
+
+	if (FAILED(pInstance->Initialize(ifs, Bones)))
+	{
+		MSG_BOX("Failed to Created in Binary : CAnimation");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CAnimation* CAnimation::Create(const aiAnimation* pAIAnimation, const vector<class CBone*>& Bones)
+{
+	CAnimation* pInstance = new CAnimation();
+
+	if (FAILED(pInstance->Initialize(pAIAnimation, Bones)))
+	{
+		MSG_BOX("Failed to Created : CAnimation");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CAnimation* CAnimation::Clone()
+{
+	return new CAnimation(*this);
+}
+
+void CAnimation::Free()
+{
+	__super::Free();
+
+	for (auto& pChannel : m_Channels)
+		Safe_Release(pChannel);
+
+	m_Channels.clear();
+}
 
 HRESULT CAnimation::Initialize(ifstream& ifs, const vector<class CBone*>& Bones)
 {
@@ -61,7 +102,7 @@ HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const vector<cla
 
 	/* 각 뼈의 정보를 새엇ㅇ한다. */
 	for (size_t i = 0; i < m_iNumChannels; i++)
-	{		
+	{
 		CChannel* pChannel = CChannel::Create(pAIAnimation->mChannels[i], Bones);
 		if (nullptr == pChannel)
 			return E_FAIL;
@@ -69,8 +110,10 @@ HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const vector<cla
 		m_Channels.push_back(pChannel);
 	}
 
-    return S_OK;
+	return S_OK;
 }
+#pragma endregion
+
 
 _bool CAnimation::Update_Bones(_float fTimeDelta, const vector<CBone*>& Bones, _bool isLoop)
 {
@@ -90,8 +133,6 @@ _bool CAnimation::Update_Bones(_float fTimeDelta, const vector<CBone*>& Bones, _
 		m_fCurrentTrackPosition = 0.f;			
 	}
 
-	
-
 	/*for (auto& pChannel : m_Channels)*/
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
@@ -102,45 +143,10 @@ exit:
 	return isFinished;
 }
 
-CAnimation* CAnimation::Create(ifstream& ifs, const vector<class CBone*>& Bones)
+
+
+
+HRESULT CAnimation::RenderImGui()
 {
-	CAnimation* pInstance = new CAnimation();
-
-	if (FAILED(pInstance->Initialize(ifs, Bones)))
-	{
-		MSG_BOX("Failed to Created in Binary : CAnimation");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CAnimation* CAnimation::Create(const aiAnimation* pAIAnimation, const vector<class CBone*>& Bones)
-{
-	CAnimation* pInstance = new CAnimation();
-
-	if (FAILED(pInstance->Initialize(pAIAnimation, Bones)))
-	{
-		MSG_BOX("Failed to Created : CAnimation");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CAnimation* CAnimation::Clone()
-{
-	return new CAnimation(*this);
-}
-
-void CAnimation::Free()
-{
-	__super::Free();
-
-		for (auto& pChannel : m_Channels)
-			Safe_Release(pChannel);
-
-	m_Channels.clear();
-
-
+	return S_OK;
 }

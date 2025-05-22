@@ -9,6 +9,7 @@ NS_BEGIN(Engine)
 
 class CBone final : public CBase
 {
+#pragma region Structures
 public:
 	typedef struct tagBoneNodeFromModel
 	{
@@ -19,14 +20,40 @@ public:
 	} MODEL_BONE_NODE;
 	typedef struct tagBoneFromMesh
 	{
-		_char*	szName;
+		_char* szName;
 		_float4x4 mOffSetMatrix;
 		_uint	iVertexIndex;
 		_float	fWeight;
 	} MESH_BONE;
+#pragma endregion
+
+#pragma region Constructor & Destructor
 private:
 	CBone();
 	virtual ~CBone() = default;
+public:
+	static CBone* Create(ifstream& ifs, _int iParentBoneIndex);
+	static CBone* Create(const aiNode* pAINode, _int iParentBoneIndex);
+	CBone* Clone();
+	virtual void Free() override;
+public:
+	HRESULT Initialize(ifstream& ifs, _int iParentBoneIndex);
+	HRESULT Initialize(const aiNode* pAINode, _int iParentBoneIndex);
+#pragma endregion
+
+#pragma region Variables
+private:
+	_char					m_szName[MAX_PATH] = {};
+
+	/* (A : 이 뼈 자체의 원점기준 변환정보를 표현한 행렬) */
+	_float4x4				m_TransformationMatrix = {};
+
+	/* (A : 이 뼈 자체의 원점기준 변환정보를 표현한 행렬) * 부모행렬. = A: 부모를 기준으로 회전한다. */
+	_float4x4				m_CombinedTransformationMatrix = {};
+
+	_int					m_iParentBoneIndex = { -1 };
+
+#pragma endregion
 
 public:
 	const _float4x4* Get_CombinedTransformationMatrix() const {
@@ -37,31 +64,14 @@ public:
 		XMStoreFloat4x4(&m_TransformationMatrix, TransformationMatrix);
 	}
 
-public:
-	HRESULT Initialize(const MODEL_BONE_NODE& tBoneNode, _int iParentBoneIndex);
-	HRESULT Initialize(const aiNode* pAINode, _int iParentBoneIndex);
 	void Update_TransformationMatrix(_fmatrix TransformationMatrix);
 	void Update_CombinedTransformationMatrix(const vector<CBone*>& Bones, _fmatrix PreTransformMatrix);
 	_bool Compare_Name(const _char* pName) {
 		return !strcmp(m_szName, pName);
 	}
 
-private:
-	_char					m_szName[MAX_PATH] = {};
-
-	/* (A : 이 뼈 자체의 원점기준 변환정보를 표현한 행렬) */
-	_float4x4				m_TransformationMatrix = {};
-
-	/* (A : 이 뼈 자체의 원점기준 변환정보를 표현한 행렬) * 부모행렬. = A: 부모를 기준으로 회전한다. */
-	_float4x4				m_CombinedTransformationMatrix = {};	
-
-	_int					m_iParentBoneIndex = { -1 };
-
 public:
-	static CBone* Create(const MODEL_BONE_NODE& tBoneNode, _int iParentBoneIndex);
-	static CBone* Create(const aiNode* pAINode, _int iParentBoneIndex);
-	CBone* Clone();
-	virtual void Free() override;
+	HRESULT RenderImGui();
 
 };
 

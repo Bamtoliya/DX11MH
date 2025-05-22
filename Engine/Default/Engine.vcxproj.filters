@@ -350,6 +350,9 @@
     <ClInclude Include="..\public\Channel.h">
       <Filter>01.Utility\04.Components\Model\Animation\Channel</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Camera.h">
+      <Filter>01.Utility\04.Components\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -649,6 +652,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Channel.cpp">
       <Filter>01.Utility\04.Components\Model\Animation\Channel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera.cpp">
+      <Filter>01.Utility\04.Components\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

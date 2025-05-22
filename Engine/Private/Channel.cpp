@@ -1,8 +1,42 @@
 ﻿#include "Channel.h"
 #include "Bone.h"
 
+#pragma region Constructor & Destructor
 CChannel::CChannel()
 {
+}
+
+CChannel* CChannel::Create(ifstream& ifs, const vector<class CBone*>& Bones)
+{
+	CChannel* pInstance = new CChannel();
+
+	if (FAILED(pInstance->Initialize(ifs, Bones)))
+	{
+		MSG_BOX("Failed to Created in Binary : CChannel");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CChannel* CChannel::Create(const aiNodeAnim* pAIChannel, const vector<class CBone*>& Bones)
+{
+	CChannel* pInstance = new CChannel();
+
+	if (FAILED(pInstance->Initialize(pAIChannel, Bones)))
+	{
+		MSG_BOX("Failed to Created : CChannel");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+void CChannel::Free()
+{
+	__super::Free();
+
+	m_KeyFrames.clear();
 }
 
 HRESULT CChannel::Initialize(ifstream& ifs, const vector<class CBone*>& Bones)
@@ -29,7 +63,7 @@ HRESULT CChannel::Initialize(ifstream& ifs, const vector<class CBone*>& Bones)
 		_double trackPosition = {};
 
 		if (i < iNumPositionKeys)
-		{	
+		{
 			ifs.read(reinterpret_cast<char*>(&trackPosition), sizeof(_double));
 			ifs.read(reinterpret_cast<char*>(&vTranslation), sizeof(_float3));
 		}
@@ -84,7 +118,7 @@ HRESULT CChannel::Initialize(const aiNodeAnim* pAIChannel, const vector<class CB
 	{
 		KEYFRAME		KeyFrame{};
 
-		if(i < pAIChannel->mNumScalingKeys)
+		if (i < pAIChannel->mNumScalingKeys)
 		{
 			memcpy(&vScale, &pAIChannel->mScalingKeys[i].mValue, sizeof(_float3));
 			KeyFrame.fTrackPosition = pAIChannel->mScalingKeys[i].mTime;
@@ -95,7 +129,7 @@ HRESULT CChannel::Initialize(const aiNodeAnim* pAIChannel, const vector<class CB
 			vRotation.x = pAIChannel->mRotationKeys[i].mValue.x;
 			vRotation.y = pAIChannel->mRotationKeys[i].mValue.y;
 			vRotation.z = pAIChannel->mRotationKeys[i].mValue.z;
-			vRotation.w = pAIChannel->mRotationKeys[i].mValue.w;			
+			vRotation.w = pAIChannel->mRotationKeys[i].mValue.w;
 			KeyFrame.fTrackPosition = pAIChannel->mRotationKeys[i].mTime;
 		}
 
@@ -125,6 +159,7 @@ HRESULT CChannel::Initialize(const aiNodeAnim* pAIChannel, const vector<class CB
 
 	return S_OK;
 }
+#pragma endregion
 
 void CChannel::Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float fCurrentTrackPosition, const vector<class CBone*>& Bones)
 {
@@ -172,39 +207,11 @@ void CChannel::Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float 
 	// TransformationMatrix = XMMatrixScaling() * XMMatrixRotationQuaternion() * XMMatrixTranslation();
 	TransformationMatrix = XMMatrixAffineTransformation(vScale, XMVectorSet(0.f, 0.f, 0.f, 1.f), vRotation, vPosition);
 
-
 	Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);
 }
 
-CChannel* CChannel::Create(ifstream& ifs, const vector<class CBone*>& Bones)
+
+HRESULT CChannel::RenderImGui()
 {
-	CChannel* pInstance = new CChannel();
-
-	if (FAILED(pInstance->Initialize(ifs, Bones)))
-	{
-		MSG_BOX("Failed to Created in Binary : CChannel");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CChannel* CChannel::Create(const aiNodeAnim* pAIChannel, const vector<class CBone*>& Bones)
-{
-	CChannel* pInstance = new CChannel();
-
-	if (FAILED(pInstance->Initialize(pAIChannel, Bones)))
-	{
-		MSG_BOX("Failed to Created : CChannel");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-void CChannel::Free()
-{
-	__super::Free();
-
-	m_KeyFrames.clear();
+	return S_OK;
 }
