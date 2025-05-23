@@ -292,7 +292,8 @@ HRESULT CModel::RenderImGui()
 		ImGui::Indent();
 		if (ImGui::CollapsingHeader(("Meshes (" + std::to_string(m_iNumMeshes) + ")").c_str()))
 		{
-
+			for (auto& pMesh : m_Meshes)
+				pMesh->RenderImGui();
 		}
 		ImGui::Unindent();
 		ImGui::Indent();
@@ -317,7 +318,11 @@ HRESULT CModel::RenderImGui()
 				/*for (auto& pAnimations : m_Animations)
 				pAnimations->RenderImGui();*/
 			}
-			ImGui::Button("Play Animation");
+			if (ImGui::Button("Play Animation"))
+			{
+				m_iCurrentAnimIndex = 0;
+				m_isLoop = true;
+			}
 			ImGui::SameLine();
 			if (ImGui::Button("Stop Animation"))
 			{

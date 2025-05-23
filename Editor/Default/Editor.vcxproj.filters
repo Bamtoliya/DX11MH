@@ -97,6 +97,9 @@
     <Filter Include="02.GameObject\05.Statue">
       <UniqueIdentifier>{9df9b6d9-4f56-4b26-bc44-30e077eae35a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\04.Player\Sonic">
+      <UniqueIdentifier>{8f2d34af-13d2-4586-b82c-99406788e13d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -153,14 +156,14 @@
     <ClCompile Include="..\Private\Monster.cpp">
       <Filter>02.GameObject\03.Monster</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Sonic.cpp">
-      <Filter>02.GameObject\04.Player</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Camera_Free.cpp">
       <Filter>02.GameObject\02.Camera\Free</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Statue.cpp">
       <Filter>02.GameObject\05.Statue</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sonic.cpp">
+      <Filter>02.GameObject\04.Player\Sonic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -242,14 +245,14 @@
     <ClInclude Include="..\Public\Editor_Macro.h">
       <Filter>99.Defines</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Sonic.h">
-      <Filter>02.GameObject\04.Player</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Camera_Free.h">
       <Filter>02.GameObject\02.Camera\Free</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Statue.h">
       <Filter>02.GameObject\05.Statue</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sonic.h">
+      <Filter>02.GameObject\04.Player\Sonic</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

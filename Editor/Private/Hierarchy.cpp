@@ -138,6 +138,11 @@ HRESULT CHierarchy::Add_GameObject_Popup()
     return S_OK;
 }
 
+HRESULT CHierarchy::Add_Prototype_Popup()
+{
+    return S_OK;
+}
+
 HRESULT CHierarchy::Delete_GameObject_Popup()
 {
     return S_OK;

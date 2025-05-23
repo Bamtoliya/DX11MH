@@ -343,8 +343,7 @@ void CTarget_Manager::Free()
     for (_uint i = 0; i < D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i) {
         Safe_Release(m_pBackupRTVs[i]);
     }
-    //Safe_Release(m_pBackupDSV);
-
+    Safe_Release(m_pBackupDSV);
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
 }

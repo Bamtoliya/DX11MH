@@ -554,5 +554,18 @@ HRESULT CMesh::Bind_Bone_Matrices(CShader* pShader, const _char* pConstantName, 
 
 HRESULT CMesh::RenderImGui()
 {
+	ImGui::Indent();
+	if (ImGui::CollapsingHeader(m_szName))
+	{
+		ImGui::Text("Vertices : %d", m_iNumVertices);
+		ImGui::Text("Faces : %d", m_iNumIndices / 3);
+		ImGui::Text("Material Index : %d", m_iMaterialIndex);
+		ImGui::Text("Bone Indices");
+		for (auto& boneIndex : m_BoneIndices)
+		{
+			ImGui::Text(to_string(boneIndex).c_str());
+		}
+	}
+	ImGui::Unindent();
 	return S_OK;
 }

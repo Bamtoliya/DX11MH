@@ -24,8 +24,12 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
+#pragma endregion
+
+#pragma region Components
 private:
-	HRESULT Ready_Components();
+	CShader* m_pShaderCom = { nullptr };
+	CModel* m_pModelCom = { nullptr };
 #pragma endregion
 
 #pragma region Loops
@@ -35,11 +39,9 @@ private:
 	virtual HRESULT Render();
 #pragma endregion
 
-#pragma region Components
 private:
-	CShader* m_pShaderCom = { nullptr };
-	CModel* m_pModelCom = { nullptr };
-#pragma endregion
+	HRESULT Ready_Components();
+	HRESULT Bind_ShaderResources();
 };
 
 NS_END

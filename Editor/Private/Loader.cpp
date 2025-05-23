@@ -7,6 +7,7 @@
 #include "Terrain.h"
 #include "Monster.h"
 #include "Statue.h"
+#include "Sonic.h"
 //#include "player.h"
 //#include "Effect.h"
 
@@ -227,6 +228,19 @@ HRESULT CLoader::Loading_For_Map()
 		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../../Assets/Models/Fiona/Fiona.model", PreTransformMatrix))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Model_Sonic */
+	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_Sonic"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../../Assets/Models/Sonic/Sonic.model", PreTransformMatrix))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Model_Sonic */
+	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(0.f));
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_SonicRun"),
+		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../../Assets/Models/Sonic/SonicXY2.fbx", PreTransformMatrix))))
+		return E_FAIL;
+
+
 	/* For.Prototype_Component_Model_ForkLift */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_ForkLift"),
@@ -268,6 +282,11 @@ HRESULT CLoader::Loading_For_Map()
 	/* For.Prototype_GameObject_Monster */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Statue"),
 		CStatue::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_GameObject_Sonic */
+	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Sonic"),
+		CSonic::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_GameObject_Monster */

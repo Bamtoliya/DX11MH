@@ -52,7 +52,15 @@ HRESULT CTerrain::Initialize(void* pArg)
 
 	Desc.fRotationPerSec = 0.f;
 	Desc.fSpeedPerSec = 0.f;
-	lstrcpy(Desc.szName, TEXT("Terrain"));
+	if(pArg != nullptr)
+	{
+		GAMEOBJECT_DESC* pDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
+		lstrcpy(Desc.szName, pDesc->szName);
+	}
+	else
+	{
+		lstrcpy(Desc.szName, TEXT("Terrain"));
+	}
 
 	if (FAILED(__super::Initialize(&Desc)))
 		return E_FAIL;
