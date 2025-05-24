@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Component.h"
 NS_BEGIN(Engine)
 class ENGINE_DLL CCamera : public CComponent
@@ -8,9 +8,9 @@ public:
 	typedef struct tagCameraComponentDesc {
 		_float4				vAt = _float4(0.f, 0.f, 0.f, 1.0f);
 		_float				fAspect;
-		_float				fDefaultFovy = XMConvertToRadians(60.f);    // ±âº» FOV °ª (¶óµğ¾È)
-		_float				fMinFovy = XMConvertToRadians(10.f);        // ÃÖ¼Ò FOV (ÃÖ´ë ÁÜÀÎ)
-		_float				fMaxFovy = XMConvertToRadians(200.f);        // ÃÖ´ë FOV (ÃÖ´ë ÁÜ¾Æ¿ô)
+		_float				fDefaultFovy = XMConvertToRadians(60.f);    // ê¸°ë³¸ FOV ê°’ (ë¼ë””ì•ˆ)
+		_float				fMinFovy = XMConvertToRadians(10.f);        // ìµœì†Œ FOV (ìµœëŒ€ ì¤Œì¸)
+		_float				fMaxFovy = XMConvertToRadians(200.f);        // ìµœëŒ€ FOV (ìµœëŒ€ ì¤Œì•„ì›ƒ)
 		_float				fFovy = XMConvertToRadians(60.0f);
 		_float				fNear = 0.1f;
 		_float				fFar = 500.f;
@@ -37,6 +37,14 @@ public:
 protected:
 	CAMERA_COM_DESC m_tDesc = {};
 #pragma endregion
+
+#pragma region Save&Load
+	virtual HRESULT Serialize(json& data) override;
+	virtual HRESULT Deserialize(const json& data) override;
+	virtual HRESULT Prototype_Serialize(json& data) override;
+	virtual HRESULT Prototype_Deserialize(const json& data) override;
+#pragma endregion
+
 #pragma region Loops
 public:
 	virtual void Priority_Update(_float fTimeDelta) override;

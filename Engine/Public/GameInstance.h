@@ -58,6 +58,10 @@ public:
 	HRESULT Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CGameObject* pGameObject = nullptr, void* pArg = nullptr);
+
+
+	HRESULT Save_Prototypes(json& data);
+	HRESULT Load_Prototypes(const json& data);
 	HRESULT Render_PrototypeManagerImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag);
 #pragma endregion
 
@@ -76,7 +80,6 @@ public:
 
 	HRESULT Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTag);
 #pragma endregion
-
 
 #pragma region OBJECT_MANAGER
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
@@ -97,7 +100,6 @@ public:
 	HRESULT Add_Timer(const _wstring& strTimerTag);
 	void Update_Timer(const _wstring& strTimerTag);
 #pragma endregion
-//
 
 #pragma region 	PIPELINE
 	void Set_Transform(D3DTS eState, _fmatrix TransformMatrix);
@@ -105,7 +107,6 @@ public:
 	_matrix Get_Transform_Matrix(D3DTS eState) const;
 	const _float4* Get_CamPosition() const;
 #pragma endregion
-
 
 #pragma region PICKING
 	HRESULT ReadPickingTargetPixel(_int screenX, _int screenY, _float4* pPickedColor);
@@ -117,14 +118,13 @@ public:
 //	_bool Picking_InLocal(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
 #pragma endregion
 
-
 #pragma region LIGHT_MANAGER
 	const LIGHT_DESC* Get_Light(_uint iIndex);
 	HRESULT Add_Light(const LIGHT_DESC& LightDesc);
 	HRESULT Add_Light(class CLight* pLight);
 #pragma endregion
 
-#pragma region Imgui
+#pragma region MYIMGUI_MANAGER
 	void SetEditor(_bool b) { m_bIsEditor = b; }
 	HRESULT Add_ImGui(const _wstring& strKey, class CMyImGui* pMyImGui);
 	HRESULT ToggleShowImGui(const _wstring& key);
@@ -134,6 +134,10 @@ public:
 	HRESULT ShowAll();
 	void Add_RenderObjectID(const _uint& iID);
 	size_t Get_RenderObjectIDCount(const _uint& iID);
+#pragma endregion
+
+#pragma region JSON_LOADER
+	HRESULT Load_Prototypes(const _char* pFilePath);
 #pragma endregion
 
 
@@ -161,6 +165,7 @@ private:
 
 	class CRenderer*			m_pRenderer = { nullptr };
 	class CPipeLine*			m_pPipeLine = { nullptr };
+	class CJson_Loader*			m_pJson_Loader = { nullptr };	
 	// class CPicking*				m_pPicking = { nullptr };
 #pragma region Boolean
 	_bool	m_bIsEditor = { true };

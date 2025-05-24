@@ -123,7 +123,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);SIMDJSON_BUILDING_WINDOWS_DYNAMIC_LIBRARY=1</PreprocessorDefinitions>
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>../public/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\wwise\include\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\imgui\backends;$(SolutionDir)External Libraries\imGuizmo\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -152,7 +152,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;ENGINE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions);SIMDJSON_BUILDING_WINDOWS_DYNAMIC_LIBRARY=1</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../public/;$(SolutionDir)External Libraries\fmod\core\inc\;$(SolutionDir)External Libraries\fmod\fsbank\inc\;$(SolutionDir)External Libraries\fmod\studio\inc\;$(SolutionDir)External Libraries\wwise\include\;$(SolutionDir)External Libraries\imgui\;$(SolutionDir)External Libraries\imgui\backends;$(SolutionDir)External Libraries\imGuizmo\</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -240,6 +240,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\public\Input_Device.h" />
+    <ClInclude Include="..\public\Json_Loader.h" />
     <ClInclude Include="..\Public\Layer.h" />
     <ClInclude Include="..\Public\Level.h" />
     <ClInclude Include="..\Public\Level_Manager.h" />
@@ -361,6 +362,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Private\Input_Device.cpp" />
+    <ClCompile Include="..\private\Json_Loader.cpp" />
     <ClCompile Include="..\Private\Layer.cpp" />
     <ClCompile Include="..\Private\Level.cpp" />
     <ClCompile Include="..\Private\Level_Manager.cpp" />

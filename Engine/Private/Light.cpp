@@ -61,6 +61,32 @@ void CLight::Free()
 #pragma endregion
 
 
+#pragma region Save&Load
+
+HRESULT CLight::Serialize(json& outJson)
+{
+	return S_OK;
+}
+
+HRESULT CLight::Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+HRESULT CLight::Prototype_Serialize(json& outJson)
+{
+	outJson["Class"] = "CLight";
+	return S_OK;
+}
+
+HRESULT CLight::Prototype_Deserialize(const json& inData)
+{
+
+	return S_OK;
+}
+
+#pragma endregion
+
 void CLight::Update()
 {
 	if (!m_pOwner)
@@ -82,7 +108,6 @@ HRESULT CLight::RenderImGui()
 		ImGui::ColorPicker4("Diffuse", &m_tInfo.vDiffuse.x);
 		ImGui::ColorPicker4("Ambient", &m_tInfo.vAmbient.x);
 		ImGui::ColorPicker4("Specular", &m_tInfo.vSpecular.x);
-		
 	}
 	return S_OK;
 }

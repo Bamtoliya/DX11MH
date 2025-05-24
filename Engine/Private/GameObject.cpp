@@ -195,11 +195,11 @@ HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& s
 	return S_OK;
 }
 
-HRESULT CGameObject::Serialize()
+HRESULT CGameObject::Serialize(json& data)
 {
 	for(auto & iter : m_Components)
 	{
-		if(FAILED(iter.second->Serialize()))
+		if(FAILED(iter.second->Serialize(data)))
 			return E_FAIL;
 	}
 	return S_OK;

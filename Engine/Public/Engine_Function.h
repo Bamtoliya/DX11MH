@@ -101,4 +101,10 @@ namespace Engine
 			(static_cast<unsigned int>(g_byte) << 8) |
 			static_cast<unsigned int>(b_byte);
 	}
+
+	static string FloatToString(float value, int precision) {
+		ostringstream oss;
+		oss << std::fixed << std::setprecision(precision) << value;
+		return oss.str();
+	}
 }

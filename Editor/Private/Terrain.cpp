@@ -71,53 +71,6 @@ HRESULT CTerrain::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CTerrain::Free()
-{
-	__super::Free();
-
-	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
-}
-#pragma endregion
-
-
-
-#pragma region Loops
-void CTerrain::Priority_Update(_float fTimeDelta)
-{
-
-}
-
-void CTerrain::Update(_float fTimeDelta)
-{
-
-}
-void CTerrain::Late_Update(_float fTimeDelta)
-{
-	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
-}
-
-HRESULT CTerrain::Render()
-{
-	if (!m_bVisible)
-		return S_OK;
-	if(FAILED(Bind_ShaderResources()))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Begin(0)))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBufferCom->Bind_Buffers()))
-		return E_FAIL;
-
-	if (FAILED(m_pVIBufferCom->Render()))
-		return E_FAIL;
-	return S_OK;
-}
-#pragma endregion
-
-
 HRESULT CTerrain::Ready_Components()
 {
 	/* For.Com_Shader */
@@ -136,6 +89,52 @@ HRESULT CTerrain::Ready_Components()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CTerrain::Free()
+{
+	__super::Free();
+
+	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
+}
+#pragma endregion
+
+HRESULT CTerrain::Serialize(json& outJson)
+{
+	return S_OK;
+}
+
+HRESULT CTerrain::Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+HRESULT CTerrain::Prototype_Serialize(json& outJson)
+{
+	outJson["Class"] = "CTerrain";
+	return S_OK;
+}
+
+HRESULT CTerrain::Prototype_Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+#pragma region Loops
+void CTerrain::Priority_Update(_float fTimeDelta)
+{
+
+}
+
+void CTerrain::Update(_float fTimeDelta)
+{
+
+}
+void CTerrain::Late_Update(_float fTimeDelta)
+{
+	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
 }
 
 HRESULT CTerrain::Bind_ShaderResources()
@@ -171,3 +170,21 @@ HRESULT CTerrain::Bind_ShaderResources()
 	return S_OK;
 }
 
+HRESULT CTerrain::Render()
+{
+	if (!m_bVisible)
+		return S_OK;
+	if(FAILED(Bind_ShaderResources()))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Begin(0)))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBufferCom->Bind_Buffers()))
+		return E_FAIL;
+
+	if (FAILED(m_pVIBufferCom->Render()))
+		return E_FAIL;
+	return S_OK;
+}
+#pragma endregion

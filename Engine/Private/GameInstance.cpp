@@ -5,6 +5,7 @@
 #include "Managers.h"
 #include "Renderer.h"
 #include "PipeLine.h"
+#include "Json_Loader.h"
 
 IMPLEMENT_SINGLETON(CGameInstance);
 
@@ -68,6 +69,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 
+	m_pLight_Manager = CLight_Manager::Create();
+	if (nullptr == m_pLight_Manager)
+		return E_FAIL;
+
 #pragma endregion
 
 	m_pRenderer = CRenderer::Create(*ppDeviceOut, *ppContextOut);
@@ -76,11 +81,9 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	m_pPipeLine = CPipeLine::Create();
 	if (nullptr == m_pPipeLine)
 		return E_FAIL;
-
-	m_pLight_Manager = CLight_Manager::Create();
-	if (nullptr == m_pLight_Manager)
+	m_pJson_Loader = CJson_Loader::Create(*ppDeviceOut, *ppContextOut);
+	if (nullptr == m_pJson_Loader)
 		return E_FAIL;
-
 
 	return S_OK;
 }
@@ -191,9 +194,6 @@ ID3D11ShaderResourceView* CGameInstance::Get_BackBufferSRV() const
 }
 #pragma endregion
 
-
-
-
 #pragma region LEVEL_MANAGER
 
 HRESULT CGameInstance::Change_Level(_uint iLevelIndex, CLevel* pNewLevel)
@@ -225,6 +225,17 @@ CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototype
 CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, CGameObject* pGameObject, void* pArg)
 {
 	return m_pPrototype_Manager->Clone_Prototype(ePrototypeType, iPrototypeLevelIndex, strPrototypeTag, pGameObject, pArg);
+}
+
+
+HRESULT CGameInstance::Save_Prototypes(json& data)
+{
+	return m_pPrototype_Manager->Save_Prototypes(data);
+}
+
+HRESULT CGameInstance::Load_Prototypes(const json& data)
+{
+	return m_pPrototype_Manager->Load_Prototypes(data);
 }
 
 HRESULT CGameInstance::Render_PrototypeManagerImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag)
@@ -379,6 +390,14 @@ size_t CGameInstance::Get_RenderObjectIDCount(const _uint& iID)
 }
 
 #pragma endregion
+
+#pragma region JSON_LOADER
+HRESULT CGameInstance::Load_Prototypes(const _char* pFilePath)
+{
+	return m_pJson_Loader->Load_Prototypes(pFilePath);
+}
+#pragma endregion
+
 
 #pragma region PIPELINE
 

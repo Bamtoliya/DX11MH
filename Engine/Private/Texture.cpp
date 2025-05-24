@@ -1,25 +1,54 @@
 ﻿#include "Texture.h"
 #include "Shader.h"
-
+#pragma region Constructor/Destructor
 CTexture::CTexture(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CComponent { pDevice, pContext }
+	: CComponent{ pDevice, pContext }
 {
 }
 
 CTexture::CTexture(const CTexture& Prototype)
 	: CComponent{ Prototype }
 	, m_SRVs{ Prototype.m_SRVs }
-	, m_iNumTextures { Prototype.m_iNumTextures }
+	, m_iNumTextures{ Prototype.m_iNumTextures }
+	, m_strTextureFilePath{ Prototype.m_strTextureFilePath }
 {
 
 	for (auto& pSRV : m_SRVs)
 		Safe_AddRef(pSRV);
 }
 
+CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures)
+{
+	CTexture* pInstance = new CTexture(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(pTextureFilePath, iNumTextures)))
+	{
+		MSG_BOX("Failed to Created : CTexture");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CComponent* CTexture::Clone(void* pArg)
+{
+	CTexture* pInstance = new CTexture(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CTexture");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+
+}
+
 HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures)
 {
 	_tchar			szTexturePath[MAX_PATH] = {};
 	_tchar			szExt[MAX_PATH] = {};
+	m_strTextureFilePath = pTextureFilePath;
 
 	_wsplitpath_s(pTextureFilePath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, MAX_PATH);
 
@@ -28,7 +57,7 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 		ID3D11ShaderResourceView* pSRV = { nullptr };
 
 		wsprintf(szTexturePath, pTextureFilePath, i);
-		
+
 		HRESULT			hr = {};
 
 		if (false == lstrcmp(TEXT(".dds"), szExt))
@@ -58,6 +87,45 @@ HRESULT CTexture::Initialize(void* pArg)
 	return S_OK;
 }
 
+void CTexture::Free()
+{
+	__super::Free();
+
+	for (auto& pSRV : m_SRVs)
+		Safe_Release(pSRV);
+
+	m_SRVs.clear();
+}
+#pragma endregion
+
+#pragma region Save&Load
+
+HRESULT CTexture::Serialize(json& outJson)
+{
+	return S_OK;
+}
+
+HRESULT CTexture::Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+HRESULT CTexture::Prototype_Serialize(json& outJson)
+{
+	outJson["Class"] = "CTexture";
+	outJson["TextureFilePath"] = WideToUtf8(m_strTextureFilePath.c_str()).c_str();
+	outJson["NumTexture"] = m_iNumTextures;
+	return S_OK;
+}
+
+HRESULT CTexture::Prototype_Deserialize(const json& inData)
+{
+
+	return S_OK;
+}
+
+#pragma endregion
+
 HRESULT CTexture::Bind_ShaderResource(CShader* pShader, const _char* pConstantName, _uint iTextureIndex)
 {
 	if (iTextureIndex >= m_iNumTextures)
@@ -75,40 +143,4 @@ HRESULT CTexture::RenderImGui()
 	return S_OK;
 }
 
-CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures)
-{
-	CTexture* pInstance = new CTexture(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pTextureFilePath, iNumTextures)))
-	{
-		MSG_BOX("Failed to Created : CTexture");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-
-CComponent* CTexture::Clone(void* pArg)
-{
-	CTexture* pInstance = new CTexture(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned : CTexture");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-
-}
-
-void CTexture::Free()
-{
-	__super::Free();
-
-	for (auto& pSRV : m_SRVs)
-		Safe_Release(pSRV);
-
-	m_SRVs.clear();
-}

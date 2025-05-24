@@ -1,4 +1,4 @@
-#include "Light_Direction.h"
+ï»¿#include "Light_Direction.h"
 
 #include "Light.h"
 #include "Shader.h"
@@ -60,6 +60,43 @@ HRESULT CLight_Direction::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CLight_Direction::Ready_Components()
+{
+	m_pLightCom = CLight::Create(m_pDevice, m_pContext);
+	m_Components.emplace(L"Com_Light", m_pLightCom);
+	m_pLightCom->Set_OwnerGameObject(this);
+	LIGHT_DESC tDesc = {};
+	tDesc.eType = LIGHT_DESC::TYPE_DIRECTIONAL;
+	tDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+	tDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	tDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	tDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+	m_pLightCom->Initialize(&tDesc);
+	Safe_AddRef(m_pLightCom);
+	/* For.Com_Texture */
+	m_pTextureCom = CTexture::Create(m_pDevice, m_pContext, L"../../Assets/Textures/Light.png", 1);
+	m_Components.emplace(L"Com_Texture", m_pTextureCom);
+	m_pTextureCom->Set_OwnerGameObject(this);
+	Safe_AddRef(m_pTextureCom);
+	/* For.Com_VIBuffer */
+	m_pVIBufferCom = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
+	m_Components.emplace(L"Com_VIBuffer", m_pVIBufferCom);
+	m_pVIBufferCom->Set_OwnerGameObject(this);
+	Safe_AddRef(m_pVIBufferCom);
+
+	//ì—¬ê¸°ì„œ ë§Œë“œëŠ”ê²Œì•„ë‹ˆë¼ ë‚˜ì¤‘ì—” í”„ë¡œí† íƒ€ìž…ì—ì„œ ì°¾ì•„ì„œ ëŒ€ì²´í•´ì£¼ê¸°
+	/* For.Com_Shader */
+	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, L"../../Assets/ShaderFiles/Shader_VtxPosTex.hlsl", VTXPOSTEX::Elements, VTXPOSTEX::iNumElements, "VTXPOSTEX");
+	m_Components.emplace(L"Com_Shader", m_pShaderCom);
+	m_pShaderCom->Set_OwnerGameObject(this);
+	Safe_AddRef(m_pShaderCom);
+	/*if (FAILED(__super::Add_Component(ENUM_CLASS(0), TEXT("Prototype_Component_Shader_Cube"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+		return E_FAIL;*/
+	return S_OK;
+}
+
+
 void CLight_Direction::Free()
 {
 	__super::Free();
@@ -67,6 +104,32 @@ void CLight_Direction::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pVIBufferCom);
+}
+
+#pragma endregion
+
+#pragma region Save&Load
+
+HRESULT CLight_Direction::Serialize(json& outJson)
+{
+	return S_OK;
+}
+
+HRESULT CLight_Direction::Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+HRESULT CLight_Direction::Prototype_Serialize(json& outJson)
+{
+	outJson["Class"] = "CLight_Direction";
+	return S_OK;
+}
+
+HRESULT CLight_Direction::Prototype_Deserialize(const json& inData)
+{
+
+	return S_OK;
 }
 
 #pragma endregion
@@ -95,8 +158,8 @@ HRESULT CLight_Direction::Render()
 {
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
 		return E_FAIL;
-	/* dx9 : ÀåÄ¡¿¡ ºä, Åõ¿µÇà·ÄÀ» ÀúÀåÇØµÎ¸é ·»´õ¸µ½Ã ¾Ë¾Æ¼­ Á¤Á¡¿¡ TransformÇØÁÖ¾ú´Ù. */
-	/* dx11 : ¼ÎÀÌ´õ¿¡ ºä, Åõ¿µÇà·ÄÀ» ÀúÀåÇØµÎ°í ¿ì¸®°¡ Á÷Á¢ º¯È¯ÇØÁÖ¾î¾ßÇÑ´Ù. */
+	/* dx9 : ìž¥ì¹˜ì— ë·°, íˆ¬ì˜í–‰ë ¬ì„ ì €ìž¥í•´ë‘ë©´ ë Œë”ë§ì‹œ ì•Œì•„ì„œ ì •ì ì— Transformí•´ì£¼ì—ˆë‹¤. */
+	/* dx11 : ì…°ì´ë”ì— ë·°, íˆ¬ì˜í–‰ë ¬ì„ ì €ìž¥í•´ë‘ê³  ìš°ë¦¬ê°€ ì§ì ‘ ë³€í™˜í•´ì£¼ì–´ì•¼í•œë‹¤. */
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
@@ -125,40 +188,3 @@ HRESULT CLight_Direction::Post_Render()
 }
 
 #pragma endregion
-
-HRESULT CLight_Direction::Ready_Components()
-{
-	m_pLightCom = CLight::Create(m_pDevice, m_pContext);
-	m_Components.emplace(L"Com_Light", m_pLightCom);
-	m_pLightCom->Set_OwnerGameObject(this);
-	LIGHT_DESC tDesc = {};
-	tDesc.eType = LIGHT_DESC::TYPE_DIRECTIONAL;
-	tDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
-	tDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	tDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	tDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	m_pLightCom->Initialize(&tDesc);
-	Safe_AddRef(m_pLightCom);
-	/* For.Com_Texture */
-	m_pTextureCom = CTexture::Create(m_pDevice, m_pContext, L"../../Assets/Textures/Light.png", 1);
-	m_Components.emplace(L"Com_Texture", m_pTextureCom);
-	m_pTextureCom->Set_OwnerGameObject(this);
-	Safe_AddRef(m_pTextureCom);
-	/* For.Com_VIBuffer */
-	m_pVIBufferCom = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
-	m_Components.emplace(L"Com_VIBuffer", m_pVIBufferCom);
-	m_pVIBufferCom->Set_OwnerGameObject(this);
-	Safe_AddRef(m_pVIBufferCom);
-
-	//¿©±â¼­ ¸¸µå´Â°Ô¾Æ´Ï¶ó ³ªÁß¿£ ÇÁ·ÎÅäÅ¸ÀÔ¿¡¼­ Ã£¾Æ¼­ ´ëÃ¼ÇØÁÖ±â
-	/* For.Com_Shader */
-	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, L"../../Assets/ShaderFiles/Shader_VtxPosTex.hlsl", VTXPOSTEX::Elements, VTXPOSTEX::iNumElements);
-	m_Components.emplace(L"Com_Shader", m_pShaderCom);
-	m_pShaderCom->Set_OwnerGameObject(this);
-	Safe_AddRef(m_pShaderCom);
-	/*if (FAILED(__super::Add_Component(ENUM_CLASS(0), TEXT("Prototype_Component_Shader_Cube"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-		return E_FAIL;*/
-	return S_OK;
-}
-

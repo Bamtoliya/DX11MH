@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 NS_BEGIN(Engine)
 class CLight;
@@ -18,6 +18,8 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+private:
+	HRESULT Ready_Components();
 public:
 	virtual void Free() override;
 #pragma endregion
@@ -40,8 +42,13 @@ protected:
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 #pragma endregion
 
-private:
-	HRESULT Ready_Components();
+#pragma region Save&Load
+public:
+	virtual HRESULT Serialize(json& data) override;
+	virtual HRESULT Deserialize(const json& data) override;
+	virtual HRESULT Prototype_Serialize(json& data) override;
+	virtual HRESULT Prototype_Deserialize(const json& data) override;
+#pragma endregion
 };
 
 NS_END

@@ -4,6 +4,7 @@
 
 _bool g_bCameraControl = false;
 
+#pragma region Constructor/Destructor
 CCamera_Free::CCamera_Free(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject_Camera{ pDevice, pContext }
 {
@@ -14,6 +15,32 @@ CCamera_Free::CCamera_Free(const CCamera_Free& Prototype)
 	: CGameObject_Camera{ Prototype }
 {
 
+}
+
+CCamera_Free* CCamera_Free::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CCamera_Free* pInstance = new CCamera_Free(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype()))
+	{
+		MSG_BOX("Failed to Created : CMainApp");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CGameObject* CCamera_Free::Clone(void* pArg)
+{
+	CCamera_Free* pInstance = new CCamera_Free(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CCamera_Free");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
 
 HRESULT CCamera_Free::Initialize_Prototype()
@@ -27,13 +54,20 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 	Desc.fSpeedPerSec = 10.f;
 	Desc.fRotationPerSec = 1.f;
 	lstrcpy(Desc.szName, TEXT("Camera"));
-	m_fSensor = 0.1f;	
+	m_fSensor = 0.1f;
 	if (FAILED(__super::Initialize(&Desc)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
+void CCamera_Free::Free()
+{
+	__super::Free();
+}
+#pragma endregion
+
+#pragma region Loops
 void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
 	if (g_bCameraControl)
@@ -82,7 +116,7 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 			{
 				m_pCameraCom->ZoomOut(fTimeDelta * m_fSensor);
 			}
-			
+
 		}*/
 	}
 
@@ -113,9 +147,10 @@ void CCamera_Free::Late_Update(_float fTimeDelta)
 
 HRESULT CCamera_Free::Render()
 {
-	
+
 	return S_OK;
 }
+#pragma endregion
 
 void CCamera_Free::Focus_OnPickedObject()
 {
@@ -158,35 +193,28 @@ void CCamera_Free::Focus_OnPickedObject()
 	}
 }
 
-CCamera_Free* CCamera_Free::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+
+#pragma region Save&Load
+
+HRESULT CCamera_Free::Serialize(json& outJson)
 {
-	CCamera_Free* pInstance = new CCamera_Free(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype()))
-	{
-		MSG_BOX("Failed to Created : CMainApp");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
+	return S_OK;
 }
 
-CGameObject* CCamera_Free::Clone(void* pArg)
+HRESULT CCamera_Free::Deserialize(const json& inData)
 {
-	CCamera_Free* pInstance = new CCamera_Free(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned : CCamera_Free");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
+	return S_OK;
 }
 
-void CCamera_Free::Free()
+HRESULT CCamera_Free::Prototype_Serialize(json& outJson)
 {
-	__super::Free();
-
-
+	outJson["Class"] = "CCamera_Free";
+	return S_OK;
 }
+
+HRESULT CCamera_Free::Prototype_Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+#pragma endregion

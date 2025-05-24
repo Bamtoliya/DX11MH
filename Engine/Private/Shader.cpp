@@ -1,16 +1,17 @@
 ﻿#include "Shader.h"
-
+#pragma region Constructor & Destructor
 CShader::CShader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    : CComponent { pDevice, pContext }
+	: CComponent{ pDevice, pContext }
 {
 
 }
 
 CShader::CShader(const CShader& Prototype)
-    : CComponent{ Prototype }
-	, m_pEffect { Prototype.m_pEffect }
-	, m_InputLayouts { Prototype.m_InputLayouts }
-	, m_strShaderFile { Prototype.m_strShaderFile }
+	: CComponent{ Prototype }
+	, m_pEffect{ Prototype.m_pEffect }
+	, m_InputLayouts{ Prototype.m_InputLayouts }
+	, m_strShaderFile{ Prototype.m_strShaderFile }
+	, m_strLayoutName { Prototype.m_strLayoutName }
 {
 	for (auto& pInputLayout : m_InputLayouts)
 		Safe_AddRef(pInputLayout);
@@ -18,10 +19,37 @@ CShader::CShader(const CShader& Prototype)
 	Safe_AddRef(m_pEffect);
 }
 
-HRESULT CShader::Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
+CShader* CShader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const _char* pLayoutName)
+{
+	CShader* pInstance = new CShader(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(pShaderFilePath, pElements, iNumElements, pLayoutName)))
+	{
+		MSG_BOX("Failed to Create : CShader");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CComponent* CShader::Clone(void* pArg)
+{
+	CShader* pInstance = new CShader(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Clone : CShader");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+HRESULT CShader::Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const _char* pLayoutName)
 {
 	_uint	iShaderFlag = {};
 	m_strShaderFile = pShaderFilePath;
+	m_strLayoutName = pLayoutName;
 
 #ifdef _DEBUG
 	iShaderFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
@@ -48,7 +76,7 @@ HRESULT CShader::Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11
 
 		D3DX11_PASS_DESC		PassDesc{};
 		pPass->GetDesc(&PassDesc);
-		
+
 		if (FAILED(m_pDevice->CreateInputLayout(pElements, iNumElements,
 			PassDesc.pIAInputSignature, PassDesc.IAInputSignatureSize, &pInputLayout)))
 			return E_FAIL;
@@ -61,12 +89,29 @@ HRESULT CShader::Initialize_Prototype(const _tchar* pShaderFilePath, const D3D11
 
 HRESULT CShader::Initialize(void* pArg)
 {
-    return S_OK;
+	return S_OK;
 }
 
+void CShader::Free()
+{
+	__super::Free();
+
+	m_strShaderFile.clear();
+
+	for (auto& pInputLayout : m_InputLayouts)
+		Safe_Release(pInputLayout);
+
+	m_InputLayouts.clear();
+
+	Safe_Release(m_pEffect);
+}
+#pragma endregion
+
+
+#pragma region Rendering
 HRESULT CShader::Begin(_uint iPassIndex)
 {
-	m_pContext->IASetInputLayout(m_InputLayouts[iPassIndex]);	
+	m_pContext->IASetInputLayout(m_InputLayouts[iPassIndex]);
 
 	ID3DX11EffectPass* pPass = m_pEffect->GetTechniqueByIndex(0)->GetPassByIndex(iPassIndex);
 	if (nullptr == pPass)
@@ -80,14 +125,16 @@ HRESULT CShader::Begin(_uint iPassIndex)
 	/* Apply() 이전에 쉐이더에 전달해야할 모든 데이터들을 다 전달해놔야한다. */
 	return pPass->Apply(0, m_pContext);
 }
+#pragma endregion
 
+#pragma region Bind Resources
 HRESULT CShader::Bind_RawValue(const _char* pConstantName, const void* pValue, _uint iLength)
 {
 	ID3DX11EffectVariable* pVariable = m_pEffect->GetVariableByName(pConstantName);
 	if (nullptr == pVariable)
 		return E_FAIL;
 
-	return pVariable->SetRawValue(pValue, 0, iLength);	
+	return pVariable->SetRawValue(pValue, 0, iLength);
 }
 
 HRESULT CShader::Bind_Matrix(const _char* pConstantName, const _float4x4* pMatrix)
@@ -123,7 +170,7 @@ HRESULT CShader::Bind_SRV(const _char* pConstantName, ID3D11ShaderResourceView* 
 	if (nullptr == pVariable)
 		return E_FAIL;
 
-	
+
 	ID3DX11EffectShaderResourceVariable* pShaderResourceVariable = pVariable->AsShaderResource();
 	if (nullptr == pShaderResourceVariable)
 		return E_FAIL;
@@ -144,6 +191,36 @@ HRESULT CShader::Bind_SRVs(const _char* pConstantName, ID3D11ShaderResourceView*
 	return pSRVVariable->SetResourceArray(ppSRVs, 0, iNumSRVs);
 }
 
+#pragma endregion
+
+#pragma region Save&Load
+
+HRESULT CShader::Serialize(json& outJson)
+{
+	return S_OK;
+}
+
+HRESULT CShader::Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+HRESULT CShader::Prototype_Serialize(json& outJson)
+{
+	outJson["Class"] = "CShader";
+	outJson["ShdaerPath"] = WideToUtf8(m_strShaderFile.c_str()).c_str();
+	outJson["Layout"] = m_strLayoutName;
+	return S_OK;
+}
+
+HRESULT CShader::Prototype_Deserialize(const json& inData)
+{
+
+	return S_OK;
+}
+
+#pragma endregion
+
 HRESULT CShader::RenderImGui()
 {
 	if (ImGui::CollapsingHeader("Shader"), ImGuiTreeNodeFlags_DefaultOpen)
@@ -156,43 +233,3 @@ HRESULT CShader::RenderImGui()
 	return S_OK;
 }
 
-CShader* CShader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements)
-{
-	CShader* pInstance = new CShader(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype(pShaderFilePath, pElements, iNumElements)))
-	{
-		MSG_BOX("Failed to Create : CShader");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-
-CComponent* CShader::Clone(void* pArg)
-{
-	CShader* pInstance = new CShader(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Clone : CShader");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-void CShader::Free()
-{
-    __super::Free();
-
-	m_strShaderFile.clear();
-
-	for (auto& pInputLayout : m_InputLayouts)
-		Safe_Release(pInputLayout);
-
-	m_InputLayouts.clear();
-
-	Safe_Release(m_pEffect);
-}

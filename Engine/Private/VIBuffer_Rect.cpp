@@ -36,16 +36,9 @@ CComponent* CVIBuffer_Rect::Clone(void* pArg)
 	return pInstance;
 }
 
-void CVIBuffer_Rect::Free()
-{
-	__super::Free();
-}
-#pragma endregion
-
-#pragma region Initialize
 HRESULT CVIBuffer_Rect::Initialize_Prototype()
 {
-	
+
 	m_iNumVertexBuffers = 1;
 	m_iNumVertices = 4;
 	m_iVertexStride = sizeof(VTXPOSTEX);
@@ -126,6 +119,37 @@ HRESULT CVIBuffer_Rect::Initialize(void* pArg)
 {
 	return S_OK;
 }
+
+void CVIBuffer_Rect::Free()
+{
+	__super::Free();
+}
+#pragma endregion
+
+#pragma region Save&Load
+
+HRESULT CVIBuffer_Rect::Serialize(json& outJson)
+{
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Rect::Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Rect::Prototype_Serialize(json& outJson)
+{
+	outJson["Class"] = "CVIBuffer_Rect";
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Rect::Prototype_Deserialize(const json& inData)
+{
+
+	return S_OK;
+}
+
 #pragma endregion
 
 HRESULT CVIBuffer_Rect::RenderImGui()

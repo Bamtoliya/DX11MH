@@ -31,7 +31,7 @@ public:
 	virtual HRESULT RenderImGui() { return S_OK; }
 	virtual void* Dump() { return nullptr; }
 public:
-	virtual HRESULT Serialize();
+	virtual HRESULT Serialize(json& data);
 	virtual HRESULT Deserialize();
 #pragma region Variables
 protected:

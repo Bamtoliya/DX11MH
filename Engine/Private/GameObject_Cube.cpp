@@ -78,7 +78,7 @@ HRESULT CGameObject_Cube::Ready_Components()
 
 	//여기서 만드는게아니라 나중엔 프로토타입에서 찾아서 대체해주기
 	/* For.Com_Shader */
-	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, L"../../Assets/ShaderFiles/Shader_VtxCubeTex.hlsl", VTXCUBETEX::Elements, VTXCUBETEX::iNumElements);
+	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, L"../../Assets/ShaderFiles/Shader_VtxCubeTex.hlsl", VTXCUBETEX::Elements, VTXCUBETEX::iNumElements, "VTXCUBETEX");
 	m_Components.emplace(L"Com_Shader", m_pShaderCom);
 	Safe_AddRef(m_pShaderCom);
 	/*if (FAILED(__super::Add_Component(ENUM_CLASS(0), TEXT("Prototype_Component_Shader_Cube"),

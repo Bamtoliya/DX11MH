@@ -90,21 +90,18 @@ HRESULT CPrototype_Manager::RenderImGui(_uint iLevelIndex, const _wstring& Proto
 	return S_OK;
 }
 
-HRESULT CPrototype_Manager::Save_Prototypes()
+HRESULT CPrototype_Manager::Save_Prototypes(json& outJson)
 {
 	for (size_t i = 0; i < m_iNumLevels; i++)
 	{
 		for (auto& Pair : m_pPrototypes[i])
 		{
-			//Pair.second.
+			json prototype = json::object();
+			Pair.second->Prototype_Serialize(prototype);
+			outJson[WideToUtf8(Pair.first.c_str()).c_str()] = prototype;
 		}
 	}
 	
-	return S_OK;
-}
-
-HRESULT CPrototype_Manager::Load_Prototypes()
-{
 	return S_OK;
 }
 

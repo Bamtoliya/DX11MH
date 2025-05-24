@@ -41,6 +41,32 @@ CModel::CModel(const CModel& Prototype)
 		m_Animations.push_back(pPrototypeAnim->Clone());
 }
 
+CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
+{
+	CModel* pInstance = new CModel(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PreTransformMatrix)))
+	{
+		MSG_BOX("Failed to Created : CModel");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CComponent* CModel::Clone(void* pArg)
+{
+	CModel* pInstance = new CModel(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CModel");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
 HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {
 	strncpy_s(m_szModelFilePath, pModelFilePath, MAX_PATH);
@@ -227,10 +253,68 @@ HRESULT CModel::Ready_Bin_Animations(ifstream& ifs)
 
 	return S_OK;
 }
+
+void CModel::Free()
+{
+	__super::Free();
+
+	for (auto& pMaterial : m_Materials)
+		Safe_Release(pMaterial);
+	m_Materials.clear();
+
+	for (auto& pMesh : m_Meshes)
+		Safe_Release(pMesh);
+	m_Meshes.clear();
+
+	for (auto& pAnimation : m_Animations)
+		Safe_Release(pAnimation);
+	m_Animations.clear();
+
+	m_Importer.FreeScene();
+}
 #pragma endregion
 
+#pragma region Save&Load
 
+HRESULT CModel::Serialize(json& outJson)
+{
+	return S_OK;
+}
 
+HRESULT CModel::Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+HRESULT CModel::Prototype_Serialize(json& outJson)
+{
+	outJson["Class"] = "CModel";
+	outJson["ModelFilePath"] = string(m_szModelFilePath);
+	switch (m_eType)
+	{
+		case MODEL::ANIM: outJson["Type"] = "ANIM"; break;
+		case MODEL::NONANIM: outJson["Type"] = "NONANIM"; break;
+	}
+
+	json matrixArray = json::array();
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			// nlohmann/json은 float를 직접 저장해도 충분한 정밀도를 가집니다.
+			// 특정 정밀도의 문자열로 저장하고 싶다면 FloatToString 헬퍼 사용.
+			matrixArray.push_back(m_PreTransformMatrix.m[i][j]);
+		}
+	}
+	outJson["PreTransformedMatrix"] = matrixArray;
+	return S_OK;
+}
+
+HRESULT CModel::Prototype_Deserialize(const json& inData)
+{
+
+	return S_OK;
+}
+
+#pragma endregion
 
 HRESULT CModel::Bind_Material(CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eType, _uint iTextureIndex)
 {
@@ -249,8 +333,6 @@ HRESULT CModel::Bind_Bone_Matrices(CShader* pShader, const _char* pConstantName,
 {
 	return m_Meshes[iMeshIndex]->Bind_Bone_Matrices(pShader, pConstantName, m_Bones);	
 }
-
-
 
 HRESULT CModel::Render(_uint iMeshIndex)
 {	
@@ -276,8 +358,6 @@ _bool CModel::Play_Animation(_float fTimeDelta)
 
 	return isFinished;
 }
-
-
 
 HRESULT CModel::RenderImGui()
 {
@@ -380,49 +460,4 @@ HRESULT CModel::RenderImGui()
 		}
 	} 
 	return S_OK;
-}
-
-CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
-{
-	CModel* pInstance = new CModel(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PreTransformMatrix)))
-	{
-		MSG_BOX("Failed to Created : CModel");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CComponent* CModel::Clone(void* pArg)
-{
-	CModel* pInstance = new CModel(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned : CModel");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-void CModel::Free()
-{
-	__super::Free();
-
-	for (auto& pMaterial : m_Materials)
-		Safe_Release(pMaterial);
-	m_Materials.clear();
-
-	for (auto& pMesh : m_Meshes)
-		Safe_Release(pMesh);	
-	m_Meshes.clear();
-
-	for (auto& pAnimation : m_Animations)
-		Safe_Release(pAnimation);
-	m_Animations.clear();
-
-	m_Importer.FreeScene();
 }

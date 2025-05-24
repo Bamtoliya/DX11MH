@@ -1,4 +1,4 @@
-#include "Camera.h"
+﻿#include "Camera.h"
 #include "GameObject.h"
 #include "Transform.h"
 #include "GameInstance.h"
@@ -128,6 +128,43 @@ void CCamera::ResetZoom(_float fTimeDelta)
 }
 
 #pragma endregion
+
+
+#pragma region Save&Load
+
+HRESULT CCamera::Serialize(json& outJson)
+{
+	outJson["Camera"] = json::object();
+	outJson["Camera"]["Class"] = "CCamera";
+	outJson["Camera"]["Leve"] = "STATIC";
+	outJson["Camera"]["bOrthographic"] = m_tDesc.bOrthographic;
+	//json["Camera"]["fZoomPerSec"] = m_tDesc.fZoomPerSec;
+	//json["Camera"]["fFovy"] = XMConvertToDegrees(m_tDesc.fFovy);
+	//json["Camera"]["fNear"] = m_tDesc.fNear;
+	//json["Camera"]["fFar"] = m_tDesc.fFar;
+	//json["Camera"]["vAt"] = { m_tDesc.vAt.x, m_tDesc.vAt.y, m_tDesc.vAt.z, m_tDesc.vAt.w };
+	return S_OK;
+}
+
+HRESULT CCamera::Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+HRESULT CCamera::Prototype_Serialize(json& outJson)
+{
+	outJson["Class"] = "CCamera";
+	return S_OK;
+}
+
+HRESULT CCamera::Prototype_Deserialize(const json& inData)
+{
+
+	return S_OK;
+}
+
+#pragma endregion
+
 
 #pragma region ImGui
 HRESULT CCamera::RenderImGui()

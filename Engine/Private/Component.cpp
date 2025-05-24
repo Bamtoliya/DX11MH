@@ -70,7 +70,7 @@ void CComponent::Set_OwnerGameObject(CGameObject* pGameObject)
 }
 
 
-HRESULT CComponent::Serialize()
+HRESULT CComponent::Serialize(json& data)
 {
 	return S_OK;
 }

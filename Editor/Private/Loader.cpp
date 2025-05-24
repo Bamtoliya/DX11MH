@@ -234,13 +234,6 @@ HRESULT CLoader::Loading_For_Map()
 		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../../Assets/Models/Sonic/SonicAllActions.model", PreTransformMatrix))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Model_Sonic */
-	PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(0.f));
-	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_SonicRun"),
-		CModel::Create(m_pDevice, m_pContext, MODEL::ANIM, "../../Assets/Models/Sonic/SonicRunTest2.fbx", PreTransformMatrix))))
-		return E_FAIL;
-
-
 	/* For.Prototype_Component_Model_ForkLift */
 	PreTransformMatrix = XMMatrixScaling(0.01f, 0.01f, 0.01f) * XMMatrixRotationY(XMConvertToRadians(180.f));
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_ForkLift"),

@@ -23,8 +23,9 @@ public:
 	void Clear(_uint iLevelIndex);
 public:
 	HRESULT RenderImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag);
-	HRESULT Save_Prototypes();
-	HRESULT Load_Prototypes();
+	HRESULT Save_Prototypes(json& data);
+public:
+
 private:
 	_uint										m_iNumLevels = {};
 	map<const _wstring, class CBase*>*			m_pPrototypes = { nullptr };

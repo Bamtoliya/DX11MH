@@ -56,6 +56,14 @@ private:
 	_char						m_szModelFilePath[MAX_PATH] = {};
 #pragma endregion
 
+#pragma region Save&Load
+public:
+	virtual HRESULT Serialize(json& data) override;
+	virtual HRESULT Deserialize(const json& data) override;
+	virtual HRESULT Prototype_Serialize(json& data) override;
+	virtual HRESULT Prototype_Deserialize(const json& data) override;
+#pragma endregion
+
 public:
 	_uint Get_NumMeshes() const { return m_iNumMeshes; }
 public:

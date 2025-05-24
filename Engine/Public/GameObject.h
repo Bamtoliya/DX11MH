@@ -73,7 +73,7 @@ public:
 
 #pragma region Serialize
 	//Save
-	HRESULT Serialize();
+	HRESULT Serialize(json& json);
 	//Load
 	HRESULT Deserialize();
 #pragma endregion

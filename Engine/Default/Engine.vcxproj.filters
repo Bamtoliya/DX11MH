@@ -389,6 +389,9 @@
     <ClInclude Include="..\public\Serializable.h">
       <Filter>01.Utility\99.SuperClass\ISerialzable</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Json_Loader.h">
+      <Filter>01.Utility\97.JsonLoader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -719,6 +722,9 @@
     <ClCompile Include="..\private\Serializable.cpp">
       <Filter>01.Utility\99.SuperClass\ISerialzable</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Json_Loader.cpp">
+      <Filter>01.Utility\97.JsonLoader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -969,6 +975,9 @@
     </Filter>
     <Filter Include="External Libraries\ImGuiToggle">
       <UniqueIdentifier>{84603064-0eb4-467c-8dfe-b25a438dac27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\97.JsonLoader">
+      <UniqueIdentifier>{6bc0fa27-9f59-4e5e-a7b0-290a324c29bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

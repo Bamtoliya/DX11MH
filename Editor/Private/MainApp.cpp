@@ -3,6 +3,10 @@
 #include "GameInstance.h"
 #include "Sound_Manager.h"
 #include "Tools.h"
+#include "simdjson.h"
+
+using namespace simdjson;
+using namespace simdjson::ondemand;
 
 CMainApp::CMainApp()
 	: m_pGameInstance{ CGameInstance::Get_Instance() }
@@ -63,6 +67,9 @@ HRESULT CMainApp::Start_Level(LEVEL eStartLevel)
 
 HRESULT CMainApp::Ready_Prototype_Components()
 {
+	parser parser;
+	padded_string json_data = padded_string::load(("../../Assets/Saves/UILevel.json"));
+	document doc = parser.iterate(json_data);
 
 	/* For.Prototype_Component_Camera*/
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Camera"),
@@ -81,22 +88,22 @@ HRESULT CMainApp::Ready_Prototype_Components()
 
 	/* For.Prototype_Component_Shader_VtxPosTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements))))
+		CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements, "VTXPOSTEX"))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_VtxNorTex */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxNorTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements))))
+		CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements, "VTXNORTEX"))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_VtxMesh */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxMesh"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements))))
+		CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements, "VTXMESH"))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_VtxAnimMesh */
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH::Elements, VTXANIMMESH::iNumElements))))
+		CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH::Elements, VTXANIMMESH::iNumElements, "VTXANIMMESH"))))
 		return E_FAIL;
 
 	return S_OK;

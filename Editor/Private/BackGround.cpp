@@ -1,7 +1,7 @@
 ﻿#include "BackGround.h"
 
 #include "GameInstance.h"
-
+#pragma region Constructor/Destructor
 CBackGround::CBackGround(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIObject{ pDevice, pContext }
 {
@@ -12,6 +12,32 @@ CBackGround::CBackGround(const CBackGround& Prototype)
 	: CUIObject{ Prototype }
 {
 
+}
+
+CBackGround* CBackGround::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CBackGround* pInstance = new CBackGround(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype()))
+	{
+		MSG_BOX("Failed to Created : CMainApp");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CGameObject* CBackGround::Clone(void* pArg)
+{
+	CBackGround* pInstance = new CBackGround(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CBackGround");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
 
 HRESULT CBackGround::Initialize_Prototype()
@@ -34,6 +60,60 @@ HRESULT CBackGround::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CBackGround::Ready_Components()
+{
+	/* For.Com_Shader */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+		return E_FAIL;
+	/* For.Com_VIBuffer */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
+		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
+		return E_FAIL;
+	/* For.Com_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::UI), TEXT("Prototype_Component_Texture_BackGround"),
+		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+void CBackGround::Free()
+{
+	__super::Free();
+
+	Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
+}
+#pragma endregion
+
+#pragma region Save&Load
+
+HRESULT CBackGround::Serialize(json& outJson)
+{
+	return S_OK;
+}
+
+HRESULT CBackGround::Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+HRESULT CBackGround::Prototype_Serialize(json& outJson)
+{
+	outJson["Class"] = "CBackGround";
+	return S_OK;
+}
+
+HRESULT CBackGround::Prototype_Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+#pragma endregion
+
+#pragma region Loops
 void CBackGround::Priority_Update(_float fTimeDelta)
 {
 
@@ -41,7 +121,7 @@ void CBackGround::Priority_Update(_float fTimeDelta)
 
 void CBackGround::Update(_float fTimeDelta)
 {
-	
+
 }
 
 void CBackGround::Late_Update(_float fTimeDelta)
@@ -78,56 +158,4 @@ HRESULT CBackGround::Render()
 
 	return S_OK;
 }
-
-HRESULT CBackGround::Ready_Components()
-{
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-		return E_FAIL;
-	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
-		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
-		return E_FAIL;
-	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::UI), TEXT("Prototype_Component_Texture_BackGround"),
-		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-CBackGround* CBackGround::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-	CBackGround* pInstance = new CBackGround(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype()))
-	{
-		MSG_BOX("Failed to Created : CMainApp");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CGameObject* CBackGround::Clone(void* pArg)
-{
-	CBackGround* pInstance = new CBackGround(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned : CBackGround");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-void CBackGround::Free()
-{
-	__super::Free();
-
-	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
-}
+#pragma endregion

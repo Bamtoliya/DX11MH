@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Editor_Defines.h"
 #include "GameObject.h"
@@ -20,10 +20,32 @@ private:
 public:
 	static CSonic* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
-	virtual void Free() override;
+	
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
+private:
+	HRESULT Ready_Components();
+public:
+	virtual void Free() override;
+#pragma endregion
+
+#pragma region Save&Load
+public:
+	virtual HRESULT Serialize(json& data) override;
+	virtual HRESULT Deserialize(const json& data) override;
+	virtual HRESULT Prototype_Serialize(json& data) override;
+	virtual HRESULT Prototype_Deserialize(const json& data) override;
+#pragma endregion
+
+#pragma region Loops
+public:
+	virtual void Priority_Update(_float fTimeDelta);
+	virtual void Update(_float fTimeDelta);
+	virtual void Late_Update(_float fTimeDelta);
+public:
+	HRESULT Bind_ShaderResources();
+	virtual HRESULT Render();
 #pragma endregion
 
 #pragma region Components
@@ -32,16 +54,7 @@ private:
 	CModel* m_pModelCom = { nullptr };
 #pragma endregion
 
-#pragma region Loops
-	virtual void Priority_Update(_float fTimeDelta);
-	virtual void Update(_float fTimeDelta);
-	virtual void Late_Update(_float fTimeDelta);
-	virtual HRESULT Render();
-#pragma endregion
-
-private:
-	HRESULT Ready_Components();
-	HRESULT Bind_ShaderResources();
+	
 };
 
 NS_END

@@ -1,22 +1,52 @@
 ﻿#include "VIBuffer_Terrain.h"
 
+#pragma region Constructor/Destructor
 CVIBuffer_Terrain::CVIBuffer_Terrain(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-    : CVIBuffer { pDevice, pContext }
+	: CVIBuffer{ pDevice, pContext }
 {
 }
 
 CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain& Prototype)
-    : CVIBuffer{ Prototype }
-	, m_iNumVerticesX { Prototype.m_iNumVerticesX }
-	, m_iNumVerticesZ { Prototype.m_iNumVerticesZ }
+	: CVIBuffer{ Prototype }
+	, m_iNumVerticesX{ Prototype.m_iNumVerticesX }
+	, m_iNumVerticesZ{ Prototype.m_iNumVerticesZ }
+	, m_strHeightMapFilePath { Prototype.m_strHeightMapFilePath }
 {
 }
 
+CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath)
+{
+	CVIBuffer_Terrain* pInstance = new CVIBuffer_Terrain(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(pHeightMapFilePath)))
+	{
+		MSG_BOX("Failed to Created : CVIBuffer_Terrain");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CComponent* CVIBuffer_Terrain::Clone(void* pArg)
+{
+	CVIBuffer_Terrain* pInstance = new CVIBuffer_Terrain(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CVIBuffer_Terrain");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
 HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath)
-{	
+{
 	HANDLE			hFile = CreateFile(pHeightMapFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 	if (0 == hFile)
 		return E_FAIL;
+
+	m_strHeightMapFilePath = pHeightMapFilePath;
 
 	_ulong			dwByte = {};
 
@@ -30,10 +60,10 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	m_iNumVerticesZ = ih.biHeight;
 	m_iNumVertices = m_iNumVerticesX * m_iNumVerticesZ;
 
-	_uint* pPixels = new _uint[m_iNumVertices];	
+	_uint* pPixels = new _uint[m_iNumVertices];
 	ReadFile(hFile, pPixels, sizeof(_uint) * m_iNumVertices, &dwByte, nullptr);
 
-	
+
 	m_iNumVertexBuffers = 1;
 	m_iVertexStride = sizeof(VTXNORTEX);
 	m_iNumIndices = (m_iNumVerticesX - 1) * (m_iNumVerticesZ - 1) * 2 * 3;
@@ -149,7 +179,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	for (size_t i = 0; i < m_iNumVertices; i++)
 	{
 		XMStoreFloat3(&pVertices[i].vNormal
-			, XMVector3Normalize(XMLoadFloat3(&pVertices[i].vNormal)));	
+			, XMVector3Normalize(XMLoadFloat3(&pVertices[i].vNormal)));
 	}
 
 	D3D11_SUBRESOURCE_DATA		IBInitialData{};
@@ -171,52 +201,31 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	CloseHandle(hFile);
 	Safe_Delete_Array(pPixels);
 
-    return S_OK;
+	return S_OK;
 }
 
 HRESULT CVIBuffer_Terrain::Initialize(void* pArg)
 {
-    return S_OK;
+	return S_OK;
 }
 
-CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath)
-{
-	CVIBuffer_Terrain* pInstance = new CVIBuffer_Terrain(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pHeightMapFilePath)))
-	{
-		MSG_BOX("Failed to Created : CVIBuffer_Terrain");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CComponent* CVIBuffer_Terrain::Clone(void* pArg)
-{
-	CVIBuffer_Terrain* pInstance = new CVIBuffer_Terrain(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned : CVIBuffer_Terrain");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
 
 void CVIBuffer_Terrain::Free()
 {
-    __super::Free();
+	__super::Free();
 
 
 }
+#pragma endregion
+
+
+
 
 HRESULT CVIBuffer_Terrain::RenderImGui()
 {
 	if (ImGui::CollapsingHeader("VIBuffer_Terrain", ImGuiTreeNodeFlags_DefaultOpen)) // 기본적으로 열려있도록 플래그 추가
 	{
-
 		//ImGui::Image()
 		ImGui::Text("HeightMap");
 		ImGui::DragScalar("NumVerticesX", ImGuiDataType_U32, &m_iNumVerticesX);
@@ -229,3 +238,30 @@ HRESULT CVIBuffer_Terrain::RenderImGui()
 	}
 	return S_OK;
 }
+
+
+#pragma region Save&Load
+
+HRESULT CVIBuffer_Terrain::Serialize(json& outJson)
+{
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Terrain::Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Terrain::Prototype_Serialize(json& outJson)
+{
+	outJson["Class"] = "CVIBuffer_Terrain";
+	outJson["HeightMapFilePath"] = WideToUtf8(m_strHeightMapFilePath.c_str()).c_str();
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Terrain::Prototype_Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+#pragma endregion

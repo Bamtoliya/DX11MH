@@ -32,6 +32,8 @@ void CToolBar::Update(_float fTimeDelta)
 
 HRESULT CToolBar::Render()
 {
+
+#pragma region 팝업그리기
     if (ifd::FileDialog::Instance().IsDone("TextureOpenDialog")) {
         if (ifd::FileDialog::Instance().HasResult()) {
             std::string res = ifd::FileDialog::Instance().GetResult().u8string();
@@ -44,7 +46,7 @@ HRESULT CToolBar::Render()
 
     if (ifd::FileDialog::Instance().IsDone("ModelOpenDialog")) {
         static bool bAnim = false;
-        
+
         if (ifd::FileDialog::Instance().HasResult()) {
             std::string res = ifd::FileDialog::Instance().GetResult().u8string();
             Convert_Model(ifd::FileDialog::Instance().GetResult().wstring().c_str());
@@ -52,6 +54,18 @@ HRESULT CToolBar::Render()
         }
         ifd::FileDialog::Instance().Close();
     }
+
+    if (ifd::FileDialog::Instance().IsDone("SaveDialog")) {
+        static bool bAnim = false;
+
+        if (ifd::FileDialog::Instance().HasResult()) {
+            std::string res = ifd::FileDialog::Instance().GetResult().u8string();
+            Save_Prototypes(ifd::FileDialog::Instance().GetResult().wstring().c_str());
+            printf("OPEN[%s]\n", res.c_str());
+        }
+        ifd::FileDialog::Instance().Close();
+    }
+#pragma endregion
     if (m_bShow)
     {
         if (ImGui::BeginMainMenuBar()) {
@@ -76,6 +90,9 @@ HRESULT CToolBar::Render()
                     // 다른 이름으로 저장 로직
                     printf("Clicked File->Save As\n");
                 }
+                if(ImGui::MenuItem("Save Prototypes", "Ctrl+Shift+S")) {
+					ifd::FileDialog::Instance().Save("SaveDialog", "Save Prototypes", "json file (*.json){.json},.*", ASSETPATH "/Saves");
+				}
                 ImGui::Separator();
                 ImGui::SameLine();
                 ImGui::Checkbox("Animation Model", &m_bConvertAnim);
@@ -231,6 +248,8 @@ HRESULT CToolBar::Save_Scene()
     return S_OK;
 }
 
+#pragma region Convert fbx Model to Binary
+
 HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
 {
     //순서
@@ -252,7 +271,7 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     pFinalPath.append(pTargetPath.replace_extension(".model").generic_wstring());
 
     _uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
-    if(!m_bConvertAnim)
+    if (!m_bConvertAnim)
         iFlag |= aiProcess_PreTransformVertices;
     Assimp::Importer asImporter;
     const aiScene* pAiScene = asImporter.ReadFile(WideToUtf8(pFilePath).c_str(), iFlag);
@@ -261,8 +280,8 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     outputFile.open(pFinalPath, std::ios::binary | std::ios::trunc);
     if (outputFile.is_open())
     {
-		_uint iNumMeshes = pAiScene->mNumMeshes;
-		_uint iNumMaterials = pAiScene->mNumMaterials;
+        _uint iNumMeshes = pAiScene->mNumMeshes;
+        _uint iNumMaterials = pAiScene->mNumMaterials;
         _uint iNumAnimations = pAiScene->mNumAnimations;
         outputFile.write(reinterpret_cast<const char*>(&iNumMeshes), sizeof(_uint));
         outputFile.write(reinterpret_cast<const char*>(&iNumMaterials), sizeof(_uint));
@@ -284,7 +303,7 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
             outputFile.write(reinterpret_cast<const char*>(&iNumBones), sizeof(_uint));
             _uint iNumIndcies = pAiMesh->mNumFaces * pAiMesh->mFaces->mNumIndices;
             outputFile.write(reinterpret_cast<const char*>(&iNumIndcies), sizeof(_uint));
-            
+
             //outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mFaces->mIndices[0]), sizeof(_uint) * iNumIndcies);
 
             for (_uint j = 0; j < pAiMesh->mNumVertices; ++j)
@@ -327,13 +346,12 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
 
 #pragma endregion
 
-        
 #pragma region WriteMatrials
         for (_uint i = 0; i < iNumMaterials; ++i)
         {
             aiMaterial* pAiMaterial = pAiScene->mMaterials[i];
             _uint iNumTextures = 0;
-			aiString strMaterialName = pAiMaterial->GetName();
+            aiString strMaterialName = pAiMaterial->GetName();
             outputFile.write(reinterpret_cast<const char*>(&strMaterialName.length), sizeof(_uint));
             outputFile.write(reinterpret_cast<const char*>(strMaterialName.C_Str()), sizeof(_char) * strMaterialName.length);
             for (size_t j = 1; j < AI_TEXTURE_TYPE_MAX; ++j)
@@ -350,15 +368,14 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
             }
         }
 #pragma endregion
-   
-      
+
 #pragma region WriteAnimations
         if (m_bConvertAnim)
         {
             for (_uint i = 0; i < iNumAnimations; ++i)
             {
                 aiAnimation* pAiAnimation = pAiScene->mAnimations[i];
-			    _uint iNumChannels = pAiAnimation->mNumChannels;
+                _uint iNumChannels = pAiAnimation->mNumChannels;
                 outputFile.write(reinterpret_cast<const char*>(&pAiAnimation->mNumChannels), sizeof(_uint));
                 outputFile.write(reinterpret_cast<const char*>(&pAiAnimation->mName.length), sizeof(_uint));
                 outputFile.write(reinterpret_cast<const char*>(pAiAnimation->mName.C_Str()), sizeof(_char) * pAiAnimation->mName.length);
@@ -367,8 +384,8 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
                 for (_uint j = 0; j < iNumChannels; j++)
                 {
                     aiNodeAnim* pAiNodeAnim = pAiAnimation->mChannels[j];
-				    outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNodeName.length), sizeof(_uint));
-				    outputFile.write(reinterpret_cast<const char*>(pAiNodeAnim->mNodeName.C_Str()), sizeof(_char) * pAiNodeAnim->mNodeName.length);
+                    outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNodeName.length), sizeof(_uint));
+                    outputFile.write(reinterpret_cast<const char*>(pAiNodeAnim->mNodeName.C_Str()), sizeof(_char) * pAiNodeAnim->mNodeName.length);
                     outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNumPositionKeys), sizeof(_uint));
                     outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNumRotationKeys), sizeof(_uint));
                     outputFile.write(reinterpret_cast<const char*>(&pAiNodeAnim->mNumScalingKeys), sizeof(_uint));
@@ -410,11 +427,11 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
 
 HRESULT CToolBar::Write_BoneNode(ofstream& ofs, aiNode* pAiNode, _int iParentBoneIndex)
 {
-	ofs.write(reinterpret_cast<const char*>(&pAiNode->mName.length), sizeof(_uint));
-	ofs.write(reinterpret_cast<const char*>(pAiNode->mName.C_Str()), sizeof(_char) * pAiNode->mName.length);
-	ofs.write(reinterpret_cast<const char*>(&pAiNode->mTransformation), sizeof(_float4x4));
-	ofs.write(reinterpret_cast<const char*>(&iParentBoneIndex), sizeof(_int));
-	ofs.write(reinterpret_cast<const char*>(&pAiNode->mNumChildren), sizeof(_uint));
+    ofs.write(reinterpret_cast<const char*>(&pAiNode->mName.length), sizeof(_uint));
+    ofs.write(reinterpret_cast<const char*>(pAiNode->mName.C_Str()), sizeof(_char) * pAiNode->mName.length);
+    ofs.write(reinterpret_cast<const char*>(&pAiNode->mTransformation), sizeof(_float4x4));
+    ofs.write(reinterpret_cast<const char*>(&iParentBoneIndex), sizeof(_int));
+    ofs.write(reinterpret_cast<const char*>(&pAiNode->mNumChildren), sizeof(_uint));
 
     int iParentIndex = iParentBoneIndex + 1;
     for (_uint i = 0; i < pAiNode->mNumChildren; ++i)
@@ -423,23 +440,47 @@ HRESULT CToolBar::Write_BoneNode(ofstream& ofs, aiNode* pAiNode, _int iParentBon
     }
     return S_OK;
 }
+#pragma endregion
 
-HRESULT CToolBar::Read_BoneNode(ifstream& ifs, CModel* pModel)
+#pragma region Map
+
+#pragma endregion
+
+
+#pragma region Scene
+
+#pragma endregion
+
+#pragma region Prototypes
+HRESULT CToolBar::Save_Prototypes(const _tchar* pFilePath)
 {
-    _uint szNameLength = { 0 };
-    CBone::MODEL_BONE_NODE ModelBoneNode;
-	ifs.read(reinterpret_cast<char*>(&szNameLength), sizeof(_uint));
-	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.szName[0]), sizeof(_char) * szNameLength);
-	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.mTransformationMatrix), sizeof(_float4x4));
-	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iParentIndex), sizeof(_int));
-	ifs.read(reinterpret_cast<char*>(&ModelBoneNode.iNumChildren), sizeof(_uint));
-
-    for (_uint i = 0; i < ModelBoneNode.iNumChildren; ++i)
+    if (m_pGameInstance == nullptr)
+        return E_FAIL;
+    json data = {};
+	m_pGameInstance->Save_Prototypes(data);
+	fstream outputFile;
+	outputFile.open(pFilePath, std::ios::out | std::ios::trunc);
+    if (!outputFile.is_open()) {
+        //printf("Failed to open file for writing: %s\n", pFilePath);
+        return E_FAIL;
+    }
+    else
     {
-        Read_BoneNode(ifs, pModel);
+        outputFile << data.dump(4); // 4는 들여쓰기 공백 수
+        outputFile.close();
+		//printf("Prototypes saved to %s\n", pFilePath.);
     }
     return S_OK;
 }
+
+HRESULT CToolBar::Load_Prototypes()
+{
+    if (m_pGameInstance == nullptr)
+		return E_FAIL;
+    return S_OK;
+}
+#pragma endregion
+
 
 HRESULT CToolBar::Load_Scene()
 {
@@ -456,15 +497,7 @@ HRESULT CToolBar::Load_Map()
     return S_OK;
 }
 
-HRESULT CToolBar::Save_Prefab()
-{
-    return E_NOTIMPL;
-}
 
-HRESULT CToolBar::Load_Prefab()
-{
-    return E_NOTIMPL;
-}
 
 CToolBar* CToolBar::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {

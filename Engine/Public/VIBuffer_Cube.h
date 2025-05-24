@@ -14,13 +14,19 @@ private:
 public:
 	static CVIBuffer_Cube* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg) override;
-	virtual void Free() override;
-#pragma endregion
-
-#pragma region Initialize
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+public:
+	virtual void Free() override;
+#pragma endregion
+
+#pragma region Save&Load
+public:
+	virtual HRESULT Serialize(json& data) override;
+	virtual HRESULT Deserialize(const json& data) override;
+	virtual HRESULT Prototype_Serialize(json& data) override;
+	virtual HRESULT Prototype_Deserialize(const json& data) override;
 #pragma endregion
 };
 

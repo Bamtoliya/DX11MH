@@ -25,6 +25,13 @@ public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
 #pragma endregion
+
+#pragma region Save&Load
+	virtual HRESULT Serialize(json& data) override;
+	virtual HRESULT Deserialize(const json& data) override;
+	virtual HRESULT Prototype_Serialize(json& data) override;
+	virtual HRESULT Prototype_Deserialize(const json& data) override;
+#pragma endregion
 public:
 	const LIGHT_DESC* Get_LightDesc() const { return &m_tInfo; }
 

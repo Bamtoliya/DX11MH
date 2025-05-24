@@ -20,8 +20,10 @@ public:
 	/* 레퍼런스 카운트를 감소시킨다. or 삭제한다. */
 	unsigned int Release();
 
-	virtual HRESULT Serialize() override { return S_OK; }
-	virtual HRESULT Deserialize() override { return S_OK; }
+	virtual HRESULT Serialize(json& data) override { return S_OK; }
+	virtual HRESULT Deserialize(const json& data) override { return S_OK; }
+	virtual HRESULT Prototype_Serialize(json& data) override { return S_OK; }
+	virtual HRESULT Prototype_Deserialize(const json& data) override { return S_OK; }
 
 protected:
 	unsigned int		m_iRefCnt = { };

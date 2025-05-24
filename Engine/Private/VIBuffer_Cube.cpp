@@ -204,3 +204,28 @@ HRESULT CVIBuffer_Cube::Initialize(void* pArg)
 	return S_OK;
 }
 
+#pragma region Save&Load
+
+HRESULT CVIBuffer_Cube::Serialize(json& outJson)
+{
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Cube::Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Cube::Prototype_Serialize(json& outJson)
+{
+	outJson["Class"] = "CVIBuffer_Cube";
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Cube::Prototype_Deserialize(const json& inData)
+{
+
+	return S_OK;
+}
+
+#pragma endregion

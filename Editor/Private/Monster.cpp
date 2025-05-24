@@ -41,14 +41,6 @@ CGameObject* CMonster::Clone(void* pArg)
 	return pInstance;
 }
 
-void CMonster::Free()
-{
-	__super::Free();
-
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pShaderCom);
-}
-
 HRESULT CMonster::Initialize_Prototype()
 {
 	return S_OK;
@@ -80,6 +72,55 @@ HRESULT CMonster::Initialize(void* pArg)
 
 	return S_OK;
 }
+
+HRESULT CMonster::Ready_Components()
+{
+	/* For.Com_Shader */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
+		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+		return E_FAIL;
+
+	/* For.Com_Model */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_Fiona"),
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+		return E_FAIL;
+
+
+	return S_OK;
+}
+
+void CMonster::Free()
+{
+	__super::Free();
+
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pShaderCom);
+}
+#pragma endregion
+
+#pragma region Save&Load
+
+HRESULT CMonster::Serialize(json& outJson)
+{
+	return S_OK;
+}
+
+HRESULT CMonster::Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
+HRESULT CMonster::Prototype_Serialize(json& outJson)
+{
+	outJson["Class"] = "CMonster";
+	return S_OK;
+}
+
+HRESULT CMonster::Prototype_Deserialize(const json& inData)
+{
+	return S_OK;
+}
+
 #pragma endregion
 
 #pragma region Loops
@@ -97,6 +138,35 @@ void CMonster::Update(_float fTimeDelta)
 void CMonster::Late_Update(_float fTimeDelta)
 {
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
+}
+
+
+HRESULT CMonster::Bind_ShaderResources()
+{
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &m_oID, sizeof(_uint))))
+		return E_FAIL;
+
+
+	const LIGHT_DESC* pLightDesc = m_pGameInstance->Get_Light(0);
+	if (pLightDesc == nullptr)
+		return S_OK;
+
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT CMonster::Render()
@@ -125,47 +195,7 @@ HRESULT CMonster::Render()
 }
 #pragma endregion
 
-HRESULT CMonster::Ready_Components()
-{
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-		return E_FAIL;
-
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_Fiona"),
-		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-		return E_FAIL;
 
 
-	return S_OK;
-}
 
-HRESULT CMonster::Bind_ShaderResources()
-{
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &m_oID, sizeof(_uint))))
-		return E_FAIL;
-
-	
-	const LIGHT_DESC* pLightDesc = m_pGameInstance->Get_Light(0);
-	if (pLightDesc == nullptr)
-		return S_OK;
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
-		return E_FAIL;
-
-	return S_OK;
-}
 
