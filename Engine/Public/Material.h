@@ -43,9 +43,12 @@ public:
 
 #pragma region Variables
 private:
-	ID3D11Device* m_pDevice = { nullptr };
-	ID3D11DeviceContext* m_pContext = { nullptr };
-	vector<ID3D11ShaderResourceView*>			m_SRVs[AI_TEXTURE_TYPE_MAX] = {};
+	ID3D11Device*			m_pDevice = { nullptr };
+	ID3D11DeviceContext*	m_pContext = { nullptr };
+private:
+	vector<string>							m_TexturePaths[AI_TEXTURE_TYPE_MAX] = {};
+	vector<ID3D11ShaderResourceView*>		m_SRVs[AI_TEXTURE_TYPE_MAX] = {};
+	_char									m_szName[MAX_PATH];
 #pragma endregion
 };
 

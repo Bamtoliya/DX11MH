@@ -71,6 +71,7 @@ private:
 public:
 	HRESULT RenderImGui();
 public:
+	_uint Get_NumVertices() { return m_iNumVertices; }
 	_uint Get_MaterialIndex() const {
 		return m_iMaterialIndex;
 	}

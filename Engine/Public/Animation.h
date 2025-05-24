@@ -37,6 +37,7 @@ private:
 	_char					m_szName[MAX_PATH] = {};
 	/* 전체 재생 거리. */
 	_float					m_fDuration = {};
+	_float					m_fDefaultTickPerSec = {};
 	_float					m_fTickPerSecond = {};
 	_float					m_fCurrentTrackPosition = {};
 	vector<_uint>			m_CurrentKeyFrameIndices;
@@ -46,15 +47,10 @@ private:
 	vector<class CChannel*>	m_Channels;
 #pragma endregion
 
-
-
-public:
-	
+public:	
 	_bool Update_Bones(_float fTimeDelta, const vector<CBone*>& Bones, _bool isLoop);
-
-	HRESULT RenderImGui();
-
-
+	const _char* Get_Name() const { return m_szName; }
+	HRESULT RenderImGui(_uint i);
 };
 
 NS_END

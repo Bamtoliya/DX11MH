@@ -554,6 +554,7 @@ HRESULT CMesh::Bind_Bone_Matrices(CShader* pShader, const _char* pConstantName, 
 
 HRESULT CMesh::RenderImGui()
 {
+	ImGui::PushID(this);
 	ImGui::Indent();
 	if (ImGui::CollapsingHeader(m_szName))
 	{
@@ -561,11 +562,14 @@ HRESULT CMesh::RenderImGui()
 		ImGui::Text("Faces : %d", m_iNumIndices / 3);
 		ImGui::Text("Material Index : %d", m_iMaterialIndex);
 		ImGui::Text("Bone Indices");
+		ImGui::BeginChild("BoneIndicesChild", ImVec2(0, 80), true, ImGuiWindowFlags_HorizontalScrollbar);
 		for (auto& boneIndex : m_BoneIndices)
 		{
-			ImGui::Text(to_string(boneIndex).c_str());
+			ImGui::Text("%d", boneIndex); // std::to_string과 .c_str() 대신 ImGui의 포맷팅 기능을 사용
 		}
+		ImGui::EndChild();
 	}
 	ImGui::Unindent();
+	ImGui::PopID();
 	return S_OK;
 }

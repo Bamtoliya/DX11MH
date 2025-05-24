@@ -9,12 +9,14 @@ CAnimation::CAnimation()
 
 CAnimation::CAnimation(const CAnimation& Prototype)
 	: m_fDuration{ Prototype.m_fDuration }
+	, m_fDefaultTickPerSec{ Prototype.m_fDefaultTickPerSec }
 	, m_fTickPerSecond{ Prototype.m_fTickPerSecond }
 	, m_fCurrentTrackPosition{ Prototype.m_fCurrentTrackPosition }
 	, m_CurrentKeyFrameIndices{ Prototype.m_CurrentKeyFrameIndices }
 	, m_iNumChannels{ Prototype.m_iNumChannels }
 	, m_Channels{ Prototype.m_Channels }
 {
+	strcpy_s(m_szName, Prototype.m_szName);
 	for (auto& pChannel : m_Channels)
 		Safe_AddRef(pChannel);
 }
@@ -75,7 +77,7 @@ HRESULT CAnimation::Initialize(ifstream& ifs, const vector<class CBone*>& Bones)
 
 	m_fDuration = static_cast<_float>(duration);
 	m_fTickPerSecond = static_cast<_float>(tick);
-
+	m_fDefaultTickPerSec = m_fTickPerSecond;
 	m_CurrentKeyFrameIndices.resize(m_iNumChannels);
 
 	/* 각 뼈의 정보를 새엇ㅇ한다. */
@@ -94,12 +96,12 @@ HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const vector<cla
 {
 	/* 이 애니메이션이 컨트롤해야하는 뼈의 갯수 */
 	m_iNumChannels = pAIAnimation->mNumChannels;
-
+	strcpy_s(m_szName, pAIAnimation->mName.C_Str());
 	m_fTickPerSecond = (_float)pAIAnimation->mTicksPerSecond;
 	m_fDuration = (_float)pAIAnimation->mDuration;
-
+	m_fDefaultTickPerSec = m_fTickPerSecond;
 	m_CurrentKeyFrameIndices.resize(m_iNumChannels);
-
+		
 	/* 각 뼈의 정보를 새엇ㅇ한다. */
 	for (size_t i = 0; i < m_iNumChannels; i++)
 	{
@@ -146,7 +148,32 @@ exit:
 
 
 
-HRESULT CAnimation::RenderImGui()
+HRESULT CAnimation::RenderImGui(_uint i)
 {
+	ImGui::PushID(this);
+	if (ImGui::CollapsingHeader(("[" + to_string(i) + "]" + m_szName).c_str()))
+	{
+		ImGui::Text("Duration : %.2f", m_fDuration);
+		ImGui::PushItemWidth(100.0f); // 원하는 너비 값 (예: 100.0f)으로 설정합니다.
+		ImGui::DragFloat("Tick Per Second", &m_fTickPerSecond, 0.01f, 0.0f, 100.f);
+		ImGui::PopItemWidth(); // 너비 설정을 원래대로 복원합니다.
+		ImGui::SameLine();
+		if (ImGui::Button("Reset", ImVec2(150, 0)))
+		{
+			m_fTickPerSecond = m_fDefaultTickPerSec;
+		}
+		ImGui::Text("Current Track Position : %.2f", m_fCurrentTrackPosition);
+		ImGui::BeginChild("ChannelsListChild", ImVec2(0, 150), true, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+		for (auto& pChannel : m_Channels)
+		{
+			if (pChannel != nullptr)
+			{
+				pChannel->RenderImGui(); // 각 채널의 ImGui 렌더링 함수 호출
+				ImGui::Separator();     // 채널 간 구분선 추가
+			}
+		}
+		ImGui::EndChild(); // 채널 정보 자식 창 종료
+	}		
+	ImGui::PopID();
 	return S_OK;
 }

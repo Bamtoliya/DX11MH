@@ -69,9 +69,10 @@ public:
 	_bool Compare_Name(const _char* pName) {
 		return !strcmp(m_szName, pName);
 	}
+	_uint Get_ParentBoneIndex() const { return m_iParentBoneIndex; }
 
 public:
-	HRESULT RenderImGui();
+	HRESULT RenderImGuiNode(const std::vector<CBone*>& allBones, _int currentBoneListIndex);
 
 };
 

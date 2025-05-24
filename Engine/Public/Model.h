@@ -46,11 +46,12 @@ private:
 	vector<class CMaterial*>	m_Materials;
 
 	vector<class CBone*>		m_Bones;
-	_bool						m_isLoop{};
+	_bool						m_isLoop = {};
+	_float						m_fAnimationSpeed = {};
 	_uint						m_iCurrentAnimIndex = { };
 	_uint						m_iNumAnimations = {};
 	vector<class CAnimation*>	m_Animations;
-
+	
 private:
 	_char						m_szModelFilePath[MAX_PATH] = {};
 #pragma endregion

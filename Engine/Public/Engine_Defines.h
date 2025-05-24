@@ -87,6 +87,10 @@ using namespace Engine;
 #pragma region ImFileDialog
 #include "ImFileDialog.h"
 #pragma endregion
+#pragma region ImGuiToggle
+#include "imgui_toggle.h"
+#pragma endregion
+
 
 #pragma region DirectInput
 #define DIRECTINPUT_VERSION 0x0800

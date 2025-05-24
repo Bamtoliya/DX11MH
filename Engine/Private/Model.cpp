@@ -292,14 +292,27 @@ HRESULT CModel::RenderImGui()
 		ImGui::Indent();
 		if (ImGui::CollapsingHeader(("Meshes (" + std::to_string(m_iNumMeshes) + ")").c_str()))
 		{
+			int a = 0;
 			for (auto& pMesh : m_Meshes)
+			{
+				a += pMesh->Get_NumVertices();
 				pMesh->RenderImGui();
+			}
+			ImGui::Text(to_string(a).c_str());
+
 		}
 		ImGui::Unindent();
 		ImGui::Indent();
 		if (ImGui::CollapsingHeader(("Bones (" + std::to_string(m_Bones.size()) + ")").c_str()))
 		{
-
+			for (size_t i = 0; i < m_Bones.size(); ++i)
+			{
+				CBone* pBone = m_Bones[i];
+				if (pBone != nullptr && pBone->Get_ParentBoneIndex() == -1)
+				{
+					pBone->RenderImGuiNode(m_Bones, static_cast<_int>(i));
+				}
+			}
 		}
 		ImGui::Unindent();
 		ImGui::Indent();
@@ -315,18 +328,52 @@ HRESULT CModel::RenderImGui()
 			ImGui::Indent();
 			if (ImGui::CollapsingHeader(("Animations (" + std::to_string(m_iNumAnimations) + ")").c_str()))
 			{
-				/*for (auto& pAnimations : m_Animations)
-				pAnimations->RenderImGui();*/
+				// 애니메이션 목록을 표시하기 위한 자식 창
+				ImGui::BeginChild("AnimationList", ImVec2(0, 150), true, ImGuiWindowFlags_HorizontalScrollbar);
+				for (size_t i = 0; i < m_Animations.size(); ++i)
+				{
+					if (m_Animations[i] != nullptr)
+					{
+						// 각 애니메이션을 선택 가능한 항목으로 표시
+						// CAnimation의 m_szName을 레이블로 사용합니다.
+						if (ImGui::Selectable(("[" + to_string(i) + "]" + m_Animations[i]->Get_Name()).c_str(), m_iCurrentAnimIndex == i))
+						{
+							m_iCurrentAnimIndex = static_cast<_uint>(i);
+						}
+					}
+				}
+				ImGui::EndChild();
+
+				// 현재 선택된 애니메이션의 상세 정보를 표시 (선택 사항)
+				if (m_iCurrentAnimIndex < m_Animations.size() && m_Animations[m_iCurrentAnimIndex] != nullptr)
+				{
+					ImGui::Separator();
+					ImGui::Text("Selected Animation Details:");
+					// CAnimation::RenderImGui(_uint i)를 호출하여 상세 정보 표시
+					// _uint i 파라미터는 ImGui ID 스택 관리를 위해 사용될 수 있습니다.
+					m_Animations[m_iCurrentAnimIndex]->RenderImGui(m_iCurrentAnimIndex);
+				}
 			}
-			if (ImGui::Button("Play Animation"))
+			
+			//ImGui::InputScalar("##Current Animation Index", ImGuiDataType_U32, &m_iCurrentAnimIndex);
+			//ImGui::SameLine();
+			// UTF-8 기호를 사용합니다: ▷ (재생), ■ (정지)
+			// 글꼴이 해당 기호를 지원해야 올바르게 표시됩니다.
+			if (ImGui::Button("Play", ImVec2(100.f, 0.f))) // "##Play"는 ID 충돌을 피하기 위함입니다.
 			{
-				m_iCurrentAnimIndex = 0;
-				m_isLoop = true;
+				if (m_iCurrentAnimIndex < m_Animations.size())
+				{
+					m_isLoop = true;
+				}
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Stop Animation"))
+			if (ImGui::Button("Pause", ImVec2(100.f, 0.f))) // "##Pause"은 ID 충돌을 피하기 위함입니다.
 			{
-				m_iCurrentAnimIndex = 0;
+				m_isLoop = false;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Stop", ImVec2(100.f, 0.f))) // "##Stop"은 ID 충돌을 피하기 위함입니다.
+			{
 				m_isLoop = false;
 			}
 			ImGui::Unindent();

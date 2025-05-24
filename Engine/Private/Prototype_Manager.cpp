@@ -90,6 +90,24 @@ HRESULT CPrototype_Manager::RenderImGui(_uint iLevelIndex, const _wstring& Proto
 	return S_OK;
 }
 
+HRESULT CPrototype_Manager::Save_Prototypes()
+{
+	for (size_t i = 0; i < m_iNumLevels; i++)
+	{
+		for (auto& Pair : m_pPrototypes[i])
+		{
+			//Pair.second.
+		}
+	}
+	
+	return S_OK;
+}
+
+HRESULT CPrototype_Manager::Load_Prototypes()
+{
+	return S_OK;
+}
+
 CBase* CPrototype_Manager::Find_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag)
 {
 	auto	iter = m_pPrototypes[iLevelIndex].find(strPrototypeTag);

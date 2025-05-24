@@ -107,6 +107,7 @@ HRESULT CChannel::Initialize(ifstream& ifs, const vector<class CBone*>& Bones)
 
 HRESULT CChannel::Initialize(const aiNodeAnim* pAIChannel, const vector<class CBone*>& Bones)
 {
+	strcpy_s(m_szName, pAIChannel->mNodeName.C_Str());
 	m_iNumKeyFrames = max(pAIChannel->mNumPositionKeys, pAIChannel->mNumScalingKeys);
 	m_iNumKeyFrames = max(pAIChannel->mNumRotationKeys, m_iNumKeyFrames);
 
@@ -213,5 +214,12 @@ void CChannel::Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float 
 
 HRESULT CChannel::RenderImGui()
 {
+	ImGui::PushID(this);
+	if (ImGui::CollapsingHeader(m_szName))
+	{
+		ImGui::Text("KeyFrames : %d", m_iNumKeyFrames);
+		ImGui::Text("BoneIndex : %d", m_iBoneIndex);
+	}
+	ImGui::PopID();
 	return S_OK;
 }

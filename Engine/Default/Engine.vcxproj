@@ -184,6 +184,12 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\..\External Libraries\ImGuiToggle\imgui_offset_rect.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuiToggle\imgui_toggle.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuiToggle\imgui_toggle_math.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuiToggle\imgui_toggle_palette.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuiToggle\imgui_toggle_presets.h" />
+    <ClInclude Include="..\..\External Libraries\ImGuiToggle\imgui_toggle_renderer.h" />
     <ClInclude Include="..\..\External Libraries\ImGuizmo\GraphEditor.h" />
     <ClInclude Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.h" />
     <ClInclude Include="..\..\External Libraries\ImGuizmo\ImGradient.h" />
@@ -264,6 +270,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\public\RenderTarget.h" />
     <ClInclude Include="..\Public\GameObject_Skybox.h" />
     <ClInclude Include="..\public\RigidBody.h" />
+    <ClInclude Include="..\public\Serializable.h" />
     <ClInclude Include="..\Public\Sound_Event.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -307,6 +314,10 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuiToggle\imgui_toggle.cpp" />
+    <ClCompile Include="..\..\External Libraries\ImGuiToggle\imgui_toggle_palette.cpp" />
+    <ClCompile Include="..\..\External Libraries\ImGuiToggle\imgui_toggle_presets.cpp" />
+    <ClCompile Include="..\..\External Libraries\ImGuiToggle\imgui_toggle_renderer.cpp" />
     <ClCompile Include="..\..\External Libraries\ImGuizmo\GraphEditor.cpp" />
     <ClCompile Include="..\..\External Libraries\ImGuizmo\ImCurveEdit.cpp" />
     <ClCompile Include="..\..\External Libraries\ImGuizmo\ImGradient.cpp" />
@@ -379,6 +390,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\private\RenderTarget.cpp" />
     <ClCompile Include="..\Private\GameObject_Skybox.cpp" />
     <ClCompile Include="..\private\RigidBody.cpp" />
+    <ClCompile Include="..\private\Serializable.cpp" />
     <ClCompile Include="..\Private\Sound_Event.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

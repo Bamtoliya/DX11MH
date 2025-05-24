@@ -332,6 +332,10 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
         for (_uint i = 0; i < iNumMaterials; ++i)
         {
             aiMaterial* pAiMaterial = pAiScene->mMaterials[i];
+            _uint iNumTextures = 0;
+			aiString strMaterialName = pAiMaterial->GetName();
+            outputFile.write(reinterpret_cast<const char*>(&strMaterialName.length), sizeof(_uint));
+            outputFile.write(reinterpret_cast<const char*>(strMaterialName.C_Str()), sizeof(_char) * strMaterialName.length);
             for (size_t j = 1; j < AI_TEXTURE_TYPE_MAX; ++j)
             {
                 _uint iNumTextureCount = pAiMaterial->GetTextureCount(static_cast<aiTextureType>(j));
