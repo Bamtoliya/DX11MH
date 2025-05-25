@@ -138,51 +138,64 @@ HRESULT CTransform::Deserialize(simdjson::ondemand::object& jsonData)
 	_float4 orientation = { 0.f, 0.f, 0.f, 1.f }; // 단위 쿼터니언
 	_float3 eulerRotation = { 0.f, 0.f, 0.f };
 
+	simdjson::ondemand::object transformObject;
 
-	//if (auto posNode = jsonData["Position"]; posNode.error() == simdjson::SUCCESS && posNode.is_array()) {
-	//	simdjson::ondemand::array arr = posNode.get_array();
-	//	if (arr.count_elements() == 3) {
-	//		auto iter = arr.begin();
-	//		position.x = static_cast<_float>((*iter++).get_double().value_unsafe());
-	//		position.y = static_cast<_float>((*iter++).get_double().value_unsafe());
-	//		position.z = static_cast<_float>((*iter).get_double().value_unsafe());
-	//	}
-	//}
-	//
-	//if (auto scaleNode = jsonData["Scale"]; scaleNode.error() == simdjson::SUCCESS && scaleNode.is_array()) {
-	//	simdjson::ondemand::array arr = scaleNode.get_array();
-	//	if (arr.count_elements() == 3) {
-	//		auto iter = arr.begin();
-	//		scale.x = static_cast<_float>((*iter++).get_double().value_unsafe());
-	//		scale.y = static_cast<_float>((*iter++).get_double().value_unsafe());
-	//		scale.z = static_cast<_float>((*iter).get_double().value_unsafe());
-	//	}
-	//}
-	//
-	//if (auto oriNode = jsonData["Orientation"]; oriNode.error() == simdjson::SUCCESS && oriNode.is_array()) {
-	//	simdjson::ondemand::array arr = oriNode.get_array();
-	//	if (arr.count_elements() == 4) {
-	//		auto iter = arr.begin();
-	//		orientation.x = static_cast<_float>((*iter++).get_double().value_unsafe());
-	//		orientation.y = static_cast<_float>((*iter++).get_double().value_unsafe());
-	//		orientation.z = static_cast<_float>((*iter++).get_double().value_unsafe());
-	//		orientation.w = static_cast<_float>((*iter).get_double().value_unsafe());
-	//		m_tDesc.qOrientation = orientation; // 쿼터니언 직접 저장
-	//	}
-	//}
-	//
-	//if (auto eulerNode = jsonData["EulerRotation"]; eulerNode.error() == simdjson::SUCCESS && eulerNode.is_array()) {
-	//	simdjson::ondemand::array arr = eulerNode.get_array();
-	//	if (arr.count_elements() == 3) {
-	//		auto iter = arr.begin();
-	//		eulerRotation.x = static_cast<_float>((*iter++).get_double().value_unsafe());
-	//		eulerRotation.y = static_cast<_float>((*iter++).get_double().value_unsafe());
-	//		eulerRotation.z = static_cast<_float>((*iter).get_double().value_unsafe());
-	//		m_tDesc.fCurRotationX = eulerRotation.x;
-	//		m_tDesc.fCurRotationY = eulerRotation.y;
-	//		m_tDesc.fCurRotationZ = eulerRotation.z;
-	//	}
-	//}
+	if (jsonData["CTransform"].get_object().get(transformObject) == simdjson::SUCCESS)
+	{
+		if (auto posNode = transformObject["Position"]; posNode.error() == simdjson::SUCCESS) {
+			simdjson::ondemand::array arr = posNode.get_array();
+			if (arr.count_elements() == 3) {
+				auto iter = arr.begin();
+				position.x = static_cast<_float>((*iter).get_double().value_unsafe());
+				++iter;
+				position.y = static_cast<_float>((*iter).get_double().value_unsafe());
+				++iter;
+				position.z = static_cast<_float>((*iter).get_double().value_unsafe());
+			}
+		}
+	}
+
+	if (auto scaleNode = transformObject["Scale"]; scaleNode.error() == simdjson::SUCCESS) {
+		simdjson::ondemand::array arr = scaleNode.get_array();
+		if (arr.count_elements() == 3) {
+			auto iter = arr.begin();
+			scale.x = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			scale.y = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			scale.z = static_cast<_float>((*iter).get_double().value_unsafe());
+		}
+	}
+	
+	if (auto oriNode = transformObject["Orientation"]; oriNode.error() == simdjson::SUCCESS) {
+		simdjson::ondemand::array arr = oriNode.get_array();
+		if (arr.count_elements() == 4) {
+			auto iter = arr.begin();
+			orientation.x = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			orientation.y = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			orientation.z = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			orientation.w = static_cast<_float>((*iter).get_double().value_unsafe());
+			m_tDesc.qOrientation = orientation; // 쿼터니언 직접 저장
+		}
+	}
+	
+	if (auto eulerNode = transformObject["EulerRotation"]; eulerNode.error() == simdjson::SUCCESS) {
+		simdjson::ondemand::array arr = eulerNode.get_array();
+		if (arr.count_elements() == 3) {
+			auto iter = arr.begin();
+			eulerRotation.x = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			eulerRotation.y = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			eulerRotation.z = static_cast<_float>((*iter).get_double().value_unsafe());
+			m_tDesc.fCurRotationX = eulerRotation.x;
+			m_tDesc.fCurRotationY = eulerRotation.y;
+			m_tDesc.fCurRotationZ = eulerRotation.z;
+		}
+	}
 
 	// SQT로부터 월드 행렬 재구성
 	_matrix worldMatrix = XMMatrixScaling(scale.x, scale.y, scale.z) *
