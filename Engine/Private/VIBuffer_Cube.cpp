@@ -222,7 +222,7 @@ HRESULT CVIBuffer_Cube::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Cube::Prototype_Deserialize(const json& inData)
+HRESULT CVIBuffer_Cube::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
 {
 
 	return S_OK;

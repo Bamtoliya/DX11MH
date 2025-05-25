@@ -17,6 +17,12 @@ CTexture::CTexture(const CTexture& Prototype)
 		Safe_AddRef(pSRV);
 }
 
+CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CTexture* pInstance = new CTexture(pDevice, pContext);
+	return pInstance;
+}
+
 CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures)
 {
 	CTexture* pInstance = new CTexture(pDevice, pContext);
@@ -118,7 +124,7 @@ HRESULT CTexture::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CTexture::Prototype_Deserialize(const json& inData)
+HRESULT CTexture::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
 {
 
 	return S_OK;

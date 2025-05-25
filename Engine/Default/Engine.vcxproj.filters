@@ -392,6 +392,9 @@
     <ClInclude Include="..\public\Json_Loader.h">
       <Filter>01.Utility\97.JsonLoader</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\External Libraries\json.hpp">
+      <Filter>External Libraries\json</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">

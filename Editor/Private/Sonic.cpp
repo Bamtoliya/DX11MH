@@ -116,7 +116,7 @@ HRESULT CSonic::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CSonic::Prototype_Deserialize(const json& inData)
+HRESULT CSonic::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
 {
 	return S_OK;
 }

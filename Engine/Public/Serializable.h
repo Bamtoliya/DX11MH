@@ -7,7 +7,7 @@ public:
 	virtual HRESULT Serialize(json& data) = 0;
 	virtual HRESULT Deserialize(const json& data) = 0;
 	virtual HRESULT Prototype_Serialize(json& data) = 0;
-	virtual HRESULT Prototype_Deserialize(const json& data) = 0;
+	virtual HRESULT Prototype_Deserialize(const simdjson::ondemand::object& jsonData) = 0;
 };
 
 NS_END

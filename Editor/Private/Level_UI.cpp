@@ -54,7 +54,6 @@ HRESULT CLevel_UI::Ready_Layer_Camera(const wstring strLayerTag)
     if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::UI), TEXT("Prototype_GameObject_Camera_Free"),
         m_iLevel, strLayerTag)))
         return E_FAIL;
-
     return S_OK;
 }
 

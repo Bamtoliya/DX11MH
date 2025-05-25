@@ -12,6 +12,7 @@ private:
 	CShader(const CShader& Prototype);
 	virtual ~CShader() = default;
 public:
+	static CShader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	static CShader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const _char* pLayoutName);
 	virtual CComponent* Clone(void* pArg) override;
 public:
@@ -54,7 +55,7 @@ public:
 	virtual HRESULT Serialize(json& data) override;
 	virtual HRESULT Deserialize(const json& data) override;
 	virtual HRESULT Prototype_Serialize(json& data) override;
-	virtual HRESULT Prototype_Deserialize(const json& data) override;
+	virtual HRESULT Prototype_Deserialize(const simdjson::ondemand::object& jsonData) override;
 #pragma endregion
 
 public:

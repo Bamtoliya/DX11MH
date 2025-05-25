@@ -14,6 +14,12 @@ CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain& Prototype)
 {
 }
 
+CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CVIBuffer_Terrain* pInstance = new CVIBuffer_Terrain(pDevice, pContext);
+	return pInstance;
+}
+
 CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath)
 {
 	CVIBuffer_Terrain* pInstance = new CVIBuffer_Terrain(pDevice, pContext);
@@ -259,7 +265,7 @@ HRESULT CVIBuffer_Terrain::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Terrain::Prototype_Deserialize(const json& inData)
+HRESULT CVIBuffer_Terrain::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
 {
 	return S_OK;
 }

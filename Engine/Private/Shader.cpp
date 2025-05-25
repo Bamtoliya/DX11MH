@@ -19,6 +19,12 @@ CShader::CShader(const CShader& Prototype)
 	Safe_AddRef(m_pEffect);
 }
 
+CShader* CShader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CShader* pInstance = new CShader(pDevice, pContext);
+	return pInstance;
+}
+
 CShader* CShader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pShaderFilePath, const D3D11_INPUT_ELEMENT_DESC* pElements, _uint iNumElements, const _char* pLayoutName)
 {
 	CShader* pInstance = new CShader(pDevice, pContext);
@@ -213,7 +219,7 @@ HRESULT CShader::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CShader::Prototype_Deserialize(const json& inData)
+HRESULT CShader::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
 {
 
 	return S_OK;

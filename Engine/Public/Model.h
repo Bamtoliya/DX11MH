@@ -12,6 +12,7 @@ protected:
 	CModel(const CModel& Prototype);
 	virtual ~CModel() = default;
 public:
+	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix = XMMatrixIdentity());
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
@@ -61,7 +62,7 @@ public:
 	virtual HRESULT Serialize(json& data) override;
 	virtual HRESULT Deserialize(const json& data) override;
 	virtual HRESULT Prototype_Serialize(json& data) override;
-	virtual HRESULT Prototype_Deserialize(const json& data) override;
+	virtual HRESULT Prototype_Deserialize(const simdjson::ondemand::object& jsonData) override;
 #pragma endregion
 
 public:

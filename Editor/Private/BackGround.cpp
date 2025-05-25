@@ -106,7 +106,7 @@ HRESULT CBackGround::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CBackGround::Prototype_Deserialize(const json& inData)
+HRESULT CBackGround::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
 {
 	return S_OK;
 }

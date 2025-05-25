@@ -12,6 +12,7 @@ private:
 	CVIBuffer_Terrain(const CVIBuffer_Terrain& Prototype);
 	virtual ~CVIBuffer_Terrain() = default;
 public:
+	static CVIBuffer_Terrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	static CVIBuffer_Terrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath);
 	virtual CComponent* Clone(void* pArg) override;
 public:
@@ -33,7 +34,7 @@ public:
 	virtual HRESULT Serialize(json& data) override;
 	virtual HRESULT Deserialize(const json& data) override;
 	virtual HRESULT Prototype_Serialize(json& data) override;
-	virtual HRESULT Prototype_Deserialize(const json& data) override;
+	virtual HRESULT Prototype_Deserialize(const simdjson::ondemand::object& jsonData) override;
 #pragma endregion
 
 public:

@@ -12,6 +12,7 @@ private:
 	CTexture(const CTexture& Prototype);
 	virtual ~CTexture() = default;
 public:
+	static CTexture* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	static CTexture* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures = 1);
 	virtual CComponent* Clone(void* pArg) override;
 public:
@@ -32,7 +33,7 @@ private:
 	virtual HRESULT Serialize(json& data) override;
 	virtual HRESULT Deserialize(const json& data) override;
 	virtual HRESULT Prototype_Serialize(json& data) override;
-	virtual HRESULT Prototype_Deserialize(const json& data) override;
+	virtual HRESULT Prototype_Deserialize(const simdjson::ondemand::object& jsonData) override;
 #pragma endregion
 
 

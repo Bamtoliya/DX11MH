@@ -117,7 +117,7 @@ HRESULT CTerrain::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CTerrain::Prototype_Deserialize(const json& inData)
+HRESULT CTerrain::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
 {
 	return S_OK;
 }

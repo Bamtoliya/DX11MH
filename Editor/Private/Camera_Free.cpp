@@ -212,7 +212,7 @@ HRESULT CCamera_Free::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CCamera_Free::Prototype_Deserialize(const json& inData)
+HRESULT CCamera_Free::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
 {
 	return S_OK;
 }

@@ -42,9 +42,9 @@
 
 #pragma region VIBuffer
 #include "VIBuffer.h"
+#include "VIBuffer_Cube.h"
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Terrain.h"
-//#include "VIBuffer_Cube.h"
 //#include "VIBuffer_Capsule.h"
 //#include "VIBuffer_Sphere.h"
 #pragma endregion

@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include "Prototype_Manager.h"
-
+#include "GameInstance.h"
 #include "GameObject.h"
 
 CPrototype_Manager::CPrototype_Manager()
 {
+
 }
 
 HRESULT CPrototype_Manager::Initialize(_uint iNumLevels)
@@ -24,6 +25,18 @@ HRESULT CPrototype_Manager::Add_Prototype(_uint iPrototypeLevelIndex, const _wst
 		nullptr != Find_Prototype(iPrototypeLevelIndex, strPrototypeTag))
 		return E_FAIL;
 
+	m_pPrototypes[iPrototypeLevelIndex].emplace(strPrototypeTag, pPrototype);
+
+	return S_OK;
+}
+
+HRESULT CPrototype_Manager::Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype, const simdjson::ondemand::object& jsonData)
+{
+	if (nullptr == m_pPrototypes ||
+		iPrototypeLevelIndex >= m_iNumLevels ||
+		nullptr != Find_Prototype(iPrototypeLevelIndex, strPrototypeTag))
+		return E_FAIL;
+	pPrototype->Prototype_Deserialize(jsonData);
 	m_pPrototypes[iPrototypeLevelIndex].emplace(strPrototypeTag, pPrototype);
 
 	return S_OK;
@@ -140,6 +153,4 @@ void CPrototype_Manager::Free()
 	}
 
 	Safe_Delete_Array(m_pPrototypes);
-
-
 }

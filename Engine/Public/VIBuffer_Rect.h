@@ -22,7 +22,7 @@ public:
 	virtual HRESULT Serialize(json& data) override;
 	virtual HRESULT Deserialize(const json& data) override;
 	virtual HRESULT Prototype_Serialize(json& data) override;
-	virtual HRESULT Prototype_Deserialize(const json& data) override;
+	virtual HRESULT Prototype_Deserialize(const simdjson::ondemand::object& jsonData) override;
 #pragma endregion
 public:
 	virtual HRESULT RenderImGui() override;

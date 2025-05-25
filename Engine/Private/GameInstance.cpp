@@ -217,6 +217,12 @@ HRESULT CGameInstance::Add_Prototype(_uint iPrototypeLevelIndex, const _wstring&
 {
 	return m_pPrototype_Manager->Add_Prototype(iPrototypeLevelIndex, strPrototypeTag, pPrototype);
 }
+
+HRESULT CGameInstance::Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, CBase* pPrototype, const simdjson::ondemand::object& jsonData)
+{
+	return m_pPrototype_Manager->Add_Prototype(iPrototypeLevelIndex, strPrototypeTag, pPrototype, jsonData);
+}
+
 CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, void* pArg)
 {
 	return m_pPrototype_Manager->Clone_Prototype(ePrototypeType, iPrototypeLevelIndex, strPrototypeTag, pArg);
@@ -235,7 +241,9 @@ HRESULT CGameInstance::Save_Prototypes(json& data)
 
 HRESULT CGameInstance::Load_Prototypes(const json& data)
 {
-	return m_pPrototype_Manager->Load_Prototypes(data);
+
+	return E_FAIL;
+	//return m_pPrototype_Manager->Load_Prototypes(data);
 }
 
 HRESULT CGameInstance::Render_PrototypeManagerImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag)
@@ -392,9 +400,13 @@ size_t CGameInstance::Get_RenderObjectIDCount(const _uint& iID)
 #pragma endregion
 
 #pragma region JSON_LOADER
-HRESULT CGameInstance::Load_Prototypes(const _char* pFilePath)
+HRESULT CGameInstance::Register_Creator_Function(const string& className, function<CBase* (ID3D11Device*, ID3D11DeviceContext*)> creatorFunc)
 {
-	return m_pJson_Loader->Load_Prototypes(pFilePath);
+	return m_pJson_Loader->Register_Creator_Function(className, creatorFunc);
+}
+HRESULT CGameInstance::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath)
+{
+	return m_pJson_Loader->Load_Prototypes(iLevelIndex, pFilePath);
 }
 #pragma endregion
 

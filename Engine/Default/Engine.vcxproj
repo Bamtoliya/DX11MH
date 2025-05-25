@@ -204,6 +204,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\..\External Libraries\imgui\imstb_rectpack.h" />
     <ClInclude Include="..\..\External Libraries\imgui\imstb_textedit.h" />
     <ClInclude Include="..\..\External Libraries\imgui\imstb_truetype.h" />
+    <ClInclude Include="..\..\External Libraries\json.hpp" />
     <ClInclude Include="..\..\External Libraries\simdjson.h" />
     <ClInclude Include="..\public\Audio_Manager.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

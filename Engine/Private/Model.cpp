@@ -41,6 +41,12 @@ CModel::CModel(const CModel& Prototype)
 		m_Animations.push_back(pPrototypeAnim->Clone());
 }
 
+CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	CModel* pInstance = new CModel(pDevice, pContext);
+	return pInstance;
+}
+
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
 {
 	CModel* pInstance = new CModel(pDevice, pContext);
@@ -308,7 +314,7 @@ HRESULT CModel::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CModel::Prototype_Deserialize(const json& inData)
+HRESULT CModel::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
 {
 
 	return S_OK;
