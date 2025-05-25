@@ -60,7 +60,7 @@ HRESULT CToolBar::Render()
 
         if (ifd::FileDialog::Instance().HasResult()) {
             std::string res = ifd::FileDialog::Instance().GetResult().u8string();
-            Save_Prototypes(ifd::FileDialog::Instance().GetResult().wstring().c_str());
+            Save_Prototypes(ENUM_CLASS(m_eLevelIndex), ifd::FileDialog::Instance().GetResult().wstring().c_str());
             printf("OPEN[%s]\n", res.c_str());
         }
         ifd::FileDialog::Instance().Close();
@@ -90,6 +90,25 @@ HRESULT CToolBar::Render()
                     // 다른 이름으로 저장 로직
                     printf("Clicked File->Save As\n");
                 }
+                ImGui::Separator();
+                // 레벨 선택 콤보 박스 추가
+                const char* level_names[] = { "Static", "UI", "Map", "Effect", "GamePlay", "All"}; // LEVEL enum에 맞게 이름 정의
+                LEVEL level_values[] = { LEVEL::STATIC, LEVEL::UI, LEVEL::MAP, LEVEL::EFFECT, LEVEL::GAMEPLAY, LEVEL::END }; // 실제 LEVEL enum 값
+                static int current_level_idx = 0; // 기본 선택 인덱스 (STATIC)
+
+                // m_eLevelToSavePrototypes와 일치하는 인덱스 찾기
+                for (int i = 0; i < IM_ARRAYSIZE(level_values); ++i) {
+                    if (level_values[i] == m_eLevelIndex) {
+                        current_level_idx = i;
+                        break;
+                    }
+                }
+
+                ImGui::PushItemWidth(120); // 콤보 박스 너비 조절
+                if (ImGui::Combo("Level to Save", &current_level_idx, level_names, IM_ARRAYSIZE(level_names))) {
+                    m_eLevelIndex = level_values[current_level_idx];
+                }
+                ImGui::PopItemWidth();
                 if(ImGui::MenuItem("Save Prototypes", "Ctrl+Shift+S")) {
 					ifd::FileDialog::Instance().Save("SaveDialog", "Save Prototypes", "json file (*.json){.json},.*", ASSETPATH "/Saves");
 				}
@@ -452,12 +471,15 @@ HRESULT CToolBar::Write_BoneNode(ofstream& ofs, aiNode* pAiNode, _int iParentBon
 #pragma endregion
 
 #pragma region Prototypes
-HRESULT CToolBar::Save_Prototypes(const _tchar* pFilePath)
+HRESULT CToolBar::Save_Prototypes(_uint iLevelInedx, const _tchar* pFilePath)
 {
     if (m_pGameInstance == nullptr)
         return E_FAIL;
     json data = {};
-	m_pGameInstance->Save_Prototypes(data);
+    if(iLevelInedx == ENUM_CLASS(LEVEL::END))
+        m_pGameInstance->Save_Prototypes(data);
+    else
+	    m_pGameInstance->Save_Prototypes(iLevelInedx, data);
 	fstream outputFile;
 	outputFile.open(pFilePath, std::ios::out | std::ios::trunc);
     if (!outputFile.is_open()) {

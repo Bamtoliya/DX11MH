@@ -65,42 +65,7 @@ HRESULT CMainApp::Start_Level(LEVEL eStartLevel)
 
 HRESULT CMainApp::Ready_Prototype_Components()
 {
-	m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STATIC), L"../../Assets/Saves/UILevel.json");
-
-	///* For.Prototype_Component_Camera*/
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Camera"),
-	//	CCamera::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For.Prototype_Component_Camera*/
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Light"),
-	//	CLight::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For.Prototype_Component_VIBuffer_Rect*/
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_VIBuffer_Rect"),
-	//	CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
-
-	///* For.Prototype_Component_Shader_VtxPosTex */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxPosTex"),
-	//	CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxPosTex.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements, "VTXPOSTEX"))))
-	//	return E_FAIL;
-
-	///* For.Prototype_Component_Shader_VtxNorTex */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxNorTex"),
-	//	CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX::Elements, VTXNORTEX::iNumElements, "VTXNORTEX"))))
-	//	return E_FAIL;
-
-	///* For.Prototype_Component_Shader_VtxMesh */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxMesh"),
-	//	CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxMesh.hlsl"), VTXMESH::Elements, VTXMESH::iNumElements, "VTXMESH"))))
-	//	return E_FAIL;
-
-	///* For.Prototype_Component_Shader_VtxAnimMesh */
-	//if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
-	//	CShader::Create(m_pDevice, m_pContext, TEXT("../../Assets/ShaderFiles/Shader_VtxAnimMesh.hlsl"), VTXANIMMESH::Elements, VTXANIMMESH::iNumElements, "VTXANIMMESH"))))
-	//	return E_FAIL;
+	m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STATIC), L"../../Assets/Saves/Prototypes_Static.json");
 
 	return S_OK;
 }

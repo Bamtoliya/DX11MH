@@ -154,7 +154,7 @@ HRESULT CJson_Loader::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath
 
         // Prototype_Manager에 프로토타입 추가
         // Add_Prototype은 성공 시 pPrototype의 소유권을 가져간다고 가정합니다.
-        if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, prototype_tag, pPrototype, prototype_data_obj))) {
+        if (FAILED(m_pGameInstance->Add_Prototype(iLevelIndex, prototype_tag, pPrototype))) {
             //std::string msg = "Failed to add prototype to manager: " + class_name + " with tag: " + std::string(tag_sv);
             //MSG_BOX(msg.c_str());
             Safe_Release(pPrototype); // Add_Prototype 실패 시 여기서 해제

@@ -218,7 +218,7 @@ HRESULT CGameInstance::Add_Prototype(_uint iPrototypeLevelIndex, const _wstring&
 	return m_pPrototype_Manager->Add_Prototype(iPrototypeLevelIndex, strPrototypeTag, pPrototype);
 }
 
-HRESULT CGameInstance::Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, CBase* pPrototype, const simdjson::ondemand::object& jsonData)
+HRESULT CGameInstance::Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, CBase* pPrototype, simdjson::ondemand::object& jsonData)
 {
 	return m_pPrototype_Manager->Add_Prototype(iPrototypeLevelIndex, strPrototypeTag, pPrototype, jsonData);
 }
@@ -237,6 +237,11 @@ CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototype
 HRESULT CGameInstance::Save_Prototypes(json& data)
 {
 	return m_pPrototype_Manager->Save_Prototypes(data);
+}
+
+HRESULT CGameInstance::Save_Prototypes(_uint iLevelIndex, json& data)
+{
+	return m_pPrototype_Manager->Save_Prototypes(iLevelIndex, data);
 }
 
 HRESULT CGameInstance::Load_Prototypes(const json& data)
@@ -540,6 +545,9 @@ HRESULT CGameInstance::Add_Light(CLight* pLight)
 void CGameInstance::Release_Engine()
 {
 	//Safe_Release(m_pPicking);
+	Safe_Release(m_pMyImGui_Manager);
+
+	Safe_Release(m_pJson_Loader);
 
 	Safe_Release(m_pSound_Manager);
 
@@ -549,8 +557,6 @@ void CGameInstance::Release_Engine()
 
 	Safe_Release(m_pLight_Manager);
 
-	Safe_Release(m_pMyImGui_Manager);
-
 	Safe_Release(m_pPipeLine);
 
 	Safe_Release(m_pTimer_Manager);
@@ -559,13 +565,13 @@ void CGameInstance::Release_Engine()
 
 	Safe_Release(m_pObject_Manager);
 
+	Safe_Release(m_pTarget_Manager);
+
 	Safe_Release(m_pPrototype_Manager);
 
 	Safe_Release(m_pLevel_Manager);
 
 	Safe_Release(m_pInput_Device);
-
-	Safe_Release(m_pTarget_Manager);
 
 	Safe_Release(m_pGraphic_Device);
 

@@ -83,6 +83,7 @@ HRESULT CLoader::Loading()
 HRESULT CLoader::Loading_For_Logo()
 {
 	
+	
 	lstrcpy(m_szLoadingText, TEXT("텍스쳐을(를) 로딩중입니다."));
 	/* For.Prototype_Component_Texture_BackGround*/
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::LOGO), TEXT("Prototype_Component_Texture_BackGround"),
@@ -114,6 +115,7 @@ HRESULT CLoader::Loading_For_Logo()
 
 HRESULT CLoader::Loading_For_UI()
 {
+	//m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::UI), L"../../Assets/Saves/");
 	lstrcpy(m_szLoadingText, TEXT("텍스쳐을(를) 로딩중입니다."));
 	/* For.Prototype_Component_Texture_BackGround*/
 	if (FAILED(m_pGameInstance->Add_Prototype(ENUM_CLASS(LEVEL::UI), TEXT("Prototype_Component_Texture_BackGround"),

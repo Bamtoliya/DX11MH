@@ -32,11 +32,5 @@
     },
     "Prototype_Component_VIBuffer_Rect": {
         "Class": "CVIBuffer_Rect"
-    },
-    "Prototype_GameObject_BackGround": {
-        "Class": "CBackGround"
-    },
-    "Prototype_GameObject_Camera_Free": {
-        "Class": "CCamera_Free"
     }
 }

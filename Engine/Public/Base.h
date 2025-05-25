@@ -23,7 +23,7 @@ public:
 	virtual HRESULT Serialize(json& data) override { return S_OK; }
 	virtual HRESULT Deserialize(const json& data) override { return S_OK; }
 	virtual HRESULT Prototype_Serialize(json& data) override { return S_OK; }
-	virtual HRESULT Prototype_Deserialize(const simdjson::ondemand::object& jsonData) override { return S_OK; }
+	virtual HRESULT Prototype_Deserialize(simdjson::ondemand::object & jsonData) override { return S_OK; }
 
 protected:
 	unsigned int		m_iRefCnt = { };

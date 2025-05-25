@@ -30,13 +30,13 @@ HRESULT CPrototype_Manager::Add_Prototype(_uint iPrototypeLevelIndex, const _wst
 	return S_OK;
 }
 
-HRESULT CPrototype_Manager::Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype, const simdjson::ondemand::object& jsonData)
+HRESULT CPrototype_Manager::Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype, simdjson::ondemand::object& jsonData)
 {
 	if (nullptr == m_pPrototypes ||
 		iPrototypeLevelIndex >= m_iNumLevels ||
 		nullptr != Find_Prototype(iPrototypeLevelIndex, strPrototypeTag))
 		return E_FAIL;
-	pPrototype->Prototype_Deserialize(jsonData);
+
 	m_pPrototypes[iPrototypeLevelIndex].emplace(strPrototypeTag, pPrototype);
 
 	return S_OK;
@@ -103,6 +103,7 @@ HRESULT CPrototype_Manager::RenderImGui(_uint iLevelIndex, const _wstring& Proto
 	return S_OK;
 }
 
+
 HRESULT CPrototype_Manager::Save_Prototypes(json& outJson)
 {
 	for (size_t i = 0; i < m_iNumLevels; i++)
@@ -115,6 +116,18 @@ HRESULT CPrototype_Manager::Save_Prototypes(json& outJson)
 		}
 	}
 	
+	return S_OK;
+}
+
+HRESULT CPrototype_Manager::Save_Prototypes(_uint iLevelIndex, json& outJson)
+{
+	for (auto& Pair : m_pPrototypes[iLevelIndex])
+	{
+		json prototype = json::object();
+		Pair.second->Prototype_Serialize(prototype);
+		outJson[WideToUtf8(Pair.first.c_str()).c_str()] = prototype;
+	}
+
 	return S_OK;
 }
 

@@ -22,7 +22,7 @@ private:
 	HRESULT Save_Level();
 	HRESULT Save_Scene();
 	HRESULT Save_Map();
-	HRESULT Save_Prototypes(const _tchar* pFilePath);
+	HRESULT Save_Prototypes(_uint iLevelIndex, const _tchar* pFilePath);
 
 	HRESULT Import_Level();
 	HRESULT Import_Scene();
@@ -43,6 +43,7 @@ private:
 	HRESULT Load_Prototypes();
 
 private:
-	bool m_bConvertAnim = { false };
+	_bool m_bConvertAnim = { false };
+	LEVEL m_eLevelIndex = { LEVEL::STATIC };
 };
 NS_END

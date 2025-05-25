@@ -124,8 +124,26 @@ HRESULT CTexture::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CTexture::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
+HRESULT CTexture::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 {
+	using namespace simdjson;
+
+	string_view texturePathSV;
+
+	if (jsonData["TextureFilePath"].get_string().get(texturePathSV) != simdjson::SUCCESS) {
+		MSG_BOX("CShader::Prototype_Deserialize - 'TextureFilePath' field is missing or not a string.");
+		return E_FAIL;
+	}
+
+	string texturePathStr(texturePathSV);
+
+	size_t iNumTextures = 0;
+
+	if (jsonData["NumTexture"].get_uint64().get(iNumTextures) != simdjson::SUCCESS) {
+		MSG_BOX("CShader::Prototype_Deserialize - 'NumTexture' field is missing or not a number.");
+		return E_FAIL;
+	}
+	Initialize_Prototype(Utf8ToWide(texturePathStr).c_str(), static_cast<_uint>(iNumTextures));
 
 	return S_OK;
 }

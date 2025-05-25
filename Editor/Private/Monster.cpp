@@ -116,7 +116,7 @@ HRESULT CMonster::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CMonster::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
+HRESULT CMonster::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }

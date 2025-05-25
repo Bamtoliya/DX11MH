@@ -106,7 +106,7 @@ HRESULT CBackGround::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CBackGround::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
+HRESULT CBackGround::Prototype_Deserialize(simdjson::ondemand::object& jsonData)
 {
 	return S_OK;
 }
@@ -133,8 +133,6 @@ HRESULT CBackGround::Render()
 {
 	if (!m_bVisible)
 		return S_OK;
-	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;*/
 	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix", m_pVIBufferCom)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &m_oID, sizeof(_uint))))

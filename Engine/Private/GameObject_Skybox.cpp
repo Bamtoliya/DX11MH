@@ -107,7 +107,7 @@ HRESULT CGameObject_Skybox::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CGameObject_Skybox::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
+HRESULT CGameObject_Skybox::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 {
 
 	return S_OK;

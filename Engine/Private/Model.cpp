@@ -314,7 +314,7 @@ HRESULT CModel::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CModel::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
+HRESULT CModel::Prototype_Deserialize(simdjson::ondemand::object& jsonData)
 {
 
 	return S_OK;

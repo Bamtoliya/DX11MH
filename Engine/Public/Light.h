@@ -30,7 +30,7 @@ public:
 	virtual HRESULT Serialize(json& data) override;
 	virtual HRESULT Deserialize(const json& data) override;
 	virtual HRESULT Prototype_Serialize(json& data) override;
-	virtual HRESULT Prototype_Deserialize(const simdjson::ondemand::object& jsonData) override;
+	virtual HRESULT Prototype_Deserialize(simdjson::ondemand::object & jsonData) override;
 #pragma endregion
 public:
 	const LIGHT_DESC* Get_LightDesc() const { return &m_tInfo; }

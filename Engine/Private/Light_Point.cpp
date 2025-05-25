@@ -127,7 +127,7 @@ HRESULT CLight_Point::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CLight_Point::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
+HRESULT CLight_Point::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 {
 
 	return S_OK;

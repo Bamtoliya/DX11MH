@@ -214,13 +214,39 @@ HRESULT CShader::Deserialize(const json& inData)
 HRESULT CShader::Prototype_Serialize(json& outJson)
 {
 	outJson["Class"] = "CShader";
-	outJson["ShdaerPath"] = WideToUtf8(m_strShaderFile.c_str()).c_str();
+	outJson["ShaderPath"] = WideToUtf8(m_strShaderFile.c_str()).c_str();
 	outJson["Layout"] = m_strLayoutName;
 	return S_OK;
 }
 
-HRESULT CShader::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
+HRESULT CShader::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 {
+	using namespace simdjson; // for string_view if not already in scope
+
+	string_view shaderPathSV;
+	// JSON 파일의 키가 "ShdaerPath"이므로 이를 사용합니다.
+	if (jsonData["ShaderPath"].get_string().get(shaderPathSV) != simdjson::SUCCESS) {
+		MSG_BOX("CShader::Prototype_Deserialize - 'ShaderPath' field is missing or not a string.");
+		return E_FAIL;
+	}
+	std::wstring wsShaderPath = Utf8ToWide(std::string(shaderPathSV));
+
+	string_view layoutTagSV;
+	if (jsonData["Layout"].get_string().get(layoutTagSV) != simdjson::SUCCESS) {
+		MSG_BOX("CShader::Prototype_Deserialize - 'Layout' field is missing or not a string.");
+		return E_FAIL;
+	}
+	std::string layoutTag(layoutTagSV);
+
+	pair<const D3D11_INPUT_ELEMENT_DESC*, _uint> layoutDetails = {};
+	if (layoutTag == "VTXPOSTEX") { layoutDetails = { VTXPOSTEX::Elements, VTXPOSTEX::iNumElements }; }
+	if (layoutTag == "VTXNORTEX") { layoutDetails = { VTXNORTEX::Elements, VTXNORTEX::iNumElements }; }
+	if (layoutTag == "VTXMESH") { layoutDetails = { VTXMESH::Elements, VTXMESH::iNumElements }; }
+	if (layoutTag == "VTXANIMMESH") { layoutDetails = { VTXANIMMESH::Elements, VTXANIMMESH::iNumElements }; }
+
+	if (FAILED(Initialize_Prototype(wsShaderPath.c_str(), layoutDetails.first, layoutDetails.second, layoutTag.c_str()))) {
+		return E_FAIL;
+	}
 
 	return S_OK;
 }

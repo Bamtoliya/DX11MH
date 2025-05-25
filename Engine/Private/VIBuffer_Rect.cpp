@@ -144,7 +144,7 @@ HRESULT CVIBuffer_Rect::Prototype_Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Rect::Prototype_Deserialize(const simdjson::ondemand::object& jsonData)
+HRESULT CVIBuffer_Rect::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 {
 
 	return S_OK;

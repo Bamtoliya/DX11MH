@@ -70,9 +70,7 @@ CMyImGui_Manager* CMyImGui_Manager::Create(HWND hWnd, ID3D11Device* pDevice, ID3
 void CMyImGui_Manager::Free()
 {
     __super::Free();
-    Safe_Release(m_pGameInstance);
-    Safe_Release(m_pDevice);
-    Safe_Release(m_pContext);
+    
     for (auto& pair : m_MyImGuis)
     {
         Safe_Release(pair.second);
@@ -81,6 +79,10 @@ void CMyImGui_Manager::Free()
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
+
+    Safe_Release(m_pGameInstance);
+    Safe_Release(m_pDevice);
+    Safe_Release(m_pContext);
 }
 #pragma endregion
 

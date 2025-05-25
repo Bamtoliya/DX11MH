@@ -18,13 +18,14 @@ private:
 public:
 	HRESULT Initialize(_uint iNumLevels);
 	HRESULT Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
-	HRESULT Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype, const simdjson::ondemand::object& jsonData);
+	HRESULT Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype, simdjson::ondemand::object& jsonData);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, void* pArg);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CGameObject* pGameObject, void* pArg);
 	void Clear(_uint iLevelIndex);
 public:
 	HRESULT RenderImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag);
 	HRESULT Save_Prototypes(json& data);
+	HRESULT Save_Prototypes(_uint iLevelIndex, json& outJson);
 public:
 private:
 	_uint										m_iNumLevels = {};
