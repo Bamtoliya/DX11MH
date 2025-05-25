@@ -135,6 +135,7 @@ void CSonic::Free()
 
 HRESULT CSonic::Serialize(json& outJson)
 {
+	json data;
 	return S_OK;
 }
 

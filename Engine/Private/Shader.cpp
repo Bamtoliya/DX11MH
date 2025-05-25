@@ -215,6 +215,33 @@ HRESULT CShader::Serialize(json& outJson)
 
 HRESULT CShader::Deserialize(simdjson::ondemand::object & jsonData)
 {
+	if (FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;
+	simdjson::ondemand::object shaderObject;
+
+	if (jsonData["CShader"].get_object().get(shaderObject) == simdjson::SUCCESS)
+	{
+		shaderObject["Tiling"].get_bool().get(m_bTiling);
+		simdjson::ondemand::array size_array;
+		shaderObject["TilingScale"].get_array().get(size_array);
+		uint64_t count = 0;
+		if (size_array.count_elements().get(count) == simdjson::SUCCESS && count >= 2)
+		{
+			auto iter = size_array.begin();
+			m_fScale.x = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			m_fScale.y = static_cast<_float>((*iter).get_double().value_unsafe());
+		}
+		shaderObject["TilingOffset"].get_array().get(size_array);
+		if (size_array.count_elements().get(count) == simdjson::SUCCESS && count >= 2)
+		{
+			auto iter = size_array.begin();
+			m_fOffset.x = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			m_fOffset.y = static_cast<_float>((*iter).get_double().value_unsafe());
+		}
+	}
+
 	return S_OK;
 }
 

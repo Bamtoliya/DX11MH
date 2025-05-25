@@ -128,6 +128,8 @@ void CTerrain::Free()
 
 HRESULT CTerrain::Serialize(json& outJson)
 {
+	json data;
+
 	return S_OK;
 }
 
