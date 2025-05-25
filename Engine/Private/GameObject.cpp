@@ -168,28 +168,66 @@ HRESULT CGameObject::RenderImGuiObjects()
 {
 	ImGui::PushID(m_oID);
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
-	static bool align_label_with_current_x_position = false;	
-	static bool test_drag_and_drop = false;
-	ImGuiTreeNodeFlags node_flags = 0;
+	// static bool align_label_with_current_x_position = false; // 원본 코드에 있었으나, 현재 사용되지 않는 것으로 보임
+	// static bool test_drag_and_drop = false; // 원본 코드에 있었으나, 현재 사용되지 않는 것으로 보임
+	ImGuiTreeNodeFlags node_flags = base_flags; // base_flags로 초기화
 	ImGui::Indent();
 	if (m_bPicked)
 		node_flags |= ImGuiTreeNodeFlags_Selected;
+
+	// 체크박스와 트리 노드를 같은 줄에 배치하기 위한 처리
+	// ImGui::AlignTextToFramePadding(); // 필요에 따라 사용
+
 	ImGui::Checkbox("##Visible", &m_bVisible);
 	ImGui::SameLine();
-	if (ImGui::TreeNodeEx(WideToUtf8(m_szName).c_str(), base_flags | node_flags))
+
+	bool node_open = ImGui::TreeNodeEx(WideToUtf8(m_szName).c_str(), node_flags);
+
+	// 드래그 소스 설정 (이 노드를 드래그할 수 있도록)
+	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+	{
+		// 페이로드 설정 (여기서는 GameObject의 ID를 전달)
+		ImGui::SetDragDropPayload("GAMEOBJECT_PAYLOAD", &m_oID, sizeof(_uint));
+		ImGui::Text("%s", WideToUtf8(m_szName).c_str()); // 드래그 중 표시될 텍스트
+		ImGui::EndDragDropSource();
+	}
+
+	// 드롭 대상 설정 (다른 노드를 이 노드 위나 아래, 또는 자식으로 드롭할 수 있도록)
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GAMEOBJECT_PAYLOAD"))
+		{
+			IM_ASSERT(payload->DataSize == sizeof(_uint));
+			_uint payload_oID = *(const _uint*)payload->Data;
+
+			// 여기에 드롭 로직 구현:
+			// 1. payload_oID를 가진 GameObject를 찾습니다.
+			// 2. 현재 노드(this)와 드롭된 노드(payload_oID)의 관계를 설정합니다.
+			//    - 예: 드롭된 노드를 현재 노드의 자식으로 만들기
+			//    - 예: 드롭된 노드를 현재 노드의 형제로 만들기 (순서 변경)
+			// CGameInstance 또는 ObjectManager를 통해 GameObject를 가져오고 관계를 변경하는 함수 호출
+			// 예시: m_pGameInstance->SetGameObjectParent(payload_oID, m_oID);
+			//       m_pGameInstance->MoveGameObject(payload_oID, m_oID, targetRelation); // targetRelation은 자식, 이전 형제, 다음 형제 등
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+
+	if (node_open)
 	{
 		if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
 			m_pGameInstance->PickObjectById(m_oID);
-		ImGui::TreePop();
-		for (auto& c : m_Childs)
+
+		for (auto& pair : m_Childs) // map 순회 시 pair 사용
 		{
-			c.second->RenderImGuiObjects();
+			if (pair.second) // 유효한 자식인지 확인
+				pair.second->RenderImGuiObjects();
 		}
+		ImGui::TreePop();
 	}
 	ImGui::PopID();
-	
 	ImGui::Unindent();
-	
+
 	return S_OK;
 }
 
