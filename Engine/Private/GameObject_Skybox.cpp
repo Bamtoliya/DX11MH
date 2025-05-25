@@ -39,6 +39,19 @@ CGameObject* CGameObject_Skybox::Clone(void* pArg)
 	return pInstance;
 }
 
+CGameObject* CGameObject_Skybox::Clone(simdjson::ondemand::object& jsonData)
+{
+	CGameObject_Skybox* pInstance = new CGameObject_Skybox(*this);
+
+	if (FAILED(pInstance->Initialize(jsonData)))
+	{
+		MSG_BOX("Failed to Cloned : CGameObject_Skybox");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
 HRESULT CGameObject_Skybox::Initialize_Prototype()
 {
 	return S_OK;
@@ -55,6 +68,18 @@ HRESULT CGameObject_Skybox::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CGameObject_Skybox::Initialize(simdjson::ondemand::object& jsonData)
+{
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	Deserialize(jsonData);
 	return S_OK;
 }
 
@@ -96,7 +121,7 @@ HRESULT CGameObject_Skybox::Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CGameObject_Skybox::Deserialize(const json& inData)
+HRESULT CGameObject_Skybox::Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }
@@ -166,4 +191,5 @@ HRESULT CGameObject_Skybox::Render()
 
 	return S_OK;
 }
+
 #pragma endregion

@@ -130,11 +130,56 @@ void CVIBuffer_Rect::Free()
 
 HRESULT CVIBuffer_Rect::Serialize(json& outJson)
 {
+	json data;
+	data["Size"] = { m_vLocalSize.x, m_vLocalSize.y };
+
+	outJson["CVIBuffer_Rect"] = data;
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Rect::Deserialize(const json& inData)
+HRESULT CVIBuffer_Rect::Deserialize(simdjson::ondemand::object & jsonData)
 {
+	if(FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;
+	simdjson::ondemand::object VIBufferObject;
+
+	if (jsonData["CVIBuffer_Rect"].get_object().get(VIBufferObject) == simdjson::SUCCESS)
+	{
+		simdjson::ondemand::array size_array;
+		VIBufferObject["Size"].get_array().get(size_array);
+		uint64_t count = 0;
+		// 배열의 요소 개수를 확인합니다.
+		if (size_array.count_elements().get(count) == simdjson::SUCCESS && count >= 2)
+		{
+			auto iter = size_array.begin();
+			if (iter == size_array.end()) {
+				// MSG_BOX("CVIBuffer_Rect: 'Size' array is empty.");
+				return E_FAIL; // 첫 번째 요소 없음
+			}
+
+			double val_x = 0.0;
+			simdjson::ondemand::value element_val = *iter; // 첫 번째 요소 가져오기
+			if (element_val.get_double().get(val_x) != simdjson::SUCCESS) {
+				// MSG_BOX("CVIBuffer_Rect: Failed to get first element of 'Size' array as double.");
+				return E_FAIL;
+			}
+			m_vLocalSize.x = static_cast<_float>(val_x);
+
+			++iter; // 다음 요소로 이동
+			if (iter == size_array.end()) {
+				// MSG_BOX("CVIBuffer_Rect: 'Size' array has only one element.");
+				return E_FAIL; // 두 번째 요소 없음
+			}
+
+			double val_y = 0.0;
+			element_val = *iter; // 두 번째 요소 가져오기
+			if (element_val.get_double().get(val_y) != simdjson::SUCCESS) {
+				// MSG_BOX("CVIBuffer_Rect: Failed to get second element of 'Size' array as double.");
+				return E_FAIL;
+			}
+			m_vLocalSize.y = static_cast<_float>(val_y);
+		}
+	}
 	return S_OK;
 }
 
@@ -146,7 +191,6 @@ HRESULT CVIBuffer_Rect::Prototype_Serialize(json& outJson)
 
 HRESULT CVIBuffer_Rect::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 {
-
 	return S_OK;
 }
 

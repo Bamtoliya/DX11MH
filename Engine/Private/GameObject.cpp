@@ -61,6 +61,29 @@ HRESULT CGameObject::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CGameObject::Initialize(simdjson::ondemand::object& jsonData)
+{
+	string temp;
+	jsonData["Name"].get_string(temp);
+	lstrcpy(m_szName, Utf8ToWide(temp).c_str());
+
+	m_pTransformCom = CTransform::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pTransformCom)
+		return E_FAIL;
+
+	m_pTransformCom->Set_OwnerGameObject(this);
+
+	if (FAILED(m_pTransformCom->Deserialize(jsonData)))
+		return E_FAIL;
+
+	m_Components.emplace(g_strTransformTag, m_pTransformCom);
+
+	Safe_AddRef(m_pTransformCom);
+
+
+	return S_OK;
+}
+
 void CGameObject::Free()
 {
 	__super::Free();
@@ -197,6 +220,7 @@ HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& s
 
 HRESULT CGameObject::Serialize(json& data)
 {
+	data["Visible"] = m_bVisible;
 	for(auto & iter : m_Components)
 	{
 		if(FAILED(iter.second->Serialize(data)))
@@ -206,11 +230,12 @@ HRESULT CGameObject::Serialize(json& data)
 }
 
 
-HRESULT CGameObject::Deserialize()
+HRESULT CGameObject::Deserialize(simdjson::ondemand::object& jsonData)
 {
+	jsonData["Visible"].get_bool().get(m_bVisible);
 	for (auto& iter : m_Components)
 	{
-		if (FAILED(iter.second->Deserialize()))
+		if (FAILED(iter.second->Deserialize(jsonData)))
 			return E_FAIL;
 	}
 	return S_OK;

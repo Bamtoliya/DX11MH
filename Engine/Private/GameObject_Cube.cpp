@@ -40,13 +40,20 @@ CGameObject_Cube* CGameObject_Cube::Clone(void* pArg)
 	return pInstance;
 }
 
-void CGameObject_Cube::Free()
+CGameObject_Cube* CGameObject_Cube::Clone(simdjson::ondemand::object& jsonData)
 {
-	__super::Free();
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pVIBufferCom);
+	CGameObject_Cube* pInstance = new CGameObject_Cube(*this);
+
+	if (FAILED(pInstance->Initialize(jsonData)))
+	{
+		MSG_BOX("Failed to Cloned : CGameObject_Cube");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
+
+
 
 HRESULT CGameObject_Cube::Initialize_Prototype()
 {
@@ -62,6 +69,18 @@ HRESULT CGameObject_Cube::Initialize(void* pArg)
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CGameObject_Cube::Initialize(simdjson::ondemand::object& jsonData)
+{
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	Deserialize(jsonData);
 	return S_OK;
 }
 
@@ -85,6 +104,14 @@ HRESULT CGameObject_Cube::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;*/
 	return S_OK;
+}
+
+void CGameObject_Cube::Free()
+{
+	__super::Free();
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pVIBufferCom);
 }
 
 void CGameObject_Cube::Priority_Update(_float fTimeDelta)

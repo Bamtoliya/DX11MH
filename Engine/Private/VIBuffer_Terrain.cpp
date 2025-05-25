@@ -253,7 +253,7 @@ HRESULT CVIBuffer_Terrain::Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Terrain::Deserialize(const json& inData)
+HRESULT CVIBuffer_Terrain::Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }

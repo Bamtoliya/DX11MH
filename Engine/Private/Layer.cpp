@@ -237,6 +237,32 @@ CGameObject* CLayer::Find_GameObjectByName(const _wstring& strName)
 	return nullptr;
 }
 
+HRESULT CLayer::Serialize(json& outJson)
+{
+	for(auto& pGameObject : m_GameObjects)
+	{
+		if (nullptr != pGameObject)
+		{
+			json gameObjectJson;
+			pGameObject->Serialize(gameObjectJson);
+			outJson["GameObjects"].push_back(gameObjectJson);
+		}
+	}
+	return S_OK;
+}
+
+HRESULT CLayer::Deserialize(simdjson::ondemand::object& jsonData)
+{
+	/*for (auto& gameObjectJson : jsonData["GameObjects"].get_array().value_or({}))
+	{
+		CGameObject* pGameObject = CGameObject::Clone(gameObjectJson);
+		if (nullptr == pGameObject)
+			return E_FAIL;
+		m_GameObjects.push_back(pGameObject);
+	}*/
+	return S_OK;
+}
+
 CLayer* CLayer::Create()
 {
 	return new CLayer();

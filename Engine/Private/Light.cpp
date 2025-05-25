@@ -68,7 +68,7 @@ HRESULT CLight::Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CLight::Deserialize(const json& inData)
+HRESULT CLight::Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }

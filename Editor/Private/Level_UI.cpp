@@ -35,6 +35,7 @@ HRESULT CLevel_UI::Render()
 
 HRESULT CLevel_UI::Ready_Layer_Background(const wstring strLayerTag)
 {
+    //m_pGameInstance->Load_GameObjects(m_iLevel, L"../../Assets/Saves/Test1.json");
     CBackGround::BACKGROUND_DESC				BackGroundDesc{};
 
     lstrcpy(BackGroundDesc.szName, L"Background");

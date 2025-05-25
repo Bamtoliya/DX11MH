@@ -51,6 +51,8 @@ HRESULT CCamera::Initialize_Prototype()
 
 HRESULT CCamera::Initialize(void* pArg)
 {
+	if (nullptr == pArg)
+		return S_OK;
 	CAMERA_COM_DESC* pDesc = static_cast<CAMERA_COM_DESC*>(pArg);
 	memcpy(&m_tDesc, pDesc, sizeof(CAMERA_COM_DESC));
 	return S_OK;
@@ -134,19 +136,18 @@ void CCamera::ResetZoom(_float fTimeDelta)
 
 HRESULT CCamera::Serialize(json& outJson)
 {
-	outJson["Camera"] = json::object();
-	outJson["Camera"]["Class"] = "CCamera";
-	outJson["Camera"]["Leve"] = "STATIC";
-	outJson["Camera"]["bOrthographic"] = m_tDesc.bOrthographic;
-	//json["Camera"]["fZoomPerSec"] = m_tDesc.fZoomPerSec;
-	//json["Camera"]["fFovy"] = XMConvertToDegrees(m_tDesc.fFovy);
-	//json["Camera"]["fNear"] = m_tDesc.fNear;
-	//json["Camera"]["fFar"] = m_tDesc.fFar;
-	//json["Camera"]["vAt"] = { m_tDesc.vAt.x, m_tDesc.vAt.y, m_tDesc.vAt.z, m_tDesc.vAt.w };
+	json data;
+	data["bOrthographic"] = m_tDesc.bOrthographic;
+	data["fZoomPerSec"] = m_tDesc.fZoomPerSec;
+	data["fFovy"] = XMConvertToDegrees(m_tDesc.fFovy);
+	data["fNear"] = m_tDesc.fNear;
+	data["fFar"] = m_tDesc.fFar;
+	data["vAt"] = { m_tDesc.vAt.x, m_tDesc.vAt.y, m_tDesc.vAt.z, m_tDesc.vAt.w };
+	outJson["CCamera"] = data;
 	return S_OK;
 }
 
-HRESULT CCamera::Deserialize(const json& inData)
+HRESULT CCamera::Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }

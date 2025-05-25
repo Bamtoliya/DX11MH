@@ -40,6 +40,19 @@ CGameObject* CBackGround::Clone(void* pArg)
 	return pInstance;
 }
 
+CGameObject* CBackGround::Clone(simdjson::ondemand::object& jsonData)
+{
+	CBackGround* pInstance = new CBackGround(*this);
+
+	if (FAILED(pInstance->Initialize(jsonData)))
+	{
+		MSG_BOX("Failed to Cloned : CBackGround");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
 HRESULT CBackGround::Initialize_Prototype()
 {
 	return S_OK;
@@ -56,6 +69,20 @@ HRESULT CBackGround::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_pVIBufferCom->Set_LocalSize(m_fSizeX, m_fSizeY);
+
+	return S_OK;
+}
+
+HRESULT CBackGround::Initialize(simdjson::ondemand::object& jsonData)
+{
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	if(FAILED(Deserialize(jsonData)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -92,11 +119,19 @@ void CBackGround::Free()
 
 HRESULT CBackGround::Serialize(json& outJson)
 {
+	json data;
+	if (FAILED(__super::Serialize(data)))
+		return E_FAIL;
+	outJson["CBackGround"] = data;
+	outJson["CBackGround"]["Name"] = WideToUtf8(m_szName);
+	outJson["CBackGround"]["PrototypeTag"] = "Prototype_GameObject_BackGround";
 	return S_OK;
 }
 
-HRESULT CBackGround::Deserialize(const json& inData)
+HRESULT CBackGround::Deserialize(simdjson::ondemand::object& jsonData)
 {
+	if(FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;
 	return S_OK;
 }
 

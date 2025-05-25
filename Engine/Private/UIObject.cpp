@@ -49,6 +49,21 @@ HRESULT CUIObject::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CUIObject::Initialize(simdjson::ondemand::object& jsonData)
+{
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	D3D11_VIEWPORT			ViewportDesc{};
+	_uint					iNumViewports = { 1 };
+
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.0f, 1.f));
+	return S_OK;
+}
+
 CGameObject* CUIObject::Clone(CGameObject* pGameObject, void* pArg)
 {
 	CUIObject* pInstance = reinterpret_cast<CUIObject*>(__super::Clone(pGameObject, pArg));

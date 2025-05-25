@@ -1,0 +1,13 @@
+{
+    "Prototype_Component_Texture_BackGround": {
+        "Class": "CTexture",
+        "NumTexture": 2,
+        "TextureFilePath": "../../Assets/Resources/Textures/Default%d.jpg"
+    },
+    "Prototype_GameObject_BackGround": {
+        "Class": "CBackGround"
+    },
+    "Prototype_GameObject_Camera_Free": {
+        "Class": "CCamera_Free"
+    }
+}

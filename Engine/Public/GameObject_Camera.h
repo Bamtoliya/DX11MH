@@ -24,6 +24,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Initialize(simdjson::ondemand::object& jsonData);
 #pragma endregion
 
 #pragma region Loops

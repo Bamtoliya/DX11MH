@@ -203,10 +203,17 @@ HRESULT CShader::Bind_SRVs(const _char* pConstantName, ID3D11ShaderResourceView*
 
 HRESULT CShader::Serialize(json& outJson)
 {
+	json data;
+	data["Tiling"] = m_bTiling;
+	data["TilingScale"] = { m_fScale.x, m_fScale.y };
+	data["TilingOffset"] = { m_fOffset.x, m_fOffset.y };
+	data["Layout"] = m_strLayoutName;
+
+	outJson["CShader"] = data;
 	return S_OK;
 }
 
-HRESULT CShader::Deserialize(const json& inData)
+HRESULT CShader::Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }

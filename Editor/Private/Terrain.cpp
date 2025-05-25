@@ -41,6 +41,19 @@ CGameObject* CTerrain::Clone(void* pArg)
 	return pInstance;
 }
 
+CGameObject* CTerrain::Clone(simdjson::ondemand::object& jsonData)
+{
+	CTerrain* pInstance = new CTerrain(*this);
+
+	if (FAILED(pInstance->Initialize(jsonData)))
+	{
+		MSG_BOX("Failed to Cloned : CTerrain");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
 HRESULT CTerrain::Initialize_Prototype()
 {
 	return S_OK;
@@ -68,6 +81,18 @@ HRESULT CTerrain::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+HRESULT CTerrain::Initialize(simdjson::ondemand::object& jsonData)
+{
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+	if(FAILED(Deserialize(jsonData)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -106,7 +131,7 @@ HRESULT CTerrain::Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CTerrain::Deserialize(const json& inData)
+HRESULT CTerrain::Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }

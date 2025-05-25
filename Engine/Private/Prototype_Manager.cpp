@@ -55,6 +55,19 @@ CBase* CPrototype_Manager::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iProt
 		return nullptr;	
 }
 
+CBase* CPrototype_Manager::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, simdjson::ondemand::object& jsonData)
+{
+	CBase* pPrototype = Find_Prototype(iPrototypeLevelIndex, strPrototypeTag);
+	if (nullptr == pPrototype)
+		return nullptr;
+
+	if (ePrototypeType == PROTOTYPE::TYPE_GAMEOBJECT)
+		return dynamic_cast<CGameObject*>(pPrototype)->Clone(jsonData);
+	else
+		return dynamic_cast<CComponent*>(pPrototype)->Clone(nullptr);
+	return nullptr;
+}
+
 CBase* CPrototype_Manager::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, CGameObject* pGameObject, void* pArg)
 {
 	CBase* pPrototype = Find_Prototype(iPrototypeLevelIndex, strPrototypeTag);

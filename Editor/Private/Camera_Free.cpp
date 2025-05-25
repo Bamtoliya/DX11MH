@@ -43,6 +43,19 @@ CGameObject* CCamera_Free::Clone(void* pArg)
 	return pInstance;
 }
 
+CGameObject* CCamera_Free::Clone(simdjson::ondemand::object& jsonData)
+{
+	CCamera_Free* pInstance = new CCamera_Free(*this);
+
+	if (FAILED(pInstance->Initialize(jsonData)))
+	{
+		MSG_BOX("Failed to Cloned : CCamera_Free");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
 HRESULT CCamera_Free::Initialize_Prototype()
 {
 	return S_OK;
@@ -56,6 +69,22 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 	lstrcpy(Desc.szName, TEXT("Camera"));
 	m_fSensor = 0.1f;
 	if (FAILED(__super::Initialize(&Desc)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CCamera_Free::Initialize(simdjson::ondemand::object& jsonData)
+{
+	CGameObject_Camera::CAMERA_DESC Desc{};
+	Desc.fSpeedPerSec = 10.f;
+	Desc.fRotationPerSec = 1.f;
+	lstrcpy(Desc.szName, TEXT("Camera"));
+	m_fSensor = 0.1f;
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	if(FAILED(Deserialize(jsonData)))
 		return E_FAIL;
 
 	return S_OK;
@@ -198,10 +227,15 @@ void CCamera_Free::Focus_OnPickedObject()
 
 HRESULT CCamera_Free::Serialize(json& outJson)
 {
+	json data;
+	__super::Serialize(data);
+	outJson["CCamera_Free"] = data;
+	outJson["CCamera_Free"]["Name"] = WideToUtf8(m_szName);
+	outJson["CCamera_Free"]["PrototypeTag"] = "Prototype_GameObject_Camera_Free";
 	return S_OK;
 }
 
-HRESULT CCamera_Free::Deserialize(const json& inData)
+HRESULT CCamera_Free::Deserialize(simdjson::ondemand::object& jsonData)
 {
 	return S_OK;
 }

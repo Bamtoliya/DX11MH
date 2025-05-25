@@ -19,6 +19,7 @@ public:
 public:
 	HRESULT Initialize(_uint iNumLevels);
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, void* pArg);
+	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, simdjson::ondemand::object& jsonData);
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, _uint iGameObjectID, void* pArg = nullptr);
 	void Priority_Update(_float fTimeDelta);
 	void Update(_float fTimeDelta);
@@ -33,6 +34,8 @@ public:
 	HRESULT RenderImGui();
 	HRESULT ToggleLayerVisible(_uint iLevelIndex, const _wstring& strLayerTag);
 	HRESULT Render_ImGuiLayerList(_uint iLevelIndex, _char* szBuffer, _uint& iGameObjectID, _uint iBufferSize);
+	HRESULT Save_GameObjects(json& outJson);
+	HRESULT Save_GameObjects(_uint iLevelIndex, json& outJson);
 private:
 	static _uint						m_oID;
 	_uint								m_iNumLevels = {};

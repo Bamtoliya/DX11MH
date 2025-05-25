@@ -29,6 +29,7 @@ private:
 	vector<ID3D11InputLayout*>	m_InputLayouts;
 	_wstring					m_strShaderFile = {};
 	string						m_strLayoutName = {};
+	_wstring					m_strPrototypeTag = {};
 
 private:
 	_bool						m_bTiling;
@@ -53,7 +54,7 @@ public:
 #pragma region Save&Load
 public:
 	virtual HRESULT Serialize(json& data) override;
-	virtual HRESULT Deserialize(const json& data) override;
+	virtual HRESULT Deserialize(simdjson::ondemand::object & jsonData) override;
 	virtual HRESULT Prototype_Serialize(json& data) override;
 	virtual HRESULT Prototype_Deserialize(simdjson::ondemand::object & jsonData) override;
 #pragma endregion

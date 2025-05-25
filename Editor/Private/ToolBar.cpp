@@ -32,7 +32,6 @@ void CToolBar::Update(_float fTimeDelta)
 
 HRESULT CToolBar::Render()
 {
-
 #pragma region 팝업그리기
     if (ifd::FileDialog::Instance().IsDone("TextureOpenDialog")) {
         if (ifd::FileDialog::Instance().HasResult()) {
@@ -55,12 +54,45 @@ HRESULT CToolBar::Render()
         ifd::FileDialog::Instance().Close();
     }
 
-    if (ifd::FileDialog::Instance().IsDone("SaveDialog")) {
+    if (ifd::FileDialog::Instance().IsDone("PrototypeSaveDialog")) {
         static bool bAnim = false;
 
         if (ifd::FileDialog::Instance().HasResult()) {
             std::string res = ifd::FileDialog::Instance().GetResult().u8string();
             Save_Prototypes(ENUM_CLASS(m_eLevelIndex), ifd::FileDialog::Instance().GetResult().wstring().c_str());
+            printf("SAVE[%s]\n", res.c_str());
+        }
+        ifd::FileDialog::Instance().Close();
+    }
+
+    if (ifd::FileDialog::Instance().IsDone("PrototypeLoadDialog")) {
+        static bool bAnim = false;
+
+        if (ifd::FileDialog::Instance().HasResult()) {
+            std::string res = ifd::FileDialog::Instance().GetResult().u8string();
+            Load_Prototypes(ENUM_CLASS(m_eLevelIndex), ifd::FileDialog::Instance().GetResult().wstring().c_str());
+            printf("OPEN[%s]\n", res.c_str());
+        }
+        ifd::FileDialog::Instance().Close();
+    }
+
+    if (ifd::FileDialog::Instance().IsDone("GameObjectSaveDialog")) {
+        static bool bAnim = false;
+
+        if (ifd::FileDialog::Instance().HasResult()) {
+            std::string res = ifd::FileDialog::Instance().GetResult().u8string();
+            Save_GameObjects(ENUM_CLASS(m_eLevelIndex), ifd::FileDialog::Instance().GetResult().wstring().c_str());
+            printf("SAVE[%s]\n", res.c_str());
+        }
+        ifd::FileDialog::Instance().Close();
+    }
+
+    if (ifd::FileDialog::Instance().IsDone("GameObjectLoadDialog")) {
+        static bool bAnim = false;
+
+        if (ifd::FileDialog::Instance().HasResult()) {
+            std::string res = ifd::FileDialog::Instance().GetResult().u8string();
+            Load_GameObjects(ENUM_CLASS(m_eLevelIndex), ifd::FileDialog::Instance().GetResult().wstring().c_str());
             printf("OPEN[%s]\n", res.c_str());
         }
         ifd::FileDialog::Instance().Close();
@@ -110,11 +142,28 @@ HRESULT CToolBar::Render()
                 }
                 ImGui::PopItemWidth();
                 if(ImGui::MenuItem("Save Prototypes", "Ctrl+Shift+S")) {
-					ifd::FileDialog::Instance().Save("SaveDialog", "Save Prototypes", "json file (*.json){.json},.*", ASSETPATH "/Saves");
+					ifd::FileDialog::Instance().Save("PrototypeSaveDialog", "Save Prototypes", "json file (*.json){.json},.*", ASSETPATH "/Saves");
 				}
+                if (ImGui::MenuItem("Load Prototypes", "Ctrl+Shift+L")) {
+                    ifd::FileDialog::Instance().Open("PrototypeLoadDialog", "Load Prototypes", "json file (*.json){.json},.*", true, ASSETPATH "/Saves");
+                }
                 ImGui::Separator();
+
+                if (ImGui::MenuItem("Save GameObjects", "Ctrl+Shift+S")) {
+                    ifd::FileDialog::Instance().Save("GameObjectSaveDialog", "Save Prototypes", "json file (*.json){.json},.*", ASSETPATH "/Saves");
+                }
+
+                ImGui::Text("Clear");
                 ImGui::SameLine();
-                ImGui::Checkbox("Animation Model", &m_bConvertAnim);
+                ImGui::Toggle("Merge", &m_bMergeLoad);
+                if (ImGui::MenuItem("Load GameObjects", "Ctrl+Shift+L")) {
+                    ifd::FileDialog::Instance().Open("GameObjectLoadDialog", "Load Prototypes", "json file (*.json){.json},.*", true, ASSETPATH "/Saves");
+                }
+
+                ImGui::Separator();
+                ImGui::Text("NonAnimation");
+                ImGui::SameLine();
+                ImGui::Toggle("Animation", &m_bConvertAnim);
                 if (ImGui::MenuItem("Convert Model", "Ctrl+Alt+C")) {
                     ifd::FileDialog::Instance().Open("ModelOpenDialog", "Open a Model", "model file (*.fbx){.fbx},.*", true, ASSETPATH);
                     printf("Clicked File->Convert Model\n");
@@ -260,11 +309,6 @@ void CToolBar::IntializeFileDialogCallBack()
             pSRV->Release();
         }
         };
-}
-
-HRESULT CToolBar::Save_Scene()
-{
-    return S_OK;
 }
 
 #pragma region Convert fbx Model to Binary
@@ -461,27 +505,18 @@ HRESULT CToolBar::Write_BoneNode(ofstream& ofs, aiNode* pAiNode, _int iParentBon
 }
 #pragma endregion
 
-#pragma region Map
-
-#pragma endregion
-
-
-#pragma region Scene
-
-#pragma endregion
-
-#pragma region Prototypes
-HRESULT CToolBar::Save_Prototypes(_uint iLevelInedx, const _tchar* pFilePath)
+#pragma region Save&Load Prototypes
+HRESULT CToolBar::Save_Prototypes(_uint iLevelIndex, const _tchar* pFilePath)
 {
     if (m_pGameInstance == nullptr)
         return E_FAIL;
     json data = {};
-    if(iLevelInedx == ENUM_CLASS(LEVEL::END))
+    if (iLevelIndex == ENUM_CLASS(LEVEL::END))
         m_pGameInstance->Save_Prototypes(data);
     else
-	    m_pGameInstance->Save_Prototypes(iLevelInedx, data);
-	fstream outputFile;
-	outputFile.open(pFilePath, std::ios::out | std::ios::trunc);
+        m_pGameInstance->Save_Prototypes(iLevelIndex, data);
+    fstream outputFile;
+    outputFile.open(pFilePath, std::ios::out | std::ios::trunc);
     if (!outputFile.is_open()) {
         //printf("Failed to open file for writing: %s\n", pFilePath);
         return E_FAIL;
@@ -490,34 +525,64 @@ HRESULT CToolBar::Save_Prototypes(_uint iLevelInedx, const _tchar* pFilePath)
     {
         outputFile << data.dump(4); // 4는 들여쓰기 공백 수
         outputFile.close();
-		//printf("Prototypes saved to %s\n", pFilePath.);
+        //printf("Prototypes saved to %s\n", pFilePath.);
     }
     return S_OK;
 }
 
-HRESULT CToolBar::Load_Prototypes()
+HRESULT CToolBar::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath)
 {
     if (m_pGameInstance == nullptr)
-		return E_FAIL;
+        return E_FAIL;
+    m_pGameInstance->Load_Prototypes(iLevelIndex, pFilePath);
     return S_OK;
 }
 #pragma endregion
 
+#pragma region Save&Load GameObjects
 
-HRESULT CToolBar::Load_Scene()
+HRESULT CToolBar::Save_GameObjects(_uint iLevelIndex, const _tchar* pFilePath)
 {
+    if (m_pGameInstance == nullptr)
+        return E_FAIL;
+    json data = {};
+    if (iLevelIndex == ENUM_CLASS(LEVEL::END))
+        m_pGameInstance->Save_GameObjects(data);
+    else
+        m_pGameInstance->Save_GameObjects(iLevelIndex, data);
+    fstream outputFile;
+    outputFile.open(pFilePath, std::ios::out | std::ios::trunc);
+    if (!outputFile.is_open()) {
+        //printf("Failed to open file for writing: %s\n", pFilePath);
+        return E_FAIL;
+    }
+    else
+    {
+        outputFile << data.dump(4); // 4는 들여쓰기 공백 수
+        outputFile.close();
+        //printf("Prototypes saved to %s\n", pFilePath.);
+    }
     return S_OK;
 }
 
-HRESULT CToolBar::Save_Map()
+HRESULT CToolBar::Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath)
 {
+    if (m_pGameInstance == nullptr)
+        return E_FAIL;
+
+    if (!m_bMergeLoad)
+        m_pGameInstance->Clear_GameObjects(iLevelIndex);
+
+    m_pGameInstance->Load_GameObjects(iLevelIndex, pFilePath);
     return S_OK;
 }
 
-HRESULT CToolBar::Load_Map()
-{
-    return S_OK;
-}
+#pragma endregion
+
+
+
+
+
 
 
 

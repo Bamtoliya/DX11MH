@@ -20,6 +20,8 @@ public:
 	void	Update(_float fTimeDelta);
 	HRESULT Render();
 
+public:
+	HRESULT Register_Class_Types();
 	HRESULT Start_Level(LEVEL eStartLevel);
 	HRESULT Ready_Prototype_Components();
 private:

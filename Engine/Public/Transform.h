@@ -24,15 +24,23 @@ private:
 	virtual ~CTransform() = default;
 
 public:
+	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CComponent* Clone(void* pArg = nullptr) override;
+
+public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
 
 public:
-	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CComponent* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
 
 #pragma endregion
+
+#pragma region Save & Load
+	HRESULT Serialize(json& outJson);
+	HRESULT Deserialize(simdjson::ondemand::object& jsonData);
+#pragma endregion
+
 
 #pragma region Loops
 public:

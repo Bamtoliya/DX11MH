@@ -164,3 +164,95 @@ HRESULT CJson_Loader::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath
     }
     return S_OK;
 }
+
+
+HRESULT CJson_Loader::Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath)
+{
+    parser parser;
+    simdjson::padded_string json_file_data;
+    auto load_error = simdjson::padded_string::load(WideToUtf8(pFilePath).c_str()).get(json_file_data);
+    if (load_error) {
+        //std::string error_msg = "Failed to load JSON file: " + WideToUtf8(pFilePath) + " Error: " + simdjson::error_message(load_error);
+        //MSG_BOX(error_msg.c_str());
+        return E_FAIL;
+    }
+
+    simdjson::ondemand::document doc;
+    auto error = parser.iterate(json_file_data).get(doc);
+    if (error) {
+        //std::string error_msg = "Failed to parse JSON data from file: " + WideToUtf8(pFilePath) + " Error: " + simdjson::error_message(error);
+        //MSG_BOX(error_msg.c_str());
+        return E_FAIL;
+    }
+
+    simdjson::ondemand::object root_obj; 
+    if (doc.get_object().get(root_obj) != simdjson::SUCCESS) {
+        MSG_BOX("JSON root is not an object.");
+        return E_FAIL;
+    }
+    
+    // JSON 파일의 최상위는 레이어 이름들을 키로 가짐
+    for (simdjson::ondemand::field layer_field : root_obj) 
+    {
+        std::string_view layer_name_sv = layer_field.escaped_key();
+        std::wstring strLayerTag = Utf8ToWide(std::string(layer_name_sv));
+
+        simdjson::ondemand::object layer_content_obj; // 예: {"GameObjects": [...]}
+        if (layer_field.value().get_object().get(layer_content_obj) != simdjson::SUCCESS) {
+            // MSG_BOX(("Layer content for '" + std::string(layer_name_sv) + "' is not an object.").c_str());
+            continue;
+        }
+
+        simdjson::ondemand::array game_objects_array; // 예: [{"CBackGround": {...data...}}, {"CAnotherClass": {...data...}}]
+        if (layer_content_obj["GameObjects"].get_array().get(game_objects_array) != simdjson::SUCCESS) {
+            // MSG_BOX(("'GameObjects' array not found or not an array in layer: " + std::string(layer_name_sv)).c_str());
+            continue;
+        }
+
+        for (simdjson::ondemand::value game_object_container_val : game_objects_array) 
+        {
+            if (game_object_container_val.type() != simdjson::ondemand::json_type::object) {
+                continue;
+            }
+            // game_object_container_val는 {"ClassName": {data_for_class}} 형태의 객체
+            simdjson::ondemand::object gameObjectContainer = game_object_container_val.get_object();
+
+            // gameObjectContainer는 정확히 하나의 필드(클래스 이름)를 가질 것으로 예상
+            auto field_iterator = gameObjectContainer.begin();
+            if (field_iterator == gameObjectContainer.end()) {
+                // 비어있는 게임 오브젝트 컨테이너 객체
+                continue;
+            }
+            
+            simdjson::ondemand::field go_field = *field_iterator;
+            // std::string_view gameObjectClassName_sv = go_field.key(); // 클래스 이름 (예: "CBackGround")
+                                                                    // 이 클래스 이름은 프로토타입 태그를 찾는 데 직접 사용되지 않음.
+                                                                    // 실제 프로토타입 태그는 go_field.value() 내의 "PrototypeTag"에서 가져옴.
+
+            simdjson::ondemand::object gameObjectSpecificData; // 이것이 실제 Deserialize에 전달될 데이터
+                                                                // (예: {"Active": true, "CShader": ..., "PrototypeTag": "..."})
+            if (go_field.value().get_object().get(gameObjectSpecificData) == simdjson::SUCCESS) 
+            {
+                // gameObjectSpecificData 내부에서 "PrototypeTag"를 읽어옴
+                std::string_view prototypeTag_sv;
+                if (gameObjectSpecificData["PrototypeTag"].get_string().get(prototypeTag_sv) != simdjson::SUCCESS) {
+                    // MSG_BOX(("Missing 'PrototypeTag' in GameObject data for class: " + std::string(gameObjectClassName_sv)).c_str());
+                    continue;
+                }
+                std::wstring strPrototypeTag = Utf8ToWide(std::string(prototypeTag_sv));
+
+                // CGameInstance::Add_GameObject는 내부적으로 CPrototype_Manager::Clone_Prototype을 호출하고,
+                // 이 Clone_Prototype은 해당 프로토타입 객체의 Clone(jsonData)를 호출.
+                // CGameObject 파생 클래스의 Clone(jsonData)는 new로 객체를 만들고,
+                // 그 객체의 Deserialize(jsonData)를 호출하여 상태(자식 포함)를 채움.
+                if (FAILED(m_pGameInstance->Add_GameObject(iLevelIndex, strPrototypeTag, iLevelIndex, strLayerTag, gameObjectSpecificData)))
+                {
+                    //std::wstring errMsg = L"Failed to add GameObject (Prototype: " + strPrototypeTag + L") to layer: " + strLayerTag;
+                    //MSG_BOX(errMsg.c_str());
+                    return E_FAIL;
+                }
+            }
+        }
+    }
+    return S_OK;
+}

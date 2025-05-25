@@ -58,12 +58,12 @@ public:
 	HRESULT Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype);
 	HRESULT Add_Prototype(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CBase* pPrototype, simdjson::ondemand::object& jsonData);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
+	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, simdjson::ondemand::object& jsonData);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CGameObject* pGameObject = nullptr, void* pArg = nullptr);
 
 
 	HRESULT Save_Prototypes(json& data);
 	HRESULT Save_Prototypes(_uint iLevelIndex, json& outJson);
-	HRESULT Load_Prototypes(const json& data);
 	HRESULT Render_PrototypeManagerImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag);
 #pragma endregion
 
@@ -85,12 +85,19 @@ public:
 
 #pragma region OBJECT_MANAGER
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
+	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, simdjson::ondemand::object& jsonData);
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, _uint iGameObjectID, void* pArg = nullptr);
+	
 	CComponent* Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex = 0);
 	class CGameObject* Get_GameObjectById(_uint iId);
 
 	HRESULT Object_Manager_RenderImGui();
 	HRESULT Render_ImGuiLayerList(_uint iLevelIndex, _char* szLayerBuffer, _uint& iGameObjectID, _uint iBufferSize);
+
+	HRESULT Save_GameObjects(json& outJson);
+	HRESULT Save_GameObjects(_uint iLevelIndex, json& outJson);
+
+	HRESULT Clear_GameObjects(_uint iLevelIndex);
 #pragma endregion
 
 #pragma region RENDERER
@@ -140,7 +147,9 @@ public:
 
 #pragma region JSON_LOADER
 	HRESULT Register_Creator_Function(const string& className, function<CBase* (ID3D11Device*, ID3D11DeviceContext*)> creatorFunc);
+	HRESULT Register_Clone_Function(const string& className, function<CBase* (ID3D11Device*, ID3D11DeviceContext*)> creatorFunc);
 	HRESULT Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath);
+	HRESULT Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath);
 #pragma endregion
 
 

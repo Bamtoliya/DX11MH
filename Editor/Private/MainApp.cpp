@@ -3,7 +3,7 @@
 #include "GameInstance.h"
 #include "Sound_Manager.h"
 #include "Tools.h"
-#include "simdjson.h"
+#include "GameObjects.h"
 
 
 CMainApp::CMainApp()
@@ -24,6 +24,9 @@ HRESULT CMainApp::Initialize()
 	EngineDesc.hInstance = g_hInst;
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(EngineDesc, &m_pDevice, &m_pContext, &m_pSound_Manager)))
+		return E_FAIL;
+
+	if (FAILED(Register_Class_Types()))
 		return E_FAIL;
 
 	if (FAILED(Ready_Prototype_Components()))
@@ -52,6 +55,18 @@ HRESULT CMainApp::Render()
 	m_pGameInstance->End_Draw();
 
 
+	return S_OK;
+}
+
+HRESULT CMainApp::Register_Class_Types()
+{
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CSonic", CSonic::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CTerrain", CTerrain::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CStatue", CStatue::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CBackGround", CBackGround::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CCamera_Free", CCamera_Free::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CMonster", CMonster::Create))) return E_FAIL;
+		
 	return S_OK;
 }
 

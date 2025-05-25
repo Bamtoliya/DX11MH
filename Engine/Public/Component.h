@@ -32,7 +32,7 @@ public:
 	virtual void* Dump() { return nullptr; }
 public:
 	virtual HRESULT Serialize(json& data);
-	virtual HRESULT Deserialize();
+	virtual HRESULT Deserialize(simdjson::ondemand::object& jsonData);
 #pragma region Variables
 protected:
 	ID3D11Device* m_pDevice = { nullptr };

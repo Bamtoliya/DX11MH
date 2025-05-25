@@ -254,6 +254,9 @@
     <ClInclude Include="..\public\Sonic.h">
       <Filter>02.GameObject\04.Player\Sonic</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\GameObjects.h">
+      <Filter>02.GameObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Editor.ico">

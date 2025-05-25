@@ -44,6 +44,19 @@ CLight_Point* CLight_Point::Clone(void* pArg)
 	return pInstance;
 }
 
+CLight_Point* CLight_Point::Clone(simdjson::ondemand::object& jsonData)
+{
+	CLight_Point* pInstance = new CLight_Point(*this);
+
+	if (FAILED(pInstance->Initialize(jsonData)))
+	{
+		MSG_BOX("Failed to Cloned : CLight_Point");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
 HRESULT CLight_Point::Initialize_Prototype()
 {
 	return S_OK;
@@ -58,6 +71,19 @@ HRESULT CLight_Point::Initialize(void* pArg)
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CLight_Point::Initialize(simdjson::ondemand::object& jsonData)
+{
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	Deserialize(jsonData);
+
 	return S_OK;
 }
 
@@ -116,7 +142,7 @@ HRESULT CLight_Point::Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CLight_Point::Deserialize(const json& inData)
+HRESULT CLight_Point::Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }

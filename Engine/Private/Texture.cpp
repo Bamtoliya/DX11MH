@@ -111,7 +111,7 @@ HRESULT CTexture::Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CTexture::Deserialize(const json& inData)
+HRESULT CTexture::Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }

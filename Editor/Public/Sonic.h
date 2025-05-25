@@ -20,10 +20,11 @@ private:
 public:
 	static CSonic* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
-	
+	virtual CGameObject* Clone(simdjson::ondemand::object& jsonData) override;
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Initialize(simdjson::ondemand::object& jsonData);
 private:
 	HRESULT Ready_Components();
 public:
@@ -33,7 +34,7 @@ public:
 #pragma region Save&Load
 public:
 	virtual HRESULT Serialize(json& data) override;
-	virtual HRESULT Deserialize(const json& data) override;
+	virtual HRESULT Deserialize(simdjson::ondemand::object & jsonData) override;
 	virtual HRESULT Prototype_Serialize(json& data) override;
 	virtual HRESULT Prototype_Deserialize(simdjson::ondemand::object & jsonData) override;
 #pragma endregion

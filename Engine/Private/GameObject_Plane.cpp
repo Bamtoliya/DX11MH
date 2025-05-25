@@ -40,14 +40,20 @@ CGameObject* CGameObject_Plane::Clone(void* pArg)
 
 	return pInstance;
 }
-
-void CGameObject_Plane::Free()
+CGameObject* CGameObject_Plane::Clone(simdjson::ondemand::object& jsonData)
 {
-	__super::Free();
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pVIBufferCom);
+	CGameObject_Plane* pInstance = new CGameObject_Plane(*this);
+
+	if (FAILED(pInstance->Initialize(jsonData)))
+	{
+		MSG_BOX("Failed to Cloned : CGameObject_Plane");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
+
+
 
 HRESULT CGameObject_Plane::Initialize_Prototype()
 {
@@ -65,6 +71,33 @@ HRESULT CGameObject_Plane::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CGameObject_Plane::Initialize(simdjson::ondemand::object& jsonData)
+{
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	Deserialize(jsonData);
+
+	return S_OK;
+}
+
+HRESULT CGameObject_Plane::Ready_Components()
+{
+	return S_OK;
+}
+
+void CGameObject_Plane::Free()
+{
+	__super::Free();
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pVIBufferCom);
+}
+
+#pragma region  Loops
 void CGameObject_Plane::Priority_Update(_float fTimeDelta)
 {
 }
@@ -115,8 +148,8 @@ HRESULT CGameObject_Plane::Post_Render()
 {
 	return S_OK;
 }
+#pragma endregion
 
-HRESULT CGameObject_Plane::Ready_Components()
-{
-	return S_OK;
-}
+
+
+

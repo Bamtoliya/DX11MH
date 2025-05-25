@@ -14,12 +14,15 @@ protected:
 public:
 	static CGameObject_Plane* Create(ID3D11Device* m_pDevice, ID3D11DeviceContext* m_pContext);
 	virtual CGameObject* Clone(void* pArg = nullptr) override;
-	virtual void Free() override;
-#pragma endregion
-#pragma region Initialize
+	virtual CGameObject* Clone(simdjson::ondemand::object& jsonData) override;
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize(simdjson::ondemand::object& jsonData) override;
+private:
+	HRESULT Ready_Components();
+public:
+	virtual void Free() override;
 #pragma endregion
 #pragma region Loops
 public:
@@ -31,8 +34,7 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Post_Render() override;
 #pragma endregion
-protected:
-	HRESULT Ready_Components();
+
 protected:
 	CShader*		m_pShaderCom = { nullptr };
 	CTexture*		m_pTextureCom = { nullptr };

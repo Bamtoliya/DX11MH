@@ -41,6 +41,19 @@ CGameObject* CMonster::Clone(void* pArg)
 	return pInstance;
 }
 
+CGameObject* CMonster::Clone(simdjson::ondemand::object& jsonData)
+{
+	CMonster* pInstance = new CMonster(*this);
+
+	if (FAILED(pInstance->Initialize(jsonData)))
+	{
+		MSG_BOX("Failed to Cloned : CMonster");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
 HRESULT CMonster::Initialize_Prototype()
 {
 	return S_OK;
@@ -66,6 +79,22 @@ HRESULT CMonster::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	m_pModelCom->Set_Animation(0, true);
+
+	return S_OK;
+}
+
+HRESULT CMonster::Initialize(simdjson::ondemand::object& jsonData)
+{
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	if(FAILED(Deserialize(jsonData)))
 		return E_FAIL;
 
 	m_pModelCom->Set_Animation(0, true);
@@ -105,7 +134,7 @@ HRESULT CMonster::Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CMonster::Deserialize(const json& inData)
+HRESULT CMonster::Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }

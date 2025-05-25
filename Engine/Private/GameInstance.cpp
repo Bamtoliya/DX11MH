@@ -228,6 +228,11 @@ CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototype
 	return m_pPrototype_Manager->Clone_Prototype(ePrototypeType, iPrototypeLevelIndex, strPrototypeTag, pArg);
 }
 
+CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, simdjson::ondemand::object& jsonData)
+{
+	return m_pPrototype_Manager->Clone_Prototype(ePrototypeType, iPrototypeLevelIndex, strPrototypeTag, jsonData);
+}
+
 CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, CGameObject* pGameObject, void* pArg)
 {
 	return m_pPrototype_Manager->Clone_Prototype(ePrototypeType, iPrototypeLevelIndex, strPrototypeTag, pGameObject, pArg);
@@ -242,13 +247,6 @@ HRESULT CGameInstance::Save_Prototypes(json& data)
 HRESULT CGameInstance::Save_Prototypes(_uint iLevelIndex, json& data)
 {
 	return m_pPrototype_Manager->Save_Prototypes(iLevelIndex, data);
-}
-
-HRESULT CGameInstance::Load_Prototypes(const json& data)
-{
-
-	return E_FAIL;
-	//return m_pPrototype_Manager->Load_Prototypes(data);
 }
 
 HRESULT CGameInstance::Render_PrototypeManagerImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag)
@@ -306,6 +304,11 @@ HRESULT CGameInstance::Add_GameObject(_uint iPrototypeLevelIndex, const _wstring
 	return m_pObject_Manager->Add_GameObject(iPrototypeLevelIndex, strPrototypeTag, iLevelIndex, strLayerTag, pArg);
 }
 
+HRESULT CGameInstance::Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, simdjson::ondemand::object& jsonData)
+{
+	return m_pObject_Manager->Add_GameObject(iPrototypeLevelIndex, strPrototypeTag, iLevelIndex, strLayerTag, jsonData);
+}
+
 HRESULT CGameInstance::Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, _uint iGameObjectID, void* pArg)
 {
 	return m_pObject_Manager->Add_GameObject(iPrototypeLevelIndex, strPrototypeTag, iLevelIndex, strLayerTag, iGameObjectID, pArg);
@@ -330,6 +333,22 @@ HRESULT CGameInstance::Object_Manager_RenderImGui()
 HRESULT CGameInstance::Render_ImGuiLayerList(_uint iLevelIndex, _char* szLayerBuffer, _uint& iGameObjectID, _uint iBufferSize)
 {
 	return m_pObject_Manager->Render_ImGuiLayerList(iLevelIndex, szLayerBuffer, iGameObjectID, iBufferSize);
+}
+
+HRESULT CGameInstance::Save_GameObjects(json& data)
+{
+	return m_pObject_Manager->Save_GameObjects(data);
+}
+
+HRESULT CGameInstance::Save_GameObjects(_uint iLevelIndex, json& data)
+{
+	return m_pObject_Manager->Save_GameObjects(iLevelIndex, data);
+}
+
+HRESULT CGameInstance::Clear_GameObjects(_uint iLevelIndex)
+{
+	m_pObject_Manager->Clear(iLevelIndex);
+	return S_OK;
 }
 
 #pragma endregion
@@ -412,6 +431,11 @@ HRESULT CGameInstance::Register_Creator_Function(const string& className, functi
 HRESULT CGameInstance::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath)
 {
 	return m_pJson_Loader->Load_Prototypes(iLevelIndex, pFilePath);
+}
+
+HRESULT CGameInstance::Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath)
+{
+	return m_pJson_Loader->Load_GameObjects(iLevelIndex, pFilePath);
 }
 #pragma endregion
 

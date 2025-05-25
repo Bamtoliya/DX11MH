@@ -49,3 +49,23 @@ HRESULT CGameObject_Camera::Initialize(void* pArg)
 	m_pCameraCom->Late_Initialize();
 	return S_OK;
 }
+
+HRESULT CGameObject_Camera::Initialize(simdjson::ondemand::object& jsonData)
+{
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	m_pCameraCom = CCamera::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pCameraCom)
+		return E_FAIL;
+
+	m_pCameraCom->Set_OwnerGameObject(this);
+
+	if (FAILED(m_pCameraCom->Initialize(nullptr)))
+		return E_FAIL;
+
+	m_Components.emplace(g_strCameraTag, m_pCameraCom);
+	Safe_AddRef(m_pCameraCom);
+	m_pCameraCom->Late_Initialize();
+	return S_OK;
+}

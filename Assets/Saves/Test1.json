@@ -1,0 +1,109 @@
+{
+    "Layer_Background": {
+        "GameObjects": [
+            {
+                "CBackGround": {
+                    "Active": true,
+                    "CShader": {
+                        "Layout": "VTXPOSTEX",
+                        "Tiling": true,
+                        "TilingOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "TilingScale": [
+                            1.0,
+                            1.0
+                        ]
+                    },
+                    "CTransform": {
+                        "EulerRotation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "IsRelative": false,
+                        "Orientation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "RotationPerSec": 0.0,
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpeedPerSec": 0.0
+                    },
+                    "CVIBuffer_Rect": {
+                        "Size": [
+                            200.0,
+                            200.0
+                        ]
+                    },
+                    "Name": "Background",
+                    "PrototypeTag": "Prototype_GameObject_BackGround",
+                    "Visible": true
+                }
+            }
+        ]
+    },
+    "Layer_Camera": {
+        "GameObjects": [
+            {
+                "CCamera_Free": {
+                    "Active": true,
+                    "CCamera": {
+                        "bOrthographic": false,
+                        "fFar": 500.0,
+                        "fFovy": 60.0,
+                        "fNear": 0.10000000149011612,
+                        "fZoomPerSec": 1.0,
+                        "vAt": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ]
+                    },
+                    "CTransform": {
+                        "EulerRotation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "IsRelative": false,
+                        "Orientation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Position": [
+                            0.0,
+                            20.0,
+                            -15.0
+                        ],
+                        "RotationPerSec": 1.0,
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpeedPerSec": 10.0
+                    },
+                    "Name": "Camera",
+                    "PrototypeTag": "Prototype_GameObject_Camera_Free",
+                    "Visible": true
+                }
+            }
+        ]
+    }
+}

@@ -41,7 +41,18 @@ CGameObject* CSonic::Clone(void* pArg)
 	return pInstance;
 }
 
+CGameObject* CSonic::Clone(simdjson::ondemand::object& jsonData)
+{
+	CSonic* pInstance = new CSonic(*this);
 
+	if (FAILED(pInstance->Initialize(jsonData)))
+	{
+		MSG_BOX("Failed to Cloned : CSonic");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
 
 HRESULT CSonic::Initialize_Prototype()
 {
@@ -70,6 +81,21 @@ HRESULT CSonic::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	m_pModelCom->Set_Animation(0, true);
+
+	return S_OK;
+}
+
+HRESULT CSonic::Initialize(simdjson::ondemand::object& jsonData)
+{
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	if(FAILED(Deserialize(jsonData)))
+		return E_FAIL;
 	m_pModelCom->Set_Animation(0, true);
 
 	return S_OK;
@@ -105,7 +131,7 @@ HRESULT CSonic::Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CSonic::Deserialize(const json& inData)
+HRESULT CSonic::Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }

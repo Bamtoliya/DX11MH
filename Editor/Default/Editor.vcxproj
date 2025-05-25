@@ -48,6 +48,7 @@
     <ClInclude Include="..\Public\Editor_Defines.h" />
     <ClInclude Include="..\Public\Editor_Enum.h" />
     <ClInclude Include="..\Public\Editor_Macro.h" />
+    <ClInclude Include="..\Public\GameObjects.h" />
     <ClInclude Include="..\public\Sonic.h" />
     <ClInclude Include="..\public\Hierarchy.h" />
     <ClInclude Include="..\public\Inspector.h" />

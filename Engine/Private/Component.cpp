@@ -72,11 +72,12 @@ void CComponent::Set_OwnerGameObject(CGameObject* pGameObject)
 
 HRESULT CComponent::Serialize(json& data)
 {
+	data["Active"] = m_bActive;
 	return S_OK;
 }
 
 
-HRESULT CComponent::Deserialize()
+HRESULT CComponent::Deserialize(simdjson::ondemand::object& jsonData)
 {
 	return S_OK;
 }

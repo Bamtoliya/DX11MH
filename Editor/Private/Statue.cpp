@@ -26,6 +26,7 @@ CStatue* CStatue::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
+
 CGameObject* CStatue::Clone(void* pArg)
 {
 	CStatue* pInstance = new CStatue(*this);
@@ -33,6 +34,19 @@ CGameObject* CStatue::Clone(void* pArg)
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX("Failed to Cloned : CStatue");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CGameObject* CStatue::Clone(simdjson::ondemand::object& jsonData)
+{
+	CStatue* pInstance = new CStatue(*this);
+
+	if (FAILED(pInstance->Initialize(jsonData)))
+	{
+		MSG_BOX("Failed to Created : CStatue");
 		Safe_Release(pInstance);
 	}
 
@@ -64,6 +78,20 @@ HRESULT CStatue::Initialize(void* pArg)
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CStatue::Initialize(simdjson::ondemand::object& jsonData)
+{
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	if(FAILED(Deserialize(jsonData)))
 		return E_FAIL;
 
 	return S_OK;
@@ -102,7 +130,7 @@ HRESULT CStatue::Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CStatue::Deserialize(const json& inData)
+HRESULT CStatue::Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }

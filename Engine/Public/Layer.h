@@ -25,6 +25,9 @@ public:
 	HRESULT Render_ImGui_ComboBox(_uint& iGameObjectID);
 	HRESULT ToggleVisible();
 	class CGameObject* Find_GameObjectByName(const _wstring& strName);
+public:
+	HRESULT Serialize(json& outJson);
+	HRESULT Deserialize(simdjson::ondemand::object& jsonData);
 private:
 	_wstring							m_strTagName = {};
 	list<class CGameObject*>			m_GameObjects;

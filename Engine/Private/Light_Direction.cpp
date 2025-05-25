@@ -43,6 +43,19 @@ CLight_Direction* CLight_Direction::Clone(void* pArg)
 	return pInstance;
 }
 
+CLight_Direction* CLight_Direction::Clone(simdjson::ondemand::object& jsonData)
+{
+	CLight_Direction* pInstance = new CLight_Direction(*this);
+
+	if (FAILED(pInstance->Initialize(jsonData)))
+	{
+		MSG_BOX("Failed to Cloned : CLight_Direction");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
 HRESULT CLight_Direction::Initialize_Prototype()
 {
 	return S_OK;
@@ -57,6 +70,18 @@ HRESULT CLight_Direction::Initialize(void* pArg)
 
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CLight_Direction::Initialize(simdjson::ondemand::object& jsonData)
+{
+	if (FAILED(__super::Initialize(jsonData)))
+		return E_FAIL;
+
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	Deserialize(jsonData);
 	return S_OK;
 }
 
@@ -115,7 +140,7 @@ HRESULT CLight_Direction::Serialize(json& outJson)
 	return S_OK;
 }
 
-HRESULT CLight_Direction::Deserialize(const json& inData)
+HRESULT CLight_Direction::Deserialize(simdjson::ondemand::object & jsonData)
 {
 	return S_OK;
 }

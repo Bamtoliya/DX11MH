@@ -14,12 +14,14 @@ protected:
 public:
 	static CGameObject_Cube* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject_Cube* Clone(void* pArg = nullptr) override;
+	virtual CGameObject_Cube* Clone(simdjson::ondemand::object& jsonData) override;
 	virtual void Free() override;
 #pragma endregion
 #pragma region Initialize
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Initialize(simdjson::ondemand::object& jsonData) override;
 private:
 	HRESULT Ready_Components();
 #pragma endregion

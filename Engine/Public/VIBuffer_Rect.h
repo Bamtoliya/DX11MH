@@ -20,7 +20,7 @@ public:
 
 #pragma region Save&Load
 	virtual HRESULT Serialize(json& data) override;
-	virtual HRESULT Deserialize(const json& data) override;
+	virtual HRESULT Deserialize(simdjson::ondemand::object & jsonData) override;
 	virtual HRESULT Prototype_Serialize(json& data) override;
 	virtual HRESULT Prototype_Deserialize(simdjson::ondemand::object & jsonData) override;
 #pragma endregion

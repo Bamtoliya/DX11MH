@@ -19,6 +19,7 @@ protected:
 	virtual ~CGameObject() = default;
 public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
+	virtual CGameObject* Clone(simdjson::ondemand::object& jsonData) = 0;
 	virtual CGameObject* Clone(CGameObject* pGameObject, void* pArg = nullptr);
 	virtual void Free() override;
 protected:
@@ -33,6 +34,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Initialize(simdjson::ondemand::object& jsonData);
 #pragma endregion
 
 #pragma region Loops
@@ -72,10 +74,8 @@ public:
 #pragma endregion
 
 #pragma region Serialize
-	//Save
-	HRESULT Serialize(json& json);
-	//Load
-	HRESULT Deserialize();
+	virtual HRESULT Serialize(json& json) override;
+	virtual HRESULT Deserialize(simdjson::ondemand::object& jsonData) override;
 #pragma endregion
 
 

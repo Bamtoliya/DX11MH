@@ -19,16 +19,6 @@ public:
 private:
 	void	IntializeFileDialogCallBack();
 
-	HRESULT Save_Level();
-	HRESULT Save_Scene();
-	HRESULT Save_Map();
-	HRESULT Save_Prototypes(_uint iLevelIndex, const _tchar* pFilePath);
-
-	HRESULT Import_Level();
-	HRESULT Import_Scene();
-	HRESULT Import_Map();
-	HRESULT Import_Prototype();
-
 #pragma region Convert fbx Model to Binary
 	HRESULT Convert_Model(const _tchar* pFilePath);
 	HRESULT Write_BoneNode(ofstream& ofs, aiNode* pAiNode, _int iParentBoneIndex);
@@ -37,13 +27,15 @@ private:
 	
 	HRESULT Convert_Texture(const _tchar* pFilePath);
 
-	HRESULT Load_Level();
-	HRESULT Load_Scene();
-	HRESULT Load_Map();
-	HRESULT Load_Prototypes();
+	HRESULT Save_Prototypes(_uint iLevelIndex, const _tchar* pFilePath);
+	HRESULT Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath);
+
+	HRESULT Save_GameObjects(_uint iLevelIndex, const _tchar* pFilePath);
+	HRESULT Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath);
 
 private:
 	_bool m_bConvertAnim = { false };
+	_bool m_bMergeLoad = { false };
 	LEVEL m_eLevelIndex = { LEVEL::STATIC };
 };
 NS_END
