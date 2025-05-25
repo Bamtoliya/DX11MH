@@ -131,11 +131,18 @@ void CMonster::Free()
 
 HRESULT CMonster::Serialize(json& outJson)
 {
+	json data;
+	if(FAILED(__super::Serialize(data)))
+		return E_FAIL;
+	outJson["CMonster"] = data;
+	outJson["CMonster"]["PrototypeTag"] = "Prototype_GameObject_Monster";
 	return S_OK;
 }
 
 HRESULT CMonster::Deserialize(simdjson::ondemand::object & jsonData)
 {
+	if(FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;
 	return S_OK;
 }
 

@@ -136,11 +136,17 @@ void CSonic::Free()
 HRESULT CSonic::Serialize(json& outJson)
 {
 	json data;
+	if(FAILED(__super::Serialize(data)))
+		return E_FAIL;	
+	outJson["CSonic"] = data;
+	outJson["CSonic"]["PrototypeTag"] = "Prototype_GameObject_Sonic";
 	return S_OK;
 }
 
 HRESULT CSonic::Deserialize(simdjson::ondemand::object & jsonData)
 {
+	if (FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;
 	return S_OK;
 }
 

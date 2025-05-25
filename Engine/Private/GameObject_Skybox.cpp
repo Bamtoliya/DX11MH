@@ -118,11 +118,18 @@ void CGameObject_Skybox::Free()
 
 HRESULT CGameObject_Skybox::Serialize(json& outJson)
 {
+	json data;
+	if (FAILED(__super::Serialize(data)))
+		return E_FAIL;
+	outJson["CGameObject_Skybox"] = data;
+	outJson["CGameObject_Skybox"]["PrototypeTag"] = "Prototype_GameObject_Skybox";
 	return S_OK;
 }
 
 HRESULT CGameObject_Skybox::Deserialize(simdjson::ondemand::object & jsonData)
 {
+	if (FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;
 	return S_OK;
 }
 

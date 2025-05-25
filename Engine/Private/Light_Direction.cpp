@@ -137,11 +137,18 @@ void CLight_Direction::Free()
 
 HRESULT CLight_Direction::Serialize(json& outJson)
 {
+	json data;
+	if (FAILED(__super::Serialize(data)))
+		return E_FAIL;
+	outJson["CLight_Direction"] = data;
+	outJson["CLight_Direction"]["PrototypeTag"] = "Prototype_GameObject_Light_Direction";
 	return S_OK;
 }
 
 HRESULT CLight_Direction::Deserialize(simdjson::ondemand::object & jsonData)
 {
+	if (FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;
 	return S_OK;
 }
 

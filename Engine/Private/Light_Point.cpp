@@ -139,11 +139,18 @@ void CLight_Point::Free()
 
 HRESULT CLight_Point::Serialize(json& outJson)
 {
+	json data;
+	if (FAILED(__super::Serialize(data)))
+		return E_FAIL;
+	outJson["CLight_Point"] = data;
+	outJson["CLight_Point"]["PrototypeTag"] = "Prototype_GameObject_Light_Point";
 	return S_OK;
 }
 
 HRESULT CLight_Point::Deserialize(simdjson::ondemand::object & jsonData)
 {
+	if (FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;
 	return S_OK;
 }
 

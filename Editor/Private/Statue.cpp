@@ -127,6 +127,11 @@ void CStatue::Free()
 
 HRESULT CStatue::Serialize(json& outJson)
 {
+	json data;
+	if (FAILED(__super::Serialize(data)))
+		return E_FAIL;
+	outJson["CStatue"] = data;
+	outJson["CStatue"]["PrototypeTag"] = "Prototype_GameObject_Statue";
 	return S_OK;
 }
 

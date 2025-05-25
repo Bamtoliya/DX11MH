@@ -129,12 +129,17 @@ void CTerrain::Free()
 HRESULT CTerrain::Serialize(json& outJson)
 {
 	json data;
-
+	if(FAILED(__super::Serialize(data)))
+		return E_FAIL;
+	outJson["CTerrain"] = data;
+	outJson["CTerrain"]["PrototypeTag"] = "Prototype_GameObject_Terrain";
 	return S_OK;
 }
 
 HRESULT CTerrain::Deserialize(simdjson::ondemand::object & jsonData)
 {
+	if(FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;	
 	return S_OK;
 }
 

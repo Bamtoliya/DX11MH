@@ -65,11 +65,68 @@ void CLight::Free()
 
 HRESULT CLight::Serialize(json& outJson)
 {
+	json data;
+	if (FAILED(__super::Serialize(data)))
+		return E_FAIL;
+	data["Type"] = m_tInfo.eType;
+	data["Direction"] = { m_tInfo.vDirection.x, m_tInfo.vDirection.y, m_tInfo.vDirection.z, m_tInfo.vDirection.w };
+	data["Position"] = { m_tInfo.vPosition.x, m_tInfo.vPosition.y, m_tInfo.vPosition.z, m_tInfo.vPosition.w };
+	data["Range"] = m_tInfo.fRange;
+	data["Diffuse"] = { m_tInfo.vDiffuse.x, m_tInfo.vDiffuse.y, m_tInfo.vDiffuse.z, m_tInfo.vDiffuse.w };
+	data["Ambient"] = { m_tInfo.vAmbient.x, m_tInfo.vAmbient.y, m_tInfo.vAmbient.z, m_tInfo.vAmbient.w };
+	data["Specular"] = { m_tInfo.vSpecular.x, m_tInfo.vSpecular.y, m_tInfo.vSpecular.z, m_tInfo.vSpecular.w };
+	outJson["CLight"] = data;
 	return S_OK;
 }
 
 HRESULT CLight::Deserialize(simdjson::ondemand::object & jsonData)
 {
+	if (FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;
+
+	simdjson::ondemand::object lightObject;
+	if(jsonData["CLight"].get_object().get(lightObject) == simdjson::SUCCESS)
+	{
+			
+		m_tInfo.eType = static_cast<LIGHT_DESC::TYPE>(lightObject["Type"].get_int64().value_unsafe());
+		m_tInfo.fRange = static_cast<_float>(lightObject["Range"].get_double().value_unsafe());
+		simdjson::ondemand::array arr = lightObject["Direction"].get_array();
+		auto iter = arr.begin();
+		m_tInfo.vDirection.x = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vDirection.y = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vDirection.z = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vDirection.w = static_cast<_float>((*iter).get_double().value_unsafe());
+
+		arr = lightObject["Position"].get_array();
+		iter = arr.begin();
+		m_tInfo.vPosition.x = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vPosition.y = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vPosition.z = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vPosition.w = static_cast<_float>((*iter).get_double().value_unsafe());
+
+		arr = lightObject["Diffuse"].get_array();
+		iter = arr.begin();
+		m_tInfo.vDiffuse.x = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vDiffuse.y = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vDiffuse.z = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vDiffuse.w = static_cast<_float>((*iter).get_double().value_unsafe());
+
+		arr = lightObject["Specular"].get_array();
+		iter = arr.begin();
+		m_tInfo.vSpecular.x = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vSpecular.y = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vSpecular.z = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vSpecular.w = static_cast<_float>((*iter).get_double().value_unsafe());
+
+		arr = lightObject["Ambient"].get_array();
+		iter = arr.begin();
+		m_tInfo.vAmbient.x = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vAmbient.y = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vAmbient.z = static_cast<_float>((*iter).get_double().value_unsafe()); ++iter;
+		m_tInfo.vAmbient.w = static_cast<_float>((*iter).get_double().value_unsafe());
+
+		
+	}
 	return S_OK;
 }
 
