@@ -1,0 +1,74 @@
+{
+    "Layer_Camera": {
+        "GameObjects": [
+            {
+                "CCamera_Free": {
+                    "Active": true,
+                    "CCamera": {
+                        "bOrthographic": false,
+                        "fFar": 500.0,
+                        "fFovy": 60.0,
+                        "fNear": 0.10000000149011612,
+                        "fZoomPerSec": 1.0,
+                        "vAt": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ]
+                    },
+                    "CTransform": {
+                        "EulerRotation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "IsRelative": false,
+                        "Orientation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Position": [
+                            0.5906209349632263,
+                            3.7823097705841064,
+                            -7.0152082443237305
+                        ],
+                        "RotationPerSec": 1.0,
+                        "Scale": [
+                            0.9999998807907104,
+                            1.0000003576278687,
+                            1.0000004768371582
+                        ],
+                        "SpeedPerSec": 10.0
+                    },
+                    "Name": "Camera",
+                    "PrototypeTag": "Prototype_GameObject_Camera_Free",
+                    "Visible": true
+                }
+            }
+        ]
+    },
+    "Layer_GameObjects": {
+        "GameObjects": [
+            null,
+            null
+        ]
+    },
+    "Layer_Light": {
+        "GameObjects": [
+            null
+        ]
+    },
+    "Layer_Sky": {
+        "GameObjects": [
+            null
+        ]
+    },
+    "Layer_Terrain": {
+        "GameObjects": [
+            null
+        ]
+    }
+}

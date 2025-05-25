@@ -113,6 +113,11 @@ HRESULT CSonic::Ready_Components()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
+	/* For.Com_Model */
+	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_SonicSpin"),
+	//	TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+	//	return E_FAIL;
+
 
 	return S_OK;
 }
@@ -122,7 +127,9 @@ void CSonic::Free()
 	__super::Free();
 
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pSpinModelCom);
 	Safe_Release(m_pShaderCom);
+
 }
 #pragma endregion
 

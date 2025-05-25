@@ -262,12 +262,12 @@ HRESULT CShader::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 
 HRESULT CShader::RenderImGui()
 {
-	if (ImGui::CollapsingHeader("Shader"), ImGuiTreeNodeFlags_DefaultOpen)
+	if (ImGui::CollapsingHeader("Shader", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::TextUnformatted(WideToUtf8(m_strShaderFile.c_str()).c_str());
 		ImGui::Checkbox("Tiling", &m_bTiling);
-		ImGui::DragFloat2("Tiling Scale", &m_fScale.x, 0.0f, 100.0f);
-		ImGui::SliderFloat2("Tiling Offset", &m_fOffset.x, -10.0f, 10.0f);
+		ImGui::DragFloat2("Tiling Scale", &m_fScale.x, 0.1f, 0.0f, 100.0f);
+		ImGui::SliderFloat2("Tiling Offset", &m_fOffset.x, -1.0f, 1.0f);
 	}
 	return S_OK;
 }

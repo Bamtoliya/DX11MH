@@ -28,8 +28,18 @@ VS_OUT VS_MAIN(VS_IN In)
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;    
+
+    vector vMtrlDiffuse;
+    if (g_bTiling)
+    {
+        vMtrlDiffuse = g_Texture.Sample(DefaultSampler, In.vTexcoord * g_vTilingScale + g_vTilingOffset);
+    }
+    else
+    {
+        vMtrlDiffuse = g_Texture.Sample(DefaultSampler, In.vTexcoord * 50.f);
+    }
     
-    Out.vColor = g_Texture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vColor = vMtrlDiffuse;
     float r = (float) ((objectId >> 16) & 0xFF) / 255.0f;
     float g = (float) ((objectId >> 8) & 0xFF) / 255.0f;
     float b = (float) (objectId & 0xFF) / 255.0f;
@@ -37,7 +47,6 @@ PS_OUT PS_MAIN(PS_IN In)
     
     return Out;    
 }
-
 
 
 technique11 DefaultTechnique
