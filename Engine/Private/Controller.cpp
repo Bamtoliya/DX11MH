@@ -74,19 +74,19 @@ void CController::Update(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
-	if (KEY_DOWN(DIK_W))
+	if (KEY_PRESSING(DIK_W))
 	{
 		pTransform->Go_Straight(fTimeDelta);
 	}
-	if (KEY_DOWN(DIK_A))
+	if (KEY_PRESSING(DIK_A))
 	{
 		pTransform->Go_Left(fTimeDelta);
 	}
-	if (KEY_DOWN(DIK_S))
+	if (KEY_PRESSING(DIK_S))
 	{
 		pTransform->Go_Backward(fTimeDelta);
 	}
-	if (KEY_DOWN(DIK_D))
+	if (KEY_PRESSING(DIK_D))
 	{
 		pTransform->Go_Right(fTimeDelta);
 	}

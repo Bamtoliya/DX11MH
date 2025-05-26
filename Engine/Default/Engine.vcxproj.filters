@@ -287,9 +287,6 @@
     <ClInclude Include="..\Public\MyMaterial.h">
       <Filter>01.Utility\04.Components\MyMaterial</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Camera_Manager.h">
-      <Filter>01.Utility\03.GameObject\Camera\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\MyCamera.h">
       <Filter>01.Utility\04.Components\Camera</Filter>
     </ClInclude>
@@ -404,6 +401,7 @@
     <ClInclude Include="..\public\Collider.h">
       <Filter>01.Utility\04.Components\Collider</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Camera_Manager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -647,9 +645,6 @@
     <ClCompile Include="..\Private\MyMaterial.cpp">
       <Filter>01.Utility\04.Components\MyMaterial</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Camera_Manager.cpp">
-      <Filter>01.Utility\03.GameObject\Camera\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\MyCamera.cpp">
       <Filter>01.Utility\04.Components\Camera</Filter>
     </ClCompile>
@@ -746,6 +741,7 @@
     <ClCompile Include="..\private\Collider.cpp">
       <Filter>01.Utility\04.Components\Collider</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Camera_Manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -1008,6 +1004,9 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Collider">
       <UniqueIdentifier>{ff2faa67-f934-4ffa-9ce9-e90d79483262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Camera\Manager">
+      <UniqueIdentifier>{52f7aa98-7e1c-450e-967c-4d52cccc891c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

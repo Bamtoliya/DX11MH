@@ -175,7 +175,8 @@ void CSonic::Priority_Update(_float fTimeDelta)
 
 void CSonic::Update(_float fTimeDelta)
 {
-	m_pControllerCom->Update(fTimeDelta);
+	if(m_pControllerCom)
+		m_pControllerCom->Update(fTimeDelta);
 	if (m_pModelCom->Play_Animation(fTimeDelta))
 		int a = 10;
 }

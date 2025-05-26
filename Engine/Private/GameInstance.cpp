@@ -304,6 +304,16 @@ HRESULT CGameInstance::Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTa
 }
 #pragma endregion
 
+#pragma region CAMERA_MANAGER
+void CGameInstance::Add_Camera(CCamera* pCamera)
+{
+	if (m_pCamera_Manager)
+		m_pCamera_Manager->Add_Camera(pCamera);
+}
+#pragma endregion
+
+
+
 #pragma region OBJECT_MANAGER
 HRESULT CGameInstance::Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, void* pArg)
 {

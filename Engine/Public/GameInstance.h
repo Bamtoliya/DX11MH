@@ -84,6 +84,11 @@ public:
 	HRESULT Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTag);
 #pragma endregion
 
+#pragma region CAMERA_MANAGER
+	void Add_Camera(class CCamera* pCamera);
+#pragma endregion
+
+
 #pragma region OBJECT_MANAGER
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, simdjson::ondemand::object& jsonData);
@@ -177,6 +182,7 @@ private:
 	class CLevel_Manager*		m_pLevel_Manager = { nullptr };
 	class CSound_Manager*		m_pSound_Manager = { nullptr };
 	class CTarget_Manager*		m_pTarget_Manager = { nullptr };
+	class CCamera_Manager*		m_pCamera_Manager = { nullptr };
 	class CObject_Manager*		m_pObject_Manager = { nullptr };
 	class CMyImGui_Manager*		m_pMyImGui_Manager = { nullptr };
 	class CPrototype_Manager*	m_pPrototype_Manager = { nullptr };
