@@ -135,6 +135,7 @@ HRESULT CMonster::Serialize(json& outJson)
 	if(FAILED(__super::Serialize(data)))
 		return E_FAIL;
 	outJson["CMonster"] = data;
+	outJson["CMonster"]["Name"] = WideToUtf8(m_szName);
 	outJson["CMonster"]["PrototypeTag"] = "Prototype_GameObject_Monster";
 	return S_OK;
 }

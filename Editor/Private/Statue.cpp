@@ -131,12 +131,15 @@ HRESULT CStatue::Serialize(json& outJson)
 	if (FAILED(__super::Serialize(data)))
 		return E_FAIL;
 	outJson["CStatue"] = data;
+	outJson["CStaute"]["Name"] = WideToUtf8(m_szName);
 	outJson["CStatue"]["PrototypeTag"] = "Prototype_GameObject_Statue";
 	return S_OK;
 }
 
 HRESULT CStatue::Deserialize(simdjson::ondemand::object & jsonData)
 {
+	if (FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;
 	return S_OK;
 }
 

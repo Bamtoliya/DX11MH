@@ -76,10 +76,6 @@ HRESULT CCamera_Free::Initialize(void* pArg)
 
 HRESULT CCamera_Free::Initialize(simdjson::ondemand::object& jsonData)
 {
-	CGameObject_Camera::CAMERA_DESC Desc{};
-	Desc.fSpeedPerSec = 10.f;
-	Desc.fRotationPerSec = 1.f;
-	lstrcpy(Desc.szName, TEXT("Camera"));
 	m_fSensor = 0.1f;
 	if (FAILED(__super::Initialize(jsonData)))
 		return E_FAIL;
@@ -101,7 +97,7 @@ void CCamera_Free::Priority_Update(_float fTimeDelta)
 {
 	if (g_bCameraControl)
 	{
-		if (KEY_PRESSING(DIK_F))
+			if (KEY_PRESSING(DIK_F))
 		{
 			Focus_OnPickedObject();
 		}
@@ -228,7 +224,8 @@ void CCamera_Free::Focus_OnPickedObject()
 HRESULT CCamera_Free::Serialize(json& outJson)
 {
 	json data;
-	__super::Serialize(data);
+	if(FAILED(__super::Serialize(data)))
+		return E_FAIL;
 	outJson["CCamera_Free"] = data;
 	outJson["CCamera_Free"]["Name"] = WideToUtf8(m_szName);
 	outJson["CCamera_Free"]["PrototypeTag"] = "Prototype_GameObject_Camera_Free";
@@ -237,6 +234,8 @@ HRESULT CCamera_Free::Serialize(json& outJson)
 
 HRESULT CCamera_Free::Deserialize(simdjson::ondemand::object& jsonData)
 {
+	if (FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;
 	return S_OK;
 }
 

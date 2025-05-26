@@ -143,6 +143,7 @@ HRESULT CLight_Point::Serialize(json& outJson)
 	if (FAILED(__super::Serialize(data)))
 		return E_FAIL;
 	outJson["CLight_Point"] = data;
+	outJson["CLight_Point"]["Name"] = WideToUtf8(m_szName);
 	outJson["CLight_Point"]["PrototypeTag"] = "Prototype_GameObject_Light_Point";
 	return S_OK;
 }

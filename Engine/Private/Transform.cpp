@@ -153,66 +153,68 @@ HRESULT CTransform::Deserialize(simdjson::ondemand::object& jsonData)
 				position.z = static_cast<_float>((*iter).get_double().value_unsafe());
 			}
 		}
-	}
 
-	if (auto scaleNode = transformObject["Scale"]; scaleNode.error() == simdjson::SUCCESS) {
-		simdjson::ondemand::array arr = scaleNode.get_array();
-		if (arr.count_elements() == 3) {
-			auto iter = arr.begin();
-			scale.x = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			scale.y = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			scale.z = static_cast<_float>((*iter).get_double().value_unsafe());
+		if (auto scaleNode = transformObject["Scale"]; scaleNode.error() == simdjson::SUCCESS) {
+			simdjson::ondemand::array arr = scaleNode.get_array();
+			if (arr.count_elements() == 3) {
+				auto iter = arr.begin();
+				scale.x = static_cast<_float>((*iter).get_double().value_unsafe());
+				++iter;
+				scale.y = static_cast<_float>((*iter).get_double().value_unsafe());
+				++iter;
+				scale.z = static_cast<_float>((*iter).get_double().value_unsafe());
+			}
+		}
+
+		if (auto oriNode = transformObject["Orientation"]; oriNode.error() == simdjson::SUCCESS) {
+			simdjson::ondemand::array arr = oriNode.get_array();
+			if (arr.count_elements() == 4) {
+				auto iter = arr.begin();
+				orientation.x = static_cast<_float>((*iter).get_double().value_unsafe());
+				++iter;
+				orientation.y = static_cast<_float>((*iter).get_double().value_unsafe());
+				++iter;
+				orientation.z = static_cast<_float>((*iter).get_double().value_unsafe());
+				++iter;
+				orientation.w = static_cast<_float>((*iter).get_double().value_unsafe());
+				m_tDesc.qOrientation = orientation; // 쿼터니언 직접 저장
+			}
+		}
+
+		if (auto eulerNode = transformObject["EulerRotation"]; eulerNode.error() == simdjson::SUCCESS) {
+			simdjson::ondemand::array arr = eulerNode.get_array();
+			if (arr.count_elements() == 3) {
+				auto iter = arr.begin();
+				eulerRotation.x = static_cast<_float>((*iter).get_double().value_unsafe());
+				++iter;
+				eulerRotation.y = static_cast<_float>((*iter).get_double().value_unsafe());
+				++iter;
+				eulerRotation.z = static_cast<_float>((*iter).get_double().value_unsafe());
+				m_tDesc.fCurRotationX = eulerRotation.x;
+				m_tDesc.fCurRotationY = eulerRotation.y;
+				m_tDesc.fCurRotationZ = eulerRotation.z;
+			}
+		}
+
+		// SQT로부터 월드 행렬 재구성
+		_matrix worldMatrix = XMMatrixScaling(scale.x, scale.y, scale.z) *
+			XMMatrixRotationQuaternion(XMLoadFloat4(&m_tDesc.qOrientation)) *
+			XMMatrixTranslation(position.x, position.y, position.z);
+		XMStoreFloat4x4(&m_tDesc.WorldMatrix, worldMatrix);
+
+
+		if (auto val = transformObject["SpeedPerSec"]; val.error() == simdjson::SUCCESS) { // 또는 get_uint64 등 타입에 맞게
+			m_tDesc.fSpeedPerSec = static_cast<_float>(val.get_double().value_unsafe());
+		}
+		if (auto val = transformObject["RotationPerSec"]; val.error() == simdjson::SUCCESS) {
+			m_tDesc.fRotationPerSec = static_cast<_float>(val.get_double().value_unsafe());
+		}
+		if (auto val = transformObject["IsRelative"]; val.error() == simdjson::SUCCESS) {
+			m_tDesc.bRelative = val.get_bool().value_unsafe();
 		}
 	}
+
 	
-	if (auto oriNode = transformObject["Orientation"]; oriNode.error() == simdjson::SUCCESS) {
-		simdjson::ondemand::array arr = oriNode.get_array();
-		if (arr.count_elements() == 4) {
-			auto iter = arr.begin();
-			orientation.x = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			orientation.y = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			orientation.z = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			orientation.w = static_cast<_float>((*iter).get_double().value_unsafe());
-			m_tDesc.qOrientation = orientation; // 쿼터니언 직접 저장
-		}
-	}
-	
-	if (auto eulerNode = transformObject["EulerRotation"]; eulerNode.error() == simdjson::SUCCESS) {
-		simdjson::ondemand::array arr = eulerNode.get_array();
-		if (arr.count_elements() == 3) {
-			auto iter = arr.begin();
-			eulerRotation.x = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			eulerRotation.y = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			eulerRotation.z = static_cast<_float>((*iter).get_double().value_unsafe());
-			m_tDesc.fCurRotationX = eulerRotation.x;
-			m_tDesc.fCurRotationY = eulerRotation.y;
-			m_tDesc.fCurRotationZ = eulerRotation.z;
-		}
-	}
-
-	// SQT로부터 월드 행렬 재구성
-	_matrix worldMatrix = XMMatrixScaling(scale.x, scale.y, scale.z) *
-		XMMatrixRotationQuaternion(XMLoadFloat4(&m_tDesc.qOrientation)) *
-		XMMatrixTranslation(position.x, position.y, position.z);
-	XMStoreFloat4x4(&m_tDesc.WorldMatrix, worldMatrix);
-
-
-	if (auto val = jsonData["SpeedPerSec"]; val.error() == simdjson::SUCCESS) { // 또는 get_uint64 등 타입에 맞게
-		m_tDesc.fSpeedPerSec = static_cast<_float>(val.get_double().value_unsafe());
-	}
-	if (auto val = jsonData["RotationPerSec"]; val.error() == simdjson::SUCCESS) {
-		m_tDesc.fRotationPerSec = static_cast<_float>(val.get_double().value_unsafe());
-	}
-	if (auto val = jsonData["IsRelative"]; val.error() == simdjson::SUCCESS) {
-		m_tDesc.bRelative = val.get_bool().value_unsafe();
-	}
 
 	// WorldMatrix_Raw를 저장했다면 여기서 복원할 수도 있습니다.
 	// 하지만 SQT로 복원하는 것이 더 일반적이고 유연합니다.
@@ -547,6 +549,8 @@ HRESULT CTransform::RenderImGui()
 			ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "XMMatrixDecompose failed. Matrix might be non-affine.");
 			// ... (기존 오류 처리) ...
 		}
+		ImGui::DragFloat("Speed", &m_tDesc.fSpeedPerSec, 0.1f, 0.0f, 10.f);
+		ImGui::DragFloat("Rotation", &m_tDesc.fRotationPerSec, 0.1f, 0.0f, 10.f);
 	}
 	return S_OK;
 }
