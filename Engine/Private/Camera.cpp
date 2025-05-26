@@ -164,6 +164,59 @@ HRESULT CCamera::Serialize(json& outJson)
 
 HRESULT CCamera::Deserialize(simdjson::ondemand::object & jsonData)
 {
+	if (FAILED(__super::Deserialize(jsonData))) // 부모 클래스의 Deserialize 호출
+		return E_FAIL;
+
+	simdjson::ondemand::object cameraData;
+	if (jsonData["CCamera"].get_object().get(cameraData)) // "CCamera" 객체 가져오기
+		return E_FAIL; // 또는 오류 처리
+
+	// 각 속성 역직렬화
+	if (cameraData["bOrthographic"].get_bool().get(m_tDesc.bOrthographic))
+		return E_FAIL; // 또는 기본값 설정 및 오류 로그
+
+	double tempDouble; // simdjson은 double로 숫자 값을 가져옵니다.
+	if (cameraData["fZoomPerSec"].get_double().get(tempDouble))
+		return E_FAIL;
+	m_tDesc.fZoomPerSec = static_cast<_float>(tempDouble);
+
+	if (cameraData["fFovy"].get_double().get(tempDouble))
+		return E_FAIL;
+	m_tDesc.fFovy = XMConvertToRadians(static_cast<_float>(tempDouble)); // JSON에서는 Degree, 내부에서는 Radian 사용
+
+	if (cameraData["fNear"].get_double().get(tempDouble))
+		return E_FAIL;
+	m_tDesc.fNear = static_cast<_float>(tempDouble);
+
+	if (cameraData["fFar"].get_double().get(tempDouble))
+		return E_FAIL;
+	m_tDesc.fFar = static_cast<_float>(tempDouble);
+
+	simdjson::ondemand::array vAtArray;
+	if (cameraData["vAt"].get_array().get(vAtArray))
+		return E_FAIL;
+
+	size_t index = 0;
+	for (auto value : vAtArray)
+	{
+		if (value.get_double().get(tempDouble))
+			return E_FAIL;
+		switch (index)
+		{
+		case 0: m_tDesc.vAt.x = static_cast<_float>(tempDouble); break;
+		case 1: m_tDesc.vAt.y = static_cast<_float>(tempDouble); break;
+		case 2: m_tDesc.vAt.z = static_cast<_float>(tempDouble); break;
+		case 3: m_tDesc.vAt.w = static_cast<_float>(tempDouble); break;
+		default: break; // 배열 크기가 예상과 다를 경우의 처리
+		}
+		index++;
+	}
+	if (index != 4) // vAt는 4개의 요소를 가져야 함
+	{
+		// 오류 처리: vAt 배열의 크기가 올바르지 않음
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
