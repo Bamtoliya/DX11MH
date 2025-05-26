@@ -227,7 +227,6 @@ HRESULT CCamera_Free::Serialize(json& outJson)
 	if(FAILED(__super::Serialize(data)))
 		return E_FAIL;
 	outJson["CCamera_Free"] = data;
-	outJson["CCamera_Free"]["Name"] = WideToUtf8(m_szName);
 	outJson["CCamera_Free"]["PrototypeTag"] = "Prototype_GameObject_Camera_Free";
 	return S_OK;
 }

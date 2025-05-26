@@ -22,6 +22,7 @@ public:
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, void* pArg);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, simdjson::ondemand::object& jsonData);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CGameObject* pGameObject, void* pArg);
+	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CGameObject* pGameObject, simdjson::ondemand::object& jsonData);
 	void Clear(_uint iLevelIndex);
 public:
 	HRESULT RenderImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag);

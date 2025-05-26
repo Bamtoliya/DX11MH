@@ -138,7 +138,6 @@ HRESULT CSonic::Serialize(json& outJson)
 	if(FAILED(__super::Serialize(data)))
 		return E_FAIL;	
 	outJson["CSonic"] = data;
-	outJson["CSonic"]["Name"] = WideToUtf8(m_szName);
 	outJson["CSonic"]["PrototypeTag"] = "Prototype_GameObject_Sonic";
 	return S_OK;
 }

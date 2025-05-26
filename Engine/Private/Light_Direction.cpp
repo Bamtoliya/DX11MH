@@ -141,7 +141,6 @@ HRESULT CLight_Direction::Serialize(json& outJson)
 	if (FAILED(__super::Serialize(data)))
 		return E_FAIL;
 	outJson["CLight_Direction"] = data;
-	outJson["CLight_Direction"]["Name"] = WideToUtf8(m_szName);
 	outJson["CLight_Direction"]["PrototypeTag"] = "Prototype_GameObject_Light_Direction";
 	return S_OK;
 }

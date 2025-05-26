@@ -3,6 +3,8 @@
 #include "Base.h"
 #include "Transform.h"
 
+static _uint objID = 1;
+
 NS_BEGIN(Engine)
 class CGameInstance;
 class ENGINE_DLL CGameObject abstract : public CBase
@@ -21,6 +23,7 @@ public:
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual CGameObject* Clone(simdjson::ondemand::object& jsonData) = 0;
 	virtual CGameObject* Clone(CGameObject* pGameObject, void* pArg = nullptr);
+	virtual CGameObject* Clone(CGameObject* pGameObject, simdjson::ondemand::object& jsonData);
 	virtual void Free() override;
 protected:
 	ID3D11Device*				m_pDevice = { nullptr };
@@ -57,7 +60,7 @@ public:
 	CComponent* Get_Component(const _wstring& strComponentTag);
 	_uint Get_ID() const { return m_oID; }
 	void Set_ID(_uint oID) { m_oID = oID; }
-	wstring Get_Name() const { return m_szName; }
+	_wstring Get_Name() const { return m_szName; }
 	void Set_Name(const wstring& str) { lstrcpy(m_szName, str.c_str()); }
 	_bool Get_Picked() { return m_bPicked; }
 	void Set_Picked(_bool bPicked) { m_bPicked = bPicked; }
@@ -69,6 +72,8 @@ public:
 	void Set_Active(_bool bActive) { m_bActive = bActive; }
 	_bool Get_IsDestroy() { return m_bToDestroy; }
 	void Set_IsDestroy(_bool bDestroy = true) { m_bToDestroy = bDestroy; }
+	_wstring Get_LayerTag() { return m_strLayerTag; }
+	void Set_LayerTag(const _wstring& strLayerTag) { m_strLayerTag = strLayerTag; }
 public:
 	CGameObject* Get_Parent() { return m_pParent; };
 	void Set_Parent(CGameObject* pParent) { 

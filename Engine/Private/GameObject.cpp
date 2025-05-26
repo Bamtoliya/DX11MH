@@ -15,6 +15,7 @@ CGameObject::CGameObject(const CGameObject& Prototype)
 	: m_pDevice 	{ Prototype.m_pDevice }
 	, m_pContext 	{ Prototype.m_pContext }
 	, m_pGameInstance{ CGameInstance::Get_Instance() }
+	, m_oID { objID++ }
 {
 	Safe_AddRef(m_pGameInstance);
 	Safe_AddRef(m_pContext);
@@ -107,6 +108,18 @@ void CGameObject::Free()
 CGameObject* CGameObject::Clone(CGameObject* pGameObject, void* pArg)
 {
 	CGameObject* pInstance = Clone(pArg);
+	if (pGameObject)
+	{
+		pInstance->m_pParent = pGameObject;
+		Safe_AddRef(m_pParent);
+		pInstance->m_pParent->Add_Child(pInstance->m_szName, pInstance);
+	}
+	return pInstance;
+}
+
+CGameObject* CGameObject::Clone(CGameObject* pGameObject, simdjson::ondemand::object& jsonData)
+{
+	CGameObject* pInstance = Clone(jsonData);
 	if (pGameObject)
 	{
 		pInstance->m_pParent = pGameObject;
@@ -277,23 +290,78 @@ HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& s
 
 HRESULT CGameObject::Serialize(json& data)
 {
+	data["Name"] = m_szName;
 	data["Visible"] = m_bVisible;
+	data["Active"] = m_bActive;
+	data["LayerTag"] = WideToUtf8(m_strLayerTag.c_str());
 	for(auto & iter : m_Components)
 	{
 		if(FAILED(iter.second->Serialize(data)))
 			return E_FAIL;
 	}
+	for (auto& pChild : m_Childs)
+	{
+		json child;
+		if(FAILED(pChild.second->Serialize(child)))
+			return E_FAIL;
+		data["Childs"].push_back(child);
+	}
+	
 	return S_OK;
 }
 
 
 HRESULT CGameObject::Deserialize(simdjson::ondemand::object& jsonData)
 {
+	string_view name_sv;
+	jsonData["Name"].get_string().get(name_sv);
+	lstrcpy(m_szName, Utf8ToWide(string(name_sv)).c_str());
 	jsonData["Visible"].get_bool().get(m_bVisible);
 	for (auto& iter : m_Components)
 	{
 		if (FAILED(iter.second->Deserialize(jsonData)))
 			return E_FAIL;
 	}
+	// 자식 객체들 역직렬화 (Childs가 배열이라고 가정)
+	simdjson::ondemand::value childs_node_value;
+	auto error = jsonData["Childs"].get(childs_node_value);
+
+	if (error == simdjson::SUCCESS) {
+		if (childs_node_value.type() == simdjson::ondemand::json_type::array) {
+			simdjson::ondemand::array childs_array = childs_node_value.get_array();
+			for (simdjson::ondemand::value child_item_value : childs_array) {
+				if (child_item_value.type() == simdjson::ondemand::json_type::object) {
+					simdjson::ondemand::object child_data_obj = child_item_value.get_object();
+
+					// m_pGameInstance->Load_GameObject는 다음을 수행해야 합니다:
+					// 1. child_data_obj에서 "PrototypeTag"를 읽어 프로토타입 복제
+					// 2. 복제된 자식 객체의 Initialize(child_data_obj) 또는 Deserialize(child_data_obj) 호출
+					// 3. 자식 객체의 부모를 현재 객체(m_oID)로 설정
+					// 4. 자식 객체를 적절한 레벨/레이어에 추가
+					if (FAILED(m_pGameInstance->Load_GameObject(
+						m_pGameInstance->Get_CurrentLevelIndex(), // 또는 부모로부터 레벨 인덱스 전달
+						this,                                  // 현재 객체의 ID (부모 ID로 사용)
+						child_data_obj))) {
+						return E_FAIL;
+					}
+				}
+			}
+		}
+		else if (childs_node_value.type() == simdjson::ondemand::json_type::null) {
+			// "Childs": null 이면, 자식 없음으로 처리
+		}
+		else {
+			// "Childs" 필드가 있지만 배열도 아니고 null도 아닌 경우 (예상치 못한 형식)
+			// MSG_BOX("Warning: Childs field is present but not an array or null.");
+		}
+	}
+	else if (error == simdjson::NO_SUCH_FIELD) {
+		// "Childs" 필드가 없는 경우, 자식 없음으로 처리
+	}
+	else {
+		// "Childs" 필드 접근 중 다른 오류 발생
+		return E_FAIL;
+	}
+
 	return S_OK;
 }

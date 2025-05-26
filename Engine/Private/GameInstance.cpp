@@ -238,6 +238,12 @@ CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototype
 	return m_pPrototype_Manager->Clone_Prototype(ePrototypeType, iPrototypeLevelIndex, strPrototypeTag, pGameObject, pArg);
 }
 
+CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, CGameObject* pGameObject, simdjson::ondemand::object& jsonData)
+{
+	return m_pPrototype_Manager->Clone_Prototype(ePrototypeType, iPrototypeLevelIndex, strPrototypeTag, pGameObject, jsonData);
+}
+
+
 
 HRESULT CGameInstance::Save_Prototypes(json& data)
 {
@@ -312,6 +318,11 @@ HRESULT CGameInstance::Add_GameObject(_uint iPrototypeLevelIndex, const _wstring
 HRESULT CGameInstance::Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, _uint iGameObjectID, void* pArg)
 {
 	return m_pObject_Manager->Add_GameObject(iPrototypeLevelIndex, strPrototypeTag, iLevelIndex, strLayerTag, iGameObjectID, pArg);
+}
+
+HRESULT CGameInstance::Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, CGameObject* pGameObject, simdjson::ondemand::object& jsonData)
+{
+	return m_pObject_Manager->Add_GameObject(iPrototypeLevelIndex, strPrototypeTag, iLevelIndex, strLayerTag, pGameObject, jsonData);
 }
 
 CComponent* CGameInstance::Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex)
@@ -446,7 +457,10 @@ HRESULT CGameInstance::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePat
 {
 	return m_pJson_Loader->Load_Prototypes(iLevelIndex, pFilePath);
 }
-
+HRESULT CGameInstance::Load_GameObject(_uint iLevelIndex, CGameObject* pGameObject, simdjson::ondemand::object& jsonData)
+{
+	return m_pJson_Loader->Load_GameObject(iLevelIndex, pGameObject, jsonData);
+}
 HRESULT CGameInstance::Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath)
 {
 	return m_pJson_Loader->Load_GameObjects(iLevelIndex, pFilePath);

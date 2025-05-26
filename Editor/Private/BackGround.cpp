@@ -123,7 +123,6 @@ HRESULT CBackGround::Serialize(json& outJson)
 	if (FAILED(__super::Serialize(data)))
 		return E_FAIL;
 	outJson["CBackGround"] = data;
-	outJson["CBackGround"]["Name"] = WideToUtf8(m_szName);
 	outJson["CBackGround"]["PrototypeTag"] = "Prototype_GameObject_BackGround";
 	return S_OK;
 }

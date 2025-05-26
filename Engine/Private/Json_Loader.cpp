@@ -165,6 +165,78 @@ HRESULT CJson_Loader::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath
     return S_OK;
 }
 
+HRESULT CJson_Loader::Load_GameObject(_uint iLevelIndex, CGameObject* pGameObject, simdjson::ondemand::object& jsonData)
+{
+    // jsonDataContainer는 { "클래스이름": { 실제_오브젝트_데이터 } } 형태일 것으로 예상합니다.
+    // 예: { "CBackGround": { "PrototypeTag": "...", "LayerTag": "...", ... } }
+
+    simdjson::error_code error;
+
+    // jsonDataContainer에서 첫 번째 (그리고 유일한 것으로 예상되는) 필드를 가져옵니다.
+    auto field_iterator = jsonData.begin();
+    if (field_iterator == jsonData.end()) {
+        // MSG_BOX("Error: jsonDataContainer is empty in CJson_Loader::Load_GameObject.");
+        return E_FAIL; // 또는 적절한 오류 처리
+    }
+    simdjson::ondemand::field game_object_field = *field_iterator;
+
+    // 필드의 값 (실제 게임 오브젝트 데이터가 포함된 객체)을 가져옵니다.
+    simdjson::ondemand::object actual_game_object_data;
+    error = game_object_field.value().get_object().get(actual_game_object_data);
+    if (error) {
+        // MSG_BOX("Error: Could not get actual game object data from field value in CJson_Loader::Load_GameObject.");
+        // std::string container_str = simdjson::to_json_string(jsonDataContainer);
+        // OutputDebugStringA(("Problematic jsonDataContainer: " + container_str).c_str());
+        return E_FAIL;
+    }
+
+    // 이제 actual_game_object_data에서 "PrototypeTag"와 "LayerTag"를 추출합니다.
+    // actual_game_object_data는 { "PrototypeTag": "...", "LayerTag": "...", "Name": "...", ... } 형태여야 합니다.
+    std::string_view prototypeTag_sv;
+    error = actual_game_object_data["PrototypeTag"].get_string().get(prototypeTag_sv);
+    if (error) {
+        // MSG_BOX("Error: Failed to get 'PrototypeTag' from actual_game_object_data or it's not a string.");
+        // std::string actual_data_str = simdjson::to_json_string(actual_game_object_data);
+        // OutputDebugStringA(("actual_game_object_data content: " + actual_data_str).c_str());
+        return E_FAIL;
+    }
+    if (prototypeTag_sv.empty()) {
+        // MSG_BOX("Error: 'PrototypeTag' string is empty in actual_game_object_data.");
+        return E_FAIL;
+    }
+    _wstring strPrototypeTag = Utf8ToWide(string(prototypeTag_sv));
+
+    std::string_view layerTag_sv;
+    error = actual_game_object_data["LayerTag"].get_string().get(layerTag_sv);
+    if (error) {
+        // MSG_BOX("Error: Failed to get 'LayerTag' from actual_game_object_data or it's not a string.");
+        return E_FAIL;
+    }
+    if (layerTag_sv.empty()) {
+        // MSG_BOX("Error: 'LayerTag' string is empty in actual_game_object_data.");
+        return E_FAIL;
+    }
+    _wstring strLayerTag = Utf8ToWide(string(layerTag_sv));
+
+    // 실제 게임 오브젝트 데이터(actual_game_object_data)를 Add_GameObject로 전달하여 초기화합니다.
+    // Add_GameObject 함수는 이 데이터를 사용하여 프로토타입을 복제하고,
+    // 새 게임 오브젝트에 대해 Initialize 또는 Deserialize를 호출해야 합니다.
+    // iParentObjectId는 새로 생성될 객체의 부모 ID로 사용됩니다.
+    if (FAILED(m_pGameInstance->Add_GameObject(
+        iLevelIndex,                // 프로토타입 검색 또는 현재 레벨 인덱스
+        strPrototypeTag,            // 복제할 프로토타입 태그
+        iLevelIndex,                // 새 게임 오브젝트가 속할 레벨 인덱스
+        strLayerTag,                // 새 게임 오브젝트의 레이어 태그
+        pGameObject,            // 부모 GameObject
+        actual_game_object_data)))  // 새 게임 오브젝트 초기화에 사용할 JSON 데이터
+    {
+        // std::wstring errMsg = L"CJson_Loader::Load_GameObject - Failed to add GameObject (Prototype: " + strPrototypeTag + L"). Parent ID: " + std::to_wstring(iParentObjectId);
+        // MSG_BOX(errMsg.c_str());
+        return E_FAIL;
+    }
+
+    return S_OK;
+}
 
 HRESULT CJson_Loader::Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath)
 {

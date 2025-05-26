@@ -60,6 +60,7 @@ public:
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, void* pArg = nullptr);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, simdjson::ondemand::object& jsonData);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CGameObject* pGameObject = nullptr, void* pArg = nullptr);
+	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CGameObject* pGameObject, simdjson::ondemand::object& jsonData);
 
 
 	HRESULT Save_Prototypes(json& data);
@@ -87,6 +88,7 @@ public:
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, simdjson::ondemand::object& jsonData);
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, _uint iGameObjectID, void* pArg = nullptr);
+	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, class CGameObject* pGameObject, simdjson::ondemand::object& jsonData);
 	
 	CComponent* Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex = 0);
 	class CGameObject* Get_GameObjectById(_uint iId);
@@ -153,6 +155,7 @@ public:
 	HRESULT Register_Creator_Function(const string& className, function<CBase* (ID3D11Device*, ID3D11DeviceContext*)> creatorFunc);
 	HRESULT Register_Clone_Function(const string& className, function<CBase* (ID3D11Device*, ID3D11DeviceContext*)> creatorFunc);
 	HRESULT Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath);
+	HRESULT Load_GameObject(_uint iLevelIndex, class CGameObject* pGameObject, simdjson::ondemand::object& jsonData);
 	HRESULT Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath);
 #pragma endregion
 

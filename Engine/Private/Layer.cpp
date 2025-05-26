@@ -314,8 +314,11 @@ HRESULT CLayer::Serialize(json& outJson)
 		if (nullptr != pGameObject)
 		{
 			json gameObjectJson;
-			pGameObject->Serialize(gameObjectJson);
-			outJson["GameObjects"].push_back(gameObjectJson);
+			if (pGameObject->Get_Parent() == nullptr)
+			{
+				pGameObject->Serialize(gameObjectJson);
+				outJson["GameObjects"].push_back(gameObjectJson);
+			}
 		}
 	}
 	return S_OK;

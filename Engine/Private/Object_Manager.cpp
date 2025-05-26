@@ -39,7 +39,8 @@ HRESULT CObject_Manager::Add_GameObject(_uint iPrototypeLevelIndex, const _wstri
 	if (nullptr == pGameObject)
 		return E_FAIL;
 
-	pGameObject->Set_ID(m_oID++);
+	//pGameObject->Set_ID(m_oID++);
+	pGameObject->Set_LayerTag(strLayerTag);
 	CLayer*		pLayer = Find_Layer(iLevelIndex, strLayerTag);
 
 	if (nullptr == pLayer)
@@ -64,7 +65,8 @@ HRESULT CObject_Manager::Add_GameObject(_uint iPrototypeLevelIndex, const _wstri
 	if (nullptr == pGameObject)
 		return E_FAIL;
 
-	pGameObject->Set_ID(m_oID++);
+	//pGameObject->Set_ID(m_oID++);
+	pGameObject->Set_LayerTag(strLayerTag);
 	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerTag);
 
 	if (nullptr == pLayer)
@@ -90,7 +92,32 @@ HRESULT CObject_Manager::Add_GameObject(_uint iPrototypeLevelIndex, const _wstri
 	if (nullptr == pGameObject)
 		return E_FAIL;
 
-	pGameObject->Set_ID(m_oID++);
+	//pGameObject->Set_ID(m_oID++);
+	pGameObject->Set_LayerTag(strLayerTag);
+	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerTag);
+
+	if (nullptr == pLayer)
+	{
+		pLayer = CLayer::Create();
+
+		pLayer->Add_GameObject(pGameObject);
+
+		m_pLayers[iLevelIndex].emplace(strLayerTag, pLayer);
+	}
+	else
+		pLayer->Add_GameObject(pGameObject);
+
+	return S_OK;
+}
+
+HRESULT CObject_Manager::Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, CGameObject* parentGameObject, simdjson::ondemand::object& jsonData)
+{
+	CGameObject* pGameObject = dynamic_cast<CGameObject*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::TYPE_GAMEOBJECT, iPrototypeLevelIndex, strPrototypeTag, parentGameObject, jsonData));
+	if (nullptr == pGameObject)
+		return E_FAIL;
+
+	//pGameObject->Set_ID(m_oID++);
+	pGameObject->Set_LayerTag(strLayerTag);
 	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerTag);
 
 	if (nullptr == pLayer)
