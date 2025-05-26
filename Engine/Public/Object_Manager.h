@@ -27,9 +27,11 @@ public:
 public:
 	void Clear(_uint iLevelIndex);
 	class CGameObject* Get_GameObjectById(_uint iId);
-	class CGmaeObject* Find_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName);
+	class CGameObject* Find_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName);
 public:
-
+	HRESULT Move_GameObjectToLayer(_uint iObjectID, _uint iTargetLevelIndex, const _wstring& strTargetLayerTag);
+	HRESULT Remove_GameObjectFromLayer(_uint iLevelIndex, const _wstring& strLayerTag, CGameObject* pGameObject);
+	HRESULT Remove_GameObjectFromLayer(_uint iLevelIndex, CGameObject* pGameObject); // GameObject의 현재 레이어를 찾아 제거
 public:
 	HRESULT RenderImGui();
 	HRESULT ToggleLayerVisible(_uint iLevelIndex, const _wstring& strLayerTag);

@@ -13,10 +13,8 @@ CShader::CShader(const CShader& Prototype)
 	, m_strShaderFile{ Prototype.m_strShaderFile }
 	, m_strLayoutName { Prototype.m_strLayoutName }
 {
-	for (auto& pInputLayout : m_InputLayouts)
-		Safe_AddRef(pInputLayout);
-
-	Safe_AddRef(m_pEffect);
+	/*for (auto& pInputLayout : m_InputLayouts)
+		Safe_AddRef(pInputLayout);*/
 }
 
 CShader* CShader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -196,7 +194,6 @@ HRESULT CShader::Bind_SRVs(const _char* pConstantName, ID3D11ShaderResourceView*
 
 	return pSRVVariable->SetResourceArray(ppSRVs, 0, iNumSRVs);
 }
-
 #pragma endregion
 
 #pragma region Save&Load
@@ -298,4 +295,3 @@ HRESULT CShader::RenderImGui()
 	}
 	return S_OK;
 }
-

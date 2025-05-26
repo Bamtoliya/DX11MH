@@ -560,7 +560,7 @@ HRESULT CToolBar::Save_GameObjects(_uint iLevelIndex, const _tchar* pFilePath)
     {
         outputFile << data.dump(4); // 4는 들여쓰기 공백 수
         outputFile.close();
-        //printf("Prototypes saved to %s\n", pFilePath.);
+        //printf("Prototypes saved to %s\n", pFilePath.);   
     }
     return S_OK;
 }

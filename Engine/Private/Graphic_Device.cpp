@@ -320,13 +320,21 @@ CGraphic_Device * CGraphic_Device::Create(HWND hWnd, _bool isWindowed, _uint iWi
 
 void CGraphic_Device::Free()
 {
-	Safe_Release(m_pSwapChain);
-	Safe_Release(m_pDepthStencilView);
-	Safe_Release(m_pBackBufferSRV);
-	Safe_Release(m_pBackBufferTexture);
-	Safe_Release(m_pBackBufferRTV);
-	Safe_Release(m_pDeviceContext);
 
+	if (m_pDeviceContext)
+	{
+		m_pDeviceContext->ClearState(); // 파이프라인 상태 초기화
+	}
+
+	Safe_Release(m_pSwapChain);
+
+	Safe_Release(m_pBackBufferRTV);
+	Safe_Release(m_pBackBufferSRV);
+	Safe_Release(m_pDepthStencilView);
+	
+	Safe_Release(m_pBackBufferTexture);
+
+	Safe_Release(m_pDeviceContext);
 
 #if defined(DEBUG) || defined(_DEBUG)
 	ID3D11Debug* d3dDebug;

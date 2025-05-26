@@ -160,8 +160,99 @@ CGameObject* CObject_Manager::Get_GameObjectById(_uint iId)
 	return nullptr;
 }
 
-CGmaeObject* CObject_Manager::Find_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName)
+CGameObject* CObject_Manager::Find_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName)
 {
+	if (iLevelIndex >= m_iNumLevels)
+		return nullptr;
+
+	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerTag);
+	if (nullptr == pLayer)
+		return nullptr;
+	CGameObject* pGameObject = pLayer->Find_GameObjectByName(strGameObjectName);
+	if (nullptr == pGameObject)
+		return nullptr;
+	
+	return pGameObject;
+}
+
+HRESULT CObject_Manager::Move_GameObjectToLayer(_uint iObjectID, _uint iTargetLevelIndex, const _wstring& strTargetLayerTag)
+{
+	if (iTargetLevelIndex >= m_iNumLevels)
+		return E_FAIL;
+
+	CGameObject* pGameObject = Get_GameObjectById(iObjectID);
+	if (nullptr == pGameObject)
+		return E_FAIL;
+
+	// 1. 현재 오브젝트가 속한 레벨과 레이어에서 오브젝트 제거
+	//    (GameObject가 자신의 레벨/레이어 정보를 가지고 있다면 더 효율적으로 찾을 수 있습니다.)
+	//    여기서는 모든 레벨과 레이어를 순회하여 오브젝트를 찾는다고 가정합니다.
+	//    또는, GameObject가 자신의 현재 레벨 인덱스를 안다면 해당 레벨만 검색합니다.
+	//    CGameInstance를 통해 현재 레벨 인덱스를 가져올 수 있습니다.
+	_uint currentLevelOfObject = m_pGameInstance->Get_CurrentLevelIndex(); // 예시: 오브젝트가 현재 레벨에 있다고 가정
+	// 또는 오브젝트가 자신의 레벨 정보를 가지고 있어야 함.
+
+// 기존 레이어에서 오브젝트 제거 (Safe_Release 없이 포인터만 리스트에서 제거)
+// 이 작업은 RemoveGameObjectFromLayer 헬퍼 함수를 통해 수행
+	if (FAILED(Remove_GameObjectFromLayer(currentLevelOfObject, pGameObject)))
+	{
+		// 만약 오브젝트가 어떤 레이어에도 속하지 않은 상태라면 (예: 방금 프로토타입에서 복제만 된 상태)
+		// 이 부분은 실패할 수 있지만, 그래도 새 레이어에 추가하는 것은 계속 진행할 수 있습니다.
+		// MSG_BOX("Failed to remove object from its original layer, or it was not in any layer.");
+	}
+
+
+	// 2. 대상 레이어 찾기 또는 생성
+	CLayer* pTargetLayer = Find_Layer(iTargetLevelIndex, strTargetLayerTag);
+	if (nullptr == pTargetLayer)
+	{
+		pTargetLayer = CLayer::Create();
+		if (nullptr == pTargetLayer)
+			return E_FAIL;
+		m_pLayers[iTargetLevelIndex].emplace(strTargetLayerTag, pTargetLayer);
+	}
+
+	// 3. 대상 레이어에 게임 오브젝트 추가
+	if (FAILED(pTargetLayer->Add_GameObject(pGameObject)))
+		return E_FAIL;
+
+	// 4. 게임 오브젝트의 부모를 nullptr로 설정 (최상위 오브젝트로 만듦)
+	pGameObject->Set_Parent(nullptr);
+
+	// (선택 사항) GameObject가 자신의 레이어 태그를 저장한다면 업데이트
+	// pGameObject->SetLayerTag(strTargetLayerTag); 
+
+	return S_OK;
+}
+
+HRESULT CObject_Manager::Remove_GameObjectFromLayer(_uint iLevelIndex, const _wstring& strLayerTag, CGameObject* pGameObject)
+{
+	if (iLevelIndex >= m_iNumLevels || nullptr == pGameObject)
+		return E_FAIL;
+
+	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerTag);
+	if (nullptr == pLayer)
+		return E_FAIL;
+
+	if (pLayer->Remove_GameObjectByObject(pGameObject))
+		return S_OK;
+	return E_FAIL; // 레이어에 해당 오브젝트가 없음
+}
+
+HRESULT CObject_Manager::Remove_GameObjectFromLayer(_uint iLevelIndex, CGameObject* pGameObject)
+{
+	if (iLevelIndex >= m_iNumLevels || nullptr == pGameObject)
+		return E_FAIL;
+
+	// 모든 레이어를 순회하며 pGameObject를 찾아서 제거
+	for (auto& layerPair : m_pLayers[iLevelIndex])
+	{
+		CLayer* pLayer = layerPair.second;
+		if (pLayer)
+		{
+			pLayer->Remove_GameObjectByObject(pGameObject);
+		}
+	}
 	return S_OK;
 }
 

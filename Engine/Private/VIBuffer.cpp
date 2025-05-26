@@ -23,8 +23,8 @@ CVIBuffer::CVIBuffer(const CVIBuffer& Prototype)
     , m_pVertexPositions        { Prototype.m_pVertexPositions }
     , m_vLocalSize              { Prototype.m_vLocalSize }
 {
-    Safe_AddRef(m_pVB);
-    Safe_AddRef(m_pIB);
+    //Safe_AddRef(m_pVB);
+    //Safe_AddRef(m_pIB);
 }
 
 void CVIBuffer::Free()

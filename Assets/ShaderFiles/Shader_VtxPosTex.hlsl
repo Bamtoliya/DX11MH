@@ -64,20 +64,4 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();        
         PixelShader = compile ps_5_0 PS_MAIN();      
     }
-
-    pass Picking /* 명암 + 스펙큘러 + 그림자 + ssao + 림라이트 */
-    {
-        VertexShader = compile vs_5_0 VS_MAIN();
-        PixelShader = compile ps_5_0 PS_PICKING();
-    }
-    //pass Disstortion/* 왜곡 1*/ 
-    //{
-    //    VertexShader = compile vs_5_0 VS_MAIN1();
-    //    PixelShader = compile ps_5_0 PS_MAIN_Diss();
-    //}
-    //pass Blend/* 반투명 */
-    //{
-    //    VertexShader = compile vs_5_0 VS_MAIN();
-    //    PixelShader = compile ps_5_0 PS_MAIN_Blend();
-    //}
 }

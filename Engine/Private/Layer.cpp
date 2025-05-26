@@ -46,15 +46,55 @@ CGameObject* CLayer::Get_GameObjectById(_uint iId)
 	return pGameObject; // 해당 ID를 가진 게임 오브젝트를 찾지 못한 경우 nullptr을 반환합니다.
 }
 
+HRESULT CLayer::Remove_GameObjectById(_uint iId)
+{
+	m_GameObjects.remove_if([&iId](CGameObject* pGameObject) {
+		if (pGameObject->Get_ID() == iId)
+			return true;
+		return false;
+		});
+
+	return S_OK;
+}
+
+HRESULT CLayer::Remove_GameObjectByObject(CGameObject* pGameObject)
+{
+	m_GameObjects.remove_if([&pGameObject](CGameObject* pObject) {
+		if (pObject == pGameObject)
+			return true;
+		return false;
+		});
+
+	return S_OK;
+}
+
+HRESULT CLayer::Remove_GameObjectByName(const _wstring& strObjectTag)
+{
+	m_GameObjects.remove_if([&strObjectTag](CGameObject* pGameObject) {
+		if (pGameObject->Get_Name() == strObjectTag)
+			return true;
+		return false;
+		});
+
+	return S_OK;
+}
+
 void CLayer::Priority_Update(_float fTimeDelta)
 {
 	for (auto& pGameObject : m_GameObjects)
 	{
 		if (nullptr != pGameObject)
 			pGameObject->Priority_Update(fTimeDelta);
-
 	}
-		
+
+	m_GameObjects.remove_if([](CGameObject* pGameObject) {
+		if (pGameObject && pGameObject->Get_IsDestroy()) // Get_IsDestroy()가 있다고 가정
+		{
+			Safe_Release(pGameObject); // 객체 해제
+			return true; // 리스트에서 제거 대상으로 표시
+		}
+		return false;
+		});
 }
 
 void CLayer::Update(_float fTimeDelta)
@@ -85,11 +125,60 @@ HRESULT CLayer::RenderImGui(const wstring& strLayerTag)
 		ToggleVisible();
 	}
 	ImGui::SameLine();
-	if (ImGui::CollapsingHeader(WideToUtf8(strLayerTag.c_str()).c_str()))
+
+	bool bHeaderOpen = ImGui::CollapsingHeader(WideToUtf8(strLayerTag.c_str()).c_str());
+
+	// CollapsingHeader 아이템을 드롭 타겟으로 설정
+	if (ImGui::BeginDragDropTarget()) // 바로 이전에 그려진 아이템(CollapsingHeader)을 타겟으로 함
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GAMEOBJECT_PAYLOAD"))
+		{
+			IM_ASSERT(payload->DataSize == sizeof(_uint));
+			_uint draggedObjectID = *(const _uint*)payload->Data;
+
+			CGameInstance* pGameInstance = CGameInstance::Get_Instance();
+			if (pGameInstance)
+			{
+				// CObject_Manager를 통해 오브젝트를 현재 레이어로 이동시킵니다.
+				// 현재 CGameInstance에 CObject_Manager의 MoveGameObjectToLayer를 호출하는 인터페이스가 없다면,
+				// CGameInstance에 해당 함수를 추가하거나, CObject_Manager의 포인터를 직접 가져와야 합니다.
+				// 여기서는 CGameInstance에 해당 기능이 래핑되어 있다고 가정합니다.
+				// 예: HRESULT hr = pGameInstance->MoveGameObjectToLayer(draggedObjectID, pGameInstance->Get_CurrentLevelIndex(), strLayerTag);
+
+				// 임시로 CObject_Manager의 포인터를 CGameInstance에서 가져오는 방법 (GetObjectManager()가 있다고 가정)
+				// CObject_Manager* pObjectManager = pGameInstance->GetObjectManager();
+				// if(pObjectManager) {
+				//    pObjectManager->MoveGameObjectToLayer(draggedObjectID, pGameInstance->Get_CurrentLevelIndex(), strLayerTag);
+				// }
+				// else { // 직접 CObject_Manager에 접근할 수 없다면, CGameInstance에 인터페이스 함수를 만들어야 합니다.
+				//    MSG_BOX("Object Manager not accessible through GameInstance for moving GameObject.");
+				// }
+
+				// 가장 직접적인 방법은 CGameInstance에 Wrapper 함수를 만드는 것입니다.
+				// GameInstance.h / .cpp 에 다음 함수를 추가했다고 가정:
+				// HRESULT CGameInstance::MoveGameObjectToLayer(_uint iObjectID, _uint iTargetLevelIndex, const _wstring& strTargetLayerTag) {
+				//     return m_pObject_Manager->MoveGameObjectToLayer(iObjectID, iTargetLevelIndex, strTargetLayerTag);
+				// }
+				HRESULT hr = pGameInstance->Move_GameObjectToLayer(draggedObjectID, pGameInstance->Get_CurrentLevelIndex(), strLayerTag);
+				if (FAILED(hr))
+				{
+					MSG_BOX("Failed to move GameObject to new layer.");
+				}
+				// Set_Parent(nullptr)은 MoveGameObjectToLayer 내부에서 처리되거나,
+				// MoveGameObjectToLayer 호출 후 pGameInstance->Get_GameObjectById(draggedObjectID)->Set_Parent(nullptr)를 호출할 수 있습니다.
+				// 위 CObject_Manager::MoveGameObjectToLayer 구현에서는 Set_Parent(nullptr)가 이미 포함되어 있습니다.
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+
+	// ... (컨텍스트 메뉴 로직 및 기존 코드) ...
+
+	if (bHeaderOpen) // CollapsingHeader가 열려 있을 때만 내부 게임 오브젝트들을 그립니다.
 	{
 		for (auto& pGameObject : m_GameObjects)
 		{
-			if(!pGameObject->Get_Parent())
+			if (pGameObject && !pGameObject->Get_Parent()) // 부모가 없는 최상위 객체만 직접 그림
 				pGameObject->RenderImGuiObjects();
 		}
 	}
@@ -181,40 +270,6 @@ HRESULT CLayer::Render_ImGui_ComboBox(_uint& iGameObjectID)
 		ImGui::EndCombo();
 	}
 	return S_OK;
-	/*static _wstring selected_key = L"";
-	static _wstring selected_key_with_ID = L"";
-	ImGuiComboFlags flags = ImGuiComboFlags_HeightRegular;
-	if (ImGui::BeginCombo("Parent GameObject", WideToUtf8(selected_key_with_ID.c_str()).c_str(), flags))
-	{
-		static ImGuiTextFilter filter;
-		if (ImGui::IsWindowAppearing())
-		{
-			ImGui::SetKeyboardFocusHere();
-			filter.Clear();\
-		}
-		ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_F);
-		filter.Draw("##Filter", -FLT_MIN);
-
-
-		for (auto& pGameObject : m_GameObjects)
-		{
-			wstring szBuffer = pGameObject->Get_Name();
-			const _bool is_selected = (selected_key == szBuffer);
-			ImGui::PushID(pGameObject->Get_ID());
-			selected_key_with_ID = to_wstring(pGameObject->Get_ID()) + L" | " + pGameObject->Get_Name();
-			ImGui::Text("%d | ", pGameObject->Get_ID());
-			ImGui::SameLine();
-			if (filter.PassFilter(WideToUtf8(szBuffer.c_str()).c_str()))
-				if (ImGui::Selectable(WideToUtf8(szBuffer.c_str()).c_str(), is_selected))
-				{
-					selected_key = szBuffer;
-					iGameObjectID = pGameObject->Get_ID();
-				}
-			ImGui::PopID();
-		}
-		ImGui::EndCombo();
-	}
-	return S_OK;*/
 }
 
 HRESULT CLayer::ToggleVisible()
@@ -228,12 +283,27 @@ HRESULT CLayer::ToggleVisible()
 	return S_OK;
 }
 
+CGameObject* CLayer::Find_GameObjectById(_uint oId)
+{
+	auto& iter = find_if(m_GameObjects.begin(), m_GameObjects.end(), [&oId](CGameObject* pGameObject) {
+		if(pGameObject->Get_ID() == oId)
+			return true;
+		return false;
+		});
+	if (iter != m_GameObjects.end())
+		return *iter;
+	return nullptr;
+}
+
 CGameObject* CLayer::Find_GameObjectByName(const _wstring& strName)
 {
 	auto &iter = find_if(m_GameObjects.begin(), m_GameObjects.end(), [&strName](CGameObject* pGameObject) {
-		pGameObject->Get_Name();
-		return true;
+		if (pGameObject->Get_Name() == strName)
+			return true;
+		return false;
 		});
+	if (iter != m_GameObjects.end())
+		return *iter;
 	return nullptr;
 }
 

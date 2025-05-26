@@ -29,7 +29,6 @@ sampler TiledSampler = sampler_state
     filter = min_mag_mip_linear;
     AddressU = wrap;
     AddressV = wrap;
-
 };
 
 /* 정점의 기초적인 변환 (월드변환, 뷰, 투영변환) */ 

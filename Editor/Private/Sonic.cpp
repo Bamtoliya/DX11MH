@@ -129,7 +129,6 @@ void CSonic::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pSpinModelCom);
 	Safe_Release(m_pShaderCom);
-
 }
 #pragma endregion
 

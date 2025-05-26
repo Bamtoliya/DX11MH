@@ -25,14 +25,14 @@ public:
 
     // 렌더 타겟 클리어 함수
     HRESULT Clear(_float4* pClearColor = nullptr); // 인자가 없으면 멤버 변수의 클리어 색상 사용
-
+     
     // 렌더 타겟 바인딩 함수 (깊이 버퍼는 외부에서 받거나, 관리하지 않음)
     void Bind(ID3D11DepthStencilView* pDSV); // 메인 깊이 버퍼를 주로 사용
 
     HRESULT Resize(_uint iWinResizeX, _uint iWinResizeY);
 
-    // 특정 이름으로 디버그 객체 이름 설정 (선택 사항)
-    void Set_DebugName(const std::string& name);
+    //// 특정 이름으로 디버그 객체 이름 설정 (선택 사항)
+    //void Set_DebugName(const std::string& name);
 
 private:
     ID3D11Device*           m_pDevice = nullptr;

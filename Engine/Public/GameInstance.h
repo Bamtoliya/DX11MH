@@ -91,6 +91,10 @@ public:
 	CComponent* Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex = 0);
 	class CGameObject* Get_GameObjectById(_uint iId);
 
+	HRESULT Move_GameObjectToLayer(_uint iObjectID, _uint iTargetLevelIndex, const _wstring& strTargetLayerTag);
+	HRESULT Remove_GameObjectFromLayer(_uint iLevelIndex, const _wstring& strLayerTag, CGameObject* pGameObject);
+	HRESULT Remove_GameObjectFromLayer(_uint iLevelIndex, CGameObject* pGameObject); // GameObject의 현재 레이어를 찾아 제거
+
 	HRESULT Object_Manager_RenderImGui();
 	HRESULT Render_ImGuiLayerList(_uint iLevelIndex, _char* szLayerBuffer, _uint& iGameObjectID, _uint iBufferSize);
 

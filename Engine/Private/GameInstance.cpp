@@ -325,6 +325,20 @@ CGameObject* CGameInstance::Get_GameObjectById(_uint iId)
 	return m_pObject_Manager->Get_GameObjectById(iId);
 }
 
+HRESULT CGameInstance::Move_GameObjectToLayer(_uint iObjectID, _uint iTargetLevelIndex, const _wstring& strTargetLayerTag)
+{
+	return m_pObject_Manager->Move_GameObjectToLayer(iObjectID, iTargetLevelIndex, strTargetLayerTag);
+}
+HRESULT CGameInstance::Remove_GameObjectFromLayer(_uint iLevelIndex, const _wstring& strLayerTag, CGameObject* pGameObject)
+{
+	return m_pObject_Manager->Remove_GameObjectFromLayer(iLevelIndex, strLayerTag, pGameObject);
+
+}
+HRESULT CGameInstance::Remove_GameObjectFromLayer(_uint iLevelIndex, CGameObject* pGameObject)
+{
+	return m_pObject_Manager->Remove_GameObjectFromLayer(iLevelIndex, pGameObject);
+}
+
 HRESULT CGameInstance::Object_Manager_RenderImGui()
 {
 	return m_pObject_Manager->RenderImGui();

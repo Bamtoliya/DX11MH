@@ -26,7 +26,7 @@ HRESULT CTarget_Manager::Add_RenderTarget(const _wstring& strTargetTag, _uint iW
     if (nullptr == pRenderTarget)
         return E_FAIL;
 
-    pRenderTarget->Set_DebugName(WideToUtf8(strTargetTag.c_str())); // 디버그 이름 설정
+    //pRenderTarget->Set_DebugName(WideToUtf8(strTargetTag.c_str())); // 디버그 이름 설정
     m_RenderTargets.emplace(strTargetTag, pRenderTarget);
 
     return S_OK;

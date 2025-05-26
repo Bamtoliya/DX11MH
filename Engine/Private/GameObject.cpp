@@ -183,6 +183,25 @@ HRESULT CGameObject::RenderImGuiObjects()
 
 	bool node_open = ImGui::TreeNodeEx(WideToUtf8(m_szName).c_str(), node_flags);
 
+	char popup_id[64];
+	sprintf_s(popup_id, sizeof(popup_id), "GameObjectContextMenu_%u", m_oID);
+
+	if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+	{
+		ImGui::OpenPopup(popup_id);
+	}
+
+	if (ImGui::BeginPopup(popup_id))
+	{
+		if (ImGui::MenuItem("Delete"))
+		{
+			m_bToDestroy = true;
+			ImGui::CloseCurrentPopup(); // 메뉴 아이템 클릭 후 팝업 닫기
+		}
+		
+		ImGui::EndPopup();
+	}
+
 	// 드래그 소스 설정 (이 노드를 드래그할 수 있도록)
 	if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 	{
@@ -199,7 +218,7 @@ HRESULT CGameObject::RenderImGuiObjects()
 		{
 			IM_ASSERT(payload->DataSize == sizeof(_uint));
 			_uint payload_oID = *(const _uint*)payload->Data;
-
+			Set_Parent(m_pGameInstance->Get_GameObjectById(payload_oID));
 			// 여기에 드롭 로직 구현:
 			// 1. payload_oID를 가진 GameObject를 찾습니다.
 			// 2. 현재 노드(this)와 드롭된 노드(payload_oID)의 관계를 설정합니다.

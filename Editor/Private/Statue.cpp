@@ -116,7 +116,6 @@ HRESULT CStatue::Ready_Components()
 void CStatue::Free()
 {
 	__super::Free();
-
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 }

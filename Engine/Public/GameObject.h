@@ -63,9 +63,31 @@ public:
 	void Set_Picked(_bool bPicked) { m_bPicked = bPicked; }
 	_bool Get_Visible() { return m_bVisible; }
 	void Set_Visible(_bool bVisible) { m_bVisible = bVisible; }
+	_bool Get_Dead() { return m_bDead; }
+	void Set_Dead(_bool bDead = true) { m_bDead = bDead; }
+	_bool Get_Active() { return m_bActive; }
+	void Set_Active(_bool bActive) { m_bActive = bActive; }
+	_bool Get_IsDestroy() { return m_bToDestroy; }
+	void Set_IsDestroy(_bool bDestroy = true) { m_bToDestroy = bDestroy; }
 public:
 	CGameObject* Get_Parent() { return m_pParent; };
+	void Set_Parent(CGameObject* pParent) { 
+		if (m_pParent)
+		{
+			m_pParent->Remove_ChildByName(m_szName);
+			Safe_Release(m_pParent);
+		}
+		m_pParent = pParent;
+		if (m_pParent)
+		{
+			m_pParent->Add_Child(m_szName, this);
+			Safe_AddRef(m_pParent);
+		}
+			
+	}
 	HRESULT Add_Child(const _wstring& strChildTag, CGameObject* pChild);
+	HRESULT Add_ChildById(const _wstring& strChildTag, _uint oId);
+	HRESULT Remove_ChildByName(const _wstring& strChildTag) { Safe_Release(m_Childs[strChildTag]); m_Childs.erase(strChildTag); return S_OK; }
 public:
 
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr);
@@ -91,6 +113,9 @@ protected:
 	_tchar									m_szName[MAX_PATH] = {};
 protected:
 	_bool									m_bVisible = { true };	
+	_bool									m_bActive = { true };
+	_bool									m_bDead = { false };
+	_bool									m_bToDestroy = { false };
 #pragma endregion
 
 };

@@ -17,8 +17,6 @@ CGameObject_Camera::CGameObject_Camera(const CGameObject_Camera& Prototype)
 void CGameObject_Camera::Free()
 {
 	__super::Free();
-	Safe_Release(m_pCameraCom);
-
 }
 
 HRESULT CGameObject_Camera::Initialize_Prototype()

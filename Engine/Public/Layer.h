@@ -18,12 +18,16 @@ public:
 public:
 	HRESULT Add_GameObject(class CGameObject* pGameObject);
 	CGameObject* Get_GameObjectById(_uint iId);
+	HRESULT Remove_GameObjectById(_uint iId);
+	HRESULT Remove_GameObjectByObject(class CGameObject* pGameObject);
+	HRESULT Remove_GameObjectByName(const _wstring& strObjectTag);
 	void Priority_Update(_float fTimeDelta);
 	void Update(_float fTimeDelta);
 	void Late_Update(_float fTimeDelta);
 	HRESULT RenderImGui(const wstring& strLayerTag);
 	HRESULT Render_ImGui_ComboBox(_uint& iGameObjectID);
 	HRESULT ToggleVisible();
+	class CGameObject* Find_GameObjectById(_uint oId);
 	class CGameObject* Find_GameObjectByName(const _wstring& strName);
 public:
 	HRESULT Serialize(json& outJson);

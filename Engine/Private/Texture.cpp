@@ -13,8 +13,8 @@ CTexture::CTexture(const CTexture& Prototype)
 	, m_strTextureFilePath{ Prototype.m_strTextureFilePath }
 {
 
-	for (auto& pSRV : m_SRVs)
-		Safe_AddRef(pSRV);
+	/*for (auto& pSRV : m_SRVs)
+		Safe_AddRef(pSRV);*/
 }
 
 CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
