@@ -32,7 +32,7 @@ private:
 #pragma region Helper
 public:
 	CGameObject* Get_Target() { return m_pTarget; }
-	void Set_Target(CGameObject* pTarget) { m_pTarget = pTarget; Safe_AddRef(m_pTarget); }
+	void Set_Target(CGameObject* pTarget) { if (m_pTarget) Safe_Release(m_pTarget); m_pTarget = pTarget; Safe_AddRef(m_pTarget); }
 	void Clear_Target() { Safe_Release(m_pTarget); }
 #pragma endregion
 

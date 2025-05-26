@@ -86,6 +86,13 @@ public:
 
 #pragma region CAMERA_MANAGER
 	void Add_Camera(class CCamera* pCamera);
+	void Remove_Camera(class CCamera* pCamera);
+	void Remove_Camera(_uint iIndex);
+	void Set_Camera(class CCamera* pCamera);
+	void Set_Camera(_uint iIndex);
+	void Change_Camera(class CCamera* pCamera);
+	void Change_Camera(_uint iIndex);
+
 #pragma endregion
 
 

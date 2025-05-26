@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "GameInstance.h"
 
+_bool g_bCameraControl = false;
 
 #pragma region Constructor/Destructor
 CViewport_3D::CViewport_3D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

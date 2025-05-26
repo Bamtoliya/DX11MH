@@ -48,114 +48,6 @@
                             200.0
                         ]
                     },
-                    "Childs": [
-                        {
-                            "CBackGround": {
-                                "Active": true,
-                                "CShader": {
-                                    "Layout": "VTXPOSTEX",
-                                    "Tiling": true,
-                                    "TilingOffset": [
-                                        0.0,
-                                        0.0
-                                    ],
-                                    "TilingScale": [
-                                        1.0,
-                                        1.0
-                                    ]
-                                },
-                                "CTransform": {
-                                    "EulerRotation": [
-                                        0.0,
-                                        0.0,
-                                        0.0
-                                    ],
-                                    "IsRelative": false,
-                                    "Orientation": [
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0
-                                    ],
-                                    "Position": [
-                                        -100.0,
-                                        -100.0,
-                                        0.0
-                                    ],
-                                    "RotationPerSec": 0.0,
-                                    "Scale": [
-                                        1.0,
-                                        1.0,
-                                        1.0
-                                    ],
-                                    "SpeedPerSec": 0.0
-                                },
-                                "CVIBuffer_Rect": {
-                                    "Size": [
-                                        100.0,
-                                        100.0
-                                    ]
-                                },
-                                "LayerTag": "Layer_Background",
-                                "Name": "Temp1",
-                                "PrototypeTag": "Prototype_GameObject_BackGround",
-                                "Visible": true
-                            }
-                        },
-                        {
-                            "CBackGround": {
-                                "Active": true,
-                                "CShader": {
-                                    "Layout": "VTXPOSTEX",
-                                    "Tiling": true,
-                                    "TilingOffset": [
-                                        0.0,
-                                        0.0
-                                    ],
-                                    "TilingScale": [
-                                        1.0,
-                                        1.0
-                                    ]
-                                },
-                                "CTransform": {
-                                    "EulerRotation": [
-                                        0.0,
-                                        0.0,
-                                        0.0
-                                    ],
-                                    "IsRelative": false,
-                                    "Orientation": [
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0
-                                    ],
-                                    "Position": [
-                                        100.0,
-                                        100.0,
-                                        0.0
-                                    ],
-                                    "RotationPerSec": 0.0,
-                                    "Scale": [
-                                        1.0,
-                                        1.0,
-                                        1.0
-                                    ],
-                                    "SpeedPerSec": 0.0
-                                },
-                                "CVIBuffer_Rect": {
-                                    "Size": [
-                                        200.0,
-                                        200.0
-                                    ]
-                                },
-                                "LayerTag": "Layer_Background",
-                                "Name": "Temp2",
-                                "PrototypeTag": "Prototype_GameObject_BackGround",
-                                "Visible": true
-                            }
-                        }
-                    ],
                     "LayerTag": "Layer_Background",
                     "Name": "Background",
                     "PrototypeTag": "Prototype_GameObject_BackGround",
@@ -170,6 +62,7 @@
                 "CCamera_Free": {
                     "Active": true,
                     "CCamera": {
+                        "Active": true,
                         "bOrthographic": false,
                         "fFar": 500.0,
                         "fFovy": 60.0,
@@ -202,9 +95,9 @@
                         ],
                         "RotationPerSec": 1.0,
                         "Scale": [
-                            1.0000004768371582,
-                            1.0000004768371582,
-                            1.0000001192092896
+                            1.0,
+                            1.0,
+                            1.0
                         ],
                         "SpeedPerSec": 10.0
                     },

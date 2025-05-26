@@ -168,6 +168,9 @@
     <ClCompile Include="..\private\Sonic.cpp">
       <Filter>02.GameObject\04.Player\Sonic</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Camera_Follow.cpp">
+      <Filter>02.GameObject\02.Camera\Follow</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor.h">
@@ -259,6 +262,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\GameObjects.h">
       <Filter>02.GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Follow.h">
+      <Filter>02.GameObject\02.Camera\Follow</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

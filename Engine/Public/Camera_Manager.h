@@ -22,7 +22,14 @@ public:
 #pragma endregion
 public:
 	void Add_Camera(CCamera* pCamera);
-	void Set_Camera(_uint iIndex) { if (iIndex >= m_Cameras.size()) return; m_iCurIndex = iIndex; }
+	void Remove_Camera(CCamera* pCamera);
+	void Remove_Camera(_uint iIndex);
+	void Set_Camera(CCamera* pCamera);
+	void Set_Camera(_uint iIndex);
+	void Change_Camera(CCamera* pCamera);
+	void Change_Camera(_uint iIndex);
+	void InActiveCameras();
+	void Clear();
 
 public:
 	list<CCamera*>	m_Cameras = {};

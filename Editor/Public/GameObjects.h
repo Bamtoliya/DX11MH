@@ -3,6 +3,7 @@
 #include "BackGround.h"
 
 #include "Camera_Free.h"
+#include "Camera_Follow.h"
 
 #include "Monster.h"
 

@@ -83,6 +83,8 @@ HRESULT CCamera::Late_Initialize()
 
 void CCamera::Priority_Update(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
 	CTransform* pTransformCom = reinterpret_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
 
 	if (nullptr == pTransformCom)
@@ -93,15 +95,20 @@ void CCamera::Priority_Update(_float fTimeDelta)
 
 void CCamera::Update(_float fTimeDelta)
 {
-
+	if (!m_bActive)
+		return;
 }
 
 void CCamera::Late_Update(_float fTimeDelta)
 {
+	if (!m_bActive)
+		return;
 }
 
 HRESULT CCamera::Render()
 {
+	if (!m_bActive)
+		return S_OK;
 	return S_OK;
 }
 
@@ -143,6 +150,8 @@ void CCamera::LookAt(_fvector position)
 HRESULT CCamera::Serialize(json& outJson)
 {
 	json data;
+	if(FAILED(__super::Serialize(data)))
+		return E_FAIL;
 	data["bOrthographic"] = m_tDesc.bOrthographic;
 	data["fZoomPerSec"] = m_tDesc.fZoomPerSec;
 	data["fFovy"] = XMConvertToDegrees(m_tDesc.fFovy);

@@ -126,6 +126,10 @@ HRESULT CFollow_Camera::RenderImGui()
 		ImGui::InputFloat("SmoothFactor", &m_fSmoothFactor, 0.01f, 0.1f, "%.3f");
 		if (m_fSmoothFactor < 0.01f) m_fSmoothFactor = 0.01f;
 		if (m_fSmoothFactor > 1.f) m_fSmoothFactor = 1.f;
+		if (ImGui::Button("Set Target"))
+		{
+			//Set_Target()
+		}
 	}
 	ImGui::PopID();
 	return S_OK;

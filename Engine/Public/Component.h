@@ -28,6 +28,9 @@ public:
 	void Set_OwnerGameObject(class CGameObject* pGameObject); 
 #pragma endregion
 public:
+	_bool Get_Active() { return m_bActive; }
+	void Set_Active(_bool bActive = true) { m_bActive = bActive; }
+public:
 	virtual HRESULT RenderImGui() { return S_OK; }
 	virtual void* Dump() { return nullptr; }
 public:

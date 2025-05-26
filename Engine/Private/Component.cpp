@@ -17,6 +17,7 @@ CComponent::CComponent(const CComponent& Prototype)
 	, m_pContext		{ Prototype.m_pContext }
 	, m_pGameInstance	{ Prototype.m_pGameInstance }
 	, m_bIsCloned		{ true }
+	, m_bActive			{ Prototype.m_bActive }
 {
 	Safe_AddRef(m_pGameInstance);
 	Safe_AddRef(m_pDevice);

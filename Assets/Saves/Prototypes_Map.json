@@ -114,6 +114,9 @@
   "Prototype_GameObject_Camera_Free": {
     "Class": "CCamera_Free"
   },
+  "Prototype_GameObject_Camera_Follow": {
+    "Class": "CCamera_Follow"
+  },
   "Prototype_GameObject_Light_Direction": {
     "Class": "CLight_Direction"
   },

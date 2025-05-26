@@ -65,6 +65,7 @@ HRESULT CMainApp::Register_Class_Types()
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CStatue", CStatue::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CBackGround", CBackGround::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CCamera_Free", CCamera_Free::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CCamera_Follow", CCamera_Follow::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CMonster", CMonster::Create))) return E_FAIL;
 		
 	return S_OK;

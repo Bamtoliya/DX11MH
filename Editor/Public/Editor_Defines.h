@@ -13,7 +13,6 @@ namespace Editor
 {
 	const unsigned int			g_iWinSizeX = 1920;
 	const unsigned int			g_iWinSizeY = 1080;
-	
 }
 
 extern unsigned int iWinResizeX;

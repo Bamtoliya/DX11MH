@@ -45,6 +45,7 @@ HRESULT CGameObject_Camera::Initialize(void* pArg)
 	m_Components.emplace(g_strCameraTag, m_pCameraCom);
 	Safe_AddRef(m_pCameraCom);
 	m_pCameraCom->Late_Initialize();
+	m_pGameInstance->Add_Camera(m_pCameraCom);
 	return S_OK;
 }
 
@@ -65,5 +66,6 @@ HRESULT CGameObject_Camera::Initialize(simdjson::ondemand::object& jsonData)
 	m_Components.emplace(g_strCameraTag, m_pCameraCom);
 	Safe_AddRef(m_pCameraCom);
 	m_pCameraCom->Late_Initialize();
+	m_pGameInstance->Add_Camera(m_pCameraCom);
 	return S_OK;
 }

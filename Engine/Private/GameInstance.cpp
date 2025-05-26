@@ -73,6 +73,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	if (nullptr == m_pLight_Manager)
 		return E_FAIL;
 
+	m_pCamera_Manager = CCamera_Manager::Create();
+	if (nullptr == m_pCamera_Manager)
+		return E_FAIL;
+
 #pragma endregion
 
 	m_pRenderer = CRenderer::Create(*ppDeviceOut, *ppContextOut);
@@ -92,10 +96,13 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 {
 	m_pLight_Manager->Update();
 	m_pInput_Device->Update(fTimeDelta);
+	m_pCamera_Manager->Priority_Update(fTimeDelta);
 	m_pObject_Manager->Priority_Update(fTimeDelta);
 	m_pPipeLine->Update();
 	m_pObject_Manager->Update(fTimeDelta);	
+	m_pCamera_Manager->Update(fTimeDelta);
 	m_pObject_Manager->Late_Update(fTimeDelta);
+	m_pCamera_Manager->Late_Update(fTimeDelta);
 	m_pPicking_System->Update(fTimeDelta);
 
 	if (m_pMyImGui_Manager)
@@ -143,6 +150,7 @@ void CGameInstance::Clear(_uint iLevelIndex)
 	/* 특정 레벨의 자원을 삭제한다. */
 	
 	/* 특정 레벨의 객체을 삭제한다. */
+	m_pCamera_Manager->Clear();
 	m_pPicking_System->Clear();
 	m_pObject_Manager->Clear(iLevelIndex);
 	m_pSound_Manager->Stop_All_Event();
@@ -309,6 +317,42 @@ void CGameInstance::Add_Camera(CCamera* pCamera)
 {
 	if (m_pCamera_Manager)
 		m_pCamera_Manager->Add_Camera(pCamera);
+}
+
+void CGameInstance::Remove_Camera(CCamera* pCamera)
+{
+	if (m_pCamera_Manager)
+		m_pCamera_Manager->Remove_Camera(pCamera);
+}
+
+void CGameInstance::Remove_Camera(_uint iIndex)
+{
+	if (m_pCamera_Manager)
+		m_pCamera_Manager->Remove_Camera(iIndex);
+}
+
+void CGameInstance::Set_Camera(CCamera* pCamera)
+{
+	if (m_pCamera_Manager)
+		m_pCamera_Manager->Set_Camera(pCamera);
+}
+
+void CGameInstance::Set_Camera(_uint iIndex)
+{
+	if (m_pCamera_Manager)
+		m_pCamera_Manager->Set_Camera(iIndex);
+}
+
+void CGameInstance::Change_Camera(CCamera* pCamera)
+{
+	if (m_pCamera_Manager)
+		m_pCamera_Manager->Change_Camera(pCamera);
+}
+
+void CGameInstance::Change_Camera(_uint iIndex)
+{
+	if (m_pCamera_Manager)
+		m_pCamera_Manager->Change_Camera(iIndex);
 }
 #pragma endregion
 

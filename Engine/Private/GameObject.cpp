@@ -290,7 +290,7 @@ HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& s
 
 HRESULT CGameObject::Serialize(json& data)
 {
-	data["Name"] = m_szName;
+	data["Name"] = WideToUtf8(m_szName).c_str();
 	data["Visible"] = m_bVisible;
 	data["Active"] = m_bActive;
 	data["LayerTag"] = WideToUtf8(m_strLayerTag.c_str());
