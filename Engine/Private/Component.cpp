@@ -79,5 +79,6 @@ HRESULT CComponent::Serialize(json& data)
 
 HRESULT CComponent::Deserialize(simdjson::ondemand::object& jsonData)
 {
+	jsonData["Active"].get_bool().get(m_bActive);
 	return S_OK;
 }

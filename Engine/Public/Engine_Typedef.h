@@ -37,5 +37,7 @@ namespace Engine
 	typedef XMMATRIX					_matrix;
 	typedef FXMMATRIX					_fmatrix;
 	typedef CXMMATRIX					_cmatrix;
+
+	typedef void(*PrototypeLoadProgressCallback)(void* pUserData, _uint iLoadedCount, _uint iTotalInJson);
 	
 }

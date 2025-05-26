@@ -928,6 +928,8 @@ void CTransform::Turn(_fvector vAxis, _float fTimeDelta)
 	Set_State(STATE::RIGHT, XMVector3TransformNormal(Get_State(STATE::RIGHT), RotationMatrix));
 	Set_State(STATE::UP, XMVector3TransformNormal(Get_State(STATE::UP), RotationMatrix));
 	Set_State(STATE::LOOK, XMVector3TransformNormal(Get_State(STATE::LOOK), RotationMatrix));
+
+	SynchronizeRotationRepresentations();
 }
 
 void CTransform::Rotation(_fvector vAxis, _float fRadian)
@@ -937,6 +939,8 @@ void CTransform::Rotation(_fvector vAxis, _float fRadian)
 	Set_State(STATE::RIGHT, XMVector3TransformNormal(XMVectorSet(1.f, 0.f, 0.f, 0.f) * Get_Scale(STATE::RIGHT), RotationMatrix));
 	Set_State(STATE::UP, XMVector3TransformNormal(XMVectorSet(0.f, 1.f, 0.f, 0.f) * Get_Scale(STATE::UP), RotationMatrix));
 	Set_State(STATE::LOOK, XMVector3TransformNormal(XMVectorSet(0.f, 0.f, 1.f, 0.f) * Get_Scale(STATE::LOOK), RotationMatrix));
+
+	SynchronizeRotationRepresentations();
 }
 
 /* This is NOT an additive rotation like the "Turn()" function above.
@@ -1087,3 +1091,43 @@ void CTransform::Turn_Quaternion(_fvector vAxis, _float fTimeDelta)
 	Rotate_Quaternion_Accumulate(vAxis, fRadian);
 }
 #pragma endregion
+
+// CTransform.cpp 파일에 다음 메서드 구현 추가 (이미 있다면 생략)
+void CTransform::SynchronizeRotationRepresentations()
+{
+	// 현재 월드 행렬로부터 스케일, 회전(쿼터니언), 위치를 분해합니다.
+	_vector scaleVec, rotationQuatVec, translationVec;
+	// Get_WorldMatrix()를 사용하여 부모 변환이 적용된 최종 월드 행렬을 가져올 수도 있지만,
+	// 여기서는 m_tDesc.WorldMatrix (로컬 월드 행렬)을 기준으로 동기화합니다.
+	// 만약 Get_WorldMatrix()의 결과를 사용해야 한다면, 해당 행렬로 XMMatrixDecompose를 호출해야 합니다.
+	// 일반적으로 로컬 변환의 회전 표현을 동기화하는 것이 목적이므로 m_tDesc.WorldMatrix를 사용합니다.
+	if (XMMatrixDecompose(&scaleVec, &rotationQuatVec, &translationVec, XMLoadFloat4x4(&m_tDesc.WorldMatrix)))
+	{
+		// 분해된 회전 쿼터니언으로 m_tDesc.qOrientation 업데이트
+		XMStoreFloat4(&m_tDesc.qOrientation, XMQuaternionNormalize(rotationQuatVec));
+
+		// 업데이트된 쿼터니언으로부터 오일러 각(라디안)을 계산하여 업데이트합니다.
+		// DirectX::SimpleMath::Quaternion::ToEuler()는 Yaw (Y축), Pitch (X축), Roll (Z축) 순서로 라디안 값을 반환합니다.
+		DirectX::SimpleMath::Quaternion smQuat(rotationQuatVec); // XMVECTOR를 SimpleMath::Quaternion으로 변환
+		DirectX::SimpleMath::Vector3 eulerAnglesRad = smQuat.ToEuler();
+
+		// CTransform::Set_WorldMatrix 및 RenderImGui에서의 규칙과 일관되게 오일러 각을 저장합니다.
+		// m_tDesc.fCurRotationX : Yaw (Y축 회전값) - eulerAnglesRad.x
+		// m_tDesc.fCurRotationY : Pitch (X축 회전값) - eulerAnglesRad.y
+		// m_tDesc.fCurRotationZ : Roll (Z축 회전값) - eulerAnglesRad.z
+		// 이 매핑은 Set_WorldMatrix 및 RenderImGui의 변환 로직과 일치해야 합니다.
+		// 현재 파일의 Set_WorldMatrix에서는 다음과 같이 사용하고 있습니다:
+		// m_tDesc.fCurRotationX = eulerAnglesRad.x; // Yaw
+		// m_tDesc.fCurRotationY = eulerAnglesRad.y; // Pitch
+		// m_tDesc.fCurRotationZ = eulerAnglesRad.z; // Roll
+		// 이 규칙을 따릅니다.
+		m_tDesc.fCurRotationX = eulerAnglesRad.x;
+		m_tDesc.fCurRotationY = eulerAnglesRad.y;
+		m_tDesc.fCurRotationZ = eulerAnglesRad.z;
+	}
+	else
+	{
+		// 행렬 분해 실패 시 (예: 행렬이 비정규적 스케일링/전단 포함)
+		OutputDebugStringA("CTransform::SynchronizeRotationRepresentations - XMMatrixDecompose failed.\n");
+	}
+}

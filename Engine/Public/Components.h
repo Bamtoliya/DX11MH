@@ -6,6 +6,7 @@
 
 #pragma region Camera
 #include "Camera.h"
+#include "Follow_Camera.h"
 #include "MyCamera.h"
 #pragma endregion
 
@@ -28,6 +29,15 @@
 #pragma region MyRegion
 //#include ""
 #pragma endregion
+
+#pragma region RigidBody
+#include "RigidBody.h"
+#pragma endregion
+
+#pragma region Controller
+#include "Controller.h"
+#pragma endregion
+
 
 
 #pragma region Collider
@@ -52,4 +62,3 @@
 #pragma region Model
 #include "Model.h"
 #pragma endregion
-

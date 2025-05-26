@@ -316,6 +316,74 @@ HRESULT CModel::Prototype_Serialize(json& outJson)
 
 HRESULT CModel::Prototype_Deserialize(simdjson::ondemand::object& jsonData)
 {
+	string_view filePath_sv;
+	if (jsonData["ModelFilePath"].get_string().get(filePath_sv)) {
+		return E_FAIL;
+	}
+	strcpy_s(m_szModelFilePath, string(filePath_sv).c_str()); // .c_str() 추가
+
+	// Type 읽기
+	string_view type_sv;
+	if (jsonData["Type"].get_string().get(type_sv)) {
+		// 오류 처리
+	}
+	string typeStr = string(type_sv);
+	if (typeStr == "ANIM") {
+		m_eType = MODEL::ANIM;
+	}
+	else if (typeStr == "NONANIM") {
+		m_eType = MODEL::NONANIM;
+	}
+	else {
+		// 알 수 없는 타입에 대한 처리
+		return E_FAIL;
+	}
+
+	// PreTransformedMatrix 읽기
+	simdjson::ondemand::array matrixJsonArray;
+	if (jsonData["PreTransformedMatrix"].get_array().get(matrixJsonArray)) {
+		// 오류 처리
+	}
+
+	_float matrixValues[16];
+	size_t index = 0;
+	for (auto value : matrixJsonArray) {
+		if (index < 16) {
+			double val_double; // simdjson은 double로 숫자 값을 가져옵니다.
+			if (value.get_double().get(val_double)) {
+				// 오류 처리
+			}
+			matrixValues[index++] = static_cast<_float>(val_double);
+		}
+		else {
+			// 배열 크기 초과 오류 처리
+			break;
+		}
+	}
+
+	if (index != 16) {
+		// 행렬 값 개수 부족 오류 처리
+		return E_FAIL;
+	}
+
+	// XMFLOAT4X4로 변환 (Row-major 순서로 가정)
+	// JSON에 저장된 순서가 Column-major라면 그에 맞게 수정해야 합니다.
+	// 현재 직렬화 코드에서는 행 우선으로 저장하고 있습니다.
+	m_PreTransformMatrix = XMFLOAT4X4(
+		matrixValues[0], matrixValues[1], matrixValues[2], matrixValues[3],
+		matrixValues[4], matrixValues[5], matrixValues[6], matrixValues[7],
+		matrixValues[8], matrixValues[9], matrixValues[10], matrixValues[11],
+		matrixValues[12], matrixValues[13], matrixValues[14], matrixValues[15]
+	);
+
+	// JSON에서 읽어온 정보로 모델 초기화
+	// Initialize_Prototype을 호출하여 모델 데이터를 로드합니다.
+	// Initialize_Prototype은 이미 m_szModelFilePath, m_eType, m_PreTransformMatrix를 사용합니다.
+	if (FAILED(Initialize_Prototype(m_eType, m_szModelFilePath, XMLoadFloat4x4(&m_PreTransformMatrix))))
+	{
+		MSG_BOX("Failed to Initialize_Prototype in Prototype_Deserialize");
+		return E_FAIL;
+	}
 
 	return S_OK;
 }

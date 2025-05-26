@@ -1,25 +1,36 @@
-﻿#pragma once
+﻿
+#pragma once
 #include "Component.h"
+
 NS_BEGIN(Engine)
 class ENGINE_DLL CRigidBody : public CComponent
 {
-	CRigidBody();
+#pragma region Constructor/Destructor
+protected:
+	CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CRigidBody(const CRigidBody& Prototype);
 	virtual ~CRigidBody() = default;
-
-	HRESULT Initialize_Prototype();
-	HRESULT Initialize(void* pArg);
-	HRESULT Initialize(simdjson::ondemand::object& jsonData);
-
-	static CComponent* Create();
-	CComponent* Clone(void* pArg);
-
 public:
-	virtual HRESULT Serialize(json& outJson) override;
+	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize(void* pArg) override;
+	virtual HRESULT Late_Initialize();
+public:
+	static CRigidBody* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	virtual CRigidBody* Clone(void* pArg)  override;
+	virtual void Free() override;
+public:
+	virtual HRESULT Serialize(json& data) override;
 	virtual HRESULT Deserialize(simdjson::ondemand::object& jsonData) override;
-	virtual HRESULT Prototype_Serialize(json& outJson) override;
-	virtual HRESULT Prototype_Deserialize(simdjson::ondemand::object& jsonData) override;
+#pragma endregion
 
-
-
+#pragma region Loops
+public:
+	virtual void Priority_Update(_float fTimeDelta)  override;
+	virtual void Update(_float fTimeDelta)  override;
+	virtual void Late_Update(_float fTimeDelta)  override;
+	virtual HRESULT Render() override;
+#pragma endregion
+public:
+	virtual HRESULT RenderImGui() override;
 };
 NS_END

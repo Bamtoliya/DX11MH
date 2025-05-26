@@ -341,9 +341,6 @@
     <ClInclude Include="..\public\Channel.h">
       <Filter>01.Utility\04.Components\Model\Animation\Channel</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Camera.h">
-      <Filter>01.Utility\04.Components\Camera</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Components.h">
       <Filter>01.Utility\04.Components</Filter>
     </ClInclude>
@@ -394,6 +391,18 @@
     </ClInclude>
     <ClInclude Include="..\..\External Libraries\json.hpp">
       <Filter>External Libraries\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Controller.h">
+      <Filter>01.Utility\04.Components\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera.h">
+      <Filter>01.Utility\04.Components\Camera\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Follow_Camera.h">
+      <Filter>01.Utility\04.Components\Camera\Follow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Collider.h">
+      <Filter>01.Utility\04.Components\Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -689,9 +698,6 @@
     <ClCompile Include="..\private\Channel.cpp">
       <Filter>01.Utility\04.Components\Model\Animation\Channel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Camera.cpp">
-      <Filter>01.Utility\04.Components\Camera</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Light.cpp">
       <Filter>01.Utility\07.Lights</Filter>
     </ClCompile>
@@ -727,6 +733,18 @@
     </ClCompile>
     <ClCompile Include="..\private\Json_Loader.cpp">
       <Filter>01.Utility\97.JsonLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Controller.cpp">
+      <Filter>01.Utility\04.Components\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera.cpp">
+      <Filter>01.Utility\04.Components\Camera\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Follow_Camera.cpp">
+      <Filter>01.Utility\04.Components\Camera\Follow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Collider.cpp">
+      <Filter>01.Utility\04.Components\Collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -981,6 +999,15 @@
     </Filter>
     <Filter Include="01.Utility\97.JsonLoader">
       <UniqueIdentifier>{6bc0fa27-9f59-4e5e-a7b0-290a324c29bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Camera\Base">
+      <UniqueIdentifier>{418187bd-05b0-4470-9997-124ace574b43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Camera\Follow">
+      <UniqueIdentifier>{c7a5694d-079a-4b1d-a53a-fd7bbbcb6c14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Collider">
+      <UniqueIdentifier>{ff2faa67-f934-4ffa-9ce9-e90d79483262}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

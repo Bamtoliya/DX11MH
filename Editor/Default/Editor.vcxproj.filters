@@ -100,6 +100,9 @@
     <Filter Include="02.GameObject\04.Player\Sonic">
       <UniqueIdentifier>{8f2d34af-13d2-4586-b82c-99406788e13d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\02.Camera\Follow">
+      <UniqueIdentifier>{5592549b-bcad-4af8-9463-c1d82480c9c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">

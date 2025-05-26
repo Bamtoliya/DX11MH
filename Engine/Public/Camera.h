@@ -60,6 +60,7 @@ public:
 	void ZoomIn(_float fTimeDelta);
 	void ZoomOut(_float fTimeDelta);
 	void ResetZoom(_float fTimeDelta);
+	void LookAt(_fvector position);
 #pragma endregion
 
 public:

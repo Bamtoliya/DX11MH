@@ -97,24 +97,20 @@ HRESULT CLight_Direction::Ready_Components()
 	tDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	tDesc.vSpecular = _float4(1.f, 1.f, 1.f, 1.f);
 	m_pLightCom->Initialize(&tDesc);
-	Safe_AddRef(m_pLightCom);
 	/* For.Com_Texture */
 	m_pTextureCom = CTexture::Create(m_pDevice, m_pContext, L"../../Assets/Textures/Light.png", 1);
 	m_Components.emplace(L"Com_Texture", m_pTextureCom);
 	m_pTextureCom->Set_OwnerGameObject(this);
-	Safe_AddRef(m_pTextureCom);
 	/* For.Com_VIBuffer */
 	m_pVIBufferCom = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	m_Components.emplace(L"Com_VIBuffer", m_pVIBufferCom);
 	m_pVIBufferCom->Set_OwnerGameObject(this);
-	Safe_AddRef(m_pVIBufferCom);
 
 	//여기서 만드는게아니라 나중엔 프로토타입에서 찾아서 대체해주기
 	/* For.Com_Shader */
 	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, L"../../Assets/ShaderFiles/Shader_VtxPosTex.hlsl", VTXPOSTEX::Elements, VTXPOSTEX::iNumElements, "VTXPOSTEX");
 	m_Components.emplace(L"Com_Shader", m_pShaderCom);
 	m_pShaderCom->Set_OwnerGameObject(this);
-	Safe_AddRef(m_pShaderCom);
 	/*if (FAILED(__super::Add_Component(ENUM_CLASS(0), TEXT("Prototype_Component_Shader_Cube"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;*/

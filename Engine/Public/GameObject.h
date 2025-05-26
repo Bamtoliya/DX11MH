@@ -116,6 +116,9 @@ protected:
 	map<const _wstring, class CGameObject*> m_Childs		= {};
 	_wstring 								m_strLayerTag = {};
 	_tchar									m_szName[MAX_PATH] = {};
+
+protected:
+	list<_wstring>					m_Tags = {};
 protected:
 	_bool									m_bVisible = { true };	
 	_bool									m_bActive = { true };

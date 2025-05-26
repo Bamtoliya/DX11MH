@@ -73,7 +73,6 @@ HRESULT CCamera::Late_Initialize()
 		pTransformCom->Set_State(STATE::POSITION, XMVectorSet(0.f, 20.f, -15.f, 1.0f));
 	}
 
-	//
 	pTransformCom->LookAt(XMLoadFloat4(&m_tDesc.vAt));
 
 	return S_OK;
@@ -88,7 +87,7 @@ void CCamera::Priority_Update(_float fTimeDelta)
 
 	if (nullptr == pTransformCom)
 		return;
-
+	
 	Bind_Matrices(pTransformCom);
 }
 
@@ -127,6 +126,12 @@ void CCamera::ZoomOut(_float fTimeDelta)
 void CCamera::ResetZoom(_float fTimeDelta)
 {
 	m_tDesc.fFovy = m_tDesc.fDefaultFovy;
+}
+
+void CCamera::LookAt(_fvector position)
+{
+	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+	pTransform->LookAt(position);
 }
 
 #pragma endregion

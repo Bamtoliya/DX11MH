@@ -88,15 +88,15 @@ HRESULT CGameObject_Skybox::Ready_Components()
 	/* For.Com_Texture */
 	m_pTextureCom = CTexture::Create(m_pDevice, m_pContext, L"../../Assets/Textures/Skybox/XYZ.dds", 1);
 	m_Components.emplace(L"Com_Texture", m_pTextureCom);
-	Safe_AddRef(m_pTextureCom);
+	//Safe_AddRef(m_pTextureCom);
 	/* For.Com_VIBuffer */
 	m_pVIBufferCom = CVIBuffer_Cube::Create(m_pDevice, m_pContext);
 	m_Components.emplace(L"Com_VIBuffer", m_pVIBufferCom);
-	Safe_AddRef(m_pVIBufferCom);
+	//Safe_AddRef(m_pVIBufferCom);
 	/* For.Com_Shader */
 	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, L"../../Assets/ShaderFiles/Shader_VtxCubeTex.hlsl", VTXCUBETEX::Elements, VTXCUBETEX::iNumElements, "VTXCUBETEX");
 	m_Components.emplace(L"Com_Shader", m_pShaderCom);
-	Safe_AddRef(m_pShaderCom);
+	//Safe_AddRef(m_pShaderCom);
 	/*if (FAILED(__super::Add_Component(ENUM_CLASS(0), TEXT("Prototype_Component_Shader_Cube"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;*/
@@ -107,9 +107,9 @@ HRESULT CGameObject_Skybox::Ready_Components()
 void CGameObject_Skybox::Free()
 {
 	__super::Free();
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pVIBufferCom);
+	//Safe_Release(m_pShaderCom);
+	//Safe_Release(m_pTextureCom);
+	//Safe_Release(m_pVIBufferCom);
 }
 
 #pragma endregion

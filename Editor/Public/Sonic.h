@@ -4,8 +4,9 @@
 #include "GameObject.h"
 
 NS_BEGIN(Engine)
-class CShader;
 class CModel;
+class CShader;
+class CController;
 NS_END
 
 NS_BEGIN(Editor)
@@ -632,6 +633,7 @@ private:
 	CShader* m_pShaderCom = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 	CModel* m_pSpinModelCom = { nullptr };
+	CController* m_pControllerCom = { nullptr };
 #pragma endregion
 
 	

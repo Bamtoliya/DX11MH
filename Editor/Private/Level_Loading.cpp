@@ -61,8 +61,16 @@ void CLevel_Loading::Update(_float fTimeDelta)
 
 HRESULT CLevel_Loading::Render()
 {
-	m_pLoader->Output_LoadingText();
-
+	if (true == m_pLoader->isFinished())
+	{
+		m_pLoader->Output_LoadingText();
+	}
+	else
+	{
+		_uint progressPercnetage = static_cast<_uint>(m_pLoader->Get_LoadingProgress());
+		wsprintf(m_szLoadingText, L"로딩중 (%d%%)", progressPercnetage);
+		SetWindowText(g_hWnd, m_szLoadingText);
+	}
 	return S_OK;
 }
 

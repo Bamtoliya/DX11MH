@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Base.h"
 NS_BEGIN(Engine)
+
+
 class CGameInstance;
 class ENGINE_DLL CJson_Loader final : public CBase
 {
@@ -36,7 +38,7 @@ private:
 
 public:
 	HRESULT Register_Creator_Function(const string& className, PrototypeCreatorFunc creatorFunc);
-	HRESULT Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath);
+	HRESULT Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath, PrototypeLoadProgressCallback pCallback, void* pUserData);
 	HRESULT Load_GameObject(_uint iLevelIndex, class CGameObject* pgameObject, simdjson::ondemand::object& jsonData);
 	HRESULT Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath);
 	

@@ -267,6 +267,24 @@ HRESULT CVIBuffer_Terrain::Prototype_Serialize(json& outJson)
 
 HRESULT CVIBuffer_Terrain::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 {
+	string_view heightMapPath_sv;
+	auto error = jsonData["HeightMapFilePath"].get_string().get(heightMapPath_sv);
+	if (error) {
+		return E_FAIL; // 또는 적절한 오류 코드 반환
+	}
+
+	// string_view (UTF-8)를 std::string으로 변환
+	string heightMapPath_utf8 = string(heightMapPath_sv);
+
+	// std::string (UTF-8)을 std::wstring으로 변환 (Utg8ToWide 함수 필요)
+	m_strHeightMapFilePath = Utf8ToWide(heightMapPath_utf8.c_str());
+
+	// 읽어온 높이맵 파일 경로로 프로토타입 초기화
+	if (FAILED(Initialize_Prototype(m_strHeightMapFilePath.c_str())))
+	{
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 

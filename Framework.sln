@@ -20,6 +20,20 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Editor", "Editor\Default\Ed
 		{E6549A29-7A97-4C29-AF47-47CAC692EFB5} = {E6549A29-7A97-4C29-AF47-47CAC692EFB5}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Saves", "Saves", "{7F87CCC8-780F-430F-BD6B-F00BA3926528}"
+	ProjectSection(SolutionItems) = preProject
+		Assets\Saves\GameObjects_Map.json = Assets\Saves\GameObjects_Map.json
+		Assets\Saves\MapLevel.json = Assets\Saves\MapLevel.json
+		Assets\Saves\Map_Test.json = Assets\Saves\Map_Test.json
+		Assets\Saves\Prototypes_Map.json = Assets\Saves\Prototypes_Map.json
+		Assets\Saves\Prototypes_Static.json = Assets\Saves\Prototypes_Static.json
+		Assets\Saves\Prototypes_UI.json = Assets\Saves\Prototypes_UI.json
+		Assets\Saves\Temp1.json = Assets\Saves\Temp1.json
+		Assets\Saves\Test1.json = Assets\Saves\Test1.json
+		Assets\Saves\Test2.json = Assets\Saves\Test2.json
+		Assets\Saves\UILevel.json = Assets\Saves\UILevel.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Editor|x64 = Debug_Editor|x64

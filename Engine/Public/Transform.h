@@ -125,6 +125,9 @@ public:
 public:
 	void RoamingTurn(_matrix WorldMatrix, _float fRadian);
 #pragma endregion
+
+private:
+	void SynchronizeRotationRepresentations();
 	
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShader, const _char* pConstantName);

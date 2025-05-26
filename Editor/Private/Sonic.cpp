@@ -113,6 +113,12 @@ HRESULT CSonic::Ready_Components()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
+	/* For.Com_Shader */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Controller"),
+		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pControllerCom))))
+		return E_FAIL;
+	
+
 	/* For.Com_Model */
 	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_SonicSpin"),
 	//	TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
@@ -129,6 +135,7 @@ void CSonic::Free()
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pSpinModelCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pControllerCom);
 }
 #pragma endregion
 
@@ -168,6 +175,7 @@ void CSonic::Priority_Update(_float fTimeDelta)
 
 void CSonic::Update(_float fTimeDelta)
 {
+	m_pControllerCom->Update(fTimeDelta);
 	if (m_pModelCom->Play_Animation(fTimeDelta))
 		int a = 10;
 }

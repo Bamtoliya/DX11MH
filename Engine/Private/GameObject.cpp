@@ -310,7 +310,6 @@ HRESULT CGameObject::Serialize(json& data)
 	return S_OK;
 }
 
-
 HRESULT CGameObject::Deserialize(simdjson::ondemand::object& jsonData)
 {
 	string_view name_sv;

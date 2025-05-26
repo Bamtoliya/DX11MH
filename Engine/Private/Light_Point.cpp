@@ -111,7 +111,6 @@ HRESULT CLight_Point::Ready_Components()
 	m_Components.emplace(L"Com_VIBuffer", m_pVIBufferCom);
 	m_pVIBufferCom->Set_OwnerGameObject(this);
 	Safe_AddRef(m_pVIBufferCom);
-
 	//여기서 만드는게아니라 나중엔 프로토타입에서 찾아서 대체해주기
 	/* For.Com_Shader */
 	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, L"../../Assets/ShaderFiles/Shader_VtxPosTex.hlsl", VTXPOSTEX::Elements, VTXPOSTEX::iNumElements, "VTXPOSTEX");

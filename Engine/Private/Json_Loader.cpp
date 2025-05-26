@@ -59,14 +59,25 @@ void CJson_Loader::RegisterBaseCreator(const std::string& className) {
 HRESULT CJson_Loader::Initialize() {
 
 #pragma region Components
+
+#pragma region Camera
     RegisterBaseCreator<CCamera>("CCamera");
+    RegisterBaseCreator<CFollow_Camera>("CFollow_Camera");
+#pragma endregion
+    
     RegisterBaseCreator<CLight>("CLight");
     RegisterBaseCreator<CModel>("CModel");
     RegisterBaseCreator<CShader>("CShader");
     RegisterBaseCreator<CTexture>("CTexture");
+    //RegisterBaseCreator<CCollider>("CColider");
+    //RegisterBaseCreator<CRigidBody>("CRigidBody");
+
+#pragma region VIBuffer
     RegisterBaseCreator<CVIBuffer_Rect>("CVIBuffer_Rect");
     RegisterBaseCreator<CVIBuffer_Rect>("CVIBuffer_Cube");
     RegisterBaseCreator<CVIBuffer_Terrain>("CVIBuffer_Terrain");
+#pragma endregion
+    
 #pragma endregion
 
 #pragma region Base_GameObjects
@@ -88,7 +99,7 @@ HRESULT CJson_Loader::Register_Creator_Function(const string& className, Prototy
     return S_OK;
 }
 
-HRESULT CJson_Loader::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath)
+HRESULT CJson_Loader::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath, PrototypeLoadProgressCallback pCallback, void* pUserData)
 {
     parser parser;
     simdjson::padded_string json_file_data;
@@ -109,6 +120,11 @@ HRESULT CJson_Loader::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath
         MSG_BOX("JSON root is not an object.");
         return E_FAIL;
     }
+
+    _uint iLoadedCountInJson = 0;
+    _uint iTotalPrototypesInJson = 0; // JSON 내 전체 프로토타입 수를 미리 계산 (선택적)
+
+    iTotalPrototypesInJson = static_cast<_uint>(root_obj.count_fields());
 
     for (simdjson::ondemand::field field : root_obj) {
         std::string_view tag_sv = field.escaped_key();
@@ -159,6 +175,12 @@ HRESULT CJson_Loader::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath
             //MSG_BOX(msg.c_str());
             Safe_Release(pPrototype); // Add_Prototype 실패 시 여기서 해제
             continue;
+        }
+
+        iLoadedCountInJson++;
+        if (pCallback) {
+            // 콜백 함수 호출 (iTotalPrototypesInJson은 선택적으로 전달)
+            pCallback(pUserData, iLoadedCountInJson, iTotalPrototypesInJson);
         }
         // 성공 시 pPrototype은 Prototype_Manager가 관리하므로 여기서 Safe_Release(pPrototype)를 호출하지 않습니다.
     }
