@@ -22,7 +22,12 @@ CALL "$(SolutionDir)\UpdateFMODLib.bat"
 
 fmod 사용,
 
+simdjson 사용,
+json.hpp 사용,
+
 imGui 사용,
 imGizmo 사용,
+imFileDialog 사용,
+imToggle 사용,
 유니티 빌드 사용,
 다중프로세서 컴파일 사용중,

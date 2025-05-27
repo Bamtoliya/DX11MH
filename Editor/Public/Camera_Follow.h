@@ -31,7 +31,7 @@ public:
 #pragma endregion
 #pragma region Variables
 private:
-	_float				m_fSensor{};
+	_float				m_fSensor = { 0.1f };
 	_bool				m_bChanged = { false };
 #pragma endregion
 #pragma region Save&Load

@@ -1,6 +1,7 @@
 #include "Camera_Follow.h"
 #include "GameInstance.h"
 #include "GameObject.h"
+#include "Follow_Camera.h"
 
 #pragma region Constructor/Destructor
 CCamera_Follow::CCamera_Follow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -11,6 +12,7 @@ CCamera_Follow::CCamera_Follow(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CCamera_Follow::CCamera_Follow(const CCamera_Follow& Prototype)
 	: CGameObject_Camera{ Prototype }
+	, m_fSensor{ Prototype.m_fSensor } // m_fSensor 복사
 {
 
 }
@@ -85,6 +87,10 @@ HRESULT CCamera_Follow::Initialize(void* pArg)
 		m_pCameraCom = nullptr;
 	}
 
+	CAMERA_DESC* pDesc = static_cast<CAMERA_DESC*>(&Desc);
+
+	CCamera::CAMERA_COM_DESC* cameraDesc = static_cast<CCamera::CAMERA_COM_DESC*>(pDesc);
+
 	// 2. 새로운 CFollow_Camera 컴포넌트 생성 및 초기화
 	CFollow_Camera* pFollowCamera = CFollow_Camera::Create(m_pDevice, m_pContext /*, 필요한 인자 */);
 	if (nullptr == pFollowCamera)
@@ -93,7 +99,7 @@ HRESULT CCamera_Follow::Initialize(void* pArg)
 		return E_FAIL;
 	}
 	pFollowCamera->Set_OwnerGameObject(this);
-	if (FAILED(pFollowCamera->Initialize(&Desc)))
+	if (FAILED(pFollowCamera->Initialize(cameraDesc)))
 	{
 		MSG_BOX("Failed to Initialize CFollow_Camera Component");
 		Safe_Release(pFollowCamera);
@@ -106,11 +112,11 @@ HRESULT CCamera_Follow::Initialize(void* pArg)
 	Safe_AddRef(m_pCameraCom); // 새 컴포넌트 참조 추가
 
 	// 4. 카메라 매니저에 새 카메라 등록 (필요한 경우)
-	// m_pGameInstance->Add_Camera(m_pCameraCom);
-	// if (m_pCameraCom)
-	// {
-	//     m_pCameraCom->Late_Initialize(); // CCamera의 Late_Initialize 호출 (필요시)
-	// }
+	m_pGameInstance->Add_Camera(m_pCameraCom);
+	if (m_pCameraCom)
+	{
+	     m_pCameraCom->Late_Initialize(); // CCamera의 Late_Initialize 호출 (필요시)
+	}
 
 
 	// 중요: 위 CFollow_Camera 관련 주석 처리된 부분은 실제 CFollow_Camera 클래스의
@@ -160,58 +166,64 @@ void CCamera_Follow::Free()
 #pragma region Loops
 void CCamera_Follow::Priority_Update(_float fTimeDelta)
 {
-	if (g_bCameraControl)
+
+	// __super::Priority_Update(fTimeDelta); // CGameObject_Camera의 Priority_Update 호출 (필요시)
+
+	if (nullptr == m_pCameraCom || nullptr == m_pGameInstance)
+		return;
+
+	// m_pCameraCom을 CFollow_Camera*로 캐스팅
+	CFollow_Camera* pFollowCam = static_cast<CFollow_Camera*>(m_pCameraCom);
+	// dynamic_cast를 사용하거나, 생성 시 타입을 확실히 보장해야 합니다.
+	// if (nullptr == pFollowCam) return; // 이미 위에서 m_pCameraCom null 체크
+
+	_long MouseMoveX = m_pGameInstance->Get_DIMouseMove(DIMM::X);
+	_long MouseMoveY = m_pGameInstance->Get_DIMouseMove(DIMM::Y);
+	_long MouseWheel = m_pGameInstance->Get_DIMouseMove(DIMM::WHEEL);
+
+
+	// g_bCameraControl 같은 전역 플래그나, 특정 조건(예: 마우스 우클릭 중)에 따라 카메라 조작 활성화
+	if (g_bCameraControl) // 이 전역 변수가 카메라 조작을 제어한다고 가정
 	{
-		_long			MouseMove = {};
-
-		if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::X))
+		if (MouseMoveX != 0)
 		{
-			m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), MouseMove * fTimeDelta * m_fSensor);
+			static_cast<CFollow_Camera*>(pFollowCam)->AddYaw(MouseMoveX * m_fSensor * fTimeDelta);
 		}
 
-		if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::Y))
+		if (MouseMoveY != 0)
 		{
-			m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), MouseMove * fTimeDelta * m_fSensor);
+			// Pitch는 일반적으로 반전되므로 -를 곱하거나, Get_DIMouseMove가 이미 적절한 값을 반환해야 함
+			static_cast<CFollow_Camera*>(pFollowCam)->AddPitch(MouseMoveY * m_fSensor * fTimeDelta);
 		}
 
-		//줌인 아웃
-		/*if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::WHEEL))
+		// 줌인/아웃 (CFollow_Camera에 AdjustDistance 메서드 필요)
+		if (MouseWheel != 0)
 		{
-			if (MouseMove > 0)
-			{
-				m_pCameraCom->ZoomIn(fTimeDelta * m_fSensor);
-			}
-			else if(MouseMove < 0)
-			{
-				m_pCameraCom->ZoomOut(fTimeDelta * m_fSensor);
-			}
-
-		}*/
+			//휠 민감도 조절 필요
+			float zoomSensitivity = 20.0f; // 예시 민감도
+			static_cast<CFollow_Camera*>(pFollowCam)->AdjustDistance(-MouseWheel * fTimeDelta * zoomSensitivity);
+		}
 	}
 
-	m_pCameraCom->Priority_Update(fTimeDelta);
+	// 기존 CCamera_Follow의 Transform을 직접 회전시키는 코드는 제거합니다.
+	// if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::X))
+	// {
+	// 	m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), MouseMove * fTimeDelta * m_fSensor);
+	// }
+	// if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::Y))
+	// {
+	// 	m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), MouseMove * fTimeDelta * m_fSensor);
+	// }
 }
 
 void CCamera_Follow::Update(_float fTimeDelta)
 {
 
-	if (KEY_DOWN(DIK_TAB))
-	{
-		m_bChanged = true;
-		g_bCameraControl = !g_bCameraControl;
-	}
 }
 
 void CCamera_Follow::Late_Update(_float fTimeDelta)
 {
-	if (g_bCameraControl && m_bChanged)
-	{
-		m_bChanged = false;
-	}
-	else if (!g_bCameraControl && m_bChanged)
-	{
-		m_bChanged = false;
-	}
+
 }
 
 HRESULT CCamera_Follow::Render()

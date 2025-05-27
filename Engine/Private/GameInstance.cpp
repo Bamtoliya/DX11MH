@@ -96,8 +96,8 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 {
 	m_pLight_Manager->Update();
 	m_pInput_Device->Update(fTimeDelta);
-	m_pCamera_Manager->Priority_Update(fTimeDelta);
 	m_pObject_Manager->Priority_Update(fTimeDelta);
+	m_pCamera_Manager->Priority_Update(fTimeDelta);
 	m_pPipeLine->Update();
 	m_pObject_Manager->Update(fTimeDelta);	
 	m_pCamera_Manager->Update(fTimeDelta);
