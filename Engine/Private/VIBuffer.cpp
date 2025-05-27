@@ -18,21 +18,22 @@ CVIBuffer::CVIBuffer(const CVIBuffer& Prototype)
     , m_iNumIndicesPerPrimitive { Prototype.m_iNumIndicesPerPrimitive }
     , m_eIndexFormat            { Prototype.m_eIndexFormat }
     , m_ePrimitiveTopology      { Prototype.m_ePrimitiveTopology }
-    /*, m_BufferDesc              { Prototype.m_BufferDesc }
+    /*, m_BufferDesc{Prototype.m_BufferDesc}
     , m_SubResourceData         { Prototype.m_SubResourceData }*/
-    , m_pVertexPositions        { Prototype.m_pVertexPositions }
+    , m_pVertexPositions{Prototype.m_pVertexPositions}
     , m_vLocalSize              { Prototype.m_vLocalSize }
 {
-    //Safe_AddRef(m_pVB);
-    //Safe_AddRef(m_pIB);
+	m_pVertexPositions = new _float3[m_iNumVertices];
+	memcpy(m_pVertexPositions, Prototype.m_pVertexPositions, sizeof(_float3) * m_iNumVertices);
+    Safe_AddRef(m_pVB);
+    Safe_AddRef(m_pIB);
 }
 
 void CVIBuffer::Free()
 {
     __super::Free();
 
-    if (!m_bIsCloned)
-		Safe_Delete_Array(m_pVertexPositions);
+	Safe_Delete_Array(m_pVertexPositions);
 
     Safe_Release(m_pVB);
     Safe_Release(m_pIB);

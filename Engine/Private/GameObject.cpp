@@ -62,7 +62,7 @@ HRESULT CGameObject::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CGameObject::Initialize(void* pArg)
+HRESULT CGameObject::Late_Initialize(void* pArg)
 {
 	for (auto& pair : m_Components)
 		pair.second->Late_Initialize();
