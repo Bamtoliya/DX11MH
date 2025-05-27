@@ -37,6 +37,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
+	virtual HRESULT Late_Initialize(void* pArg);
 	virtual HRESULT Initialize(simdjson::ondemand::object& jsonData);
 #pragma endregion
 

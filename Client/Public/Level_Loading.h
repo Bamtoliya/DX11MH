@@ -19,7 +19,8 @@ public:
 private:
 	LEVEL				m_eNextLevelID = { LEVEL::END };
 	class CLoader*		m_pLoader = { nullptr };
-
+public:
+	virtual _uint Get_LevelIndex() override { return ENUM_CLASS(m_eNextLevelID); }
 
 
 public:

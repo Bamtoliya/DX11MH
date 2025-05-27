@@ -251,10 +251,7 @@ HRESULT CFollow_Camera::RenderImGui()
 			}
 		}
 
-		if(ImGui::Button("Set this Camera as Active"))
-		{
-			m_pGameInstance->Set_Camera(this);
-		}
+		
 	}
 	ImGui::PopID();
 	return S_OK;

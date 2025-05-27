@@ -5,6 +5,7 @@
 CLevel_Effect::CLevel_Effect(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel{ pDevice, pContext }
 {
+    m_iLevel = { ENUM_CLASS(LEVEL::EFFECT) };
 }
 
 HRESULT CLevel_Effect::Initialize()

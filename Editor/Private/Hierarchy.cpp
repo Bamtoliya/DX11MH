@@ -95,7 +95,9 @@ HRESULT CHierarchy::Add_GameObject_Popup()
         static CUIObject::UIOBJECT_DESC tempDesc = {};
         ImGui::Checkbox("2D | 3D", &b2D);
         ImGui::InputText("GameObject Name", szGameObjectName, MAX_PATH, ImGuiInputTextFlags_EnterReturnsTrue);
-        ImGui::Checkbox("Relative Transform", &tempDesc.bRelative);
+        ImGui::Checkbox("Relative Postion", &tempDesc.bRelativePosition);
+        ImGui::Checkbox("Relative Rotation", &tempDesc.bRelativeRotation);
+        ImGui::Checkbox("Relative Scale", &tempDesc.bRelativeScale);
         if (b2D)
         {
             ImGui::DragFloat2("Postion(X, Y)", reinterpret_cast<_float*>(&tempDesc.vPos), 1.0f);

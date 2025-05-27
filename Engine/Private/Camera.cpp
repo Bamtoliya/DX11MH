@@ -240,7 +240,13 @@ HRESULT CCamera::RenderImGui()
 {
 	if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::Checkbox("OrthGraphic", &m_tDesc.bOrthographic);
+		if (ImGui::Button("Set this Camera as Active"))
+		{
+			m_pGameInstance->Set_Camera(this);
+		}
+		ImGui::Text("Perspective");
+		ImGui::SameLine();
+		ImGui::Toggle("Orthographic", &m_tDesc.bOrthographic);
 		_float fFovDegree = XMConvertToDegrees(m_tDesc.fFovy);
 		ImGui::DragFloat("ZoomSpeed", &m_tDesc.fZoomPerSec, 0.01f, 0.0f, 10.f);
 		ImGui::DragFloat("FOVy(Zoom)", &fFovDegree, 0.1f, 10.f, 200.f);

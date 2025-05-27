@@ -401,12 +401,14 @@
     <ClInclude Include="..\public\Collider.h">
       <Filter>01.Utility\04.Components\Collider</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Camera_Manager.h" />
     <ClInclude Include="..\public\ContainerObject.h">
       <Filter>01.Utility\03.GameObject\ContainerObject</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Camera_Manager.h">
+      <Filter>01.Utility\04.Components\Camera\Manager</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\PartObject.h">
-      <Filter>01.Utility\03.GameObject\PartObject</Filter>
+      <Filter>01.Utility\03.GameObject\Base\PartObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -705,6 +707,51 @@
     <ClCompile Include="..\private\Light_Manager.cpp">
       <Filter>01.Utility\07.Lights\Manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Camera.cpp">
+      <Filter>01.Utility\04.Components\Camera\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Camera_Manager.cpp">
+      <Filter>01.Utility\04.Components\Camera\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Collider.cpp">
+      <Filter>01.Utility\04.Components\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ContainerObject.cpp">
+      <Filter>01.Utility\03.GameObject\ContainerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Follow_Camera.cpp">
+      <Filter>01.Utility\04.Components\Camera\Follow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Controller.cpp">
+      <Filter>01.Utility\04.Components\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuiToggle\imgui_toggle_renderer.cpp">
+      <Filter>External Libraries\ImGuiToggle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuiToggle\imgui_toggle.cpp">
+      <Filter>External Libraries\ImGuiToggle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuiToggle\imgui_toggle_palette.cpp">
+      <Filter>External Libraries\ImGuiToggle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\External Libraries\ImGuiToggle\imgui_toggle_presets.cpp">
+      <Filter>External Libraries\ImGuiToggle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Json_Loader.cpp">
+      <Filter>01.Utility\97.JsonLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Light_Direction.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Lights\Direction</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Light_Point.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Lights\Point</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PartObject.cpp">
+      <Filter>01.Utility\03.GameObject\Base\PartObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Serializable.cpp">
+      <Filter>01.Utility\99.SuperClass\Observer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -970,6 +1017,12 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Camera\Manager">
       <UniqueIdentifier>{52f7aa98-7e1c-450e-967c-4d52cccc891c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\ContainerObject">
+      <UniqueIdentifier>{f612d519-49ba-41a9-89a3-cff1a5c44e1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\PartObject">
+      <UniqueIdentifier>{087bba7b-3135-48d1-8479-6eac0e2573e1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

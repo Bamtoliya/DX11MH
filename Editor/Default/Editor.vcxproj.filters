@@ -103,6 +103,9 @@
     <Filter Include="02.GameObject\02.Camera\Follow">
       <UniqueIdentifier>{5592549b-bcad-4af8-9463-c1d82480c9c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\02.Camera\TPS">
+      <UniqueIdentifier>{55b8f72b-e379-4a27-bc56-0ab34c6dbc2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -171,6 +174,7 @@
     <ClCompile Include="..\private\Camera_Follow.cpp">
       <Filter>02.GameObject\02.Camera\Follow</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Camera_TPS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor.h">
@@ -266,6 +270,7 @@
     <ClInclude Include="..\public\Camera_Follow.h">
       <Filter>02.GameObject\02.Camera\Follow</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Camera_TPS.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Editor.ico">

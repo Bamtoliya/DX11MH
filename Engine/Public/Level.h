@@ -24,7 +24,7 @@ protected:
 public:	
 	virtual void Free() override;
 public:
-	_uint Get_LevelIndex() { return m_iLevel; }
+	virtual _uint Get_LevelIndex() { return m_iLevel; }
 protected:
 	_uint					m_iLevel;
 };

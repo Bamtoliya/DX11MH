@@ -15,6 +15,8 @@ public:
 	virtual HRESULT Initialize(LEVEL eNextLevelID);
 	virtual void Update(_float fTimeDelta) override;
 	virtual HRESULT Render() override;
+public:
+	virtual _uint Get_LevelIndex() override { return ENUM_CLASS(m_eNextLevelID); }
 private:
 	LEVEL				m_eNextLevelID = { LEVEL::END };
 	class CLoader*		m_pLoader = { nullptr };

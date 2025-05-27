@@ -62,6 +62,13 @@ HRESULT CGameObject::Initialize(void* pArg)
 	return S_OK;
 }
 
+HRESULT CGameObject::Initialize(void* pArg)
+{
+	for (auto& pair : m_Components)
+		pair.second->Late_Initialize();
+	return S_OK;
+}
+
 HRESULT CGameObject::Initialize(simdjson::ondemand::object& jsonData)
 {
 	string temp;
@@ -231,7 +238,7 @@ HRESULT CGameObject::RenderImGuiObjects()
 		{
 			IM_ASSERT(payload->DataSize == sizeof(_uint));
 			_uint payload_oID = *(const _uint*)payload->Data;
-			Set_Parent(m_pGameInstance->Get_GameObjectById(payload_oID));
+			m_pGameInstance->Get_GameObjectById(payload_oID)->Set_Parent(this);
 			// 여기에 드롭 로직 구현:
 			// 1. payload_oID를 가진 GameObject를 찾습니다.
 			// 2. 현재 노드(this)와 드롭된 노드(payload_oID)의 관계를 설정합니다.

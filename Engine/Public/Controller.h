@@ -22,6 +22,12 @@ public:
 	virtual HRESULT Deserialize(simdjson::ondemand::object& jsonData) override;
 #pragma endregion
 
+#pragma region Variables
+	_uint			m_iNumActions = {};
+	vector<_byte>	m_pKeys = {};
+#pragma endregion
+
+
 #pragma region Loops
 public:
 	virtual void Priority_Update(_float fTimeDelta)  override;

@@ -6,11 +6,11 @@
 CLevel_UI::CLevel_UI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel {pDevice, pContext}
 {
+    m_iLevel = { ENUM_CLASS(LEVEL::UI) };
 }
 
 HRESULT CLevel_UI::Initialize()
 {
-    m_iLevel = ENUM_CLASS(LEVEL::UI);
     if(FAILED(Ready_Layer_ImGui()))
         return E_FAIL;
 

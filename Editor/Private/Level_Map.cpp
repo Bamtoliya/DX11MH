@@ -5,12 +5,11 @@
 CLevel_Map::CLevel_Map(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel{ pDevice, pContext }
 {
+    m_iLevel = { ENUM_CLASS(LEVEL::MAP) };
 }
 
 HRESULT CLevel_Map::Initialize()
 {
-    m_iLevel = ENUM_CLASS(LEVEL::MAP);
-
     if (FAILED(m_pGameInstance->Load_GameObjects(ENUM_CLASS(LEVEL::MAP), ASSETPATH L"Saves/Map_Test.json")))
         return E_FAIL;
     /*if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain")))

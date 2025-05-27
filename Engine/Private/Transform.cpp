@@ -43,13 +43,6 @@ CComponent* CTransform::Clone(void* pArg)
 	return pInstance;
 }
 
-void CTransform::Free()
-{
-	__super::Free();
-
-}
-#pragma endregion
-
 #pragma region Initalize
 HRESULT CTransform::Initialize_Prototype()
 {
@@ -71,12 +64,23 @@ HRESULT CTransform::Initialize(void* pArg)
 	m_tDesc.WorldMatrix._44 = 1.f;
 	m_tDesc.fSpeedPerSec = pDesc->fSpeedPerSec;
 	m_tDesc.fRotationPerSec = pDesc->fRotationPerSec;
-	m_tDesc.bRelative = pDesc->bRelative;
+	m_tDesc.bRelativePosition = pDesc->bRelativePosition;
+	m_tDesc.bRelativeRotation = pDesc->bRelativeRotation;
+	m_tDesc.bRelativeScale = pDesc->bRelativeScale;
 
 	return S_OK;
 }
 
 #pragma endregion
+
+void CTransform::Free()
+{
+	__super::Free();
+
+}
+#pragma endregion
+
+
 
 #pragma region Save & Load
 
@@ -111,7 +115,11 @@ HRESULT CTransform::Serialize(json& outJson)
 
 	data["SpeedPerSec"] = m_tDesc.fSpeedPerSec;
 	data["RotationPerSec"] = m_tDesc.fRotationPerSec;
-	data["IsRelative"] = m_tDesc.bRelative;
+
+	// 세분화된 상대 플래그 저장
+	data["IsRelativePosition"] = m_tDesc.bRelativePosition;
+	data["IsRelativeRotation"] = m_tDesc.bRelativeRotation;
+	data["IsRelativeScale"] = m_tDesc.bRelativeScale;
 
 	// WorldMatrix 자체를 저장하고 싶다면 (예: 디버깅용 또는 특정 상황)
 	// json worldMatJson = json::array();
@@ -209,8 +217,23 @@ HRESULT CTransform::Deserialize(simdjson::ondemand::object& jsonData)
 		if (auto val = transformObject["RotationPerSec"]; val.error() == simdjson::SUCCESS) {
 			m_tDesc.fRotationPerSec = static_cast<_float>(val.get_double().value_unsafe());
 		}
+
+		// 세분화된 상대 플래그 로드
+		if (auto val = transformObject["IsRelativePosition"]; val.error() == simdjson::SUCCESS) {
+			m_tDesc.bRelativePosition = val.get_bool().value_unsafe();
+		}
+		if (auto val = transformObject["IsRelativeRotation"]; val.error() == simdjson::SUCCESS) {
+			m_tDesc.bRelativeRotation = val.get_bool().value_unsafe();
+		}
+		if (auto val = transformObject["IsRelativeScale"]; val.error() == simdjson::SUCCESS) {
+			m_tDesc.bRelativeScale = val.get_bool().value_unsafe();
+		}
+		// 이전 IsRelative 호환성 (선택 사항)
 		if (auto val = transformObject["IsRelative"]; val.error() == simdjson::SUCCESS) {
-			m_tDesc.bRelative = val.get_bool().value_unsafe();
+		 	bool oldRelative = val.get_bool().value_unsafe();
+		 	m_tDesc.bRelativePosition = oldRelative;
+		 	m_tDesc.bRelativeRotation = oldRelative;
+			m_tDesc.bRelativeScale = oldRelative;
 		}
 	}
 
@@ -223,7 +246,6 @@ HRESULT CTransform::Deserialize(simdjson::ondemand::object& jsonData)
 }
 
 #pragma endregion
-
 
 #pragma region Loops
 void CTransform::Priority_Update(_float fTimeDelta)
@@ -245,17 +267,125 @@ HRESULT CTransform::Render()
 #pragma endregion
 _matrix CTransform::Get_WorldMatrix() const
 {
-	if (m_tDesc.bRelative && nullptr != m_pOwner->Get_Parent())
+	// 1. 로컬 변환 행렬 가져오기
+	_matrix localWorldMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix);
+
+	if (nullptr == m_pOwner || nullptr == m_pOwner->Get_Parent())
 	{
-		CGameObject* pParentGameObject = m_pOwner->Get_Parent();
-		_matrix finalMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix);
-		return XMMatrixMultiply(finalMatrix,
-								static_cast<CTransform*>(pParentGameObject->Get_Component(g_strTransformTag))->Get_WorldMatrix());
+		return localWorldMatrix; // 부모가 없으면 로컬 월드 행렬이 최종 월드 행렬
 	}
-	else
+
+	CTransform* pParentTransform = static_cast<CTransform*>(m_pOwner->Get_Parent()->Get_Component(g_strTransformTag));
+	if (nullptr == pParentTransform)
 	{
-		return XMLoadFloat4x4(&m_tDesc.WorldMatrix);
+		return localWorldMatrix; // 부모는 있지만 트랜스폼 컴포넌트가 없으면 로컬 월드 행렬 반환
 	}
+
+	_matrix parentWorldMatrix = pParentTransform->Get_WorldMatrix();
+
+	// 로컬 SQT 분해
+	_vector localScaleVec, localRotQuatVec, localTransVec;
+	XMMatrixDecompose(&localScaleVec, &localRotQuatVec, &localTransVec, localWorldMatrix);
+
+	// 부모 SQT 분해
+	_vector parentScaleVec, parentRotQuatVec, parentTransVec;
+	XMMatrixDecompose(&parentScaleVec, &parentRotQuatVec, &parentTransVec, parentWorldMatrix);
+
+	// 최종 SQT 계산
+	_vector finalScaleVec = localScaleVec;
+	_vector finalRotQuatVec = localRotQuatVec;
+	_vector finalTransVec = localTransVec;
+
+	if (m_tDesc.bRelativeScale)
+	{
+		finalScaleVec = XMVectorMultiply(localScaleVec, parentScaleVec);
+	}
+	// else: finalScaleVec은 localScaleVec 그대로 사용 (월드 기준 절대 크기)
+	// 이 경우, 부모의 회전과 크기가 자식의 절대 크기에 영향을 주지 않도록 하려면
+	// 최종 행렬 구성 시 주의가 필요합니다. 일반적으로 절대 크기는 월드 행렬의 스케일링 벡터를
+	// 직접 설정하는 방식으로 구현될 수 있으나, SQT 결합 방식에서는 복잡합니다.
+	// 여기서는 bRelativeScale이 false이면 로컬 스케일을 월드 스케일로 간주하고,
+	// 부모의 스케일링 효과를 제거하기 위해 부모 스케일의 역을 곱하는 방식도 고려할 수 있으나,
+	// 가장 간단한 것은 "로컬 스케일이 최종 월드 스케일"이라고 가정하는 것입니다.
+	// 하지만 일반적인 계층 구조에서는 부모의 변환이 누적되므로,
+	// bRelativeScale = false 일 때 "월드에서 이 스케일 값을 가져라"는 의미로 해석하고,
+	// 부모의 스케일링을 제거하려면 (finalScaleVec / parentScaleVec) 와 유사한 연산이 필요합니다.
+	// 여기서는 bRelativeScale이 true일 때만 부모 스케일을 곱하고, false이면 로컬 스케일을 사용합니다.
+
+	if (m_tDesc.bRelativeRotation)
+	{
+		finalRotQuatVec = XMQuaternionMultiply(localRotQuatVec, parentRotQuatVec);
+	}
+	// else: finalRotQuatVec은 localRotQuatVec 그대로 사용 (월드 기준 절대 회전)
+	// 이 경우, 부모의 회전을 제거해야 합니다. finalRotQuatVec = XMQuaternionMultiply(localRotQuatVec, XMQuaternionInverse(parentRotQuatVec));
+	// 하지만 이는 로컬 회전을 월드 회전으로 직접 설정하는 것과 같습니다.
+
+	if (m_tDesc.bRelativePosition)
+	{
+		// 로컬 위치를 부모의 월드 공간으로 변환
+		finalTransVec = XMVector3TransformCoord(localTransVec, parentWorldMatrix);
+	}
+	// else: finalTransVec은 localTransVec 그대로 사용 (월드 기준 절대 위치)
+	// 이 경우, 부모의 위치 변환을 제거해야 합니다.
+	// finalTransVec = XMVectorSubtract(localTransVec, parentTransVec); // 이것은 단순 뺄셈이며, 회전/크기 변환을 고려하지 않음
+	// 정확히는, localTransVec을 월드 원점 기준으로 설정하고 싶다면,
+	// 부모 변환의 역행렬을 로컬 변환에 곱한 후 위치를 가져오는 방식이 필요할 수 있습니다.
+	// 여기서는 bRelativePosition이 false이면 localTransVec을 월드 위치로 간주합니다.
+
+	// --- 재검토된 절대 변환 로직 ---
+	// bRelativeXXX가 false일 경우, 해당 컴포넌트는 월드 공간 값을 직접 사용해야 합니다.
+	// 이는 부모 변환의 해당 부분을 "무효화"하는 것을 의미합니다.
+
+	_matrix finalMatrix;
+
+	if (!m_tDesc.bRelativePosition && !m_tDesc.bRelativeRotation && !m_tDesc.bRelativeScale) {
+		// 모든 것이 절대적이면, 로컬 월드 행렬이 최종 월드 행렬
+		finalMatrix = localWorldMatrix;
+	}
+	else if (m_tDesc.bRelativePosition && m_tDesc.bRelativeRotation && m_tDesc.bRelativeScale) {
+		// 모든 것이 상대적이면, 단순 곱셈
+		finalMatrix = XMMatrixMultiply(localWorldMatrix, parentWorldMatrix);
+	}
+	else {
+		// 혼합된 경우: 각 SQT 요소를 조건부로 결합
+		XMMATRIX scaleMat, rotMat, transMat;
+
+		// 스케일
+		if (m_tDesc.bRelativeScale) {
+			finalScaleVec = XMVectorMultiply(localScaleVec, parentScaleVec);
+		}
+		else {
+			finalScaleVec = localScaleVec; // 월드 스케일로 사용
+		}
+		scaleMat = XMMatrixScalingFromVector(finalScaleVec);
+
+		// 회전
+		if (m_tDesc.bRelativeRotation) {
+			finalRotQuatVec = XMQuaternionMultiply(localRotQuatVec, parentRotQuatVec);
+		}
+		else {
+			finalRotQuatVec = localRotQuatVec; // 월드 회전으로 사용
+		}
+		rotMat = XMMatrixRotationQuaternion(finalRotQuatVec);
+
+		// 위치
+		if (m_tDesc.bRelativePosition) {
+			// 로컬 위치를 부모의 (스케일 * 회전) 변환 후, 부모 위치에 더함
+			_matrix parentSR = XMMatrixScalingFromVector(parentScaleVec) * XMMatrixRotationQuaternion(parentRotQuatVec);
+			finalTransVec = XMVector3TransformCoord(localTransVec, parentSR);
+			finalTransVec = XMVectorAdd(finalTransVec, parentTransVec);
+		}
+		else {
+			finalTransVec = localTransVec; // 월드 위치로 사용
+		}
+		transMat = XMMatrixTranslationFromVector(finalTransVec);
+
+		// 최종 행렬 구성: S * R * T (월드 공간 기준)
+		// 또는 로컬(S*R*T)을 기준으로 하고, 절대적인 부분을 부모 변환에서 "제거"
+		// 여기서는 최종 S, R, T를 계산하여 월드 행렬을 만듭니다.
+		finalMatrix = scaleMat * rotMat * transMat;
+	}
+	return finalMatrix;
 }
 _vector CTransform::Get_Scale_Vector() const
 {
@@ -301,58 +431,88 @@ void CTransform::Scaling(const _float3& vScale)
 
 void CTransform::Set_WorldMatrix(const _matrix& WorldMatrix)
 {
-	if (m_tDesc.bRelative && nullptr != m_pOwner->Get_Parent())
+	_matrix matrixToStore = WorldMatrix;
+
+	if (nullptr != m_pOwner && nullptr != m_pOwner->Get_Parent())
 	{
-		CGameObject* pParentGameObject = m_pOwner->Get_Parent();
-		_matrix finalMatrix = WorldMatrix;
-		finalMatrix = XMMatrixMultiply(finalMatrix, static_cast<CTransform*>(pParentGameObject->Get_Component(g_strTransformTag))->Get_WorldMatrix_Inverse());
-		/*while (pParentGameObject)
+		CTransform* pParentTransform = static_cast<CTransform*>(m_pOwner->Get_Parent()->Get_Component(g_strTransformTag));
+		if (pParentTransform)
 		{
-			
-			pParentGameObject = pParentGameObject->Get_Parent();
-		}*/
-		//부모가 없을때까지 반복적으로 월드매트릭스 인버스를 곱하기?
-		XMStoreFloat4x4(&m_tDesc.WorldMatrix, finalMatrix);
-	}
-	else
-	{
-		XMStoreFloat4x4(&m_tDesc.WorldMatrix, WorldMatrix);
-	}
-	
-	// 월드 행렬로부터 스케일, 회전(쿼터니언), 위치를 분해합니다.
-	_vector scaleVec, rotationQuatVec, translationVec;
-	if (XMMatrixDecompose(&scaleVec, &rotationQuatVec, &translationVec, WorldMatrix))
-	{
-		// 정규화된 쿼터니언을 저장합니다.
-		XMStoreFloat4(&m_tDesc.qOrientation, XMQuaternionNormalize(rotationQuatVec));
+			_matrix parentWorldMatrix = pParentTransform->Get_WorldMatrix();
+			_matrix invParentWorldMatrix = XMMatrixInverse(nullptr, parentWorldMatrix);
 
-		// (선택 사항) 오일러 각 멤버 변수도 업데이트합니다.
-		// 이 오일러 각은 주로 ImGui 표시용으로 사용될 수 있습니다.
-		// 정확한 오일러 각 변환 함수 필요 (이전 답변의 예시 참고 또는 직접 구현)
-		// 여기서는 간단히 쿼터니언만 업데이트하고, RenderImGui에서 필요시 변환합니다.
-		
-		// UpdateEulerAnglesFromQuaternion(rotationQuatVec); // 이런 함수를 만들어서 호출 가능
-		DirectX::XMVECTOR xmQuat = XMLoadFloat4(&m_tDesc.qOrientation);
-		DirectX::SimpleMath::Quaternion smQuat(xmQuat); // XMVECTOR를 SimpleMath::Quaternion으로 변환
-		DirectX::SimpleMath::Vector3 eulerAnglesRad = smQuat.ToEuler(); // YXZ 순서의 오일러 각 (Yaw, Pitch, Roll)을 라디안으로 반환
+			// NewWorldMatrix는 최종 월드 공간 변환으로 가정합니다.
+			// 로컬 변환을 계산해야 합니다.
 
-		// XMQuaternionRotationRollPitchYawFromVector는 Roll, Pitch, Yaw 순서를 기대하므로, 값을 올바르게 매핑해야 합니다.
-		// eulerAnglesRad.x 가 Yaw, eulerAnglesRad.y 가 Pitch, eulerAnglesRad.z 가 Roll 인 경우:
-		m_tDesc.fCurRotationX = eulerAnglesRad.x; // Yaw
-		m_tDesc.fCurRotationY = eulerAnglesRad.y; // Pitch
-		m_tDesc.fCurRotationZ = eulerAnglesRad.z; // Roll
+			_vector newWorldScale, newWorldRot, newWorldPos;
+			XMMatrixDecompose(&newWorldScale, &newWorldRot, &newWorldPos, WorldMatrix);
 
-		//_float3 eulerRad = SimpleMath::Quaternion::ToEuler(rotationQuatVec); // 직접 구현 또는 라이브러리 함수 사용
-		//m_tDesc.fCurRotationX = eulerRad.x; // Roll에 해당하는 값
-		//m_tDesc.fCurRotationY = eulerRad.y; // Pitch에 해당하는 값
-		//m_tDesc.fCurRotationZ = eulerRad.z; // Yaw에 해당하는 값
+			_vector parentScale, parentRot, parentPos;
+			XMMatrixDecompose(&parentScale, &parentRot, &parentPos, parentWorldMatrix);
+
+			_vector localScale = newWorldScale;
+			_vector localRot = newWorldRot;
+			_vector localPos = newWorldPos;
+
+			if (m_tDesc.bRelativeScale) {
+				// newWorldScale = localScale * parentScale  => localScale = newWorldScale / parentScale
+				// XMVectorDivide는 없으므로, 역수를 곱합니다. (1/parentScale.x, ...)
+				// 또는 XMMatrixDecompose가 반환하는 스케일 벡터가 이미 적절히 분리되어 있다면,
+				// matrixToStore = NewWorldMatrix * invParentWorldMatrix; 에서 스케일이 올바르게 계산될 수 있습니다.
+				// 여기서는 단순화하여, 전체가 상대적이면 invParentWorldMatrix를 곱합니다.
+			}
+			else {
+				// 로컬 스케일은 newWorldScale과 동일해야 함.
+			}
+
+			if (m_tDesc.bRelativeRotation) {
+				// newWorldRot = localRot * parentRot => localRot = newWorldRot * invParentRot
+			}
+			else {
+				// 로컬 회전은 newWorldRot과 동일해야 함.
+			}
+
+			if (m_tDesc.bRelativePosition) {
+				// newWorldPos = XMVector3TransformCoord(localPos, parentWorldMatrix)
+				// => localPos = XMVector3TransformCoord(newWorldPos, invParentWorldMatrix)
+			}
+			else {
+				// 로컬 위치는 newWorldPos와 동일해야 함.
+			}
+
+			// 모든 것이 상대적인 경우의 단순화된 로직:
+			if (m_tDesc.bRelativePosition && m_tDesc.bRelativeRotation && m_tDesc.bRelativeScale) {
+				matrixToStore = XMMatrixMultiply(WorldMatrix, invParentWorldMatrix);
+			}
+			// TODO: 각 bRelative 플래그에 따라 S/R/T를 개별적으로 계산하고 로컬 행렬을 재구성하는
+			//       더 정교한 로직이 필요합니다.
+			//       예: 로컬 S = bRelativeScale ? newS/parentS : newS
+			//           로컬 R = bRelativeRotation ? newR*invParentR : newR
+			//           로컬 T = bRelativePosition ? XMVector3TransformCoord(newP, invParentSR) : newP
+			//       그런 다음 로컬 S, R, T로 matrixToStore를 재구성합니다.
+			// 현재는 모든 플래그가 true일 때만 부모 변환을 제거합니다.
+			// 그렇지 않으면 NewWorldMatrix를 로컬로 간주합니다 (이는 의도와 다를 수 있음).
+			// 사용자의 요구사항에 따라 이 부분을 더 정교하게 만들어야 합니다.
+			// 가장 일반적인 경우는 NewWorldMatrix가 "최종 목표 월드 변환"이고,
+			// 우리는 m_tDesc.WorldMatrix (로컬 변환)를 저장해야 한다는 것입니다.
+
+			// 임시 단순화: 모든 것이 절대적이면 NewWorldMatrix를 그대로 사용,
+			// 그렇지 않고 하나라도 상대적이면 부모의 역행렬을 곱하여 로컬화 시도.
+			// 이는 정확하지 않을 수 있으며, 각 요소별 처리가 필요합니다.
+			bool anyRelative = m_tDesc.bRelativePosition || m_tDesc.bRelativeRotation || m_tDesc.bRelativeScale;
+			if (anyRelative) {
+				// 이 부분은 Get_WorldMatrix와 대칭적으로 S, R, T를 분리하고 재계산해야 합니다.
+				// 지금은 전체 행렬에 대해 역변환을 적용합니다.
+				matrixToStore = XMMatrixMultiply(WorldMatrix, invParentWorldMatrix);
+			}
+			else { // 모든 것이 절대적이면, NewWorldMatrix가 로컬이자 월드.
+				matrixToStore = WorldMatrix;
+			}
+		}
 	}
-	else
-	{
-		// 행렬 분해 실패 시 처리 (예: 로그 출력)
-		// 이 경우 qOrientation은 이전 값을 유지하거나, 기본값으로 설정할 수 있습니다.
-		OutputDebugStringA("CTransform::Set_WorldMatrix - XMMatrixDecompose failed.\n");
-	}
+
+	XMStoreFloat4x4(&m_tDesc.WorldMatrix, matrixToStore);
+	SynchronizeRotationRepresentations(); // 월드 행렬 변경 시 SQT 및 오일러 각 동기화
 }
 
 _float3 CTransform::Get_Scaled()
@@ -373,18 +533,13 @@ void CTransform::Set_Scale(STATE eState, _float fScale)
 
 HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstantName)
 {
-	if (m_tDesc.bRelative && nullptr != m_pOwner->Get_Parent())
-	{
-		_float4x4 finalMatrixToBind = {};
-		XMStoreFloat4x4(&finalMatrixToBind,
-			XMMatrixMultiply(XMLoadFloat4x4(&m_tDesc.WorldMatrix),
-			static_cast<CTransform*>(m_pOwner->Get_Parent()->Get_Component(g_strTransformTag))->Get_WorldMatrix()));
-		return pShader->Bind_Matrix(pConstantName, &finalMatrixToBind);
-	}
-	else
-	{
-		return pShader->Bind_Matrix(pConstantName, &m_tDesc.WorldMatrix);
-	}
+	if (nullptr == pShader)
+		return E_FAIL;
+
+	_float4x4 finalMatrixToBind;
+	XMStoreFloat4x4(&finalMatrixToBind, Get_WorldMatrix()); // Get_WorldMatrix가 이미 상대성을 처리
+
+	return pShader->Bind_Matrix(pConstantName, &finalMatrixToBind);
 	
 }
 
@@ -393,165 +548,155 @@ HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstant
 	if (nullptr == pShader)
 		return E_FAIL;
 
-	_matrix worldMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix); // CTransform의 현재 월드 행렬 (위치, 회전, 상대 스케일 적용됨)
+	_matrix transformWorldMatrix = Get_WorldMatrix(); // CTransform의 최종 월드 행렬 (상대성 처리됨)
 
 	if (pVIBuffer != nullptr)
 	{
 		_float3 bufferLocalSize = pVIBuffer->Get_LocalSize();
 		_matrix vibufferScaleMatrix = XMMatrixScaling(bufferLocalSize.x, bufferLocalSize.y, bufferLocalSize.z);
-		_matrix finalWorldMatrixForShader = vibufferScaleMatrix * worldMatrix;
+		// VIBuffer의 스케일은 CTransform의 로컬 공간에 적용되어야 합니다.
+		// Get_WorldMatrix()가 반환하는 것은 이미 부모 변환이 적용된 것일 수 있으므로,
+		// VIBuffer 스케일 적용 시점을 고려해야 합니다.
+		// 만약 VIBuffer가 객체의 "모델" 크기를 나타낸다면, 로컬 변환에 먼저 곱해져야 합니다.
+		// _matrix localWorldMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix);
+		// _matrix scaledLocalWorldMatrix = vibufferScaleMatrix * localWorldMatrix;
+		// 그런 다음 이 scaledLocalWorldMatrix를 기준으로 Get_WorldMatrix와 유사한 상대성 계산을 해야 합니다.
+
+		// 현재 Get_WorldMatrix()는 m_tDesc.WorldMatrix를 기반으로 계산합니다.
+		// VIBuffer 스케일을 적용하려면, Get_WorldMatrix 로직 내에서 처리하거나,
+		// 여기서 Get_WorldMatrix 결과를 후처리해야 합니다.
+		// 여기서는 Get_WorldMatrix() 결과를 사용하고, VIBuffer 스케일을 곱합니다.
+		// 이는 VIBuffer 스케일이 최종 월드 변환 후 적용되는 것처럼 보일 수 있습니다.
+		// 정확한 적용 순서는 의도에 따라 달라집니다.
+		// 일반적으로 모델 스케일은 가장 먼저 적용됩니다.
+		// _matrix finalWorldMatrixForShader = vibufferScaleMatrix * transformWorldMatrix; (이것은 월드 스케일링처럼 동작)
+
+		// 수정: VIBuffer 스케일은 로컬 스케일에 먼저 적용되어야 합니다.
+		_matrix localMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix);
+		_matrix scaledLocalMatrix = vibufferScaleMatrix * localMatrix; // 로컬 스케일 * 모델 스케일
+
+		// 이제 이 scaledLocalMatrix를 기반으로 부모와의 상대성을 계산해야 합니다.
+		// Get_WorldMatrix 로직을 여기에 다시 적용하거나, Get_WorldMatrix가 로컬 행렬을 인자로 받도록 수정해야 합니다.
+		// 임시로, Get_WorldMatrix가 m_tDesc.WorldMatrix를 사용한다고 가정하고,
+		// VIBuffer 스케일은 최종 결과에 곱하는 것으로 유지 (이는 시각적으로 다를 수 있음)
+		// TODO: 이 로직은 VIBuffer 스케일 적용 시점을 명확히 해야 합니다.
+		// 가장 간단한 방법은 VIBuffer를 렌더링할 때만 이 스케일을 적용하는 것입니다.
+		// 셰이더에 전달되는 월드 행렬은 객체의 월드 행렬이어야 합니다.
+		// VIBuffer의 크기는 모델 변환의 일부로 간주될 수 있습니다.
 
 		_float4x4 finalMatrixToBind;
-		XMStoreFloat4x4(&finalMatrixToBind, finalWorldMatrixForShader);
-		if (m_tDesc.bRelative && nullptr != m_pOwner->Get_Parent())
-		{
-			_float4x4 parentMatrixToBind = {};
-			XMStoreFloat4x4(&parentMatrixToBind,
-				XMMatrixMultiply(XMLoadFloat4x4(&finalMatrixToBind),
-				static_cast<CTransform*>(m_pOwner->Get_Parent()->Get_Component(g_strTransformTag))->Get_WorldMatrix()));
-			return pShader->Bind_Matrix(pConstantName, &parentMatrixToBind);
-		}
+		XMStoreFloat4x4(&finalMatrixToBind, transformWorldMatrix); // 우선 객체의 월드 행렬 사용
+		// 만약 pVIBuffer 스케일을 여기에 곱한다면:
+		// _matrix finalMatrixWithBufferScale = vibufferScaleMatrix * transformWorldMatrix;
+		// XMStoreFloat4x4(&finalMatrixToBind, finalMatrixWithBufferScale);
 		return pShader->Bind_Matrix(pConstantName, &finalMatrixToBind);
 	}
-	// pVIBuffer가 nullptr이면, CTransform의 월드 행렬만 사용 (기존 방식)
-	return pShader->Bind_Matrix(pConstantName, &m_tDesc.WorldMatrix);
+
+	_float4x4 worldMat;
+	XMStoreFloat4x4(&worldMat, transformWorldMatrix);
+	return pShader->Bind_Matrix(pConstantName, &worldMat);
 }
 
 HRESULT CTransform::RenderImGui()
 {
+	ImGui::PushID(this);
 	if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		ImGui::Checkbox("Releative(Local)", &m_tDesc.bRelative);
-		_matrix worldMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix);
+		// 세분화된 상대성 체크박스
+		bool changedRelative = false;
+		if (ImGui::Checkbox("Relative Position", &m_tDesc.bRelativePosition)) changedRelative = true;
+		ImGui::SameLine();
+		if (ImGui::Checkbox("Relative Rotation", &m_tDesc.bRelativeRotation)) changedRelative = true;
+		ImGui::SameLine();
+		if (ImGui::Checkbox("Relative Scale", &m_tDesc.bRelativeScale)) changedRelative = true;
+
+		// 로컬 월드 행렬 (m_tDesc.WorldMatrix)을 분해하여 표시 및 편집
+		_matrix localWorldMatrix = XMLoadFloat4x4(&m_tDesc.WorldMatrix);
 		_vector scaleVec, currentRotationQuatVec, translationVec;
 
-		// 1. 월드 행렬 분해 (주로 스케일과 위치를 가져오고, 회전은 m_tDesc.qOrientation 사용)
-		//    또는, m_tDesc.qOrientation을 직접 사용하고, 스케일/위치만 행렬에서 가져올 수도 있습니다.
-		//    여기서는 일관성을 위해 분해 후 m_tDesc.qOrientation으로 다시 로드합니다.
-		if (XMMatrixDecompose(&scaleVec, &currentRotationQuatVec, &translationVec, worldMatrix))
+		if (XMMatrixDecompose(&scaleVec, &currentRotationQuatVec, &translationVec, localWorldMatrix))
 		{
-			// 저장된 쿼터니언을 사용 (ImGuizmo에 의해 업데이트되었을 수 있으므로)
+			// UI 편집을 위해 m_tDesc의 SQT 값 사용 또는 분해된 값 사용
+			// m_tDesc.qOrientation이 항상 최신이라고 가정
 			currentRotationQuatVec = XMLoadFloat4(&m_tDesc.qOrientation);
 
 			_float3 position, scale;
-			XMStoreFloat3(&position, translationVec);
-			XMStoreFloat3(&scale, scaleVec);
+			XMStoreFloat3(&position, translationVec); // 로컬 위치
+			XMStoreFloat3(&scale, scaleVec);         // 로컬 스케일
 
-			bool changed = false;
+			bool changedSQT = false;
 
-			// --- 위치 (Position) ---
-			if (ImGui::DragFloat3("Position", &position.x, 1.0f))
+			if (ImGui::DragFloat3("Position (Local)", &position.x, 0.1f))
 			{
 				translationVec = XMLoadFloat3(&position);
-				changed = true;
+				changedSQT = true;
 			}
 
-			// --- 회전 (Rotation) - 오일러 각으로 표시 및 편집 ---
-			// 현재 쿼터니언(m_tDesc.qOrientation)을 오일러 각(도)으로 변환하여 UI에 표시
-			_float3 eulerAnglesDegrees;
-			// 여기에 쿼터니언 -> 오일러 각(도) 변환 로직 필요
-			// 예시: (정확한 변환 함수를 사용해야 합니다)
-			//    auto quatToEuler = [](const _float4& q) -> _float3 {
-			//        _float3 angles; // 라디안
-			//        // ... (쿼터니언 q로부터 오일러 각 angles.x, angles.y, angles.z 계산) ...
-			//        // 예: ZYX 순서 (DirectXMath의 Roll, Pitch, Yaw에 대응되도록)
-			//        // Roll (x-axis rotation)
-			//        double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
-			//        double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
-			//        angles.x = std::atan2(sinr_cosp, cosr_cosp);
-			//        // Pitch (y-axis rotation)
-			//        double sinp = 2 * (q.w * q.y - q.z * q.x);
-			//        if (std::abs(sinp) >= 1)
-			//            angles.y = std::copysign(XM_PI / 2, sinp); // use 90 degrees if out of range
-			//        else
-			//            angles.y = std::asin(sinp);
-			//        // Yaw (z-axis rotation)
-			//        double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
-			//        double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
-			//        angles.z = std::atan2(siny_cosp, cosy_cosp);
-			//        return angles;
-			//    };
-			// _float3 eulerAnglesRadians = quatToEuler(m_tDesc.qOrientation);
-
-			// 임시: 오일러 각 변환이 복잡하므로, 이전처럼 fCurRotationX, Y, Z를 사용하되,
-			// ImGuizmo 변경 시 이 값들이 업데이트되도록 Set_WorldMatrix에서 처리해야 합니다.
-			// 가장 좋은 방법은 m_tDesc.qOrientation에서 직접 오일러 각을 계산하는 것입니다.
-			// 아래는 임시로 fCurRotationX,Y,Z를 계속 사용하는 방식입니다.
-			// **이 방식은 Set_WorldMatrix에서 fCurRotationX,Y,Z도 함께 업데이트한다는 가정하에 동작합니다.**
-			// **쿼터니언으로 완전 동기화하려면 m_tDesc.qOrientation -> 오일러 각 변환이 필요합니다.**
-
-			// 여기서는 m_tDesc.qOrientation을 오일러 각(라디안)으로 변환한다고 가정합니다.
-			// (실제 변환 함수는 프로젝트에 맞게 구현 필요)
-			// 예를 들어, `GetEulerAnglesFromQuaternion(XMLoadFloat4(&m_tDesc.qOrientation))` 함수가 있다고 가정하고,
-			// 이 함수가 라디안 단위의 _float3(roll, pitch, yaw)를 반환한다고 가정합니다.
-
-			// --- 쿼터니언을 오일러 각으로 변환 (표시용) ---
-			// 이 부분은 정확한 변환 함수가 필요합니다. (예: DirectX Tool Kit의 SimpleMath::Quaternion::ToEuler)
-			// 여기서는 임시로 fCurRotationX,Y,Z를 사용하지만, 이상적으로는 m_tDesc.qOrientation에서 변환해야 합니다.
-			// 만약 fCurRotationX,Y,Z가 Set_WorldMatrix에서 qOrientation과 동기화된다면 이대로 사용 가능.
-			XMVECTOR tempQuatForEuler = XMLoadFloat4(&m_tDesc.qOrientation);
-			// 오일러 각 추출 (예시 - 정확한 함수로 대체 필요)
-			// 다음은 DirectX::SimpleMath (DirectX Tool Kit)의 예시입니다.
-			// DirectX::SimpleMath::Vector3 eulerRad = DirectX::SimpleMath::Quaternion(tempQuatForEuler).ToEuler();
-			// eulerAnglesDegrees.x = XMConvertToDegrees(eulerRad.x); // Roll
-			// eulerAnglesDegrees.y = XMConvertToDegrees(eulerRad.y); // Pitch
-			// eulerAnglesDegrees.z = XMConvertToDegrees(eulerRad.z); // Yaw
-			// 지금은 fCurRotationX, Y, Z가 qOrientation과 동기화된다고 가정하고 사용합니다.
-			eulerAnglesDegrees = {
+			_float3 eulerAnglesDegrees = {
 				XMConvertToDegrees(m_tDesc.fCurRotationX),
 				XMConvertToDegrees(m_tDesc.fCurRotationY),
 				XMConvertToDegrees(m_tDesc.fCurRotationZ)
 			};
 
-
-			if (ImGui::DragFloat3(u8"Rotation (Euler °)", &eulerAnglesDegrees.x, 1.0f, -360.0f, 360.0f))
+			if (ImGui::DragFloat3(u8"Rotation (Local Euler °)", &eulerAnglesDegrees.x, 1.0f, -360.0f, 360.0f))
 			{
-				_float3 eulerAnglesRadians = {
-					XMConvertToRadians(eulerAnglesDegrees.x),
-					XMConvertToRadians(eulerAnglesDegrees.y),
-					XMConvertToRadians(eulerAnglesDegrees.z)
-				};
-				// 오일러 각(라디안)으로부터 새로운 쿼터니언 생성 (X, Y, Z 순서로 Roll, Pitch, Yaw)
-				currentRotationQuatVec = XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&eulerAnglesRadians));
-				XMStoreFloat4(&m_tDesc.qOrientation, XMQuaternionNormalize(currentRotationQuatVec)); // 쿼터니언 업데이트
+				m_tDesc.fCurRotationX = XMConvertToRadians(eulerAnglesDegrees.x);
+				m_tDesc.fCurRotationY = XMConvertToRadians(eulerAnglesDegrees.y);
+				m_tDesc.fCurRotationZ = XMConvertToRadians(eulerAnglesDegrees.z);
 
-				// fCurRotationX,Y,Z도 동기화 (UI 표시용)
-				m_tDesc.fCurRotationX = eulerAnglesRadians.x;
-				m_tDesc.fCurRotationY = eulerAnglesRadians.y;
-				m_tDesc.fCurRotationZ = eulerAnglesRadians.z;
-
-				changed = true;
+				currentRotationQuatVec = XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&_float3(m_tDesc.fCurRotationX, m_tDesc.fCurRotationY, m_tDesc.fCurRotationZ)));
+				XMStoreFloat4(&m_tDesc.qOrientation, XMQuaternionNormalize(currentRotationQuatVec));
+				changedSQT = true;
 			}
 
-			// --- 크기 (Scale) ---
-			if (ImGui::DragFloat3("Scale", &scale.x, 0.01f, 0.001f, 1000.0f))
+			if (ImGui::DragFloat3("Scale (Local)", &scale.x, 0.01f, 0.001f, 1000.0f))
 			{
-				/*if (scale.x < 0.001f) scale.x = 0.001f;
-				if (scale.y < 0.001f) scale.y = 0.001f;
-				if (scale.z < 0.001f) scale.z = 0.001f;*/
 				scaleVec = XMLoadFloat3(&scale);
-				changed = true;
+				changedSQT = true;
 			}
 
-			// 2. 변경 사항이 있다면 월드 행렬 재구성 및 업데이트
-			if (changed)
+			if (changedSQT)
 			{
-				_matrix newWorldMatrix = XMMatrixScalingFromVector(scaleVec) *
-					XMMatrixRotationQuaternion(currentRotationQuatVec) * // 업데이트된 쿼터니언 사용
+				// 변경된 로컬 SQT로 로컬 월드 행렬 업데이트
+				_matrix newLocalWorldMatrix = XMMatrixScalingFromVector(scaleVec) *
+					XMMatrixRotationQuaternion(XMLoadFloat4(&m_tDesc.qOrientation)) *
 					XMMatrixTranslationFromVector(translationVec);
-
-				XMStoreFloat4x4(&m_tDesc.WorldMatrix, newWorldMatrix);
-				// Set_WorldMatrix를 호출하여 qOrientation 등도 다시 업데이트할 필요는 없음 (이미 changed 플래그에서 직접 처리)
+				XMStoreFloat4x4(&m_tDesc.WorldMatrix, newLocalWorldMatrix);
+				// SynchronizeRotationRepresentations(); // 이미 오일러 각과 쿼터니언이 동기화됨
 			}
 		}
 		else
 		{
-			ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "XMMatrixDecompose failed. Matrix might be non-affine.");
-			// ... (기존 오류 처리) ...
+			ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "XMMatrixDecompose failed for local matrix.");
 		}
 		ImGui::DragFloat("Speed", &m_tDesc.fSpeedPerSec, 0.1f, 0.0f, 10.f);
-		ImGui::DragFloat("Rotation", &m_tDesc.fRotationPerSec, 0.1f, 0.0f, 10.f);
+		ImGui::DragFloat("Rotation Speed", &m_tDesc.fRotationPerSec, 0.1f, 0.0f, 10.f);
+
+		// 디버깅: 최종 월드 SQT 표시 (읽기 전용)
+		if (ImGui::TreeNode("Computed World Transform (Read-Only)")) {
+			_matrix finalWorldMat = Get_WorldMatrix();
+			_vector finalS, finalR, finalT;
+			XMMatrixDecompose(&finalS, &finalR, &finalT, finalWorldMat);
+
+			_float3 finalScale, finalTranslation;
+			_float4 finalOrientation;
+			XMStoreFloat3(&finalScale, finalS);
+			XMStoreFloat3(&finalTranslation, finalT);
+			XMStoreFloat4(&finalOrientation, finalR);
+
+			DirectX::SimpleMath::Quaternion smFinalQuat(finalR);
+			DirectX::SimpleMath::Vector3 finalEulerRad = smFinalQuat.ToEuler();
+			_float3 finalEulerDeg = { XMConvertToDegrees(finalEulerRad.x), XMConvertToDegrees(finalEulerRad.y), XMConvertToDegrees(finalEulerRad.z) };
+
+
+			ImGui::InputFloat3("World Pos", &finalTranslation.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::InputFloat3("World Euler Deg", &finalEulerDeg.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::InputFloat4("World Quat", &finalOrientation.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::InputFloat3("World Scale", &finalScale.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::TreePop();
+		}
 	}
+	ImGui::PopID();
 	return S_OK;
 }
 

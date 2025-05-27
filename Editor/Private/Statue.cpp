@@ -46,7 +46,7 @@ CGameObject* CStatue::Clone(simdjson::ondemand::object& jsonData)
 
 	if (FAILED(pInstance->Initialize(jsonData)))
 	{
-		MSG_BOX("Failed to Created : CStatue");
+		MSG_BOX("Failed to Cloned : CStatue");
 		Safe_Release(pInstance);
 	}
 
