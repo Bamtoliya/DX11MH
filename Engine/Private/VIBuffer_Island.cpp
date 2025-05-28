@@ -1,4 +1,4 @@
-#include "VIBuffer_Island.h"
+ï»¿#include "VIBuffer_Island.h"
 
 namespace fs = std::filesystem;
 
@@ -56,7 +56,7 @@ HRESULT CVIBuffer_Island::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _ui
 	ID3D11Resource* pResource = nullptr;
 	ID3D11Texture2D* pTexture = nullptr;
 
-	// DDS ÆÄÀÏ ·Îµå
+	// DDS íŒŒì¼ ë¡œë“œ
 	HRESULT hr = DirectX::CreateDDSTextureFromFile(m_pDevice, filePath, &pResource, nullptr);
 	if (FAILED(hr)) {
 		MSG_BOX("Failed to load DDS texture: )");
@@ -76,7 +76,7 @@ HRESULT CVIBuffer_Island::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _ui
 		return E_FAIL;
 	}
 
-	// CPU¿¡¼­ ÀĞÀ» ¼ö ÀÖ´Â ½ºÅ×ÀÌÂ¡ ÅØ½ºÃ³ »ı¼º
+	// CPUì—ì„œ ì½ì„ ìˆ˜ ìˆëŠ” ìŠ¤í…Œì´ì§• í…ìŠ¤ì²˜ ìƒì„±
 	D3D11_TEXTURE2D_DESC stagingDesc = texDesc;
 	stagingDesc.Usage = D3D11_USAGE_STAGING;
 	stagingDesc.BindFlags = 0;
@@ -104,8 +104,8 @@ HRESULT CVIBuffer_Island::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _ui
 	const unsigned char* pSrcBits = static_cast<const unsigned char*>(mappedResource.pData);
 	unsigned int rowPitch = mappedResource.RowPitch;
 
-	// ÇÈ¼¿ Çü½Ä¿¡ µû¶ó ³ôÀÌ µ¥ÀÌÅÍ ÃßÃâ (¿©±â¼­´Â R8_UNORM ¶Ç´Â R32_FLOAT ¿¹½Ã)
-	// ½ÇÁ¦ DDS ÆÄÀÏÀÇ Çü½Ä¿¡ ¸Â°Ô ¼öÁ¤ ÇÊ¿ä
+	// í”½ì…€ í˜•ì‹ì— ë”°ë¼ ë†’ì´ ë°ì´í„° ì¶”ì¶œ (ì—¬ê¸°ì„œëŠ” R8_UNORM ë˜ëŠ” R32_FLOAT ì˜ˆì‹œ)
+	// ì‹¤ì œ DDS íŒŒì¼ì˜ í˜•ì‹ì— ë§ê²Œ ìˆ˜ì • í•„ìš”
 	for (unsigned int y = 0; y < height; ++y) {
 		for (unsigned int x = 0; x < width; ++x) {
 			float normalizedHeight = 0.0f;
@@ -127,7 +127,7 @@ HRESULT CVIBuffer_Island::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _ui
 			case DXGI_FORMAT_R32_FLOAT:
 			{
 				const float* pPixel = reinterpret_cast<const float*>(pSrcBits + (y * rowPitch) + (x * sizeof(float)));
-				normalizedHeight = *pPixel; // ÀÌ¹Ì 0.0 ~ 1.0 ¹üÀ§¶ó°í °¡Á¤, ¾Æ´Ï¸é Á¤±ÔÈ­ ÇÊ¿ä
+				normalizedHeight = *pPixel; // ì´ë¯¸ 0.0 ~ 1.0 ë²”ìœ„ë¼ê³  ê°€ì •, ì•„ë‹ˆë©´ ì •ê·œí™” í•„ìš”
 				break;
 			}
 			}
@@ -140,10 +140,10 @@ HRESULT CVIBuffer_Island::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _ui
 	if (pInitContext != m_pContext) {
 		ID3D11CommandList* pCommandList = nullptr;
 		pInitContext->FinishCommandList(FALSE, &pCommandList);
-		// Ä¿¸Çµå ¸®½ºÆ®¸¦ Å¥¿¡ Ãß°¡ (GameInstance³ª Loader¸¦ ÅëÇØ)
+		// ì»¤ë§¨ë“œ ë¦¬ìŠ¤íŠ¸ë¥¼ íì— ì¶”ê°€ (GameInstanceë‚˜ Loaderë¥¼ í†µí•´)
 		//m_pGameInstance->Add_CommandList(pCommandList);
 	}
-	// »ç¿ëÇÑ ¸®¼Ò½º ÇØÁ¦
+	// ì‚¬ìš©í•œ ë¦¬ì†ŒìŠ¤ í•´ì œ
 	Safe_Release(pTexture);
 	Safe_Release(stagingTexture);
 
@@ -161,12 +161,12 @@ HRESULT CVIBuffer_Island::Initialize_Prototype(const _tchar* pHeightMapFilePath)
 		return E_INVALIDARG;
 	}
 
-	m_strHeightMapFilePath = pHeightMapFilePath; // °æ·Î ÀúÀå
+	m_strHeightMapFilePath = pHeightMapFilePath; // ê²½ë¡œ ì €ì¥
 	fs::path filePathObj(pHeightMapFilePath);
 	std::wstring fileExtension = filePathObj.extension().wstring();
-	std::transform(fileExtension.begin(), fileExtension.end(), fileExtension.begin(), ::towlower); // ¼Ò¹®ÀÚ·Î º¯È¯
+	std::transform(fileExtension.begin(), fileExtension.end(), fileExtension.begin(), ::towlower); // ì†Œë¬¸ìë¡œ ë³€í™˜
 
-	std::vector<float> heightValues; // 0.0f ~ 1.0f ¹üÀ§ÀÇ Á¤±ÔÈ­µÈ ³ôÀÌ°ª ÀúÀå
+	std::vector<float> heightValues; // 0.0f ~ 1.0f ë²”ìœ„ì˜ ì •ê·œí™”ëœ ë†’ì´ê°’ ì €ì¥
 
 	if (fileExtension == L".dds")
 	{
@@ -203,7 +203,7 @@ HRESULT CVIBuffer_Island::Initialize_Prototype(const _tchar* pHeightMapFilePath)
 		}
 
 		_uint numPixels = m_iNumVerticesX * m_iNumVerticesZ;
-		_uint* pBmpPixels = new _uint[numPixels]; // BMP´Â º¸Åë ÇÈ¼¿´ç 3 ¶Ç´Â 4¹ÙÀÌÆ® (¿©±â¼­´Â _uint °¡Á¤)
+		_uint* pBmpPixels = new _uint[numPixels]; // BMPëŠ” ë³´í†µ í”½ì…€ë‹¹ 3 ë˜ëŠ” 4ë°”ì´íŠ¸ (ì—¬ê¸°ì„œëŠ” _uint ê°€ì •)
 		if (!ReadFile(hFile, pBmpPixels, sizeof(_uint) * numPixels, &dwByte, nullptr) || dwByte != sizeof(_uint) * numPixels) {
 			Safe_Delete_Array(pBmpPixels); CloseHandle(hFile); MSG_BOX("Failed to read BMP pixel data."); return E_FAIL;
 		}
@@ -211,7 +211,7 @@ HRESULT CVIBuffer_Island::Initialize_Prototype(const _tchar* pHeightMapFilePath)
 
 		heightValues.resize(numPixels);
 		for (_uint i = 0; i < numPixels; ++i) {
-			// BMPÀÇ R Ã¤³ÎÀ» ³ôÀÌ·Î »ç¿ë (0-255 ¹üÀ§), Á¤±ÔÈ­
+			// BMPì˜ R ì±„ë„ì„ ë†’ì´ë¡œ ì‚¬ìš© (0-255 ë²”ìœ„), ì •ê·œí™”
 			heightValues[i] = static_cast<float>(pBmpPixels[i] & 0x000000ff) / 255.0f;
 		}
 		Safe_Delete_Array(pBmpPixels);
@@ -251,11 +251,11 @@ HRESULT CVIBuffer_Island::Initialize_Prototype(const _tchar* pHeightMapFilePath)
 	m_pVertexPositions = new _float3[m_iNumVertices];
 	ZeroMemory(m_pVertexPositions, sizeof(_float3) * m_iNumVertices);
 
-	// ÁöÇüÀÇ ÀüÃ¼ ³Êºñ¿Í ±íÀÌ (Á¤Á¡ °£ °£°İÀÌ 1.0f¶ó°í °¡Á¤)
+	// ì§€í˜•ì˜ ì „ì²´ ë„ˆë¹„ì™€ ê¹Šì´ (ì •ì  ê°„ ê°„ê²©ì´ 1.0fë¼ê³  ê°€ì •)
 	_float IslandActualWidth = static_cast<_float>(m_iNumVerticesX - 1);
 	_float IslandActualDepth = static_cast<_float>(m_iNumVerticesZ - 1);
 
-	// ÁöÇüÀÇ Àı¹İ ³Êºñ¿Í Àı¹İ ±íÀÌ
+	// ì§€í˜•ì˜ ì ˆë°˜ ë„ˆë¹„ì™€ ì ˆë°˜ ê¹Šì´
 	_float halfWidth = IslandActualWidth / 2.0f;
 	_float halfDepth = IslandActualDepth / 2.0f;
 
@@ -392,26 +392,26 @@ HRESULT CVIBuffer_Island::RenderImGui()
 {
 	ImGui::PushID(this);
 	static char tempHeightMapPath[512] = "";
-	const char* dndPayloadType = "DND_ASSET_PATH"; // ¿¡¼Â ºê¶ó¿ìÀú¿¡¼­ »ç¿ëÇÒ ÆäÀÌ·Îµå Å¸ÀÔ
+	const char* dndPayloadType = "DND_ASSET_PATH"; // ì—ì…‹ ë¸Œë¼ìš°ì €ì—ì„œ ì‚¬ìš©í•  í˜ì´ë¡œë“œ íƒ€ì…
 
-#pragma region ÆË¾÷±×¸®±â
+#pragma region íŒì—…ê·¸ë¦¬ê¸°
 	if (ifd::FileDialog::Instance().IsDone("HeightMapOpenDialog_VIBufferIsland")) {
 		if (ifd::FileDialog::Instance().HasResult()) {
-			fs::path absoluteFilePath = ifd::FileDialog::Instance().GetResult().u8string(); // Àı´ë °æ·Î (UTF-8)
-			fs::path assetRootPath = fs::absolute(ASSETPATH); // ASSETPATH¸¦ Àı´ë °æ·Î·Î º¯È¯
+			fs::path absoluteFilePath = ifd::FileDialog::Instance().GetResult().u8string(); // ì ˆëŒ€ ê²½ë¡œ (UTF-8)
+			fs::path assetRootPath = fs::absolute(ASSETPATH); // ASSETPATHë¥¼ ì ˆëŒ€ ê²½ë¡œë¡œ ë³€í™˜
 
-			// Àı´ë °æ·Î¸¦ ASSETPATH ±âÁØÀ¸·Î »ó´ë °æ·Î·Î º¯È¯
+			// ì ˆëŒ€ ê²½ë¡œë¥¼ ASSETPATH ê¸°ì¤€ìœ¼ë¡œ ìƒëŒ€ ê²½ë¡œë¡œ ë³€í™˜
 			fs::path relativeFilePath = fs::relative(absoluteFilePath, assetRootPath);
-			std::string relativePathStr = ASSETPATH + relativeFilePath.generic_u8string(); // ÇÃ·§Æû µ¶¸³ÀûÀÎ UTF-8 °æ·Î ¹®ÀÚ¿­
+			std::string relativePathStr = ASSETPATH + relativeFilePath.generic_u8string(); // í”Œë«í¼ ë…ë¦½ì ì¸ UTF-8 ê²½ë¡œ ë¬¸ìì—´
 
 			strncpy_s(tempHeightMapPath, sizeof(tempHeightMapPath), relativePathStr.c_str(), _TRUNCATE);
-			// printf("Selected via Dialog (Relative): [%s]\n", relativePathStr.c_str()); // µğ¹ö±ë¿ë
+			// printf("Selected via Dialog (Relative): [%s]\n", relativePathStr.c_str()); // ë””ë²„ê¹…ìš©
 		}
 		ifd::FileDialog::Instance().Close();
 	}
 #pragma endregion
 
-	if (ImGui::CollapsingHeader("VIBuffer_Island", ImGuiTreeNodeFlags_DefaultOpen)) // ±âº»ÀûÀ¸·Î ¿­·ÁÀÖµµ·Ï ÇÃ·¡±× Ãß°¡
+	if (ImGui::CollapsingHeader("VIBuffer_Island", ImGuiTreeNodeFlags_DefaultOpen)) // ê¸°ë³¸ì ìœ¼ë¡œ ì—´ë ¤ìˆë„ë¡ í”Œë˜ê·¸ ì¶”ê°€
 	{
 		ImGui::Text("Current HeightMap: %ls", m_strHeightMapFilePath.c_str());
 		ImGui::DragFloat("Height Scale", &m_fHeightScale, 0.1f, 0.1f, 1024.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
@@ -426,7 +426,7 @@ HRESULT CVIBuffer_Island::RenderImGui()
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(dndPayloadType))
 			{
-				const char* absolutePathFromPayload = (const char*)payload->Data; // ÆäÀÌ·Îµå´Â Àı´ë °æ·Î(UTF-8)¶ó°í °¡Á¤
+				const char* absolutePathFromPayload = (const char*)payload->Data; // í˜ì´ë¡œë“œëŠ” ì ˆëŒ€ ê²½ë¡œ(UTF-8)ë¼ê³  ê°€ì •
 				if (absolutePathFromPayload)
 				{
 					fs::path droppedAbsolutePath = absolutePathFromPayload;
@@ -456,14 +456,14 @@ HRESULT CVIBuffer_Island::RenderImGui()
 				if (FAILED(Initialize_Prototype(newPathWide.c_str())))
 				{
 					MSG_BOX("Failed to apply new HeightMap. Check file path and format.");
-					// ½ÇÆĞ ½Ã, tempHeightMapPath¸¦ ÀÌÀü m_strHeightMapFilePath·Î µÇµ¹¸± ¼ö ÀÖ½À´Ï´Ù.
-					// ¿¹¸¦ µé¾î, Initialize_Prototype ½ÇÆĞ ½Ã m_strHeightMapFilePath´Â º¯°æµÇÁö ¾ÊÀ¸¹Ç·Î
-					// ´ÙÀ½ "Edit Path" Å¬¸¯ ½Ã ´Ù½Ã ¿Ã¹Ù¸¥ °æ·Î·Î tempHeightMapPath°¡ Ã¤¿öÁı´Ï´Ù.
+					// ì‹¤íŒ¨ ì‹œ, tempHeightMapPathë¥¼ ì´ì „ m_strHeightMapFilePathë¡œ ë˜ëŒë¦´ ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+					// ì˜ˆë¥¼ ë“¤ì–´, Initialize_Prototype ì‹¤íŒ¨ ì‹œ m_strHeightMapFilePathëŠ” ë³€ê²½ë˜ì§€ ì•Šìœ¼ë¯€ë¡œ
+					// ë‹¤ìŒ "Edit Path" í´ë¦­ ì‹œ ë‹¤ì‹œ ì˜¬ë°”ë¥¸ ê²½ë¡œë¡œ tempHeightMapPathê°€ ì±„ì›Œì§‘ë‹ˆë‹¤.
 				}
 				else
 				{
 					MSG_BOX("New HeightMap applied successfully.");
-					// ¼º°ø ½Ã m_strHeightMapFilePath´Â ÀÌ¹Ì newPathWide·Î ¾÷µ¥ÀÌÆ® µÇ¾úÀ½
+					// ì„±ê³µ ì‹œ m_strHeightMapFilePathëŠ” ì´ë¯¸ newPathWideë¡œ ì—…ë°ì´íŠ¸ ë˜ì—ˆìŒ
 				}
 			}
 			else
@@ -499,30 +499,30 @@ HRESULT CVIBuffer_Island::Deserialize(simdjson::ondemand::object& jsonData)
 
 	simdjson::ondemand::object IslandJsonData;
 	auto error = jsonData["CVIBuffer_Island"].get_object().get(IslandJsonData);
-	if (error) // "CVIBuffer_Island" °´Ã¼ ÀÚÃ¼°¡ ¾ø´Â °æ¿ì
+	if (error) // "CVIBuffer_Island" ê°ì²´ ìì²´ê°€ ì—†ëŠ” ê²½ìš°
 	{
-		// CVIBuffer_Island °´Ã¼°¡ ¾øÀ¸¸é ±âº»°ªÀ¸·Î ÃÊ±âÈ­ ½Ãµµ
+		// CVIBuffer_Island ê°ì²´ê°€ ì—†ìœ¼ë©´ ê¸°ë³¸ê°’ìœ¼ë¡œ ì´ˆê¸°í™” ì‹œë„
 		MSG_BOX("Warning: CVIBuffer_Island data not found in JSON. Initializing with default heightmap path.");
-		m_strHeightMapFilePath = L""; // ±âº» ºó °æ·Î
-		m_fHeightScale = 10.0f;       // ±âº» ³ôÀÌ ½ºÄÉÀÏ
+		m_strHeightMapFilePath = L""; // ê¸°ë³¸ ë¹ˆ ê²½ë¡œ
+		m_fHeightScale = 10.0f;       // ê¸°ë³¸ ë†’ì´ ìŠ¤ì¼€ì¼
 		if (FAILED(Initialize_Prototype(m_strHeightMapFilePath.c_str())))
 		{
-			// ±âº» °æ·Î·Î ÃÊ±âÈ­ ½ÇÆĞ ½Ã (¿¹: ºó °æ·Î°¡ Çã¿ëµÇÁö ¾Ê´Â °æ¿ì)
+			// ê¸°ë³¸ ê²½ë¡œë¡œ ì´ˆê¸°í™” ì‹¤íŒ¨ ì‹œ (ì˜ˆ: ë¹ˆ ê²½ë¡œê°€ í—ˆìš©ë˜ì§€ ì•ŠëŠ” ê²½ìš°)
 			MSG_BOX("Failed to initialize with default empty heightmap path during Deserialize.");
-			// ÀÌ °æ¿ì E_FAILÀ» ¹İÈ¯ÇÏ°Å³ª, ¶Ç´Â °ÔÀÓ ·ÎÁ÷¿¡ µû¶ó ´Ù¸¥ Ã³¸®¸¦ ÇÒ ¼ö ÀÖ½À´Ï´Ù.
-			// ¿©±â¼­´Â E_FAILÀ» ¹İÈ¯ÇÏ¿© ·Îµù ½ÇÆĞ¸¦ ¾Ë¸³´Ï´Ù.
+			// ì´ ê²½ìš° E_FAILì„ ë°˜í™˜í•˜ê±°ë‚˜, ë˜ëŠ” ê²Œì„ ë¡œì§ì— ë”°ë¼ ë‹¤ë¥¸ ì²˜ë¦¬ë¥¼ í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+			// ì—¬ê¸°ì„œëŠ” E_FAILì„ ë°˜í™˜í•˜ì—¬ ë¡œë”© ì‹¤íŒ¨ë¥¼ ì•Œë¦½ë‹ˆë‹¤.
 			return E_FAIL;
 		}
-		return S_OK; // ±âº»°ªÀ¸·Î ÃÊ±âÈ­ ¼º°ø (¶Ç´Â ½Ãµµ)
+		return S_OK; // ê¸°ë³¸ê°’ìœ¼ë¡œ ì´ˆê¸°í™” ì„±ê³µ (ë˜ëŠ” ì‹œë„)
 	}
 
-	// HeightMapFilePath Ã³¸®
+	// HeightMapFilePath ì²˜ë¦¬
 	string_view heightMapPath_sv;
 	error = IslandJsonData["HeightMapFilePath"].get_string().get(heightMapPath_sv);
-	if (error) // Å°°¡ ¾ø°Å³ª Å¸ÀÔÀÌ ¸ÂÁö ¾Ê´Â °æ¿ì
+	if (error) // í‚¤ê°€ ì—†ê±°ë‚˜ íƒ€ì…ì´ ë§ì§€ ì•ŠëŠ” ê²½ìš°
 	{
 		MSG_BOX("Warning: HeightMapFilePath not found or invalid in JSON. Using default empty path.");
-		m_strHeightMapFilePath = L""; // ±âº»°ª: ºó ¹®ÀÚ¿­
+		m_strHeightMapFilePath = L""; // ê¸°ë³¸ê°’: ë¹ˆ ë¬¸ìì—´
 	}
 	else
 	{
@@ -530,13 +530,13 @@ HRESULT CVIBuffer_Island::Deserialize(simdjson::ondemand::object& jsonData)
 		m_strHeightMapFilePath = Utf8ToWide(heightMapPath_utf8.c_str());
 	}
 
-	// HeightScale Ã³¸®
+	// HeightScale ì²˜ë¦¬
 	double heightScaleValue;
 	error = IslandJsonData["HeightScale"].get_double().get(heightScaleValue);
-	if (error) // Å°°¡ ¾ø°Å³ª Å¸ÀÔÀÌ ¸ÂÁö ¾Ê´Â °æ¿ì
+	if (error) // í‚¤ê°€ ì—†ê±°ë‚˜ íƒ€ì…ì´ ë§ì§€ ì•ŠëŠ” ê²½ìš°
 	{
 		MSG_BOX("Warning: HeightScale not found or invalid in JSON. Using default value 10.0f.");
-		m_fHeightScale = 10.0f; // ±âº»°ª
+		m_fHeightScale = 10.0f; // ê¸°ë³¸ê°’
 	}
 	else
 	{
@@ -547,8 +547,8 @@ HRESULT CVIBuffer_Island::Deserialize(simdjson::ondemand::object& jsonData)
 
 	if (FAILED(Initialize_Prototype(m_strHeightMapFilePath.c_str())))
 	{
-		// °æ·Î°¡ À¯È¿ÇÏÁö ¾Ê°Å³ª (¿¹: ±âº»°ªÀÎ ºó °æ·Î) ÆÄÀÏ ·Îµå ½ÇÆĞ ½Ã
-		// Initialize_Prototype ³»ºÎ¿¡¼­ ÀÌ¹Ì MSG_BOX¸¦ È£ÃâÇÒ °ÍÀÌ¹Ç·Î ¿©±â¼­´Â Ãß°¡ ¸Ş½ÃÁö ¾øÀÌ ½ÇÆĞ ¹İÈ¯
+		// ê²½ë¡œê°€ ìœ íš¨í•˜ì§€ ì•Šê±°ë‚˜ (ì˜ˆ: ê¸°ë³¸ê°’ì¸ ë¹ˆ ê²½ë¡œ) íŒŒì¼ ë¡œë“œ ì‹¤íŒ¨ ì‹œ
+		// Initialize_Prototype ë‚´ë¶€ì—ì„œ ì´ë¯¸ MSG_BOXë¥¼ í˜¸ì¶œí•  ê²ƒì´ë¯€ë¡œ ì—¬ê¸°ì„œëŠ” ì¶”ê°€ ë©”ì‹œì§€ ì—†ì´ ì‹¤íŒ¨ ë°˜í™˜
 		return E_FAIL;
 	}
 

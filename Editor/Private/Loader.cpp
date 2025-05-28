@@ -148,9 +148,6 @@ HRESULT CLoader::Loading_For_Map()
 
 	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
 
-	if (FAILED(m_pGameInstance->Load_GameObjects(ENUM_CLASS(LEVEL::MAP), SAVEPATH L"Terrain_Test.json")))
-		return E_FAIL;
-
 	m_isFinished = true;
 
 	

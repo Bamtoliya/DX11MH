@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Camera.h"
 
 NS_BEGIN(Engine)
@@ -28,11 +28,11 @@ private:
 	CGameObject*	m_pTarget = { nullptr };
 	_float			m_fDistance = { 100.f };
 	_float			m_fSmoothFactor = { 0.1f };
-	_float m_fCameraYaw = { 0.f };   // YÃà ±âÁØ ¼öÆò È¸Àü
-	_float m_fCameraPitch = { XM_PIDIV4 }; // XÃà ±âÁØ ¼öÁ÷ È¸Àü
-	// ÇÊ¿äÇÏ´Ù¸é ¼öÁ÷ °¢µµ Á¦ÇÑ °ª
-	const _float m_fMinPitch = { -XM_PIDIV2 + 0.2f }; // ¾à -80µµ
-	const _float m_fMaxPitch = { XM_PIDIV2 - 0.2f };  // ¾à +80µµ
+	_float m_fCameraYaw = { 0.f };   // Yì¶• ê¸°ì¤€ ìˆ˜í‰ íšŒì „
+	_float m_fCameraPitch = { XM_PIDIV4 }; // Xì¶• ê¸°ì¤€ ìˆ˜ì§ íšŒì „
+	// í•„ìš”í•˜ë‹¤ë©´ ìˆ˜ì§ ê°ë„ ì œí•œ ê°’
+	const _float m_fMinPitch = { -XM_PIDIV2 + 0.2f }; // ì•½ -80ë„
+	const _float m_fMaxPitch = { XM_PIDIV2 - 0.2f };  // ì•½ +80ë„
 #pragma endregion
 #pragma region Helper
 public:

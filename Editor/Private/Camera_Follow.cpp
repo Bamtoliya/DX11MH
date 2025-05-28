@@ -1,4 +1,4 @@
-#include "Camera_Follow.h"
+ï»¿#include "Camera_Follow.h"
 #include "GameInstance.h"
 #include "GameObject.h"
 #include "Follow_Camera.h"
@@ -12,7 +12,7 @@ CCamera_Follow::CCamera_Follow(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 CCamera_Follow::CCamera_Follow(const CCamera_Follow& Prototype)
 	: CGameObject_Camera{ Prototype }
-	, m_fSensor{ Prototype.m_fSensor } // m_fSensor º¹»ç
+	, m_fSensor{ Prototype.m_fSensor } // m_fSensor ë³µì‚¬
 {
 
 }
@@ -71,19 +71,19 @@ HRESULT CCamera_Follow::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(&Desc)))
 		return E_FAIL;
 
-	if (m_pCameraCom) // m_pCameraComÀº CGameObject_CameraÀÇ ¸â¹öÀÏ °ÍÀ¸·Î °¡Á¤
+	if (m_pCameraCom) // m_pCameraComì€ CGameObject_Cameraì˜ ë©¤ë²„ì¼ ê²ƒìœ¼ë¡œ ê°€ì •
 	{
-		// Ä«¸Ş¶ó ¸Å´ÏÀú¿¡¼­ ±âÁ¸ Ä«¸Ş¶ó Á¦°Å (ÇÊ¿äÇÑ °æ¿ì)
+		// ì¹´ë©”ë¼ ë§¤ë‹ˆì €ì—ì„œ ê¸°ì¡´ ì¹´ë©”ë¼ ì œê±° (í•„ìš”í•œ ê²½ìš°)
 		m_pGameInstance->Remove_Camera(m_pCameraCom); 
 
-		// ÄÄÆ÷³ÍÆ® ¸Ê¿¡¼­ Á¦°Å
+		// ì»´í¬ë„ŒíŠ¸ ë§µì—ì„œ ì œê±°
 		auto iter = m_Components.find(g_strCameraTag);
 		if (iter != m_Components.end())
 		{
-			Safe_Release(iter->second); // ±âÁ¸ ÄÄÆ÷³ÍÆ® ÂüÁ¶ ÇØÁ¦
+			Safe_Release(iter->second); // ê¸°ì¡´ ì»´í¬ë„ŒíŠ¸ ì°¸ì¡° í•´ì œ
 			m_Components.erase(iter);
 		}
-		Safe_Release(m_pCameraCom); // CGameObject_CameraÀÇ m_pCameraCom ¸â¹ö ÇØÁ¦
+		Safe_Release(m_pCameraCom); // CGameObject_Cameraì˜ m_pCameraCom ë©¤ë²„ í•´ì œ
 		m_pCameraCom = nullptr;
 	}
 
@@ -91,8 +91,8 @@ HRESULT CCamera_Follow::Initialize(void* pArg)
 
 	CCamera::CAMERA_COM_DESC* cameraDesc = static_cast<CCamera::CAMERA_COM_DESC*>(pDesc);
 
-	// 2. »õ·Î¿î CFollow_Camera ÄÄÆ÷³ÍÆ® »ı¼º ¹× ÃÊ±âÈ­
-	CFollow_Camera* pFollowCamera = CFollow_Camera::Create(m_pDevice, m_pContext /*, ÇÊ¿äÇÑ ÀÎÀÚ */);
+	// 2. ìƒˆë¡œìš´ CFollow_Camera ì»´í¬ë„ŒíŠ¸ ìƒì„± ë° ì´ˆê¸°í™”
+	CFollow_Camera* pFollowCamera = CFollow_Camera::Create(m_pDevice, m_pContext /*, í•„ìš”í•œ ì¸ì */);
 	if (nullptr == pFollowCamera)
 	{
 		MSG_BOX("Failed to Create CFollow_Camera Component");
@@ -106,41 +106,41 @@ HRESULT CCamera_Follow::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	// 3. »õ ÄÄÆ÷³ÍÆ®¸¦ °ÔÀÓ ¿ÀºêÁ§Æ®¿¡ µî·Ï
-	m_pCameraCom = pFollowCamera; // CGameObject_CameraÀÇ m_pCameraComÀ» »õ Ä«¸Ş¶ó·Î ¼³Á¤
+	// 3. ìƒˆ ì»´í¬ë„ŒíŠ¸ë¥¼ ê²Œì„ ì˜¤ë¸Œì íŠ¸ì— ë“±ë¡
+	m_pCameraCom = pFollowCamera; // CGameObject_Cameraì˜ m_pCameraComì„ ìƒˆ ì¹´ë©”ë¼ë¡œ ì„¤ì •
 	m_Components.emplace(g_strCameraTag, m_pCameraCom);
-	Safe_AddRef(m_pCameraCom); // »õ ÄÄÆ÷³ÍÆ® ÂüÁ¶ Ãß°¡
+	Safe_AddRef(m_pCameraCom); // ìƒˆ ì»´í¬ë„ŒíŠ¸ ì°¸ì¡° ì¶”ê°€
 
-	// 4. Ä«¸Ş¶ó ¸Å´ÏÀú¿¡ »õ Ä«¸Ş¶ó µî·Ï (ÇÊ¿äÇÑ °æ¿ì)
+	// 4. ì¹´ë©”ë¼ ë§¤ë‹ˆì €ì— ìƒˆ ì¹´ë©”ë¼ ë“±ë¡ (í•„ìš”í•œ ê²½ìš°)
 	m_pGameInstance->Add_Camera(m_pCameraCom);
 	if (m_pCameraCom)
 	{
-	     m_pCameraCom->Late_Initialize(); // CCameraÀÇ Late_Initialize È£Ãâ (ÇÊ¿ä½Ã)
+	     m_pCameraCom->Late_Initialize(); // CCameraì˜ Late_Initialize í˜¸ì¶œ (í•„ìš”ì‹œ)
 	}
 
 
-	// Áß¿ä: À§ CFollow_Camera °ü·Ã ÁÖ¼® Ã³¸®µÈ ºÎºĞÀº ½ÇÁ¦ CFollow_Camera Å¬·¡½ºÀÇ
-	//      ±¸Çö¿¡ ¸ÂÃç ¼öÁ¤ÇØ¾ß ÇÕ´Ï´Ù. ÇöÀç´Â °³³äÀûÀÎ ÄÚµåÀÔ´Ï´Ù.
-	//      ¸¸¾à CCamera_Follow ÀÚÃ¼°¡ »õ·Î¿î Ä«¸Ş¶ó ·ÎÁ÷À» Á÷Á¢ Æ÷ÇÔÇÏ°í,
-	//      CCamera ÄÄÆ÷³ÍÆ®¸¦ ¿ÏÀüÈ÷ ´ëÃ¼ÇÏ´Â °ÍÀÌ ¾Æ´Ï¶ó CCameraÀÇ ±â´ÉÀ» È®Àå/º¯°æÇÏ´Â °ÍÀÌ¶ó¸é
-	//      Á¢±Ù ¹æ½ÄÀÌ ´Ş¶óÁı´Ï´Ù.
-	//      ÇöÀç CCamera_Follow´Â CGameObject_Camera¸¦ »ó¼ÓÇÏ°í ÀÖÀ¸¹Ç·Î,
-	//      CGameObject_Camera°¡ »ı¼ºÇÏ´Â CCamera ÄÄÆ÷³ÍÆ®(m_pCameraCom)¸¦
-	//      »õ·Î¿î Å¸ÀÔÀÇ Ä«¸Ş¶ó ÄÄÆ÷³ÍÆ®·Î ±³Ã¼ÇÏ´Â ·ÎÁ÷ÀÌ ÇÊ¿äÇÕ´Ï´Ù.
-	//      ¸¸¾à CFollow_Camera¶ó´Â º°µµÀÇ ÄÄÆ÷³ÍÆ® Å¬·¡½º°¡ ¾ø´Ù¸é,
-	//      CGameObject_Camera::Initialize¿¡¼­ »ı¼ºµÇ´Â CCamera °´Ã¼ÀÇ µ¿ÀÛÀ»
-	//      CCamera_Follow Å¬·¡½º ³»¿¡¼­ ¿À¹ö¶óÀÌµåÇÏ°Å³ª ¼öÁ¤ÇØ¾ß ÇÕ´Ï´Ù.
+	// ì¤‘ìš”: ìœ„ CFollow_Camera ê´€ë ¨ ì£¼ì„ ì²˜ë¦¬ëœ ë¶€ë¶„ì€ ì‹¤ì œ CFollow_Camera í´ë˜ìŠ¤ì˜
+	//      êµ¬í˜„ì— ë§ì¶° ìˆ˜ì •í•´ì•¼ í•©ë‹ˆë‹¤. í˜„ì¬ëŠ” ê°œë…ì ì¸ ì½”ë“œì…ë‹ˆë‹¤.
+	//      ë§Œì•½ CCamera_Follow ìì²´ê°€ ìƒˆë¡œìš´ ì¹´ë©”ë¼ ë¡œì§ì„ ì§ì ‘ í¬í•¨í•˜ê³ ,
+	//      CCamera ì»´í¬ë„ŒíŠ¸ë¥¼ ì™„ì „íˆ ëŒ€ì²´í•˜ëŠ” ê²ƒì´ ì•„ë‹ˆë¼ CCameraì˜ ê¸°ëŠ¥ì„ í™•ì¥/ë³€ê²½í•˜ëŠ” ê²ƒì´ë¼ë©´
+	//      ì ‘ê·¼ ë°©ì‹ì´ ë‹¬ë¼ì§‘ë‹ˆë‹¤.
+	//      í˜„ì¬ CCamera_FollowëŠ” CGameObject_Cameraë¥¼ ìƒì†í•˜ê³  ìˆìœ¼ë¯€ë¡œ,
+	//      CGameObject_Cameraê°€ ìƒì„±í•˜ëŠ” CCamera ì»´í¬ë„ŒíŠ¸(m_pCameraCom)ë¥¼
+	//      ìƒˆë¡œìš´ íƒ€ì…ì˜ ì¹´ë©”ë¼ ì»´í¬ë„ŒíŠ¸ë¡œ êµì²´í•˜ëŠ” ë¡œì§ì´ í•„ìš”í•©ë‹ˆë‹¤.
+	//      ë§Œì•½ CFollow_Cameraë¼ëŠ” ë³„ë„ì˜ ì»´í¬ë„ŒíŠ¸ í´ë˜ìŠ¤ê°€ ì—†ë‹¤ë©´,
+	//      CGameObject_Camera::Initializeì—ì„œ ìƒì„±ë˜ëŠ” CCamera ê°ì²´ì˜ ë™ì‘ì„
+	//      CCamera_Follow í´ë˜ìŠ¤ ë‚´ì—ì„œ ì˜¤ë²„ë¼ì´ë“œí•˜ê±°ë‚˜ ìˆ˜ì •í•´ì•¼ í•©ë‹ˆë‹¤.
 
-	// ÇöÀç ÄÚµå¿¡¼­´Â CGameObject_Camera::Initialize°¡ CCamera¸¦ »ı¼ºÇÏ°í m_pCameraCom¿¡ ÇÒ´çÇÕ´Ï´Ù.
-	// CCamera_FollowÀÇ ¸ñÀûÀÌ ÀÌ CCameraÀÇ µ¿ÀÛÀ» º¯°æÇÏ´Â °ÍÀÌ¶ó¸é,
-	// m_pCameraComÀ» ´Ù¸¥ Å¸ÀÔÀ¸·Î ±³Ã¼ÇÏ°Å³ª, m_pCameraComÀÇ ¼³Á¤À» º¯°æÇØ¾ß ÇÕ´Ï´Ù.
-	// ¸¸¾à "CFollow_Camera"°¡ CCamera¸¦ »ó¼ÓÇÑ »õ·Î¿î Å¬·¡½º¶ó¸é,
-	// CGameObject_Camera::Initialize ³»ºÎ¿¡¼­ CCamera ´ë½Å CFollow_Camera¸¦ »ı¼ºÇÏµµ·Ï ¼öÁ¤ÇÏ°Å³ª,
-	// ¿©±â¼­ ±³Ã¼ÇÏ´Â ·ÎÁ÷À» ±¸ÇöÇØ¾ß ÇÕ´Ï´Ù.
+	// í˜„ì¬ ì½”ë“œì—ì„œëŠ” CGameObject_Camera::Initializeê°€ CCameraë¥¼ ìƒì„±í•˜ê³  m_pCameraComì— í• ë‹¹í•©ë‹ˆë‹¤.
+	// CCamera_Followì˜ ëª©ì ì´ ì´ CCameraì˜ ë™ì‘ì„ ë³€ê²½í•˜ëŠ” ê²ƒì´ë¼ë©´,
+	// m_pCameraComì„ ë‹¤ë¥¸ íƒ€ì…ìœ¼ë¡œ êµì²´í•˜ê±°ë‚˜, m_pCameraComì˜ ì„¤ì •ì„ ë³€ê²½í•´ì•¼ í•©ë‹ˆë‹¤.
+	// ë§Œì•½ "CFollow_Camera"ê°€ CCameraë¥¼ ìƒì†í•œ ìƒˆë¡œìš´ í´ë˜ìŠ¤ë¼ë©´,
+	// CGameObject_Camera::Initialize ë‚´ë¶€ì—ì„œ CCamera ëŒ€ì‹  CFollow_Cameraë¥¼ ìƒì„±í•˜ë„ë¡ ìˆ˜ì •í•˜ê±°ë‚˜,
+	// ì—¬ê¸°ì„œ êµì²´í•˜ëŠ” ë¡œì§ì„ êµ¬í˜„í•´ì•¼ í•©ë‹ˆë‹¤.
 
-	// ÀÓ½Ã·Î, CGameObject_Camera°¡ »ı¼ºÇÑ CCamera¸¦ ±×´ë·Î »ç¿ëÇÑ´Ù°í °¡Á¤ÇÏ°í,
-	// ÇØ´ç Ä«¸Ş¶óÀÇ ¼³Á¤À» CCamera_Follow¿¡ ¸Â°Ô Á¶Á¤ÇÒ ¼ö ÀÖ½À´Ï´Ù.
-	// ¿¹¸¦ µé¾î, m_pCameraCom->Set_FollowTarget(...) °°Àº ¸Ş¼­µå°¡ ÀÖ´Ù¸é È£ÃâÇÕ´Ï´Ù.
+	// ì„ì‹œë¡œ, CGameObject_Cameraê°€ ìƒì„±í•œ CCameraë¥¼ ê·¸ëŒ€ë¡œ ì‚¬ìš©í•œë‹¤ê³  ê°€ì •í•˜ê³ ,
+	// í•´ë‹¹ ì¹´ë©”ë¼ì˜ ì„¤ì •ì„ CCamera_Followì— ë§ê²Œ ì¡°ì •í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+	// ì˜ˆë¥¼ ë“¤ì–´, m_pCameraCom->Set_FollowTarget(...) ê°™ì€ ë©”ì„œë“œê°€ ìˆë‹¤ë©´ í˜¸ì¶œí•©ë‹ˆë‹¤.
 
 	return S_OK;
 }
@@ -167,23 +167,23 @@ void CCamera_Follow::Free()
 void CCamera_Follow::Priority_Update(_float fTimeDelta)
 {
 
-	// __super::Priority_Update(fTimeDelta); // CGameObject_CameraÀÇ Priority_Update È£Ãâ (ÇÊ¿ä½Ã)
+	// __super::Priority_Update(fTimeDelta); // CGameObject_Cameraì˜ Priority_Update í˜¸ì¶œ (í•„ìš”ì‹œ)
 
 	if (nullptr == m_pCameraCom || nullptr == m_pGameInstance)
 		return;
 
-	// m_pCameraComÀ» CFollow_Camera*·Î Ä³½ºÆÃ
+	// m_pCameraComì„ CFollow_Camera*ë¡œ ìºìŠ¤íŒ…
 	CFollow_Camera* pFollowCam = static_cast<CFollow_Camera*>(m_pCameraCom);
-	// dynamic_cast¸¦ »ç¿ëÇÏ°Å³ª, »ı¼º ½Ã Å¸ÀÔÀ» È®½ÇÈ÷ º¸ÀåÇØ¾ß ÇÕ´Ï´Ù.
-	// if (nullptr == pFollowCam) return; // ÀÌ¹Ì À§¿¡¼­ m_pCameraCom null Ã¼Å©
+	// dynamic_castë¥¼ ì‚¬ìš©í•˜ê±°ë‚˜, ìƒì„± ì‹œ íƒ€ì…ì„ í™•ì‹¤íˆ ë³´ì¥í•´ì•¼ í•©ë‹ˆë‹¤.
+	// if (nullptr == pFollowCam) return; // ì´ë¯¸ ìœ„ì—ì„œ m_pCameraCom null ì²´í¬
 
 	_long MouseMoveX = m_pGameInstance->Get_DIMouseMove(DIMM::X);
 	_long MouseMoveY = m_pGameInstance->Get_DIMouseMove(DIMM::Y);
 	_long MouseWheel = m_pGameInstance->Get_DIMouseMove(DIMM::WHEEL);
 
 
-	// g_bCameraControl °°Àº Àü¿ª ÇÃ·¡±×³ª, Æ¯Á¤ Á¶°Ç(¿¹: ¸¶¿ì½º ¿ìÅ¬¸¯ Áß)¿¡ µû¶ó Ä«¸Ş¶ó Á¶ÀÛ È°¼ºÈ­
-	if (g_bCameraControl) // ÀÌ Àü¿ª º¯¼ö°¡ Ä«¸Ş¶ó Á¶ÀÛÀ» Á¦¾îÇÑ´Ù°í °¡Á¤
+	// g_bCameraControl ê°™ì€ ì „ì—­ í”Œë˜ê·¸ë‚˜, íŠ¹ì • ì¡°ê±´(ì˜ˆ: ë§ˆìš°ìŠ¤ ìš°í´ë¦­ ì¤‘)ì— ë”°ë¼ ì¹´ë©”ë¼ ì¡°ì‘ í™œì„±í™”
+	if (g_bCameraControl) // ì´ ì „ì—­ ë³€ìˆ˜ê°€ ì¹´ë©”ë¼ ì¡°ì‘ì„ ì œì–´í•œë‹¤ê³  ê°€ì •
 	{
 		if (MouseMoveX != 0)
 		{
@@ -192,20 +192,20 @@ void CCamera_Follow::Priority_Update(_float fTimeDelta)
 
 		if (MouseMoveY != 0)
 		{
-			// Pitch´Â ÀÏ¹İÀûÀ¸·Î ¹İÀüµÇ¹Ç·Î -¸¦ °öÇÏ°Å³ª, Get_DIMouseMove°¡ ÀÌ¹Ì ÀûÀıÇÑ °ªÀ» ¹İÈ¯ÇØ¾ß ÇÔ
+			// PitchëŠ” ì¼ë°˜ì ìœ¼ë¡œ ë°˜ì „ë˜ë¯€ë¡œ -ë¥¼ ê³±í•˜ê±°ë‚˜, Get_DIMouseMoveê°€ ì´ë¯¸ ì ì ˆí•œ ê°’ì„ ë°˜í™˜í•´ì•¼ í•¨
 			static_cast<CFollow_Camera*>(pFollowCam)->AddPitch(MouseMoveY * m_fSensor * fTimeDelta);
 		}
 
-		// ÁÜÀÎ/¾Æ¿ô (CFollow_Camera¿¡ AdjustDistance ¸Ş¼­µå ÇÊ¿ä)
+		// ì¤Œì¸/ì•„ì›ƒ (CFollow_Cameraì— AdjustDistance ë©”ì„œë“œ í•„ìš”)
 		if (MouseWheel != 0)
 		{
-			//ÈÙ ¹Î°¨µµ Á¶Àı ÇÊ¿ä
-			float zoomSensitivity = 20.0f; // ¿¹½Ã ¹Î°¨µµ
+			//íœ  ë¯¼ê°ë„ ì¡°ì ˆ í•„ìš”
+			float zoomSensitivity = 20.0f; // ì˜ˆì‹œ ë¯¼ê°ë„
 			static_cast<CFollow_Camera*>(pFollowCam)->AdjustDistance(-MouseWheel * fTimeDelta * zoomSensitivity);
 		}
 	}
 
-	// ±âÁ¸ CCamera_FollowÀÇ TransformÀ» Á÷Á¢ È¸Àü½ÃÅ°´Â ÄÚµå´Â Á¦°ÅÇÕ´Ï´Ù.
+	// ê¸°ì¡´ CCamera_Followì˜ Transformì„ ì§ì ‘ íšŒì „ì‹œí‚¤ëŠ” ì½”ë“œëŠ” ì œê±°í•©ë‹ˆë‹¤.
 	// if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::X))
 	// {
 	// 	m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), MouseMove * fTimeDelta * m_fSensor);

@@ -274,6 +274,8 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 		MSG_BOX("Heightmap dimensions are zero after loading.");
 		return E_FAIL;
 	}
+
+#pragma region Vertex
 	m_iNumVertices = m_iNumVerticesX * m_iNumVerticesZ;
 
 	m_iNumVertexBuffers = 1;
@@ -307,7 +309,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	_float halfWidth = terrainActualWidth / 2.0f;
 	_float halfDepth = terrainActualDepth / 2.0f;
 
-	
+
 
 	for (size_t i = 0; i < m_iNumVerticesZ; i++)
 	{
@@ -318,7 +320,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 			_float xPos = static_cast<_float>(j) - halfWidth;
 			_float zPos = static_cast<_float>(i) - halfDepth;
 
-			_float actualHeight = heightValues[iIndex] * m_fHeightScale;
+			_float actualHeight = heightValues[(_uint)i * m_iNumVerticesX + (m_iNumVerticesX - 1 - (_uint)j)] * m_fHeightScale;
 
 			m_pVertexPositions[iIndex] = pVertices[iIndex].vPosition = _float3(xPos, (actualHeight), zPos);
 			pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
@@ -326,12 +328,12 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 		}
 	}
 
-
-	/*for (_uint i = 0; i < m_iNumVertices; ++i)
-		m_pVertexPositions[i] = pVertices[i].vPosition;*/
-
 	VBInitialData.pSysMem = pVertices;
+#pragma endregion
 
+	
+
+#pragma region Index
 	D3D11_BUFFER_DESC			IBBufferDesc{};
 	IBBufferDesc.ByteWidth = m_iNumIndices * m_iIndexStride;
 	IBBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -341,7 +343,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	IBBufferDesc.MiscFlags = 0;
 
 	_uint* pIndices = new _uint[m_iNumIndices];
-	ZeroMemory(pIndices, sizeof(_uint) * m_iNumIndices);
+	ZeroMemory(pIndices, sizeof(_uint)* m_iNumIndices);
 
 	_uint	iNumIndices = { 0 };
 
@@ -391,12 +393,23 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 				, XMLoadFloat3(&pVertices[iIndices[3]].vNormal) + vNormal);
 		}
 	}
+#pragma endregion
 
+	/*for (_uint i = 0; i < m_iNumVertices; ++i)
+		m_pVertexPositions[i] = pVertices[i].vPosition;*/
+
+	
+
+	
+#pragma region Normal
 	for (size_t i = 0; i < m_iNumVertices; i++)
 	{
 		XMStoreFloat3(&pVertices[i].vNormal
 			, XMVector3Normalize(XMLoadFloat3(&pVertices[i].vNormal)));
 	}
+#pragma endregion
+
+	
 
 	D3D11_SUBRESOURCE_DATA		IBInitialData{};
 	IBInitialData.pSysMem = pIndices;
@@ -602,12 +615,8 @@ HRESULT CVIBuffer_Terrain::Deserialize(simdjson::ondemand::object& jsonData)
 		m_iNumMaps = static_cast<_uint>(iNumMpas);
 	}
 
-	unsigned long long iGridWidth;
-	unsigned long long iGridHeight;
 	simdjson::ondemand::array arr;
 	error = terrainJsonData["GridSize"].get_array().get(arr);
-	error = arr.at(0).get_uint64().get(iGridWidth);
-	error = arr.at(1).get_uint64().get(iGridHeight);
 	if (error) // 키가 없거나 타입이 맞지 않는 경우
 	{
 		MSG_BOX("Warning: HeightScale not found or invalid in JSON. Using default value 10.0f.");
@@ -616,8 +625,10 @@ HRESULT CVIBuffer_Terrain::Deserialize(simdjson::ondemand::object& jsonData)
 	}
 	else
 	{
-		m_iGridWidth = static_cast<_uint>(iGridWidth);
-		m_iGridHeight = static_cast<_uint>(iGridHeight);
+		auto iter = arr.begin();
+		m_iGridWidth = static_cast<_uint>((*iter).get_uint64().value_unsafe());
+		++iter;
+		m_iGridHeight = static_cast<_uint>((*iter).get_uint64().value_unsafe());
 	}
 
 	if (FAILED(Initialize_Prototype(m_strHeightMapFilePath.c_str(), m_iNumMaps, m_iGridWidth, m_iGridHeight)))

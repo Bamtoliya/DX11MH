@@ -1,4 +1,4 @@
-
+ï»¿
 #include "Follow_Camera.h"
 #include "GameInstance.h"
 #include "GameObject.h"
@@ -24,11 +24,11 @@ CFollow_Camera::CFollow_Camera(const CFollow_Camera& Prototype)
 
 HRESULT CFollow_Camera::Initialize_Prototype()
 {
-	// ±âº»°ª ¼³Á¤Àº Çì´õ¿¡¼­ Ã³¸®ÇÏ°Å³ª ¿©±â¼­ ¸í½ÃÀûÀ¸·Î ÇÒ ¼ö ÀÖ½À´Ï´Ù.
+	// ê¸°ë³¸ê°’ ì„¤ì •ì€ í—¤ë”ì—ì„œ ì²˜ë¦¬í•˜ê±°ë‚˜ ì—¬ê¸°ì„œ ëª…ì‹œì ìœ¼ë¡œ í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 	m_fDistance = 10.f;
-	m_fSmoothFactor = 0.2f; // Á» ´õ ºÎµå·¯¿î °ªÀ» ±âº»À¸·Î ÇÒ ¼öµµ ÀÖ½À´Ï´Ù.
+	m_fSmoothFactor = 0.2f; // ì¢€ ë” ë¶€ë“œëŸ¬ìš´ ê°’ì„ ê¸°ë³¸ìœ¼ë¡œ í•  ìˆ˜ë„ ìˆìŠµë‹ˆë‹¤.
 	m_fCameraYaw = 0.f;
-	m_fCameraPitch = XM_PIDIV4; // ¾à 45µµ À§¿¡¼­ ½ÃÀÛ
+	m_fCameraPitch = XM_PIDIV4; // ì•½ 45ë„ ìœ„ì—ì„œ ì‹œì‘
 	return S_OK;
 }
 HRESULT CFollow_Camera::Initialize(void* pArg)
@@ -105,13 +105,13 @@ void CFollow_Camera::Update(_float fTimeDelta)
 }
 void CFollow_Camera::Late_Update(_float fTimeDelta)
 {
-	if (nullptr == m_pOwner) // CComponentÀÇ ¸â¹ö, ÀÌ Ä«¸Ş¶ó ÄÄÆ÷³ÍÆ®¸¦ ¼ÒÀ¯ÇÑ °ÔÀÓ ¿ÀºêÁ§Æ®
+	if (nullptr == m_pOwner) // CComponentì˜ ë©¤ë²„, ì´ ì¹´ë©”ë¼ ì»´í¬ë„ŒíŠ¸ë¥¼ ì†Œìœ í•œ ê²Œì„ ì˜¤ë¸Œì íŠ¸
 		return;
 
-	if (nullptr == m_pTarget) // µû¶ó°¥ ´ë»óÀÌ ¾øÀ¸¸é ¾÷µ¥ÀÌÆ® ¾È ÇÔ
+	if (nullptr == m_pTarget) // ë”°ë¼ê°ˆ ëŒ€ìƒì´ ì—†ìœ¼ë©´ ì—…ë°ì´íŠ¸ ì•ˆ í•¨
 	{
-		// ´ë»óÀÌ ¾øÀ» ¶§ ±âº» µ¿ÀÛ (¿¹: ÇöÀç À§Ä¡ À¯Áö ¶Ç´Â ´Ù¸¥ ·ÎÁ÷)
-		// CCameraÀÇ Late_Update¸¦ È£ÃâÇÏ¿© ºä/Åõ¿µ Çà·Ä¸¸ ¾÷µ¥ÀÌÆ® ÇÒ ¼ö ÀÖ½À´Ï´Ù.
+		// ëŒ€ìƒì´ ì—†ì„ ë•Œ ê¸°ë³¸ ë™ì‘ (ì˜ˆ: í˜„ì¬ ìœ„ì¹˜ ìœ ì§€ ë˜ëŠ” ë‹¤ë¥¸ ë¡œì§)
+		// CCameraì˜ Late_Updateë¥¼ í˜¸ì¶œí•˜ì—¬ ë·°/íˆ¬ì˜ í–‰ë ¬ë§Œ ì—…ë°ì´íŠ¸ í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 		__super::Late_Update(fTimeDelta);
 		return;
 	}
@@ -122,62 +122,62 @@ void CFollow_Camera::Late_Update(_float fTimeDelta)
 
 	_vector vTargetPosition = pTargetTransform->Get_State(STATE::POSITION);
 
-	// 1. Ä«¸Ş¶ó È¸Àü Çà·Ä »ı¼º (Yaw, Pitch ±âÁØ)
+	// 1. ì¹´ë©”ë¼ íšŒì „ í–‰ë ¬ ìƒì„± (Yaw, Pitch ê¸°ì¤€)
 	XMMATRIX matRotation = XMMatrixRotationRollPitchYaw(m_fCameraPitch, m_fCameraYaw, 0.f);
 
-	// 2. Å¸°ÙÀ¸·ÎºÎÅÍÀÇ ±âº» ¿ÀÇÁ¼Â º¤ÅÍ (Å¸°Ù µÚÂÊ ZÃà ¹æÇâ)
-	_vector vBaseOffset = XMVectorSet(0.f, 0.f, -m_fDistance, 0.f); // -Z ¹æÇâÀ¸·Î m_fDistance ¸¸Å­
+	// 2. íƒ€ê²Ÿìœ¼ë¡œë¶€í„°ì˜ ê¸°ë³¸ ì˜¤í”„ì…‹ ë²¡í„° (íƒ€ê²Ÿ ë’¤ìª½ Zì¶• ë°©í–¥)
+	_vector vBaseOffset = XMVectorSet(0.f, 0.f, -m_fDistance, 0.f); // -Z ë°©í–¥ìœ¼ë¡œ m_fDistance ë§Œí¼
 
-	// 3. È¸ÀüµÈ ¿ÀÇÁ¼Â º¤ÅÍ °è»ê
-	// XMVector3TransformCoord´Â w=1·Î °£ÁÖÇÏ¹Ç·Î À§Ä¡ º¯È¯¿¡ ÀûÇÕÇÕ´Ï´Ù.
-	// ¹æÇâ º¤ÅÍÀÇ È¸Àü¿¡´Â XMVector3TransformNormalÀÌ ´õ ÀûÇÕÇÒ ¼ö ÀÖ½À´Ï´Ù.
-	// ¿©±â¼­´Â ¿ÀÇÁ¼Â À§Ä¡¸¦ °è»êÇÏ¹Ç·Î Coordµµ ±¦Âú½À´Ï´Ù.
+	// 3. íšŒì „ëœ ì˜¤í”„ì…‹ ë²¡í„° ê³„ì‚°
+	// XMVector3TransformCoordëŠ” w=1ë¡œ ê°„ì£¼í•˜ë¯€ë¡œ ìœ„ì¹˜ ë³€í™˜ì— ì í•©í•©ë‹ˆë‹¤.
+	// ë°©í–¥ ë²¡í„°ì˜ íšŒì „ì—ëŠ” XMVector3TransformNormalì´ ë” ì í•©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+	// ì—¬ê¸°ì„œëŠ” ì˜¤í”„ì…‹ ìœ„ì¹˜ë¥¼ ê³„ì‚°í•˜ë¯€ë¡œ Coordë„ ê´œì°®ìŠµë‹ˆë‹¤.
 	_vector vRotatedOffset = XMVector3TransformCoord(vBaseOffset, matRotation);
 
-	// 4. ÃÖÁ¾ Ä«¸Ş¶ó ¸ñÇ¥ À§Ä¡ °è»ê
+	// 4. ìµœì¢… ì¹´ë©”ë¼ ëª©í‘œ ìœ„ì¹˜ ê³„ì‚°
 	_vector vDesiredPosition = vTargetPosition + vRotatedOffset;
 
-	// 5. ÇöÀç Ä«¸Ş¶ó(¼ÒÀ¯ÀÚ °ÔÀÓ ¿ÀºêÁ§Æ®)ÀÇ À§Ä¡ °¡Á®¿À±â
+	// 5. í˜„ì¬ ì¹´ë©”ë¼(ì†Œìœ ì ê²Œì„ ì˜¤ë¸Œì íŠ¸)ì˜ ìœ„ì¹˜ ê°€ì ¸ì˜¤ê¸°
 	CTransform* pCameraOwnerTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
 	if (nullptr == pCameraOwnerTransform)
 		return;
 	_vector vCurrentPosition = pCameraOwnerTransform->Get_State(STATE::POSITION);
 
-	// 6. ¼±Çü º¸°£(Lerp)À» »ç¿ëÇÏ¿© Ä«¸Ş¶ó À§Ä¡¸¦ ºÎµå·´°Ô ÀÌµ¿
-	// m_fSmoothFactor°¡ 1¿¡ °¡±î¿ì¸é Áï½Ã ÀÌµ¿, 0¿¡ °¡±î¿ì¸é ´À¸®°Ô ÀÌµ¿.
-	// ÇÁ·¹ÀÓ·ü¿¡ µ¶¸³ÀûÀÎ ½º¹«µùÀ» ¿øÇÏ¸é: Lerp(current, desired, 1.f - exp(-Rate * fTimeDelta))
-	// ÇöÀç´Â ´Ü¼ø Lerp: factor°¡ Å¬¼ö·Ï ºü¸£°Ô µû¶ó°¨.
-	_vector vNewPosition = XMVectorLerp(vCurrentPosition, vDesiredPosition, m_fSmoothFactor /* * fTimeDelta - »ç¿ë ¹æ½Ä¿¡ µû¶ó °áÁ¤ */);
+	// 6. ì„ í˜• ë³´ê°„(Lerp)ì„ ì‚¬ìš©í•˜ì—¬ ì¹´ë©”ë¼ ìœ„ì¹˜ë¥¼ ë¶€ë“œëŸ½ê²Œ ì´ë™
+	// m_fSmoothFactorê°€ 1ì— ê°€ê¹Œìš°ë©´ ì¦‰ì‹œ ì´ë™, 0ì— ê°€ê¹Œìš°ë©´ ëŠë¦¬ê²Œ ì´ë™.
+	// í”„ë ˆì„ë¥ ì— ë…ë¦½ì ì¸ ìŠ¤ë¬´ë”©ì„ ì›í•˜ë©´: Lerp(current, desired, 1.f - exp(-Rate * fTimeDelta))
+	// í˜„ì¬ëŠ” ë‹¨ìˆœ Lerp: factorê°€ í´ìˆ˜ë¡ ë¹ ë¥´ê²Œ ë”°ë¼ê°.
+	_vector vNewPosition = XMVectorLerp(vCurrentPosition, vDesiredPosition, m_fSmoothFactor /* * fTimeDelta - ì‚¬ìš© ë°©ì‹ì— ë”°ë¼ ê²°ì • */);
 	pCameraOwnerTransform->Set_State(STATE::POSITION, vNewPosition);
 
-	// 7. CCameraÀÇ LookAt ÇÔ¼ö¸¦ È£ÃâÇÏ¿© Ä«¸Ş¶ó°¡ Ç×»ó Å¸°ÙÀ» ¹Ù¶óº¸µµ·Ï ¼³Á¤
-	// CCamera::LookAtÀº m_pOwnerÀÇ Transform¿¡¼­ ´« À§Ä¡(Eye)¸¦ °¡Á®¿À°í,
-	// Á¦°øµÈ Å¸°Ù À§Ä¡(At)¸¦ »ç¿ëÇÏ¿© ºä Çà·ÄÀ» ¼³Á¤ÇÕ´Ï´Ù.
+	// 7. CCameraì˜ LookAt í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•˜ì—¬ ì¹´ë©”ë¼ê°€ í•­ìƒ íƒ€ê²Ÿì„ ë°”ë¼ë³´ë„ë¡ ì„¤ì •
+	// CCamera::LookAtì€ m_pOwnerì˜ Transformì—ì„œ ëˆˆ ìœ„ì¹˜(Eye)ë¥¼ ê°€ì ¸ì˜¤ê³ ,
+	// ì œê³µëœ íƒ€ê²Ÿ ìœ„ì¹˜(At)ë¥¼ ì‚¬ìš©í•˜ì—¬ ë·° í–‰ë ¬ì„ ì„¤ì •í•©ë‹ˆë‹¤.
 	__super::LookAt(vTargetPosition);
 
-	// 8. CCameraÀÇ ³ª¸ÓÁö Late_Update ·ÎÁ÷ (ºä/Åõ¿µ Çà·Ä ¾÷µ¥ÀÌÆ® µî) È£Ãâ
-	// LookAtÀ» È£ÃâÇßÀ¸¹Ç·Î, __super::Late_Update(fTimeDelta)¸¦ ´Ù½Ã È£ÃâÇÒ ÇÊ¿ä´Â ¾øÀ» ¼ö ÀÖ½À´Ï´Ù.
-	// CCamera::LookAt ³»ºÎ¿¡¼­ ÇÊ¿äÇÑ ºä Çà·Ä ¾÷µ¥ÀÌÆ®°¡ ¼öÇàµÇ°í,
-	// CCamera::Late_Update¿¡¼­ Åõ¿µ Çà·Ä ¹× ±âÅ¸ ¾÷µ¥ÀÌÆ®°¡ ¼öÇàµÉ °ÍÀÔ´Ï´Ù.
-	// ¸¸¾à LookAtÀÌ ºä Çà·Ä¸¸ ¼³Á¤ÇÏ°í, Late_Update¿¡¼­ ÃÖÁ¾ Çà·Ä °è»êÀ» ÇÑ´Ù¸é È£Ãâ ÇÊ¿ä.
-	// ÇöÀç CCamera ±¸Á¶¿¡ µû¶ó __super::Late_Update(fTimeDelta)¸¦ È£ÃâÇÏ°Å³ª,
-	// LookAt ÀÌÈÄ ÇÊ¿äÇÑ __super::Update_Matrix() °°Àº ÇÔ¼ö¸¦ È£ÃâÇÒ ¼ö ÀÖ½À´Ï´Ù.
-	// ¾ÈÀüÇÏ°Ô´Â CCamera::Late_Update¸¦ È£ÃâÇÏ¿© ¸ğµç ±âº» ¾÷µ¥ÀÌÆ®°¡ ¼öÇàµÇµµ·Ï ÇÕ´Ï´Ù.
-	// ´Ü, LookAtÀ» È£ÃâÇÑ ÈÄ¿¡´Â Eye, At, UpÀÌ ÀÌ¹Ì ¼³Á¤µÈ »óÅÂÀÌ¹Ç·Î,
-	// CCamera::Late_Update°¡ ÀÌ¸¦ µ¤¾î¾²Áö ¾Êµµ·Ï ÁÖÀÇÇØ¾ß ÇÕ´Ï´Ù.
-	// °¡Àå ÀÏ¹İÀûÀÎ ¹æ¹ıÀº CCamera::Set_ViewMatrix, CCamera::Set_ProjMatrix µîÀ» Á÷Á¢ È£ÃâÇÏ°Å³ª,
-	// __super::Late_Update()°¡ ³»ºÎÀûÀ¸·Î m_matView, m_matProj¸¦ ¾÷µ¥ÀÌÆ®ÇÏµµ·Ï ÇÏ´Â °ÍÀÔ´Ï´Ù.
-	// ¿©±â¼­´Â LookAtÀÌ ºä Çà·ÄÀ» ¼³Á¤ÇÏ°í, __super::Late_Update°¡ ³ª¸ÓÁö¸¦ Ã³¸®ÇÑ´Ù°í °¡Á¤ÇÕ´Ï´Ù.
-	// CCamera::Late_Update°¡ m_vEye, m_vAt µîÀ» ±â¹İÀ¸·Î LookAtÀ» ´Ù½Ã È£ÃâÇÑ´Ù¸é Áßº¹ÀÌ¹Ç·Î,
-	// CCameraÀÇ ±¸ÇöÀ» È®ÀÎÇØ¾ß ÇÕ´Ï´Ù.
-	// ¿©±â¼­´Â LookAtÀ¸·Î ºä¸¦ ¼³Á¤ÇßÀ¸¹Ç·Î, __super::Late_Update()´Â È£ÃâÇÏÁö ¾Ê°Å³ª,
-	// ºä Çà·ÄÀ» Á¦¿ÜÇÑ ºÎºĞ¸¸ ¾÷µ¥ÀÌÆ®ÇÏµµ·Ï ¼öÁ¤µÈ CCamera::Late_Update_Partially() °°Àº ÇÔ¼ö¸¦ °¡Á¤ÇÕ´Ï´Ù.
-	// °¡Àå °£´ÜÇÏ°Ô´Â, CCamera::Late_Update°¡ ³»ºÎÀûÀ¸·Î m_matView¿Í m_matProj¸¦ ¾÷µ¥ÀÌÆ®ÇÑ´Ù°í °¡Á¤ÇÏ°í È£ÃâÇÕ´Ï´Ù.
-	// ¸¸¾à CCamera::Late_Update°¡ TransformÀ» ±â¹İÀ¸·Î Eye, AtÀ» ´Ù½Ã °è»êÇÑ´Ù¸é ¹®Á¦°¡ µË´Ï´Ù.
-	// ¿©±â¼­´Â __super::LookAt()ÀÌ ºä Çà·ÄÀ» ¼³Á¤ÇÏ°í,
-	// CCameraÀÇ __super::Late_Update()´Â ÁÖ·Î Åõ¿µ Çà·Ä ¾÷µ¥ÀÌÆ® ¹× ÃÖÁ¾ ÆÄÀÌÇÁ¶óÀÎ »óÅÂ ¼³Á¤À» ÇÑ´Ù°í °¡Á¤ÇÕ´Ï´Ù.
-	// CCamera::Late_Update()¸¦ È£ÃâÇÏ¿© ÆÄÀÌÇÁ¶óÀÎ¿¡ ºä/Åõ¿µ Çà·ÄÀ» ¼³Á¤ÇÏµµ·Ï ÇÕ´Ï´Ù.
-	__super::Late_Update(fTimeDelta); // CCameraÀÇ ÃÖÁ¾ ¾÷µ¥ÀÌÆ® (Çà·Ä ÆÄÀÌÇÁ¶óÀÎ¿¡ Àû¿ë µî)
+	// 8. CCameraì˜ ë‚˜ë¨¸ì§€ Late_Update ë¡œì§ (ë·°/íˆ¬ì˜ í–‰ë ¬ ì—…ë°ì´íŠ¸ ë“±) í˜¸ì¶œ
+	// LookAtì„ í˜¸ì¶œí–ˆìœ¼ë¯€ë¡œ, __super::Late_Update(fTimeDelta)ë¥¼ ë‹¤ì‹œ í˜¸ì¶œí•  í•„ìš”ëŠ” ì—†ì„ ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+	// CCamera::LookAt ë‚´ë¶€ì—ì„œ í•„ìš”í•œ ë·° í–‰ë ¬ ì—…ë°ì´íŠ¸ê°€ ìˆ˜í–‰ë˜ê³ ,
+	// CCamera::Late_Updateì—ì„œ íˆ¬ì˜ í–‰ë ¬ ë° ê¸°íƒ€ ì—…ë°ì´íŠ¸ê°€ ìˆ˜í–‰ë  ê²ƒì…ë‹ˆë‹¤.
+	// ë§Œì•½ LookAtì´ ë·° í–‰ë ¬ë§Œ ì„¤ì •í•˜ê³ , Late_Updateì—ì„œ ìµœì¢… í–‰ë ¬ ê³„ì‚°ì„ í•œë‹¤ë©´ í˜¸ì¶œ í•„ìš”.
+	// í˜„ì¬ CCamera êµ¬ì¡°ì— ë”°ë¼ __super::Late_Update(fTimeDelta)ë¥¼ í˜¸ì¶œí•˜ê±°ë‚˜,
+	// LookAt ì´í›„ í•„ìš”í•œ __super::Update_Matrix() ê°™ì€ í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+	// ì•ˆì „í•˜ê²ŒëŠ” CCamera::Late_Updateë¥¼ í˜¸ì¶œí•˜ì—¬ ëª¨ë“  ê¸°ë³¸ ì—…ë°ì´íŠ¸ê°€ ìˆ˜í–‰ë˜ë„ë¡ í•©ë‹ˆë‹¤.
+	// ë‹¨, LookAtì„ í˜¸ì¶œí•œ í›„ì—ëŠ” Eye, At, Upì´ ì´ë¯¸ ì„¤ì •ëœ ìƒíƒœì´ë¯€ë¡œ,
+	// CCamera::Late_Updateê°€ ì´ë¥¼ ë®ì–´ì“°ì§€ ì•Šë„ë¡ ì£¼ì˜í•´ì•¼ í•©ë‹ˆë‹¤.
+	// ê°€ì¥ ì¼ë°˜ì ì¸ ë°©ë²•ì€ CCamera::Set_ViewMatrix, CCamera::Set_ProjMatrix ë“±ì„ ì§ì ‘ í˜¸ì¶œí•˜ê±°ë‚˜,
+	// __super::Late_Update()ê°€ ë‚´ë¶€ì ìœ¼ë¡œ m_matView, m_matProjë¥¼ ì—…ë°ì´íŠ¸í•˜ë„ë¡ í•˜ëŠ” ê²ƒì…ë‹ˆë‹¤.
+	// ì—¬ê¸°ì„œëŠ” LookAtì´ ë·° í–‰ë ¬ì„ ì„¤ì •í•˜ê³ , __super::Late_Updateê°€ ë‚˜ë¨¸ì§€ë¥¼ ì²˜ë¦¬í•œë‹¤ê³  ê°€ì •í•©ë‹ˆë‹¤.
+	// CCamera::Late_Updateê°€ m_vEye, m_vAt ë“±ì„ ê¸°ë°˜ìœ¼ë¡œ LookAtì„ ë‹¤ì‹œ í˜¸ì¶œí•œë‹¤ë©´ ì¤‘ë³µì´ë¯€ë¡œ,
+	// CCameraì˜ êµ¬í˜„ì„ í™•ì¸í•´ì•¼ í•©ë‹ˆë‹¤.
+	// ì—¬ê¸°ì„œëŠ” LookAtìœ¼ë¡œ ë·°ë¥¼ ì„¤ì •í–ˆìœ¼ë¯€ë¡œ, __super::Late_Update()ëŠ” í˜¸ì¶œí•˜ì§€ ì•Šê±°ë‚˜,
+	// ë·° í–‰ë ¬ì„ ì œì™¸í•œ ë¶€ë¶„ë§Œ ì—…ë°ì´íŠ¸í•˜ë„ë¡ ìˆ˜ì •ëœ CCamera::Late_Update_Partially() ê°™ì€ í•¨ìˆ˜ë¥¼ ê°€ì •í•©ë‹ˆë‹¤.
+	// ê°€ì¥ ê°„ë‹¨í•˜ê²ŒëŠ”, CCamera::Late_Updateê°€ ë‚´ë¶€ì ìœ¼ë¡œ m_matViewì™€ m_matProjë¥¼ ì—…ë°ì´íŠ¸í•œë‹¤ê³  ê°€ì •í•˜ê³  í˜¸ì¶œí•©ë‹ˆë‹¤.
+	// ë§Œì•½ CCamera::Late_Updateê°€ Transformì„ ê¸°ë°˜ìœ¼ë¡œ Eye, Atì„ ë‹¤ì‹œ ê³„ì‚°í•œë‹¤ë©´ ë¬¸ì œê°€ ë©ë‹ˆë‹¤.
+	// ì—¬ê¸°ì„œëŠ” __super::LookAt()ì´ ë·° í–‰ë ¬ì„ ì„¤ì •í•˜ê³ ,
+	// CCameraì˜ __super::Late_Update()ëŠ” ì£¼ë¡œ íˆ¬ì˜ í–‰ë ¬ ì—…ë°ì´íŠ¸ ë° ìµœì¢… íŒŒì´í”„ë¼ì¸ ìƒíƒœ ì„¤ì •ì„ í•œë‹¤ê³  ê°€ì •í•©ë‹ˆë‹¤.
+	// CCamera::Late_Update()ë¥¼ í˜¸ì¶œí•˜ì—¬ íŒŒì´í”„ë¼ì¸ì— ë·°/íˆ¬ì˜ í–‰ë ¬ì„ ì„¤ì •í•˜ë„ë¡ í•©ë‹ˆë‹¤.
+	__super::Late_Update(fTimeDelta); // CCameraì˜ ìµœì¢… ì—…ë°ì´íŠ¸ (í–‰ë ¬ íŒŒì´í”„ë¼ì¸ì— ì ìš© ë“±)
 }
 HRESULT CFollow_Camera::Render()
 {
@@ -195,21 +195,21 @@ HRESULT CFollow_Camera::RenderImGui()
 		if (m_fSmoothFactor < 0.01f) m_fSmoothFactor = 0.01f;
 		if (m_fSmoothFactor > 1.f) m_fSmoothFactor = 1.f;
 
-		// Ä«¸Ş¶ó È¸Àü °ª Ç¥½Ã ¹× ¼öÁ¤ (¶óµğ¾ÈÀ» °¢µµ·Î º¯È¯ÇÏ¿© Ç¥½Ã)
+		// ì¹´ë©”ë¼ íšŒì „ ê°’ í‘œì‹œ ë° ìˆ˜ì • (ë¼ë””ì•ˆì„ ê°ë„ë¡œ ë³€í™˜í•˜ì—¬ í‘œì‹œ)
 		float fYawDeg = XMConvertToDegrees(m_fCameraYaw);
 		float fPitchDeg = XMConvertToDegrees(m_fCameraPitch);
 		if (ImGui::DragFloat("Yaw (Degrees)", &fYawDeg, 1.0f, -360.0f, 360.0f)) {
 			m_fCameraYaw = XMConvertToRadians(fYawDeg);
 		}
-		if (ImGui::DragFloat("Pitch (Degrees)", &fPitchDeg, 1.0f, -89.0f, 89.0f)) { // Pitch Á¦ÇÑ ¿¹½Ã
+		if (ImGui::DragFloat("Pitch (Degrees)", &fPitchDeg, 1.0f, -89.0f, 89.0f)) { // Pitch ì œí•œ ì˜ˆì‹œ
 			m_fCameraPitch = XMConvertToRadians(fPitchDeg);
 		}
 
-		// Å¸°Ù ¿ÀºêÁ§Æ® Ç¥½Ã ¹× µå·¡±× ¾Ø µå·Ó Å¸°Ù ¼³Á¤
+		// íƒ€ê²Ÿ ì˜¤ë¸Œì íŠ¸ í‘œì‹œ ë° ë“œë˜ê·¸ ì•¤ ë“œë¡­ íƒ€ê²Ÿ ì„¤ì •
 		if (m_pTarget)
 		{
-			// CGameObject¿¡ Get_Name() ¶Ç´Â À¯»çÇÑ ÀÌ¸§ ¹İÈ¯ ÇÔ¼ö°¡ ÀÖ´Ù°í °¡Á¤ÇÕ´Ï´Ù.
-			// ½ÇÁ¦ ÇÁ·ÎÁ§Æ®ÀÇ ÇÔ¼ö¸íÀ¸·Î º¯°æÇØ¾ß ÇÒ ¼ö ÀÖ½À´Ï´Ù.
+			// CGameObjectì— Get_Name() ë˜ëŠ” ìœ ì‚¬í•œ ì´ë¦„ ë°˜í™˜ í•¨ìˆ˜ê°€ ìˆë‹¤ê³  ê°€ì •í•©ë‹ˆë‹¤.
+			// ì‹¤ì œ í”„ë¡œì íŠ¸ì˜ í•¨ìˆ˜ëª…ìœ¼ë¡œ ë³€ê²½í•´ì•¼ í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 			ImGui::Text("Target: %s", WideToUtf8(m_pTarget->Get_Name().c_str()).c_str());
 		}
 		else
@@ -219,20 +219,20 @@ HRESULT CFollow_Camera::RenderImGui()
 
 		if (ImGui::BeginDragDropTarget())
 		{
-			// "GAMEOBJECT_PAYLOAD"´Â ÇÏÀÌ¶óÅ° ºä¿¡¼­ µå·¡±× ¼Ò½º¸¦ ¼³Á¤ÇÒ ¶§ »ç¿ëÇÑ ÆäÀÌ·Îµå Å¸ÀÔ°ú ÀÏÄ¡ÇØ¾ß ÇÕ´Ï´Ù.
+			// "GAMEOBJECT_PAYLOAD"ëŠ” í•˜ì´ë¼í‚¤ ë·°ì—ì„œ ë“œë˜ê·¸ ì†ŒìŠ¤ë¥¼ ì„¤ì •í•  ë•Œ ì‚¬ìš©í•œ í˜ì´ë¡œë“œ íƒ€ì…ê³¼ ì¼ì¹˜í•´ì•¼ í•©ë‹ˆë‹¤.
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("GAMEOBJECT_PAYLOAD"))
 			{
 				IM_ASSERT(payload->DataSize == sizeof(_uint));
 				_uint payload_oID = *(const _uint*)payload->Data;
 				CGameObject* pPayloadObject = m_pGameInstance->Get_GameObjectById(payload_oID);
 
-				// ±âÁ¸ Å¸°ÙÀÌ ÀÖ´Ù¸é Release
+				// ê¸°ì¡´ íƒ€ê²Ÿì´ ìˆë‹¤ë©´ Release
 				if (nullptr != m_pTarget)
 				{
 					Safe_Release(m_pTarget);
 				}
 
-				// »õ·Î¿î Å¸°Ù ¼³Á¤ ¹× AddRef
+				// ìƒˆë¡œìš´ íƒ€ê²Ÿ ì„¤ì • ë° AddRef
 				m_pTarget = pPayloadObject;
 				if (nullptr != m_pTarget)
 				{
@@ -260,8 +260,8 @@ HRESULT CFollow_Camera::RenderImGui()
 void CFollow_Camera::AddYaw(_float fDelta)
 {
 	m_fCameraYaw += fDelta;
-	// Yaw´Â ÀÏ¹İÀûÀ¸·Î ·¦¾î¶ó¿îµå µË´Ï´Ù (¿¹: -PI ~ PI ¶Ç´Â 0 ~ 2PI)
-	// ¿©±â¼­´Â Æ¯º°ÇÑ Ã³¸®¸¦ ÇÏÁö ¾ÊÁö¸¸, ÇÊ¿ä½Ã Ãß°¡ °¡´É
+	// YawëŠ” ì¼ë°˜ì ìœ¼ë¡œ ë©ì–´ë¼ìš´ë“œ ë©ë‹ˆë‹¤ (ì˜ˆ: -PI ~ PI ë˜ëŠ” 0 ~ 2PI)
+	// ì—¬ê¸°ì„œëŠ” íŠ¹ë³„í•œ ì²˜ë¦¬ë¥¼ í•˜ì§€ ì•Šì§€ë§Œ, í•„ìš”ì‹œ ì¶”ê°€ ê°€ëŠ¥
 }
 
 void CFollow_Camera::AddPitch(_float fDelta)
@@ -276,6 +276,6 @@ void CFollow_Camera::AddPitch(_float fDelta)
 void CFollow_Camera::AdjustDistance(_float fDeltaDistance)
 {
 	m_fDistance += fDeltaDistance;
-	if (m_fDistance < 1.0f) m_fDistance = 1.0f; // ÃÖ¼Ò °Å¸® Á¦ÇÑ ¿¹½Ã
-	if (m_fDistance > 50.f) m_fDistance = 50.f; // ÃÖ´ë °Å¸® Á¦ÇÑ ¿¹½Ã
+	if (m_fDistance < 1.0f) m_fDistance = 1.0f; // ìµœì†Œ ê±°ë¦¬ ì œí•œ ì˜ˆì‹œ
+	if (m_fDistance > 50.f) m_fDistance = 50.f; // ìµœëŒ€ ê±°ë¦¬ ì œí•œ ì˜ˆì‹œ
 }

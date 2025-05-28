@@ -154,7 +154,7 @@ HRESULT CJson_Loader::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath
             continue;
         }
 
-        CBase* pPrototype = it->second(m_pDevice, pDeferredContext);
+        CBase* pPrototype = it->second(m_pDevice, m_pContext);
         if (!pPrototype) {
             //std::string msg = "Failed to create prototype instance for: " + class_name;
             //MSG_BOX(msg.c_str());

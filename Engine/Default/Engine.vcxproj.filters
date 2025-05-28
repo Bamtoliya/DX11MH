@@ -413,6 +413,10 @@
     <ClInclude Include="..\public\VIBuffer_Island.h">
       <Filter>01.Utility\04.Components\VIBuffer\Island</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Loading_System.h" />
+    <ClInclude Include="..\public\State.h">
+      <Filter>01.Utility\04.Components\Controller\State</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -758,6 +762,10 @@
     <ClCompile Include="..\private\VIBuffer_Island.cpp">
       <Filter>01.Utility\04.Components\VIBuffer\Island</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Loading_System.cpp" />
+    <ClCompile Include="..\private\State.cpp">
+      <Filter>01.Utility\04.Components\Controller\State</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -1032,6 +1040,9 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\VIBuffer\Island">
       <UniqueIdentifier>{e55956fe-7de2-4804-9658-1303b40c3de6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\State">
+      <UniqueIdentifier>{2272c59f-a716-4363-a08c-a18e0c0d160d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

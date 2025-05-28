@@ -1,4 +1,4 @@
-#include "Camera_Manager.h"
+ï»¿#include "Camera_Manager.h"
 #include "Camera.h"
 CCamera_Manager::CCamera_Manager()
 {
@@ -133,12 +133,12 @@ void CCamera_Manager::Remove_Camera(CCamera* pCamera)
 		{
 			m_iCurIndex--;
 		}
-		// m_iCurIndex°¡ Á¦°Å ÈÄ ¸®½ºÆ®ÀÇ À¯È¿ÇÑ ¹üÀ§¸¦ ¹ş¾î³ªÁö ¾Êµµ·Ï Á¶Á¤
+		// m_iCurIndexê°€ ì œê±° í›„ ë¦¬ìŠ¤íŠ¸ì˜ ìœ íš¨í•œ ë²”ìœ„ë¥¼ ë²—ì–´ë‚˜ì§€ ì•Šë„ë¡ ì¡°ì •
 		m_iCurIndex = std::min(m_iCurIndex, static_cast<_uint>(m_Cameras.size() - 1));
 	}
 
-	// È°¼º Ä«¸Ş¶ó »óÅÂ ¾÷µ¥ÀÌÆ®
-	InActiveCameras(); // ¸ğµç Ä«¸Ş¶ó ºñÈ°¼ºÈ­
+	// í™œì„± ì¹´ë©”ë¼ ìƒíƒœ ì—…ë°ì´íŠ¸
+	InActiveCameras(); // ëª¨ë“  ì¹´ë©”ë¼ ë¹„í™œì„±í™”
 	if (!m_Cameras.empty())
 	{
 		auto current_iter = m_Cameras.begin();
@@ -174,8 +174,8 @@ void CCamera_Manager::Remove_Camera(_uint iIndex)
 		m_iCurIndex = std::min(m_iCurIndex, static_cast<_uint>(m_Cameras.size() - 1));
 	}
 
-	// È°¼º Ä«¸Ş¶ó »óÅÂ ¾÷µ¥ÀÌÆ®
-	InActiveCameras(); // ¸ğµç Ä«¸Ş¶ó ºñÈ°¼ºÈ­
+	// í™œì„± ì¹´ë©”ë¼ ìƒíƒœ ì—…ë°ì´íŠ¸
+	InActiveCameras(); // ëª¨ë“  ì¹´ë©”ë¼ ë¹„í™œì„±í™”
 	if (!m_Cameras.empty())
 	{
 		auto current_iter = m_Cameras.begin();
@@ -209,22 +209,22 @@ void CCamera_Manager::Set_Camera(CCamera* pCamera)
 
 void CCamera_Manager::Set_Camera(_uint iIndex)
 {
-	// ÀÎµ¦½º°¡ À¯È¿ÇÑ ¹üÀ§ ³»¿¡ ÀÖ´ÂÁö È®ÀÎÇÕ´Ï´Ù.
+	// ì¸ë±ìŠ¤ê°€ ìœ íš¨í•œ ë²”ìœ„ ë‚´ì— ìˆëŠ”ì§€ í™•ì¸í•©ë‹ˆë‹¤.
 	if (iIndex >= m_Cameras.size() || m_Cameras.empty())
 	{
-		return; // À¯È¿ÇÏÁö ¾ÊÀ¸¸é ÇÔ¼ö Á¾·á
+		return; // ìœ íš¨í•˜ì§€ ì•Šìœ¼ë©´ í•¨ìˆ˜ ì¢…ë£Œ
 	}
 
-	// ÇöÀç Ä«¸Ş¶ó ÀÎµ¦½º¸¦ ¼³Á¤ÇÕ´Ï´Ù.
+	// í˜„ì¬ ì¹´ë©”ë¼ ì¸ë±ìŠ¤ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
 	m_iCurIndex = iIndex;
 
-	// ¸ğµç Ä«¸Ş¶ó¸¦ ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
+	// ëª¨ë“  ì¹´ë©”ë¼ë¥¼ ë¹„í™œì„±í™”í•©ë‹ˆë‹¤.
 	InActiveCameras();
 
-	// »õ ÇöÀç Ä«¸Ş¶ó¸¦ È°¼ºÈ­ÇÕ´Ï´Ù.
-	// m_Cameras´Â std::listÀÌ¹Ç·Î ¹İº¹ÀÚ¸¦ »ç¿ëÇØ¾ß ÇÕ´Ï´Ù.
+	// ìƒˆ í˜„ì¬ ì¹´ë©”ë¼ë¥¼ í™œì„±í™”í•©ë‹ˆë‹¤.
+	// m_CamerasëŠ” std::listì´ë¯€ë¡œ ë°˜ë³µìë¥¼ ì‚¬ìš©í•´ì•¼ í•©ë‹ˆë‹¤.
 	auto iter = m_Cameras.begin();
-	std::advance(iter, m_iCurIndex); // m_iCurIndex¸¸Å­ ¹İº¹ÀÚ ÀÌµ¿
+	std::advance(iter, m_iCurIndex); // m_iCurIndexë§Œí¼ ë°˜ë³µì ì´ë™
 
 	if (iter != m_Cameras.end() && (*iter) != nullptr)
 	{
@@ -254,22 +254,22 @@ void CCamera_Manager::Change_Camera(CCamera* pCamera)
 
 void CCamera_Manager::Change_Camera(_uint iIndex)
 {
-	// ÀÎµ¦½º°¡ À¯È¿ÇÑ ¹üÀ§ ³»¿¡ ÀÖ´ÂÁö È®ÀÎÇÕ´Ï´Ù.
+	// ì¸ë±ìŠ¤ê°€ ìœ íš¨í•œ ë²”ìœ„ ë‚´ì— ìˆëŠ”ì§€ í™•ì¸í•©ë‹ˆë‹¤.
 	if (iIndex >= m_Cameras.size() || m_Cameras.empty())
 	{
-		return; // À¯È¿ÇÏÁö ¾ÊÀ¸¸é ÇÔ¼ö Á¾·á
+		return; // ìœ íš¨í•˜ì§€ ì•Šìœ¼ë©´ í•¨ìˆ˜ ì¢…ë£Œ
 	}
 
-	// ÇöÀç Ä«¸Ş¶ó ÀÎµ¦½º¸¦ ¼³Á¤ÇÕ´Ï´Ù.
+	// í˜„ì¬ ì¹´ë©”ë¼ ì¸ë±ìŠ¤ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.
 	m_iCurIndex = iIndex;
 
-	// ¸ğµç Ä«¸Ş¶ó¸¦ ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
+	// ëª¨ë“  ì¹´ë©”ë¼ë¥¼ ë¹„í™œì„±í™”í•©ë‹ˆë‹¤.
 	InActiveCameras();
 
-	// »õ ÇöÀç Ä«¸Ş¶ó¸¦ È°¼ºÈ­ÇÕ´Ï´Ù.
-	// m_Cameras´Â std::listÀÌ¹Ç·Î ¹İº¹ÀÚ¸¦ »ç¿ëÇØ¾ß ÇÕ´Ï´Ù.
+	// ìƒˆ í˜„ì¬ ì¹´ë©”ë¼ë¥¼ í™œì„±í™”í•©ë‹ˆë‹¤.
+	// m_CamerasëŠ” std::listì´ë¯€ë¡œ ë°˜ë³µìë¥¼ ì‚¬ìš©í•´ì•¼ í•©ë‹ˆë‹¤.
 	auto iter = m_Cameras.begin();
-	std::advance(iter, m_iCurIndex); // m_iCurIndex¸¸Å­ ¹İº¹ÀÚ ÀÌµ¿
+	std::advance(iter, m_iCurIndex); // m_iCurIndexë§Œí¼ ë°˜ë³µì ì´ë™
 
 	if (iter != m_Cameras.end() && (*iter) != nullptr)
 	{
@@ -280,7 +280,7 @@ void CCamera_Manager::Change_Camera(_uint iIndex)
 
 void CCamera_Manager::InActiveCameras()
 {
-	// ¸ğµç Ä«¸Ş¶ó¸¦ ¿ì¼± ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
+	// ëª¨ë“  ì¹´ë©”ë¼ë¥¼ ìš°ì„  ë¹„í™œì„±í™”í•©ë‹ˆë‹¤.
 	for (auto& pCam : m_Cameras)
 	{
 		if (pCam != nullptr)
@@ -292,7 +292,7 @@ void CCamera_Manager::InActiveCameras()
 
 void CCamera_Manager::Clear()
 {
-	// ¸ğµç Ä«¸Ş¶ó¸¦ ¿ì¼± ºñÈ°¼ºÈ­ÇÕ´Ï´Ù.
+	// ëª¨ë“  ì¹´ë©”ë¼ë¥¼ ìš°ì„  ë¹„í™œì„±í™”í•©ë‹ˆë‹¤.
 	for (auto& pCam : m_Cameras)
 	{
 		if (pCam != nullptr)

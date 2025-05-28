@@ -1,4 +1,4 @@
-#include "Camera_TPS.h"
+ï»¿#include "Camera_TPS.h"
 #include "GameInstance.h"
 #include "GameObject.h"
 
@@ -106,7 +106,7 @@ void CCamera_TPS::Priority_Update(_float fTimeDelta)
 		m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), MouseMove * fTimeDelta * m_fSensor);
 	}
 
-	//ÁÜÀÎ ¾Æ¿ô
+	//ì¤Œì¸ ì•„ì›ƒ
 	/*if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::WHEEL))
 	{
 		if (MouseMove > 0)
@@ -160,33 +160,33 @@ void CCamera_TPS::Focus_OnPickedObject()
 		CTransform* pTargetTransform = static_cast<CTransform*>(pGameObject->Get_Component(g_strTransformTag));
 		if (pTargetTransform)
 		{
-			// ÇöÀç °´Ã¼ÀÇ Transform ÄÄÆ÷³ÍÆ® (m_pTransformCom)
+			// í˜„ìž¬ ê°ì²´ì˜ Transform ì»´í¬ë„ŒíŠ¸ (m_pTransformCom)
 			if (m_pTransformCom)
 			{
-				// 1. Å¸°Ù °´Ã¼ÀÇ À§Ä¡¿Í ÇöÀç °´Ã¼ÀÇ À§Ä¡ °¡Á®¿À±â
+				// 1. íƒ€ê²Ÿ ê°ì²´ì˜ ìœ„ì¹˜ì™€ í˜„ìž¬ ê°ì²´ì˜ ìœ„ì¹˜ ê°€ì ¸ì˜¤ê¸°
 				_vector vTargetPosition = pTargetTransform->Get_State(STATE::POSITION);
-				_vector vMyCurrentPosition = m_pTransformCom->Get_State(STATE::POSITION); // ÇöÀç À§Ä¡µµ ÇÊ¿ä
+				_vector vMyCurrentPosition = m_pTransformCom->Get_State(STATE::POSITION); // í˜„ìž¬ ìœ„ì¹˜ë„ í•„ìš”
 
-				// 2. ÇöÀç °´Ã¼¿¡¼­ Å¸°ÙÀ» ÇâÇÏ´Â ¹æÇâ º¤ÅÍ °è»ê
+				// 2. í˜„ìž¬ ê°ì²´ì—ì„œ íƒ€ê²Ÿì„ í–¥í•˜ëŠ” ë°©í–¥ ë²¡í„° ê³„ì‚°
 				_vector vDirectionFromMeToTarget = vTargetPosition - vMyCurrentPosition;
 
-				// 3. ¹æÇâ º¤ÅÍ Á¤±ÔÈ­ (ÀÌµ¿ ¹æÇâ °áÁ¤)
-				//    Å¸°ÙÀ¸·ÎºÎÅÍ '¸Ö¾îÁö´Â' ¹æÇâÀº (³ªÀÇ À§Ä¡ - Å¸°Ù À§Ä¡) ¶Ç´Â -(Å¸°Ù À§Ä¡ - ³ªÀÇ À§Ä¡) ÀÔ´Ï´Ù.
-				//    Áï, vDirectionFromMeToTarget ¿¡ -1À» °öÇÑ ¹æÇâÀÔ´Ï´Ù.
+				// 3. ë°©í–¥ ë²¡í„° ì •ê·œí™” (ì´ë™ ë°©í–¥ ê²°ì •)
+				//    íƒ€ê²Ÿìœ¼ë¡œë¶€í„° 'ë©€ì–´ì§€ëŠ”' ë°©í–¥ì€ (ë‚˜ì˜ ìœ„ì¹˜ - íƒ€ê²Ÿ ìœ„ì¹˜) ë˜ëŠ” -(íƒ€ê²Ÿ ìœ„ì¹˜ - ë‚˜ì˜ ìœ„ì¹˜) ìž…ë‹ˆë‹¤.
+				//    ì¦‰, vDirectionFromMeToTarget ì— -1ì„ ê³±í•œ ë°©í–¥ìž…ë‹ˆë‹¤.
 				_vector vDirectionToMove = XMVectorScale(vDirectionFromMeToTarget, -1.f);
 				_vector vNormalizedDirectionToMove = XMVector3Normalize(vDirectionToMove);
 
-				// 4. ¶³¾îÁú °Å¸® ¼³Á¤
-				_float fDistance = 5.f; // ¿©±â¿¡ ¿øÇÏ´Â °Å¸® °ªÀ» ÀÔ·ÂÇÏ¼¼¿ä. ¿¹: 10.f
+				// 4. ë–¨ì–´ì§ˆ ê±°ë¦¬ ì„¤ì •
+				_float fDistance = 5.f; // ì—¬ê¸°ì— ì›í•˜ëŠ” ê±°ë¦¬ ê°’ì„ ìž…ë ¥í•˜ì„¸ìš”. ì˜ˆ: 10.f
 
-				// 5. »õ·Î¿î À§Ä¡ °è»ê: Å¸°ÙÀÇ À§Ä¡¿¡¼­ (Á¤±ÔÈ­µÈ ¸Ö¾îÁö´Â ¹æÇâ º¤ÅÍ * °Å¸®) ¸¸Å­ ÀÌµ¿
+				// 5. ìƒˆë¡œìš´ ìœ„ì¹˜ ê³„ì‚°: íƒ€ê²Ÿì˜ ìœ„ì¹˜ì—ì„œ (ì •ê·œí™”ëœ ë©€ì–´ì§€ëŠ” ë°©í–¥ ë²¡í„° * ê±°ë¦¬) ë§Œí¼ ì´ë™
 				_vector vNewPosition = XMVectorMultiplyAdd(vNormalizedDirectionToMove, XMVectorReplicate(fDistance), vTargetPosition);
-				// vNewPosition = vTargetPosition + (vNormalizedDirectionToMove * fDistance); ¿Í µ¿ÀÏ
+				// vNewPosition = vTargetPosition + (vNormalizedDirectionToMove * fDistance); ì™€ ë™ì¼
 
-				// 6. °è»êµÈ À§Ä¡·Î ÇöÀç °´Ã¼ ÀÌµ¿
+				// 6. ê³„ì‚°ëœ ìœ„ì¹˜ë¡œ í˜„ìž¬ ê°ì²´ ì´ë™
 				m_pTransformCom->Set_State(STATE::POSITION, vNewPosition);
 
-				// 7. (¼±ÅÃ »çÇ×) ÀÌµ¿ ÈÄ Å¸°ÙÀ» ´Ù½Ã ¹Ù¶óº¸µµ·Ï ¼³Á¤
+				// 7. (ì„ íƒ ì‚¬í•­) ì´ë™ í›„ íƒ€ê²Ÿì„ ë‹¤ì‹œ ë°”ë¼ë³´ë„ë¡ ì„¤ì •
 				m_pTransformCom->LookAt(vTargetPosition);
 			}
 		}

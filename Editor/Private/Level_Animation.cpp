@@ -1,4 +1,4 @@
-#include "Level_Animation.h"
+﻿#include "Level_Animation.h"
 #include "GameInstance.h"
 #include "Tools.h"
 
@@ -33,7 +33,7 @@ void CLevel_Animation::Update(_float fTimeDelta)
 
 HRESULT CLevel_Animation::Render()
 {
-    SetWindowText(g_hWnd, TEXT("�� ���Դϴ�."));
+    SetWindowText(g_hWnd, TEXT("¸Ê ÅøÀÔ´Ï´Ù."));
 
     return S_OK;
 }
