@@ -37,6 +37,15 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 {
 	m_eNextLevelID = eNextLevelID;
 
+	// 지연된 컨텍스트 생성
+	if (FAILED(m_pDevice->CreateDeferredContext(0, &m_pDeferredContext)))
+	{
+		MSG_BOX("Failed to Create Deferred Context");
+		return E_FAIL;
+	}
+
+	//Safe_AddRef(m_pDeferredContext);
+
 	InitializeCriticalSection(&m_CriticalSection);
 
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingMain, this, 0, nullptr);
@@ -116,26 +125,35 @@ HRESULT CLoader::Loading_For_Logo()
 HRESULT CLoader::Loading_For_UI()
 {
 
-	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::UI), L"../../Assets/Saves/Prototypes_UI.json", CLoader::JsonLoadCallback, this)))
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::UI), SAVEPATH L"Prototypes_UI.json", CLoader::JsonLoadCallback, this)))
 	{
 		return E_FAIL;
 	}
+
 	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
 
 	m_isFinished = true;
+
+	
 
 	return S_OK;
 }
 
 HRESULT CLoader::Loading_For_Map()
 {
-	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::MAP), L"../../Assets/Saves/Prototypes_Map.json", CLoader::JsonLoadCallback, this)))
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::MAP), SAVEPATH L"Prototypes_Map.json", CLoader::JsonLoadCallback, this, m_pDeferredContext)))
 	{
 		return E_FAIL;
 	}
+
 	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
 
+	if (FAILED(m_pGameInstance->Load_GameObjects(ENUM_CLASS(LEVEL::MAP), SAVEPATH L"Terrain_Test.json")))
+		return E_FAIL;
+
 	m_isFinished = true;
+
+	
 	return S_OK;
 }
 
@@ -156,6 +174,18 @@ CLoader* CLoader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, L
 void CLoader::Free()
 {
 	__super::Free();
+
+	// 남은 커맨드 리스트 정리
+	std::lock_guard<std::mutex> lock(m_QueueMutex);
+	while (!m_CommandListQueue.empty())
+	{
+		ID3D11CommandList* pList = m_CommandListQueue.front();
+		m_CommandListQueue.pop();
+		Safe_Release(pList);
+	}
+
+	// 지연된 컨텍스트 해제
+	Safe_Release(m_pDeferredContext);
 
 	WaitForSingleObject(m_hThread, INFINITE);
 

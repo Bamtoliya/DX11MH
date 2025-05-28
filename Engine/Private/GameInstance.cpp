@@ -507,12 +507,12 @@ HRESULT CGameInstance::Register_Creator_Function(const string& className, functi
 {
 	return m_pJson_Loader->Register_Creator_Function(className, creatorFunc);
 }
-HRESULT CGameInstance::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath, PrototypeLoadProgressCallback pCallback, void* pUserData)
+HRESULT CGameInstance::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath, PrototypeLoadProgressCallback pCallback, void* pUserData, ID3D11DeviceContext* pDeferredContext)
 {
 	if (nullptr == m_pJson_Loader)
 		return E_FAIL;
 	// CJson_Loader에게 콜백 함수와 사용자 데이터 전달
-	return m_pJson_Loader->Load_Prototypes(iLevelIndex, pFilePath, pCallback, pUserData);
+	return m_pJson_Loader->Load_Prototypes(iLevelIndex, pFilePath, pCallback, pUserData, pDeferredContext);
 }
 HRESULT CGameInstance::Load_GameObject(_uint iLevelIndex, CGameObject* pGameObject, simdjson::ondemand::object& jsonData)
 {

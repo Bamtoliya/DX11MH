@@ -38,7 +38,7 @@ private:
 
 public:
 	HRESULT Register_Creator_Function(const string& className, PrototypeCreatorFunc creatorFunc);
-	HRESULT Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath, PrototypeLoadProgressCallback pCallback, void* pUserData);
+	HRESULT Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath, PrototypeLoadProgressCallback pCallback, void* pUserData, ID3D11DeviceContext* pDeferredContext = nullptr);
 	HRESULT Load_GameObject(_uint iLevelIndex, class CGameObject* pgameObject, simdjson::ondemand::object& jsonData);
 	HRESULT Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath);
 	

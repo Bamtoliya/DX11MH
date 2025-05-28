@@ -100,7 +100,7 @@ HRESULT CJson_Loader::Register_Creator_Function(const string& className, Prototy
     return S_OK;
 }
 
-HRESULT CJson_Loader::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath, PrototypeLoadProgressCallback pCallback, void* pUserData)
+HRESULT CJson_Loader::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath, PrototypeLoadProgressCallback pCallback, void* pUserData, ID3D11DeviceContext* pDeferredContext)
 {
     parser parser;
     simdjson::padded_string json_file_data;
@@ -154,7 +154,7 @@ HRESULT CJson_Loader::Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath
             continue;
         }
 
-        CBase* pPrototype = it->second(m_pDevice, m_pContext);
+        CBase* pPrototype = it->second(m_pDevice, pDeferredContext);
         if (!pPrototype) {
             //std::string msg = "Failed to create prototype instance for: " + class_name;
             //MSG_BOX(msg.c_str());

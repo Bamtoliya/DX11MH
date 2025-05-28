@@ -81,7 +81,7 @@ HRESULT CMainApp::Start_Level(LEVEL eStartLevel)
 
 HRESULT CMainApp::Ready_Prototype_Components()
 {
-	m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STATIC), L"../../Assets/Saves/Prototypes_Static.json");
+	m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STATIC), SAVEPATH L"Prototypes_Static.json");
 
 	return S_OK;
 }

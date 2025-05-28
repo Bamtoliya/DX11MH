@@ -11,41 +11,54 @@ NS_BEGIN(Editor)
 
 class CLoader final : public CBase
 {
+#pragma region Constructor/Destructor
 private:
-	CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual ~CLoader() = default;
+    CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+    virtual ~CLoader() = default;
+public:
+    static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);
+public:
+    HRESULT Initialize(LEVEL eNextLevelID);
+public:
+    virtual void Free() override;
+#pragma endregion
 
 public:
-	_bool isFinished() const {
-		return m_isFinished;
-	}
-
-public:
-	HRESULT Initialize(LEVEL eNextLevelID);
+	_bool isFinished() const { return m_isFinished; }
 	HRESULT Loading();
+	void Output_LoadingText() { SetWindowText(g_hWnd, m_szLoadingText); }
+public:
+    HRESULT Execute_CommandLists(ID3D11DeviceContext* pMainContext);
 
-	void Output_LoadingText() {
-		SetWindowText(g_hWnd, m_szLoadingText);
-	}
-	
 
+//Deferred Context
 private:
-	ID3D11Device* m_pDevice = { nullptr };
-	ID3D11DeviceContext* m_pContext = { nullptr };
-	LEVEL						m_eNextLevelID = { LEVEL::END };
-	_bool						m_isFinished = { false };
-	CGameInstance*				m_pGameInstance = { nullptr };
+    ID3D11DeviceContext* m_pDeferredContext = nullptr;
+    queue<ID3D11CommandList*> m_CommandListQueue;
+    mutex m_QueueMutex;
 
+#pragma region Variables
 private:
-	HANDLE						m_hThread = {};
-	CRITICAL_SECTION			m_CriticalSection = {};
-	_tchar						m_szLoadingText[MAX_PATH] = {};
+    ID3D11Device* m_pDevice = { nullptr };
+    ID3D11DeviceContext* m_pContext = { nullptr };
+    CGameInstance* m_pGameInstance = { nullptr };
+    LEVEL						m_eNextLevelID = { LEVEL::END };
+    _bool						m_isFinished = { false };
+
+    HANDLE						m_hThread = {};
+    CRITICAL_SECTION			m_CriticalSection = {};
+    _tchar						m_szLoadingText[MAX_PATH] = {};
+#pragma endregion
 
 private:
 	_uint m_iTotalLoadingItems = 0;
 	_uint m_iLoadedItems = 0;
 	_uint m_iTotalJsonItems = 0; // JSON 파일 내의 총 아이템 수를 저장하기 위한 변수 (선택적)
 	_uint m_iLoadedJsonItems = 0; // JSON 파일에서 로드된 아이템 수를 저장하기 위한 변수
+
+#pragma region Loading Count
+
+#pragma endregion
 
 public:
     // ...
@@ -68,11 +81,25 @@ public:
     static void JsonLoadCallback(void* pUserData, _uint iLoadedCount, _uint iTotalInJson) {
         if (pUserData) {
             CLoader* pLoader = static_cast<CLoader*>(pUserData);
+            if (nullptr == pLoader)
+                return;
             pLoader->m_iTotalJsonItems = iTotalInJson;
             pLoader->m_iLoadedJsonItems = iLoadedCount;
-            //pLoader->UpdateJsonLoadProgress(iLoadedCount, iTotalInJson);
+
+            if (pLoader->m_pDeferredContext && iLoadedCount % 5 == 0)  // 5개 항목마다 커맨드 리스트 생성 (성능 조정 가능)
+            {
+                ID3D11CommandList* pCommandList = nullptr;
+                if (SUCCEEDED(pLoader->m_pDeferredContext->FinishCommandList(FALSE, &pCommandList)))
+                {
+                    std::lock_guard<std::mutex> lock(pLoader->m_QueueMutex);
+                    pLoader->m_CommandListQueue.push(pCommandList);
+                }
+            }
         }
     }
+
+    // Deferred Context 접근 함수 추가
+    ID3D11DeviceContext* Get_DeferredContext() const { return m_pDeferredContext; }
 
     void UpdateJsonLoadProgress(_uint iLoadedCount, _uint iTotalInJson) {
         // 이전에 JSON에서 로드된 항목 수를 빼고 새로 계산된 항목 수를 더함
@@ -87,16 +114,17 @@ public:
         }
         if (m_iLoadedItems > m_iTotalLoadingItems) m_iLoadedItems = m_iTotalLoadingItems;
     }
-
+#pragma region Loading For Level
 public:
-	HRESULT Loading_For_Logo();
-	HRESULT Loading_For_UI();
-	HRESULT Loading_For_Map();
+    HRESULT Loading_For_Logo();
+    HRESULT Loading_For_UI();
+    HRESULT Loading_For_Map();
+#pragma endregion
 
 
-public:
-	static CLoader* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID);
-	virtual void Free() override;
+
+
+
 };
 
 NS_END

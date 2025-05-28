@@ -10,8 +10,8 @@ CLevel_Map::CLevel_Map(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_Map::Initialize()
 {
-    if (FAILED(m_pGameInstance->Load_GameObjects(ENUM_CLASS(LEVEL::MAP), ASSETPATH L"Saves/Terrain_Test.json")))
-        return E_FAIL;
+    /*if (FAILED(m_pGameInstance->Load_GameObjects(ENUM_CLASS(LEVEL::MAP), SAVEPATH L"Terrain_Test.json")))
+        return E_FAIL;*/
     /*if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain")))
         return E_FAIL;
     if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))

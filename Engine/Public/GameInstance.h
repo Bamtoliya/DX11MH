@@ -166,7 +166,7 @@ public:
 #pragma region JSON_LOADER
 	HRESULT Register_Creator_Function(const string& className, function<CBase* (ID3D11Device*, ID3D11DeviceContext*)> creatorFunc);
 	HRESULT Register_Clone_Function(const string& className, function<CBase* (ID3D11Device*, ID3D11DeviceContext*)> creatorFunc);
-	HRESULT Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath, PrototypeLoadProgressCallback pCallback = nullptr, void* pUserData = nullptr); // 콜백 인자 추가
+	HRESULT Load_Prototypes(_uint iLevelIndex, const _tchar* pFilePath, PrototypeLoadProgressCallback pCallback = nullptr, void* pUserData = nullptr, ID3D11DeviceContext* pDeferredContext = nullptr); // 콜백 인자 추가
 	HRESULT Load_GameObject(_uint iLevelIndex, class CGameObject* pGameObject, simdjson::ondemand::object& jsonData);
 	HRESULT Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath);
 #pragma endregion
@@ -199,6 +199,8 @@ private:
 	class CPipeLine*			m_pPipeLine = { nullptr };
 	class CJson_Loader*			m_pJson_Loader = { nullptr };	
 	// class CPicking*				m_pPicking = { nullptr };
+#pragma endregion
+
 #pragma region Boolean
 	_bool	m_bIsEditor = { true };
 #pragma endregion

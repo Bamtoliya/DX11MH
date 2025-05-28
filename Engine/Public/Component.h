@@ -28,6 +28,10 @@ public:
 	void Set_OwnerGameObject(class CGameObject* pGameObject); 
 #pragma endregion
 public:
+	ID3D11DeviceContext* GetInitContext() {
+		return m_pDeferredContext ? m_pDeferredContext : m_pContext;
+	}
+public:
 	_bool Get_Active() { return m_bActive; }
 	void Set_Active(_bool bActive = true) { m_bActive = bActive; }
 public:
@@ -40,6 +44,7 @@ public:
 protected:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
+	ID3D11DeviceContext* m_pDeferredContext = { nullptr };
 	class CGameInstance* m_pGameInstance = { nullptr };
 protected:
 	class CGameObject* m_pOwner = { nullptr };

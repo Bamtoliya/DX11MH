@@ -1,4 +1,5 @@
 ﻿#include "VIBuffer_Terrain.h"
+#include ""
 
 namespace fs = std::filesystem;
 
@@ -52,6 +53,7 @@ HRESULT CVIBuffer_Terrain::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _u
 {
 	if (!m_pDevice || !filePath) return E_INVALIDARG;
 
+	ID3D11DeviceContext* pInitContext = GetInitContext();
 	ID3D11Resource* pResource = nullptr;
 	ID3D11Texture2D* pTexture = nullptr;
 
@@ -67,8 +69,8 @@ HRESULT CVIBuffer_Terrain::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _u
 	D3D11_TEXTURE2D_DESC texDesc;
 	pTexture->GetDesc(&texDesc);
 
-	width = texDesc.Width;
-	height = texDesc.Height;
+	width = texDesc.Width + 1;
+	height = texDesc.Height + 1;
 
 	if (width == 0 || height == 0) {
 		MSG_BOX("DDS texture has zero width or height.");
@@ -89,11 +91,11 @@ HRESULT CVIBuffer_Terrain::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _u
 		return hr;
 	}
 
-	m_pContext->CopyResource(stagingTexture, pTexture);
+	pInitContext->CopyResource(stagingTexture, pTexture);
 	OutputDebugString(L"Test");
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	hr = m_pContext->Map(stagingTexture, 0, D3D11_MAP_READ, 0, &mappedResource);
+	hr = pInitContext->Map(stagingTexture, 0, D3D11_MAP_READ, 0, &mappedResource);
 	if (FAILED(hr)) {
 		MSG_BOX("Failed to map staging texture for DDS heightmap.");
 		return hr;
@@ -134,7 +136,14 @@ HRESULT CVIBuffer_Terrain::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _u
 		}
 	}
 
-	m_pContext->Unmap(stagingTexture, 0);
+	pInitContext->Unmap(stagingTexture, 0);
+
+	if (pInitContext != m_pContext) {
+		ID3D11CommandList* pCommandList = nullptr;
+		pInitContext->FinishCommandList(FALSE, &pCommandList);
+		// 커맨드 리스트를 큐에 추가 (GameInstance나 Loader를 통해)
+		m_pGameInstance->Add_CommandList(pCommandList);
+	}
 	// 사용한 리소스 해제
 	Safe_Release(pTexture);
 	Safe_Release(stagingTexture);

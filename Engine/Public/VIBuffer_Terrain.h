@@ -30,7 +30,7 @@ private:
 	_uint			m_iNumVerticesX = {};
 	_uint			m_iNumVerticesZ = {};
 	_wstring		m_strHeightMapFilePath = {};
-	_float			m_fHeightScale = { 1000.0f };
+	_float			m_fHeightScale = { 1024.0f };
 #pragma endregion
 
 #pragma region Save&Load

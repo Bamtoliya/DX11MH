@@ -48,7 +48,9 @@ unsigned int ClassName::Destroy_Instance()				\
 
 #define BANKPATH ""
 
-#define ASSETPATH "../../Assets/"
+#define SOLUTIONPATH "../../"
+#define ASSETPATH SOLUTIONPATH "Assets/"
+#define SAVEPATH SOLUTIONPATH "Saves/"
 
 #define KEY_DOWN(eKey) m_pGameInstance->Key_Down(eKey)
 #define KEY_UP(eKey) m_pGameInstance->Key_Up(eKey)
