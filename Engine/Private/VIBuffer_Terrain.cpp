@@ -1,5 +1,4 @@
 ﻿#include "VIBuffer_Terrain.h"
-#include ""
 
 namespace fs = std::filesystem;
 
@@ -14,7 +13,11 @@ CVIBuffer_Terrain::CVIBuffer_Terrain(const CVIBuffer_Terrain& Prototype)
 	, m_iNumVerticesX{ Prototype.m_iNumVerticesX }
 	, m_iNumVerticesZ{ Prototype.m_iNumVerticesZ }
 	, m_strHeightMapFilePath { Prototype.m_strHeightMapFilePath }
+	, m_iNumMaps { Prototype.m_iNumMaps }
+	, m_iGridWidth{ Prototype.m_iGridWidth }
+	, m_iGridHeight{ Prototype.m_iGridHeight }
 {
+
 }
 
 CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -23,11 +26,11 @@ CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11Device
 	return pInstance;
 }
 
-CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath)
+CVIBuffer_Terrain* CVIBuffer_Terrain::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath, _uint iNumMaps, _uint iGridWidth, _uint iGridHeight)
 {
 	CVIBuffer_Terrain* pInstance = new CVIBuffer_Terrain(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(pHeightMapFilePath)))
+	if (FAILED(pInstance->Initialize_Prototype(pHeightMapFilePath, iNumMaps, iGridWidth, iGridHeight)))
 	{
 		MSG_BOX("Failed to Created : CVIBuffer_Terrain");
 		Safe_Release(pInstance);
@@ -54,110 +57,154 @@ HRESULT CVIBuffer_Terrain::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _u
 	if (!m_pDevice || !filePath) return E_INVALIDARG;
 
 	ID3D11DeviceContext* pInitContext = GetInitContext();
+	_tchar			szTexturePath[MAX_PATH] = {};
+	_tchar			szExt[MAX_PATH] = {};
+	m_strHeightMapFilePath = filePath;
+
+	_wsplitpath_s(filePath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, MAX_PATH);
+	wsprintf(szTexturePath, filePath, 0);
+
+	// 첫 번째 그리드 파일 로드해서 사이즈 확인
 	ID3D11Resource* pResource = nullptr;
 	ID3D11Texture2D* pTexture = nullptr;
 
-	// DDS 파일 로드
-	HRESULT hr = DirectX::CreateDDSTextureFromFile(m_pDevice, filePath, &pResource, nullptr);
-	if (FAILED(hr)) {
-		MSG_BOX("Failed to load DDS texture: )");
-		return hr;
-	}
-	hr = pResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pTexture));
+	CreateDDSTextureFromFile(m_pDevice, szTexturePath, &pResource, nullptr);
+	pResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pTexture));
 	Safe_Release(pResource);
 
 	D3D11_TEXTURE2D_DESC texDesc;
 	pTexture->GetDesc(&texDesc);
+	Safe_Release(pTexture);
 
-	width = texDesc.Width + 1;
-	height = texDesc.Height + 1;
+	_uint gridTexWidth = texDesc.Width;
+	_uint gridTexHeight = texDesc.Height;
+	m_fHeightScale = static_cast<_float>(texDesc.Height);
 
-	if (width == 0 || height == 0) {
-		MSG_BOX("DDS texture has zero width or height.");
-		return E_FAIL;
-	}
+	// 전체 높이맵 크기 계산
+	width = gridTexWidth * m_iGridWidth + 1;
+	height = gridTexHeight * m_iGridHeight + 1;
 
-	// CPU에서 읽을 수 있는 스테이징 텍스처 생성
-	D3D11_TEXTURE2D_DESC stagingDesc = texDesc;
-	stagingDesc.Usage = D3D11_USAGE_STAGING;
-	stagingDesc.BindFlags = 0;
-	stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-	stagingDesc.MiscFlags = 0;
+	// 높이맵 데이터 배열 초기화
+	heightData.resize(width * height, 0.0f);
 
-	ID3D11Texture2D* stagingTexture = nullptr;
-	hr = m_pDevice->CreateTexture2D(&stagingDesc, nullptr, &stagingTexture);
-	if (FAILED(hr)) {
-		MSG_BOX("Failed to create staging texture for DDS heightmap.");
-		return hr;
-	}
+	// 각 그리드 높이맵 로드
+	for (_uint h = 0; h < m_iGridHeight; ++h)
+	{
+		for (_uint w = 0; w < m_iGridWidth; ++w)
+		{
+			// 현재 그리드의 인덱스 계산 (0부터 시작)
+			_uint fileIndex = h * m_iGridWidth + w;
 
-	pInitContext->CopyResource(stagingTexture, pTexture);
-	OutputDebugString(L"Test");
+			// 파일 경로 생성 (예: "w1r03_heightmap_003.dds")
+			wsprintf(szTexturePath, filePath, fileIndex);
 
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	hr = pInitContext->Map(stagingTexture, 0, D3D11_MAP_READ, 0, &mappedResource);
-	if (FAILED(hr)) {
-		MSG_BOX("Failed to map staging texture for DDS heightmap.");
-		return hr;
-	}
+			_tchar debugMsg[256];
+			swprintf_s(debugMsg, 256, L"Loading grid file: %s\n", szTexturePath);
+			OutputDebugString(debugMsg);
 
-	heightData.resize(width * height);
-	const unsigned char* pSrcBits = static_cast<const unsigned char*>(mappedResource.pData);
-	unsigned int rowPitch = mappedResource.RowPitch;
+			// 그리드 파일 로드
+			ID3D11Resource* pGridResource = nullptr;
+			ID3D11Texture2D* pGridTexture = nullptr;
 
-	// 픽셀 형식에 따라 높이 데이터 추출 (여기서는 R8_UNORM 또는 R32_FLOAT 예시)
-	// 실제 DDS 파일의 형식에 맞게 수정 필요
-	for (unsigned int y = 0; y < height; ++y) {
-		for (unsigned int x = 0; x < width; ++x) {
-			float normalizedHeight = 0.0f;
-			size_t pixelIndex = static_cast<size_t>(y) * width + x;
-			switch (texDesc.Format)
-			{
-				case DXGI_FORMAT_R8_UNORM:
-				{
-					const unsigned char* pPixel = pSrcBits + (y * rowPitch) + x;
-					normalizedHeight = static_cast<float>(*pPixel) / 255.0f;
-					break;
-				}
-				case DXGI_FORMAT_R16_UNORM:
-				{
-					const unsigned short* pPixel = reinterpret_cast<const unsigned short*>(pSrcBits + (y * rowPitch) + (x * sizeof(unsigned short)));
-					normalizedHeight = static_cast<float>(*pPixel) / 65535.0f;
-					break;
-				}
-				case DXGI_FORMAT_R32_FLOAT:
-				{
-					const float* pPixel = reinterpret_cast<const float*>(pSrcBits + (y * rowPitch) + (x * sizeof(float)));
-					normalizedHeight = *pPixel; // 이미 0.0 ~ 1.0 범위라고 가정, 아니면 정규화 필요
-					break;
+			CreateDDSTextureFromFile(m_pDevice, szTexturePath, &pGridResource, nullptr);
+
+			pGridResource->QueryInterface(__uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pGridTexture));
+			Safe_Release(pGridResource);
+
+			D3D11_TEXTURE2D_DESC gridDesc;
+			pGridTexture->GetDesc(&gridDesc);
+
+			// 스테이징 텍스처 생성
+			D3D11_TEXTURE2D_DESC stagingDesc = gridDesc;
+			stagingDesc.Usage = D3D11_USAGE_STAGING;
+			stagingDesc.BindFlags = 0;
+			stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+			stagingDesc.MiscFlags = 0;
+
+			ID3D11Texture2D* stagingTexture = nullptr;
+			m_pDevice->CreateTexture2D(&stagingDesc, nullptr, &stagingTexture);
+
+			pInitContext->CopyResource(stagingTexture, pGridTexture);
+
+			D3D11_MAPPED_SUBRESOURCE mappedResource;
+			pInitContext->Map(stagingTexture, 0, D3D11_MAP_READ, 0, &mappedResource);
+
+			// 현재 그리드의 시작 위치 계산
+			_uint startX = w * gridTexWidth;
+			_uint startY = h * gridTexHeight;
+
+			// 높이맵 데이터 추출 및 병합
+			const unsigned char* pSrcBits = static_cast<const unsigned char*>(mappedResource.pData);
+			unsigned int rowPitch = mappedResource.RowPitch;
+
+			for (_uint y = 0; y < gridDesc.Height; ++y) {
+				for (_uint x = 0; x < gridDesc.Width; ++x) {
+					float normalizedHeight = 0.0f;
+
+					// 픽셀 형식에 따라 높이 데이터 추출
+					switch (gridDesc.Format)
+					{
+					case DXGI_FORMAT_R8_UNORM:
+					{
+						const unsigned char* pPixel = pSrcBits + (y * rowPitch) + x;
+						normalizedHeight = static_cast<float>(*pPixel) / 255.0f;
+						break;
+					}
+					case DXGI_FORMAT_R16_UNORM:
+					{
+						const unsigned short* pPixel = reinterpret_cast<const unsigned short*>(
+							pSrcBits + (y * rowPitch) + (x * sizeof(unsigned short)));
+						normalizedHeight = static_cast<float>(*pPixel) / 65535.0f;
+						break;
+					}
+					case DXGI_FORMAT_R32_FLOAT:
+					{
+						const float* pPixel = reinterpret_cast<const float*>(
+							pSrcBits + (y * rowPitch) + (x * sizeof(float)));
+						normalizedHeight = *pPixel;
+						break;
+					}
+					}
+
+					// 전체 높이맵에 데이터 저장
+					_uint globalX = startX + x;
+					_uint globalY = startY + y;
+					size_t globalIndex = static_cast<size_t>(globalY) * width + globalX;
+
+					if (globalIndex < heightData.size()) {
+						heightData[globalIndex] = normalizedHeight;
+					}
 				}
 			}
-			heightData[pixelIndex] = normalizedHeight;
+
+			pInitContext->Unmap(stagingTexture, 0);
+			Safe_Release(pGridTexture);
+			Safe_Release(stagingTexture);
 		}
 	}
 
-	pInitContext->Unmap(stagingTexture, 0);
-
-	if (pInitContext != m_pContext) {
-		ID3D11CommandList* pCommandList = nullptr;
-		pInitContext->FinishCommandList(FALSE, &pCommandList);
-		// 커맨드 리스트를 큐에 추가 (GameInstance나 Loader를 통해)
-		m_pGameInstance->Add_CommandList(pCommandList);
+	// 마지막 행/열 처리 (+1 경계값)
+	for (_uint y = 0; y < height - 1; ++y) {
+		heightData[y * width + (width - 1)] = heightData[y * width + (width - 2)];
 	}
-	// 사용한 리소스 해제
-	Safe_Release(pTexture);
-	Safe_Release(stagingTexture);
+
+	for (_uint x = 0; x < width; ++x) {
+		heightData[(height - 1) * width + x] = heightData[(height - 2) * width + x];
+	}
 
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath)
+HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath, _uint iNumMaps, _uint iGridWidth, _uint iGridHeight)
 {
 	Safe_Release(m_pVB);
 	Safe_Release(m_pIB);
 	Safe_Delete_Array(m_pVertexPositions);
+	m_iNumMaps = iNumMaps;
+	m_iGridWidth = iGridWidth;
+	m_iGridHeight = iGridHeight;
 
-	if (pHeightMapFilePath == nullptr || wcslen(pHeightMapFilePath) == 0) {
+	if (pHeightMapFilePath == nullptr || wcslen(pHeightMapFilePath) == 0 || m_iNumMaps != m_iGridHeight * m_iGridWidth) {
 		MSG_BOX("Heightmap file path is null or empty.");
 		return E_INVALIDARG;
 	}
@@ -381,16 +428,11 @@ HRESULT CVIBuffer_Terrain::Initialize(simdjson::ondemand::object& jsonData)
 	return S_OK;
 }
 
-
-
 void CVIBuffer_Terrain::Free()
 {
 	__super::Free();
 }
 #pragma endregion
-
-
-
 
 HRESULT CVIBuffer_Terrain::RenderImGui()
 {
@@ -480,7 +522,6 @@ HRESULT CVIBuffer_Terrain::RenderImGui()
 	return S_OK;
 }
 
-
 #pragma region Save&Load
 
 HRESULT CVIBuffer_Terrain::Serialize(json& outJson)
@@ -490,6 +531,8 @@ HRESULT CVIBuffer_Terrain::Serialize(json& outJson)
 		return E_FAIL;
 	data["HeightMapFilePath"] = WideToUtf8(m_strHeightMapFilePath.c_str()).c_str();
 	data["HeightScale"] = m_fHeightScale;
+	data["Maps"] = m_iNumMaps;
+	data["GridSize"] = { m_iGridWidth, m_iGridHeight };
 	outJson["CVIBuffer_Terrain"] = data;
 
 	return S_OK;
@@ -546,7 +589,38 @@ HRESULT CVIBuffer_Terrain::Deserialize(simdjson::ondemand::object& jsonData)
 		m_fHeightScale = static_cast<_float>(heightScaleValue);
 	}
 
-	if (FAILED(Initialize_Prototype(m_strHeightMapFilePath.c_str())))
+	// HeightScale 처리
+	unsigned long long iNumMpas;
+	error = terrainJsonData["Maps"].get_uint64().get(iNumMpas);
+	if (error) // 키가 없거나 타입이 맞지 않는 경우
+	{
+		MSG_BOX("Warning: HeightScale not found or invalid in JSON. Using default value 10.0f.");
+		m_iNumMaps = 1; // 기본값
+	}
+	else
+	{
+		m_iNumMaps = static_cast<_uint>(iNumMpas);
+	}
+
+	unsigned long long iGridWidth;
+	unsigned long long iGridHeight;
+	simdjson::ondemand::array arr;
+	error = terrainJsonData["GridSize"].get_array().get(arr);
+	error = arr.at(0).get_uint64().get(iGridWidth);
+	error = arr.at(1).get_uint64().get(iGridHeight);
+	if (error) // 키가 없거나 타입이 맞지 않는 경우
+	{
+		MSG_BOX("Warning: HeightScale not found or invalid in JSON. Using default value 10.0f.");
+		m_iGridWidth = 1; // 기본값
+		m_iGridHeight = 1; // 기본값
+	}
+	else
+	{
+		m_iGridWidth = static_cast<_uint>(iGridWidth);
+		m_iGridHeight = static_cast<_uint>(iGridHeight);
+	}
+
+	if (FAILED(Initialize_Prototype(m_strHeightMapFilePath.c_str(), m_iNumMaps, m_iGridWidth, m_iGridHeight)))
 	{
 		// 경로가 유효하지 않거나 (예: 기본값인 빈 경로) 파일 로드 실패 시
 		// Initialize_Prototype 내부에서 이미 MSG_BOX를 호출할 것이므로 여기서는 추가 메시지 없이 실패 반환

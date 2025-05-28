@@ -13,12 +13,12 @@ private:
 	virtual ~CVIBuffer_Terrain() = default;
 public:
 	static CVIBuffer_Terrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	static CVIBuffer_Terrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath);
+	static CVIBuffer_Terrain* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pHeightMapFilePath, _uint iNumMaps = 1, _uint iGridWidth = 1, _uint iGridHeight = 1);
 	virtual CComponent* Clone(void* pArg) override;
 private:
 	HRESULT LoadHeightMapPixelsFromDDS(const _tchar* filePath, _uint& width, _uint& height, vector<_float>& heightData);
 public:
-	virtual HRESULT Initialize_Prototype(const _tchar* pHeightMapFilePath);
+	virtual HRESULT Initialize_Prototype(const _tchar* pHeightMapFilePath, _uint iNumMaps = 1, _uint iGridWidth = 1, _uint iGridHeight = 1);
 	virtual HRESULT Initialize(void* pArg);
 	virtual HRESULT Initialize(simdjson::ondemand::object& jsonData);
 public:
@@ -30,6 +30,9 @@ private:
 	_uint			m_iNumVerticesX = {};
 	_uint			m_iNumVerticesZ = {};
 	_wstring		m_strHeightMapFilePath = {};
+	_uint			m_iNumMaps = { 1 };
+	_uint			m_iGridWidth = { 1 };
+	_uint			m_iGridHeight = { 1 };
 	_float			m_fHeightScale = { 1024.0f };
 #pragma endregion
 

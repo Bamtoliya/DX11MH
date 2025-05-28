@@ -24,6 +24,7 @@
     <ClCompile Include="..\private\Camera_Follow.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Camera_TPS.cpp" />
+    <ClCompile Include="..\private\Level_Animation.cpp" />
     <ClCompile Include="..\private\Sonic.cpp" />
     <ClCompile Include="..\private\Hierarchy.cpp" />
     <ClCompile Include="..\private\Inspector.cpp" />
@@ -53,6 +54,7 @@
     <ClInclude Include="..\Public\Editor_Enum.h" />
     <ClInclude Include="..\Public\Editor_Macro.h" />
     <ClInclude Include="..\Public\GameObjects.h" />
+    <ClInclude Include="..\public\Level_Animation.h" />
     <ClInclude Include="..\public\Sonic.h" />
     <ClInclude Include="..\public\Hierarchy.h" />
     <ClInclude Include="..\public\Inspector.h" />
