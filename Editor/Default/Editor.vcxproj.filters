@@ -109,6 +109,12 @@
     <Filter Include="01.Levels\Animation">
       <UniqueIdentifier>{142851fd-8759-4c99-b9c5-b1a5fb3fe06c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Imgui\Animation">
+      <UniqueIdentifier>{7b85596f-46c2-405b-88cc-b536ac7c5615}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Giant">
+      <UniqueIdentifier>{c7fef04f-0723-40b1-9160-7b9db8047c74}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">

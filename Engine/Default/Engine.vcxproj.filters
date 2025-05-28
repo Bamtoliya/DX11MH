@@ -417,6 +417,9 @@
     <ClInclude Include="..\public\State.h">
       <Filter>01.Utility\04.Components\Controller\State</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BlendNode.h">
+      <Filter>01.Utility\04.Components\Controller\BlendTree\Node</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -766,6 +769,9 @@
     <ClCompile Include="..\private\State.cpp">
       <Filter>01.Utility\04.Components\Controller\State</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\BlendNode.cpp">
+      <Filter>01.Utility\04.Components\Controller\BlendTree\Node</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -1043,6 +1049,12 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Controller\State">
       <UniqueIdentifier>{2272c59f-a716-4363-a08c-a18e0c0d160d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\BlendTree">
+      <UniqueIdentifier>{64d2097c-40cb-438f-9c44-19b7f453f7d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\BlendTree\Node">
+      <UniqueIdentifier>{1b8af662-17f5-44a2-b2df-f3b21f9a941a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

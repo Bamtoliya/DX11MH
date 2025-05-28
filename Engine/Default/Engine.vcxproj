@@ -212,6 +212,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\public\Animation.h" />
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\Public\Base_Objects.h" />
+    <ClInclude Include="..\public\BlendNode.h" />
     <ClInclude Include="..\Public\Bounding_Box.h" />
     <ClInclude Include="..\Public\Bounding_Sphere.h" />
     <ClInclude Include="..\public\Bone.h" />
@@ -355,6 +356,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     </ClCompile>
     <ClCompile Include="..\private\Animation.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />
+    <ClCompile Include="..\private\BlendNode.cpp" />
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Camera_Manager.cpp" />
