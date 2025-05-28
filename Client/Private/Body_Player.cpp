@@ -1,6 +1,7 @@
 ﻿#include "Body_Player.h"
 
 #include "GameInstance.h"
+#include "Player.h"
 
 CBody_Player::CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CPartObject { pDevice, pContext }
@@ -14,6 +15,11 @@ CBody_Player::CBody_Player(const CBody_Player& Prototype)
 
 }
 
+const _float4x4* CBody_Player::Get_SocketMatrix(const _char* pBoneName)
+{
+	return m_pModelCom->Get_BoneMatrix(pBoneName);	
+}
+
 HRESULT CBody_Player::Initialize_Prototype()
 {
 	return S_OK;
@@ -21,6 +27,10 @@ HRESULT CBody_Player::Initialize_Prototype()
 
 HRESULT CBody_Player::Initialize(void* pArg)
 {
+	BODY_PLAYER_DESC* pDesc = static_cast<BODY_PLAYER_DESC*>(pArg);
+
+	m_pParentState = pDesc->pParentState;
+
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
@@ -43,13 +53,20 @@ void CBody_Player::Priority_Update(_float fTimeDelta)
 
 void CBody_Player::Update(_float fTimeDelta)
 {
+	if (*m_pParentState & CPlayer::STATE_IDLE)
+		m_pModelCom->Set_Animation(3);
+
+	if (*m_pParentState & CPlayer::STATE_WALK)
+		m_pModelCom->Set_Animation(4);
+
+
 	if (true == m_pModelCom->Play_Animation(fTimeDelta))
 		int a = 10;
 }
 
 void CBody_Player::Late_Update(_float fTimeDelta)
 {
-	XMStoreFloat4x4(&m_CombindWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrix_Ptr()) * XMLoadFloat4x4(m_pParentMatrix));
+	XMStoreFloat4x4(&m_CombinedWorldMatrix, XMLoadFloat4x4(m_pTransformCom->Get_WorldMatrix_Ptr()) * XMLoadFloat4x4(m_pParentMatrix));
 
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
 }
@@ -97,7 +114,7 @@ HRESULT CBody_Player::Ready_Components()
 
 HRESULT CBody_Player::Bind_ShaderResources()
 {	
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombindWorldMatrix)))
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_WorldMatrix", &m_CombinedWorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
 		return E_FAIL;

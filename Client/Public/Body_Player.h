@@ -12,10 +12,18 @@ NS_BEGIN(Client)
 
 class CBody_Player final : public CPartObject
 {
+public:
+	typedef struct tagBodyPlayerDesc : public CPartObject::PARTOBJECT_DESC
+	{
+		_uint* pParentState = { nullptr };
+	}BODY_PLAYER_DESC;
 private:
 	CBody_Player(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CBody_Player(const CBody_Player& Prototype);
 	virtual ~CBody_Player() = default;
+
+public:
+	const _float4x4* Get_SocketMatrix(const _char* pBoneName);
 
 public:
 	virtual HRESULT Initialize_Prototype();
@@ -28,6 +36,9 @@ public:
 private:
 	CShader*			m_pShaderCom = { nullptr };
 	CModel*				m_pModelCom = { nullptr };
+
+private:
+	_uint* m_pParentState = { nullptr };
 
 private:
 	HRESULT Ready_Components();

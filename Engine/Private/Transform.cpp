@@ -1118,6 +1118,42 @@ void CTransform::Set_RotationY(_float fAngleY)
 	Set_Rotation(_float3(m_tDesc.fCurRotationX, fAngleY, m_tDesc.fCurRotationZ));
 }
 
+void CTransform::Rotation(_fvector vAxis, _float fRadian)
+{
+	_float3		vScaled = Get_Scaled();
+
+	_vector		vRight = XMVectorSet(1.f, 0.f, 0.f, 0.f) * vScaled.x;
+	_vector		vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScaled.y;
+	_vector		vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f) * vScaled.z;
+
+	_matrix		RotationMatrix = XMMatrixRotationAxis(vAxis, fRadian);	
+
+	Set_State(STATE::RIGHT, XMVector4Transform(vRight, RotationMatrix));
+	Set_State(STATE::UP, XMVector4Transform(vUp, RotationMatrix));
+	Set_State(STATE::LOOK, XMVector4Transform(vLook, RotationMatrix));
+
+	SynchronizeRotationRepresentations();
+}
+
+void CTransform::Rotation(_float fX, _float fY, _float fZ)
+{
+	_float3		vScaled = Get_Scaled();
+
+	_vector		vRight = XMVectorSet(1.f, 0.f, 0.f, 0.f) * vScaled.x;
+	_vector		vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f) * vScaled.y;
+	_vector		vLook = XMVectorSet(0.f, 0.f, 1.f, 0.f) * vScaled.z;
+
+	_vector		vQuaternion = XMQuaternionRotationRollPitchYaw(fX, fY, fZ);
+
+	_matrix		RotationMatrix = XMMatrixRotationQuaternion(vQuaternion);
+
+	Set_State(STATE::RIGHT, XMVector4Transform(vRight, RotationMatrix));
+	Set_State(STATE::UP, XMVector4Transform(vUp, RotationMatrix));
+	Set_State(STATE::LOOK, XMVector4Transform(vLook, RotationMatrix));
+
+	SynchronizeRotationRepresentations();
+}
+
 void CTransform::LookAt(_fvector vAt)
 {
 	_float3		vScaled = Get_Scaled();

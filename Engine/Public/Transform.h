@@ -116,6 +116,7 @@ public:
 public:/* Rotations */
 	void Turn(_fvector vAxis, _float fTimeDelta);
 	void Rotation(_fvector vAxis, _float fRadian);
+	void Rotation(_float fX, _float fY, _float fZ);
 	void Set_Rotation(_float3 fAngle);
 	void Set_RotationY(_float fAngleY);
 
