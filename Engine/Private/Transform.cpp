@@ -1077,17 +1077,6 @@ void CTransform::Turn(_fvector vAxis, _float fTimeDelta)
 	SynchronizeRotationRepresentations();
 }
 
-void CTransform::Rotation(_fvector vAxis, _float fRadian)
-{
-	_matrix		RotationMatrix = XMMatrixRotationAxis(vAxis, fRadian);
-
-	Set_State(STATE::RIGHT, XMVector3TransformNormal(XMVectorSet(1.f, 0.f, 0.f, 0.f) * Get_Scale(STATE::RIGHT), RotationMatrix));
-	Set_State(STATE::UP, XMVector3TransformNormal(XMVectorSet(0.f, 1.f, 0.f, 0.f) * Get_Scale(STATE::UP), RotationMatrix));
-	Set_State(STATE::LOOK, XMVector3TransformNormal(XMVectorSet(0.f, 0.f, 1.f, 0.f) * Get_Scale(STATE::LOOK), RotationMatrix));
-
-	SynchronizeRotationRepresentations();
-}
-
 /* This is NOT an additive rotation like the "Turn()" function above.
 This function set the specific rotation on the specific axis. */
 void CTransform::Set_Rotation(_float3 fAngle)
