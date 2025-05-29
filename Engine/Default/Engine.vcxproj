@@ -206,6 +206,8 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\..\External Libraries\imgui\imstb_truetype.h" />
     <ClInclude Include="..\..\External Libraries\json.hpp" />
     <ClInclude Include="..\..\External Libraries\simdjson.h" />
+    <ClInclude Include="..\public\AnimationNode.h" />
+    <ClInclude Include="..\public\Animator.h" />
     <ClInclude Include="..\public\Audio_Manager.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
@@ -245,7 +247,9 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\public\IdleState.h" />
     <ClInclude Include="..\public\Input_Device.h" />
+    <ClInclude Include="..\public\InterpolationNode.h" />
     <ClInclude Include="..\public\Json_Loader.h" />
     <ClInclude Include="..\Public\Layer.h" />
     <ClInclude Include="..\Public\Level.h" />
@@ -351,6 +355,8 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\External Libraries\simdjson.cpp" />
+    <ClCompile Include="..\private\AnimationNode.cpp" />
+    <ClCompile Include="..\private\Animator.cpp" />
     <ClCompile Include="..\private\Audio_Manager.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -380,7 +386,9 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\private\IdleState.cpp" />
     <ClCompile Include="..\Private\Input_Device.cpp" />
+    <ClCompile Include="..\private\InterpolationNode.cpp" />
     <ClCompile Include="..\private\Json_Loader.cpp" />
     <ClCompile Include="..\Private\Layer.cpp" />
     <ClCompile Include="..\Private\Level.cpp" />

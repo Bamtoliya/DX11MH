@@ -84,6 +84,22 @@ HRESULT CCamera_Manager::Render()
 	return S_OK;
 }
 
+CCamera* CCamera_Manager::Get_CurrentCamera()
+{
+	if (m_Cameras.empty() || m_iCurIndex >= m_Cameras.size())
+	{
+		return S_OK;
+	}
+
+	auto iter = m_Cameras.begin();
+	std::advance(iter, m_iCurIndex);
+
+	if (iter != m_Cameras.end() && (*iter) != nullptr)
+		return *iter;
+	else
+		return nullptr;
+}
+
 void CCamera_Manager::Add_Camera(CCamera* pCamera)
 {
 	auto iter = find_if(m_Cameras.begin(), m_Cameras.end(), [&pCamera](CCamera* camera)-> bool {

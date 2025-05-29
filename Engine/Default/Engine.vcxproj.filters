@@ -381,7 +381,7 @@
       <Filter>External Libraries\ImGuiToggle</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Serializable.h">
-      <Filter>01.Utility\99.SuperClass\ISerialzable</Filter>
+      <Filter>01.Utility\99.SuperClass\Serialzable</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Json_Loader.h">
       <Filter>01.Utility\97.JsonLoader</Filter>
@@ -421,6 +421,18 @@
     </ClInclude>
     <ClInclude Include="..\public\Loading_System.h">
       <Filter>00.System\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Animator.h">
+      <Filter>01.Utility\04.Components\Controller\Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AnimationNode.h">
+      <Filter>01.Utility\04.Components\Controller\BlendTree\Node\AnimationNode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\InterpolationNode.h">
+      <Filter>01.Utility\04.Components\Controller\BlendTree\Node\InterpolationNode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\IdleState.h">
+      <Filter>01.Utility\04.Components\Controller\State\IdleState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -761,9 +773,6 @@
     <ClCompile Include="..\private\PartObject.cpp">
       <Filter>01.Utility\03.GameObject\Base\PartObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Serializable.cpp">
-      <Filter>01.Utility\99.SuperClass\Observer</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\VIBuffer_Island.cpp">
       <Filter>01.Utility\04.Components\VIBuffer\Island</Filter>
     </ClCompile>
@@ -775,6 +784,21 @@
     </ClCompile>
     <ClCompile Include="..\private\Loading_System.cpp">
       <Filter>00.System\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Animator.cpp">
+      <Filter>01.Utility\04.Components\Controller\Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Serializable.cpp">
+      <Filter>01.Utility\99.SuperClass\Serialzable</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AnimationNode.cpp">
+      <Filter>01.Utility\04.Components\Controller\BlendTree\Node\AnimationNode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\InterpolationNode.cpp">
+      <Filter>01.Utility\04.Components\Controller\BlendTree\Node\InterpolationNode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\IdleState.cpp">
+      <Filter>01.Utility\04.Components\Controller\State\IdleState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -982,9 +1006,6 @@
     <Filter Include="01.Utility\99.SuperClass\Observer">
       <UniqueIdentifier>{16a861eb-f8ed-45ba-887c-18309be191be}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\99.SuperClass\ISerialzable">
-      <UniqueIdentifier>{048d4ce1-f314-445b-92ff-2d85bc0b148c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.GameObject\Camera\Manager">
       <UniqueIdentifier>{99f3528b-a230-4016-96da-c046b37862f8}</UniqueIdentifier>
     </Filter>
@@ -1065,6 +1086,30 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Controller\Animator">
       <UniqueIdentifier>{eaeda38b-958d-4e3a-a11a-9e4db4deb968}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\99.SuperClass\Serialzable">
+      <UniqueIdentifier>{048d4ce1-f314-445b-92ff-2d85bc0b148c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\BlendTree\Node\AnimationNode">
+      <UniqueIdentifier>{57f92a86-f673-4ac9-bce6-e3d8210fb895}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\BlendTree\Node\InterpolationNode">
+      <UniqueIdentifier>{ba124921-b205-4e34-b2a5-f9f9661ea9bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\State\IdleState">
+      <UniqueIdentifier>{f5a8677c-53be-460a-ba06-f46f9b383c0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\State\GroundState">
+      <UniqueIdentifier>{d1068364-ab01-4f14-b019-54a584afde0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\State\MoveState">
+      <UniqueIdentifier>{cdbfc90d-315c-4bfd-8cf0-1d2a912f9699}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\State\AirState">
+      <UniqueIdentifier>{9fd7f59d-59e5-44c2-9d4c-acafcb1a838e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\State\CombatState">
+      <UniqueIdentifier>{d47cd8c8-7fd1-4467-9257-8dc064da787c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

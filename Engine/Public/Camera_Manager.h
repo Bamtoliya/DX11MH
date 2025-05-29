@@ -21,6 +21,7 @@ public:
 	virtual HRESULT Render();
 #pragma endregion
 public:
+	CCamera* Get_CurrentCamera();
 	void Add_Camera(CCamera* pCamera);
 	void Remove_Camera(CCamera* pCamera);
 	void Remove_Camera(_uint iIndex);

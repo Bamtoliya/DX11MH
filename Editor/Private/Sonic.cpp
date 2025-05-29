@@ -81,7 +81,7 @@ HRESULT CSonic::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pModelCom->Set_Animation(0, true);
+	m_pModelCom->Set_Animation(ENUM_CLASS(STATE::RUN_LOOP), true);
 
 	return S_OK;
 }
@@ -96,7 +96,7 @@ HRESULT CSonic::Initialize(simdjson::ondemand::object& jsonData)
 
 	if(FAILED(Deserialize(jsonData)))
 		return E_FAIL;
-	m_pModelCom->Set_Animation(0, true);
+	m_pModelCom->Set_Animation(ENUM_CLASS(STATE::RUN_LOOP), true);
 
 	return S_OK;
 }

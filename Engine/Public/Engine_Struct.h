@@ -77,25 +77,25 @@ namespace Engine
 
 	typedef struct ENGINE_DLL BlendParameters
 	{
-		_float fSpeed = 0.f;
-		_float fDirection = 0.f; // 예: 2D 블렌드를 위한 각도 (라디안)
-		_bool  bIsJumping = false;
-		_bool  bIsAttacking = false;
+		float fSpeed = 0.f;
+		float fDirection = 0.f; // 예: 2D 블렌드를 위한 각도 (라디안)
+		bool  bIsJumping = false;
+		bool  bIsAttacking = false;
 		// 기타 게임 상태에 따른 파라미터 추가 가능
-		map<const _wstring, _float> customParamsFloat;
-		map<const _wstring, _int>   customParamsInt;
-		map<const _wstring, _bool>  customParamsBool;
+		map<const wstring, float> customParamsFloat;
+		map<const wstring, int>   customParamsInt;
+		map<const wstring, bool>  customParamsBool;
 
 		// 특정 파라미터 값을 가져오는 헬퍼 함수 (옵션)
-		_bool GetBoolParam(const _wstring& name, _bool defaultValue = false) const {
+		bool GetBoolParam(const wstring& name, bool defaultValue = false) const {
 			auto it = customParamsBool.find(name);
 			return (it != customParamsBool.end()) ? it->second : defaultValue;
 		}
-		_float GetFloatParam(const _wstring& name, _float defaultValue = 0.f) const {
+		float GetFloatParam(const wstring& name, float defaultValue = 0.f) const {
 			auto it = customParamsFloat.find(name);
 			return (it != customParamsFloat.end()) ? it->second : defaultValue;
 		}
-		_int GetIntParam(const _wstring& name, _int defaultValue = 0) const {
+		int GetIntParam(const wstring& name, int defaultValue = 0) const {
 			auto it = customParamsInt.find(name);
 			return (it != customParamsInt.end()) ? it->second : defaultValue;
 		}
