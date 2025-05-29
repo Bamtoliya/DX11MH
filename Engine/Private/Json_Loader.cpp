@@ -70,6 +70,7 @@ HRESULT CJson_Loader::Initialize() {
     RegisterBaseCreator<CShader>("CShader");
     RegisterBaseCreator<CTexture>("CTexture");
     RegisterBaseCreator<CController>("CController");
+    RegisterBaseCreator<CAnimator>("CAnimator");
     //RegisterBaseCreator<CCollider>("CColider");
     //RegisterBaseCreator<CRigidBody>("CRigidBody");
 

@@ -1,4 +1,4 @@
-﻿#include "IdleState.h"
+﻿#include "Idle_State.h"
 #include "Model.h"
 #include "GameObject.h"
 #include "GameInstance.h"
@@ -13,10 +13,7 @@ CIdleState::CIdleState(CGameObject* pGameObject, CModel* pModel)
 
 void CIdleState::Enter()
 {
-	if (m_pModelCom)
-	{
-		//m_pModelCom->Set_Animation(0, true);
-	}
+
 }
 
 void CIdleState::Execute()
@@ -26,10 +23,12 @@ void CIdleState::Execute()
 
 void CIdleState::HandleInput()
 {
+
 }
 
 void CIdleState::Exit()
 {
+
 }
 
 

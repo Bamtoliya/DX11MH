@@ -85,9 +85,6 @@
     <Filter Include="01.Levels\GamePlay">
       <UniqueIdentifier>{affe5e44-9579-4944-bb8d-bd02ce6b190c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\NonAnimObject">
-      <UniqueIdentifier>{ba0c82f2-acf8-4b97-aaea-03884fb77b96}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\04.Player">
       <UniqueIdentifier>{a2beb641-35fe-42a0-bb27-5b9761b2332c}</UniqueIdentifier>
     </Filter>
@@ -114,6 +111,12 @@
     </Filter>
     <Filter Include="02.GameObject\03.Monster\Giant">
       <UniqueIdentifier>{c7fef04f-0723-40b1-9160-7b9db8047c74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\04.Player\Controller">
+      <UniqueIdentifier>{0ca2b876-a367-4b4e-be5a-ce466dad4c8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\04.Player\Controller\States">
+      <UniqueIdentifier>{63f9269e-617b-40be-8b1c-f14967199dfe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -188,6 +191,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Camera_TPS.cpp">
       <Filter>02.GameObject\02.Camera\TPS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sonic_Controller.cpp">
+      <Filter>02.GameObject\04.Player\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sonic_Ground_State.cpp">
+      <Filter>02.GameObject\04.Player\Controller\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -289,6 +298,12 @@
     </ClInclude>
     <ClInclude Include="..\public\Camera_TPS.h">
       <Filter>02.GameObject\02.Camera\TPS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sonic_Controller.h">
+      <Filter>02.GameObject\04.Player\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sonic_Ground_State.h">
+      <Filter>02.GameObject\04.Player\Controller\States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

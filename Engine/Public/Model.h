@@ -67,7 +67,9 @@ public:
 
 public:
 	_uint Get_NumMeshes() const { return m_iNumMeshes; }
+	_uint Get_NumBones() const { return static_cast<_uint>(m_Bones.size()); }
 	const _float4x4* Get_BoneMatrix(const _char* pBoneName) const;
+	class CAnimation* Get_Animation(_uint iIndex) const { return m_Animations[iIndex]; }
 public:
 	HRESULT Bind_Material(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eType, _uint iTextureIndex = 0);
 	HRESULT Bind_Bone_Matrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);

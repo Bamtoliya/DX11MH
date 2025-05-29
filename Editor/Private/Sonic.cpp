@@ -1,6 +1,7 @@
 ﻿#include "Sonic.h"
-
+#include "Sonic_Controller.h"
 #include "GameInstance.h"
+#include "Sonic_Ground_State.h"
 
 #pragma region Constructor / Destructor
 CSonic::CSonic(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -83,6 +84,8 @@ HRESULT CSonic::Initialize(void* pArg)
 
 	m_pModelCom->Set_Animation(ENUM_CLASS(STATE::RUN_LOOP), true);
 
+	Ready_States();
+
 	return S_OK;
 }
 
@@ -97,6 +100,8 @@ HRESULT CSonic::Initialize(simdjson::ondemand::object& jsonData)
 	if(FAILED(Deserialize(jsonData)))
 		return E_FAIL;
 	m_pModelCom->Set_Animation(ENUM_CLASS(STATE::RUN_LOOP), true);
+
+	Ready_States();
 
 	return S_OK;
 }
@@ -114,9 +119,14 @@ HRESULT CSonic::Ready_Components()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Controller"),
+	/* For.Com_Controller */
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Sonic_Controller"),
 		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pControllerCom))))
+		return E_FAIL;
+
+	/* For.Com_Animator */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Animator"),
+		TEXT("Com_Animator"), reinterpret_cast<CComponent**>(&m_pAnimatorCom))))
 		return E_FAIL;
 	
 
@@ -126,6 +136,15 @@ HRESULT CSonic::Ready_Components()
 	//	return E_FAIL;
 
 
+	return S_OK;
+}
+
+HRESULT CSonic::Ready_States()
+{
+	m_pAnimatorCom->Resize_States(STATE::END);
+	m_pAnimatorCom->Add_State(STATE::IDLE01_LOOP, CSonic_Idle_State::Create(m_pDevice, m_pContext));
+	m_pAnimatorCom->Add_State(STATE::RUN_LOOP, CSonic_Run_State::Create(m_pDevice, m_pContext));
+	
 	return S_OK;
 }
 
@@ -178,8 +197,9 @@ void CSonic::Update(_float fTimeDelta)
 {
 	if(m_pControllerCom)
 		m_pControllerCom->Update(fTimeDelta);
-	if (m_pModelCom->Play_Animation(fTimeDelta))
-		int a = 10;
+	if (m_pAnimatorCom)
+		m_pAnimatorCom->Update(fTimeDelta);
+	m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CSonic::Late_Update(_float fTimeDelta)

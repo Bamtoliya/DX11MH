@@ -37,6 +37,8 @@
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\Monster.cpp" />
+    <ClCompile Include="..\private\Sonic_Controller.cpp" />
+    <ClCompile Include="..\private\Sonic_Ground_State.cpp" />
     <ClCompile Include="..\private\Statue.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\private\ToolBar.cpp" />
@@ -68,6 +70,8 @@
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\Monster.h" />
+    <ClInclude Include="..\public\Sonic_Controller.h" />
+    <ClInclude Include="..\public\Sonic_Ground_State.h" />
     <ClInclude Include="..\public\Statue.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\public\ToolBar.h" />

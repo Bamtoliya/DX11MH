@@ -7,13 +7,16 @@ NS_BEGIN(Engine)
 class CModel;
 class CShader;
 class CController;
+class CAnimator;
 NS_END
 
 NS_BEGIN(Editor)
 
 class CSonic final : public CGameObject
 {
+
 #pragma region States
+public:
 	enum STATE {
 		AVOID_B,
 		AVOID_B_AIR,
@@ -576,6 +579,7 @@ class CSonic final : public CGameObject
 		WOLF_READY_END,
 		WOLF_READY_LOOP,
 		WOLF_READY_START,
+		END
 	};
 	enum SPINSTATE {
 		SPIN_SPECIAL_ATK,
@@ -606,6 +610,7 @@ public:
 	virtual HRESULT Initialize(simdjson::ondemand::object& jsonData);
 private:
 	HRESULT Ready_Components();
+	HRESULT Ready_States();
 public:
 	virtual void Free() override;
 #pragma endregion
@@ -613,9 +618,9 @@ public:
 #pragma region Save&Load
 public:
 	virtual HRESULT Serialize(json& data) override;
-	virtual HRESULT Deserialize(simdjson::ondemand::object & jsonData) override;
+	virtual HRESULT Deserialize(simdjson::ondemand::object& jsonData) override;
 	virtual HRESULT Prototype_Serialize(json& data) override;
-	virtual HRESULT Prototype_Deserialize(simdjson::ondemand::object & jsonData) override;
+	virtual HRESULT Prototype_Deserialize(simdjson::ondemand::object& jsonData) override;
 #pragma endregion
 
 #pragma region Loops
@@ -633,7 +638,18 @@ private:
 	CShader* m_pShaderCom = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 	CModel* m_pSpinModelCom = { nullptr };
+	CAnimator* m_pAnimatorCom = { nullptr };
 	CController* m_pControllerCom = { nullptr };
+#pragma endregion
+
+#pragma region Variables
+	_uint Get_CurStateIndex() { return m_iCurStateIndex; }
+	_uint Get_NextStateIndex() { return m_iNextStateIndex; }
+	void Set_CurStateIndex(_uint iCurStateIndex) { m_iCurStateIndex = iCurStateIndex; }
+	void Set_NextStateIndex(_uint iNextStateIndex) { m_iNextStateIndex =  iNextStateIndex; }
+private:
+	_uint m_iCurStateIndex = { ENUM_CLASS(IDLE01_LOOP) };
+	_uint m_iNextStateIndex = { ENUM_CLASS(IDLE01_LOOP) };
 #pragma endregion
 
 	

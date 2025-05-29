@@ -38,7 +38,9 @@
 #include "Controller.h"
 #pragma endregion
 
-
+#pragma region Animator
+#include "Animator.h"
+#pragma endregion
 
 #pragma region Collider
 #include "Collider.h"
@@ -47,8 +49,6 @@
 #pragma region Shader
 #include "Shader.h"
 #pragma endregion
-
-
 
 #pragma region VIBuffer
 #include "VIBuffer.h"

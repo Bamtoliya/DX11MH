@@ -96,6 +96,9 @@
     "NumTexture": 1,
     "TextureFilePath": "../../Assets/Textures/Skybox/XYZ.dds"
   },
+  "Prototype_Component_Sonic_Controller": {
+    "Class": "CSonic_Controller"
+  },
   "Prototype_GameObject_Camera_Free": {
     "Class": "CCamera_Free"
   },

@@ -1,6 +1,7 @@
 ﻿#include "Controller.h"
 #include "GameInstance.h"
 #include "Transform.h"
+#include "Animator.h"
 
 CController::CController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent { pDevice, pContext }
@@ -74,6 +75,9 @@ void CController::Update(_float fTimeDelta)
 	if (!m_bActive)
 		return;
 
+	CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
+	if (nullptr == pAnimator)
+		return;
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
 	if (nullptr == pTransform)
 		return;
@@ -127,6 +131,10 @@ void CController::Update(_float fTimeDelta)
 
 		// 캐릭터 이동
 		pTransform->Go_Straight(fTimeDelta); // Go_Straight는 현재 Transform의 Look 방향으로 이동
+	}
+	else
+	{
+		//pAnimator->Set_NextState( false);
 	}
 }
 void CController::Late_Update(_float fTimeDelta)

@@ -61,6 +61,7 @@ HRESULT CMainApp::Render()
 HRESULT CMainApp::Register_Class_Types()
 {
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CSonic", CSonic::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CSonic_Controller", CSonic_Controller::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CTerrain", CTerrain::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CStatue", CStatue::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CBackGround", CBackGround::Create))) return E_FAIL;

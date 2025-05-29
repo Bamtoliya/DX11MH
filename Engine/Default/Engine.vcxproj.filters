@@ -431,7 +431,7 @@
     <ClInclude Include="..\public\InterpolationNode.h">
       <Filter>01.Utility\04.Components\Controller\BlendTree\Node\InterpolationNode</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\IdleState.h">
+    <ClInclude Include="..\public\Idle_State.h">
       <Filter>01.Utility\04.Components\Controller\State\IdleState</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Font_Manager.h">
@@ -439,6 +439,24 @@
     </ClInclude>
     <ClInclude Include="..\public\CustomFont.h">
       <Filter>01.Utility\08.Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\RunState.h">
+      <Filter>01.Utility\04.Components\Controller\State\MoveState\Run</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Move_State.h">
+      <Filter>01.Utility\04.Components\Controller\State\MoveState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\States.h">
+      <Filter>01.Utility\04.Components\Controller\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Combat_State.h">
+      <Filter>01.Utility\04.Components\Controller\State\CombatState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Ground_State.h">
+      <Filter>01.Utility\04.Components\Controller\State\GroundState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Air_State.h">
+      <Filter>01.Utility\04.Components\Controller\State\AirState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -803,7 +821,7 @@
     <ClCompile Include="..\private\InterpolationNode.cpp">
       <Filter>01.Utility\04.Components\Controller\BlendTree\Node\InterpolationNode</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\IdleState.cpp">
+    <ClCompile Include="..\private\Idle_State.cpp">
       <Filter>01.Utility\04.Components\Controller\State\IdleState</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Font_Manager.cpp">
@@ -811,6 +829,21 @@
     </ClCompile>
     <ClCompile Include="..\private\CustomFont.cpp">
       <Filter>01.Utility\08.Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\RunState.cpp">
+      <Filter>01.Utility\04.Components\Controller\State\MoveState\Run</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Move_State.cpp">
+      <Filter>01.Utility\04.Components\Controller\State\MoveState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Combat_State.cpp">
+      <Filter>01.Utility\04.Components\Controller\State\CombatState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Ground_State.cpp">
+      <Filter>01.Utility\04.Components\Controller\State\GroundState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AirState.cpp">
+      <Filter>01.Utility\04.Components\Controller\State\AirState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1122,6 +1155,15 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Controller\State\CombatState">
       <UniqueIdentifier>{d47cd8c8-7fd1-4467-9257-8dc064da787c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\State\MoveState\Run">
+      <UniqueIdentifier>{463b65c8-f2fb-4d94-ac3d-65a801004b72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\State\MoveState\Walk">
+      <UniqueIdentifier>{658bead1-6a65-4888-b20c-1c211803fbaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Controller\State\InteractState">
+      <UniqueIdentifier>{301a7c6a-e500-4ac0-bde0-fbb22258d1db}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

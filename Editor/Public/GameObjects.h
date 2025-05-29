@@ -9,4 +9,6 @@
 #include "Monster.h"
 
 #include "Sonic.h"
+#include "Sonic_Controller.h"
+
 #include "Statue.h"

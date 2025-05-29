@@ -11,6 +11,9 @@
   "Prototype_Component_Controller": {
     "Class": "CController"
   },
+  "Prototype_Component_Animator": {
+    "Class": "CAnimator"
+  },
   "Prototype_Component_Shader_VtxAnimMesh": {
     "Class": "CShader",
     "Layout": "VTXANIMMESH",

@@ -16,13 +16,12 @@ Animator, HFSM, SUB FSM, Blend Tree
 
 블렌드 애니메이션 시작
 	Animator를 만들어서 거기에 스테이트 머신을 등록하는 방식으로 해서 구현
-플레이어 상태 제어 시작
-	일단 프리 카메라에서 움직이는걸 보자
+플레이어 상태 제어 시작 
+	이동은 플레이어 좌우 방향이아니라 카메라 방향에 따라서 이동
+	
 몬스터 1종 상태 제어 불러오기
 
 레이피킹
-
-
 
 Deferred Context
 
@@ -37,10 +36,16 @@ HeightField 조사
 	Splat를 찾아서 마테리얼을 통해서 디퓨즈 계산할려고하는데
 	Splat이 뭔지 확정이 잘 안됨
 	마테리얼을 추가해서 지형 디퓨즈 계산(를 하기위해서 Splat Map, Area Map, Scale Map, Color Map)을 찾았는데
+	Splat Map으로 trr_Height에있는 텍스쳐 인데 그 0~45번 까지 있음.49번은 바다 
+저 많은 텍스쳐들을 한번에 맵핑할수없으니 분명 다른 방법이있을꺼다
+
 	특정 알파값이 뭘의미하는지 모르겠다.
 
 물리 콜라이더 컴포넌트
 	Physx와 Bullet Physics 둘중하나 사용해야함
 	지형 구현 난이도에 따라서 사용할듯
 
-	
+스카이 박스 텍스쳐는 없음 쉐이더로 구현 해야함
+https://ebruneton.github.io/precomputed_atmospheric_scattering/
+https://www.shadertoy.com/view/slSXRW
+https://github.com/AirGuanZ/AtmosphereRenderer
