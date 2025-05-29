@@ -24,7 +24,7 @@
   },
   "Prototype_Component_Model_ForkLift": {
     "Class": "CModel",
-    "ModelFilePath": "../../Assets/Resources/Models/ForkLift/ForkLift.fbx",
+    "ModelFilePath": "../../Assets/Models/ForkLift/ForkLift.fbx",
     "PreTransformedMatrix": [
       -0.009999999776482582,
       0.0,
@@ -90,9 +90,6 @@
       1.0
     ],
     "Type": "NONANIM"
-  },
-  "Prototype_Component_Controller": {
-    "Class": "CController"
   },
   "Prototype_Component_Texture_Sky": {
     "Class": "CTexture",

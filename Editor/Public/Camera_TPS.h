@@ -36,17 +36,21 @@ private:
 	_bool				m_bLockOn = { false };
 	CGameObject*		m_pFollowTarget = { nullptr };
 	CGameObject*		m_pLockOnTarget = { nullptr };
+	_float				m_fMinDistance = {};
+	_float				m_fMaxDistance = {};
+	_float				m_fDamper = {};
 #pragma endregion
 
 #pragma region Loops
+public:
 	virtual void Priority_Update(_float fTimeDelta);
 	virtual void Update(_float fTimeDelta);
 	virtual void Late_Update(_float fTimeDelta);
 	virtual HRESULT Render();
 #pragma endregion
 
-public:
-	void Focus_OnPickedObject();
+private:
+	void Follow(_vector vTargetPosition, _float fTimeDelta);
 
 #pragma region Save&Load
 public:

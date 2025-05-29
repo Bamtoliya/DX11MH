@@ -80,17 +80,53 @@ HRESULT CFollow_Camera::Serialize(json& outJson)
 	data["SmoothFactor"] = m_fSmoothFactor;
 	data["CameraYaw"] = m_fCameraYaw;
 	data["CameraPitch"] = m_fCameraPitch;
+
+	// 타겟 오브젝트 이름 저장
+	if (m_pTarget != nullptr)
+	{
+		data["TargetName"] = WideToUtf8(m_pTarget->Get_Name().c_str());
+	}
+
 	outJson["CFollow_Camera"] = data;
 	return S_OK;
 }
 HRESULT CFollow_Camera::Deserialize(simdjson::ondemand::object& jsonData)
 {
-	if (FAILED(__super::Deserialize(jsonData)))
+	// CFollow_Camera 전용 데이터 추출
+	simdjson::ondemand::object cameraData;
+	simdjson::error_code error = jsonData["CFollow_Camera"].get_object().get(cameraData);
+	if (error != simdjson::SUCCESS) {
+		MSG_BOX("Failed to get CFollow_Camera data from JSON");
 		return E_FAIL;
-	m_fDistance = static_cast<_float>(jsonData["Distance"].get_double().value_unsafe());
-	m_fSmoothFactor = static_cast<_float>(jsonData["SmoothFactor"].get_double().value_unsafe());
-	m_fCameraYaw = static_cast<_float>(jsonData["CameraYaw"].get_double().value_unsafe());
-	m_fCameraPitch = static_cast<_float>(jsonData["CameraPitch"].get_double().value_unsafe());
+	}
+
+	// 부모 클래스의 Deserialize 호출 (CCamera 데이터 전달)
+	if (FAILED(__super::Deserialize(cameraData)))
+		return E_FAIL;
+
+	// CFollow_Camera 자체 필드 파싱
+	double distance, smoothFactor, cameraYaw, cameraPitch;
+
+	if (cameraData["Distance"].get_double().get(distance) == simdjson::SUCCESS)
+		m_fDistance = static_cast<_float>(distance);
+
+	if (cameraData["SmoothFactor"].get_double().get(smoothFactor) == simdjson::SUCCESS)
+		m_fSmoothFactor = static_cast<_float>(smoothFactor);
+
+	if (cameraData["CameraYaw"].get_double().get(cameraYaw) == simdjson::SUCCESS)
+		m_fCameraYaw = static_cast<_float>(cameraYaw);
+
+	if (cameraData["CameraPitch"].get_double().get(cameraPitch) == simdjson::SUCCESS)
+		m_fCameraPitch = static_cast<_float>(cameraPitch);
+
+	// 타겟 이름 파싱 및 저장
+	std::string_view targetNameView;
+	if (cameraData["TargetName"].get_string().get(targetNameView) == simdjson::SUCCESS)
+	{
+		m_strTargetName = Utf8ToWide(std::string(targetNameView));
+		m_bFindTarget = true;
+	}
+
 	return S_OK;
 }
 
@@ -101,7 +137,8 @@ void CFollow_Camera::Priority_Update(_float fTimeDelta)
 }
 void CFollow_Camera::Update(_float fTimeDelta)
 {
-
+	if (m_bFindTarget)
+		Find_Target();
 }
 void CFollow_Camera::Late_Update(_float fTimeDelta)
 {
@@ -116,72 +153,80 @@ void CFollow_Camera::Late_Update(_float fTimeDelta)
 		return;
 	}
 
+	CTransform* pCameraTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+	
+	if (nullptr == pCameraTransform)
+		return;
 	CTransform* pTargetTransform = static_cast<CTransform*>(m_pTarget->Get_Component(g_strTransformTag));
 	if (nullptr == pTargetTransform)
 		return;
-
 	_vector vTargetPosition = pTargetTransform->Get_State(STATE::POSITION);
 
-	// 1. 카메라 회전 행렬 생성 (Yaw, Pitch 기준)
-	XMMATRIX matRotation = XMMatrixRotationRollPitchYaw(m_fCameraPitch, m_fCameraYaw, 0.f);
+	Follow(pCameraTransform, vTargetPosition, fTimeDelta);
 
-	// 2. 타겟으로부터의 기본 오프셋 벡터 (타겟 뒤쪽 Z축 방향)
-	_vector vBaseOffset = XMVectorSet(0.f, 0.f, -m_fDistance, 0.f); // -Z 방향으로 m_fDistance 만큼
-
-	// 3. 회전된 오프셋 벡터 계산
-	// XMVector3TransformCoord는 w=1로 간주하므로 위치 변환에 적합합니다.
-	// 방향 벡터의 회전에는 XMVector3TransformNormal이 더 적합할 수 있습니다.
-	// 여기서는 오프셋 위치를 계산하므로 Coord도 괜찮습니다.
-	_vector vRotatedOffset = XMVector3TransformCoord(vBaseOffset, matRotation);
-
-	// 4. 최종 카메라 목표 위치 계산
-	_vector vDesiredPosition = vTargetPosition + vRotatedOffset;
-
-	// 5. 현재 카메라(소유자 게임 오브젝트)의 위치 가져오기
-	CTransform* pCameraOwnerTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
-	if (nullptr == pCameraOwnerTransform)
-		return;
-	_vector vCurrentPosition = pCameraOwnerTransform->Get_State(STATE::POSITION);
-
-	// 6. 선형 보간(Lerp)을 사용하여 카메라 위치를 부드럽게 이동
-	// m_fSmoothFactor가 1에 가까우면 즉시 이동, 0에 가까우면 느리게 이동.
-	// 프레임률에 독립적인 스무딩을 원하면: Lerp(current, desired, 1.f - exp(-Rate * fTimeDelta))
-	// 현재는 단순 Lerp: factor가 클수록 빠르게 따라감.
-	_vector vNewPosition = XMVectorLerp(vCurrentPosition, vDesiredPosition, m_fSmoothFactor /* * fTimeDelta - 사용 방식에 따라 결정 */);
-	pCameraOwnerTransform->Set_State(STATE::POSITION, vNewPosition);
-
-	// 7. CCamera의 LookAt 함수를 호출하여 카메라가 항상 타겟을 바라보도록 설정
-	// CCamera::LookAt은 m_pOwner의 Transform에서 눈 위치(Eye)를 가져오고,
-	// 제공된 타겟 위치(At)를 사용하여 뷰 행렬을 설정합니다.
-	__super::LookAt(vTargetPosition);
-
-	// 8. CCamera의 나머지 Late_Update 로직 (뷰/투영 행렬 업데이트 등) 호출
-	// LookAt을 호출했으므로, __super::Late_Update(fTimeDelta)를 다시 호출할 필요는 없을 수 있습니다.
-	// CCamera::LookAt 내부에서 필요한 뷰 행렬 업데이트가 수행되고,
-	// CCamera::Late_Update에서 투영 행렬 및 기타 업데이트가 수행될 것입니다.
-	// 만약 LookAt이 뷰 행렬만 설정하고, Late_Update에서 최종 행렬 계산을 한다면 호출 필요.
-	// 현재 CCamera 구조에 따라 __super::Late_Update(fTimeDelta)를 호출하거나,
-	// LookAt 이후 필요한 __super::Update_Matrix() 같은 함수를 호출할 수 있습니다.
-	// 안전하게는 CCamera::Late_Update를 호출하여 모든 기본 업데이트가 수행되도록 합니다.
-	// 단, LookAt을 호출한 후에는 Eye, At, Up이 이미 설정된 상태이므로,
-	// CCamera::Late_Update가 이를 덮어쓰지 않도록 주의해야 합니다.
-	// 가장 일반적인 방법은 CCamera::Set_ViewMatrix, CCamera::Set_ProjMatrix 등을 직접 호출하거나,
-	// __super::Late_Update()가 내부적으로 m_matView, m_matProj를 업데이트하도록 하는 것입니다.
-	// 여기서는 LookAt이 뷰 행렬을 설정하고, __super::Late_Update가 나머지를 처리한다고 가정합니다.
-	// CCamera::Late_Update가 m_vEye, m_vAt 등을 기반으로 LookAt을 다시 호출한다면 중복이므로,
-	// CCamera의 구현을 확인해야 합니다.
-	// 여기서는 LookAt으로 뷰를 설정했으므로, __super::Late_Update()는 호출하지 않거나,
-	// 뷰 행렬을 제외한 부분만 업데이트하도록 수정된 CCamera::Late_Update_Partially() 같은 함수를 가정합니다.
-	// 가장 간단하게는, CCamera::Late_Update가 내부적으로 m_matView와 m_matProj를 업데이트한다고 가정하고 호출합니다.
-	// 만약 CCamera::Late_Update가 Transform을 기반으로 Eye, At을 다시 계산한다면 문제가 됩니다.
-	// 여기서는 __super::LookAt()이 뷰 행렬을 설정하고,
-	// CCamera의 __super::Late_Update()는 주로 투영 행렬 업데이트 및 최종 파이프라인 상태 설정을 한다고 가정합니다.
-	// CCamera::Late_Update()를 호출하여 파이프라인에 뷰/투영 행렬을 설정하도록 합니다.
-	__super::Late_Update(fTimeDelta); // CCamera의 최종 업데이트 (행렬 파이프라인에 적용 등)
+	__super::Late_Update(fTimeDelta);
 }
 HRESULT CFollow_Camera::Render()
 {
 	return S_OK;
+}
+
+HRESULT CFollow_Camera::Find_Target()
+{
+	if (!m_bFindTarget || m_strTargetName.empty())
+		return S_OK;
+
+	if (m_pTarget != nullptr)
+	{
+		Safe_Release(m_pTarget);
+		m_pTarget = nullptr;
+	}
+
+	CGameObject* pGameObject = m_pGameInstance->Get_GameObjectByName(m_strTargetName);
+	if(nullptr != pGameObject)
+		Set_Target(pGameObject);
+	return S_OK;
+}
+
+void CFollow_Camera::Follow(CTransform* pTransformCom, _vector vTargetPosition, _float fTimeDelta)
+{
+
+	// 1. 구면 좌표계로 카메라 방향 벡터 계산
+	// Yaw는 수평 회전 (Y축 기준), Pitch는 수직 회전 (X축 기준)
+	_float fSinPitch = sinf(m_fCameraPitch);
+	_float fCosPitch = cosf(m_fCameraPitch);
+	_float fSinYaw = sinf(m_fCameraYaw);
+	_float fCosYaw = cosf(m_fCameraYaw);
+
+	_vector vDirection = XMVectorSet(
+		fCosPitch * fSinYaw,
+		fSinPitch,
+		fCosPitch * fCosYaw,
+		0.0f
+	);
+
+	// 2. 방향 벡터에 거리를 곱하여 오프셋 계산
+	_vector vOffset = XMVectorScale(vDirection, -m_fDistance); // 음수는 카메라가 타겟 뒤에 위치하게 함
+
+	// 3. 타겟 위치에 오프셋을 더하여 카메라의 이상적 위치 계산
+	_vector vIdealPosition = XMVectorAdd(vTargetPosition, vOffset);
+
+	// 추가 높이 오프셋 (선택적, 타겟의 머리 위를 보게 하는 용도)
+	// 이미 Pitch로 높이가 조절되므로 작은 값이나 0으로 설정 가능
+	_float fExtraHeightOffset = 1.0f;
+	vIdealPosition = XMVectorAdd(vIdealPosition, XMVectorSet(0.0f, fExtraHeightOffset, 0.0f, 0.0f));
+
+	_vector vCurrentPosition = pTransformCom->Get_State(STATE::POSITION);
+	_vector vNewPosition = XMVectorLerp(vCurrentPosition, vIdealPosition, m_fSmoothFactor * fTimeDelta);
+
+	// 5. 카메라 위치 및 시선 방향 업데이트
+	pTransformCom->Set_State(STATE::POSITION, vNewPosition);
+
+	// 시선은 항상 타겟을 향하도록 (약간 위쪽을 보도록 오프셋 적용 가능)
+	_vector vLookAt = XMVectorAdd(vTargetPosition, XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+	pTransformCom->LookAt(vLookAt);
+
+	return;
 }
 #pragma endregion
 HRESULT CFollow_Camera::RenderImGui()

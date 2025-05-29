@@ -46,6 +46,18 @@ CGameObject* CLayer::Get_GameObjectById(_uint iId)
 	return pGameObject; // 해당 ID를 가진 게임 오브젝트를 찾지 못한 경우 nullptr을 반환합니다.
 }
 
+CGameObject* CLayer::Get_GameObjectByName(const _wstring& strName)
+{
+	auto& iter = find_if(m_GameObjects.begin(), m_GameObjects.end(), [&strName](CGameObject* pGameObject) {
+		if (pGameObject->Get_Name() == strName)
+			return true;
+		return false;
+		});
+	if (iter != m_GameObjects.end())
+		return *iter;
+	return nullptr;
+}
+
 HRESULT CLayer::Remove_GameObjectById(_uint iId)
 {
 	m_GameObjects.remove_if([&iId](CGameObject* pGameObject) {
@@ -283,29 +295,7 @@ HRESULT CLayer::ToggleVisible()
 	return S_OK;
 }
 
-CGameObject* CLayer::Find_GameObjectById(_uint oId)
-{
-	auto& iter = find_if(m_GameObjects.begin(), m_GameObjects.end(), [&oId](CGameObject* pGameObject) {
-		if(pGameObject->Get_ID() == oId)
-			return true;
-		return false;
-		});
-	if (iter != m_GameObjects.end())
-		return *iter;
-	return nullptr;
-}
 
-CGameObject* CLayer::Find_GameObjectByName(const _wstring& strName)
-{
-	auto &iter = find_if(m_GameObjects.begin(), m_GameObjects.end(), [&strName](CGameObject* pGameObject) {
-		if (pGameObject->Get_Name() == strName)
-			return true;
-		return false;
-		});
-	if (iter != m_GameObjects.end())
-		return *iter;
-	return nullptr;
-}
 
 HRESULT CLayer::Serialize(json& outJson)
 {

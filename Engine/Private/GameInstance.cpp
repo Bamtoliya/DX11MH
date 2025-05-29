@@ -390,6 +390,17 @@ CGameObject* CGameInstance::Get_GameObjectById(_uint iId)
 	return m_pObject_Manager->Get_GameObjectById(iId);
 }
 
+CGameObject* CGameInstance::Get_GameObjectByName(const _wstring& strGameObjectName)
+{
+	return m_pObject_Manager->Get_GameObjectByName(strGameObjectName);
+}
+
+CGameObject* CGameInstance::Get_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName)
+{
+	return m_pObject_Manager->Get_GameObjectByName(iLevelIndex, strLayerTag, strGameObjectName);
+}
+
+
 HRESULT CGameInstance::Move_GameObjectToLayer(_uint iObjectID, _uint iTargetLevelIndex, const _wstring& strTargetLayerTag)
 {
 	return m_pObject_Manager->Move_GameObjectToLayer(iObjectID, iTargetLevelIndex, strTargetLayerTag);

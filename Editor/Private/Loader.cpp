@@ -76,6 +76,10 @@ HRESULT CLoader::Loading()
 		break;
 	case LEVEL::EFFECT:
 		hr = Loading_For_Logo();
+	case LEVEL::ANIMATION:
+		hr = Loading_For_Animation();
+	case LEVEL::GAMEPLAY:
+		hr = Loading_For_Gameplay();
 		break;
 	}
 
@@ -151,6 +155,38 @@ HRESULT CLoader::Loading_For_Map()
 	m_isFinished = true;
 
 	
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Effect()
+{
+	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
+
+	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Gameplay()
+{
+	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
+
+	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Animation()
+{
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::ANIMATION), SAVEPATH L"Prototypes_Animation.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+
+	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
+
+	m_isFinished = true;
+
 	return S_OK;
 }
 

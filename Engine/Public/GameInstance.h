@@ -104,6 +104,8 @@ public:
 	
 	CComponent* Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex = 0);
 	class CGameObject* Get_GameObjectById(_uint iId);
+	class CGameObject* Get_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName);
+	class CGameObject* Get_GameObjectByName(const _wstring& strGameObjectName);
 
 	HRESULT Move_GameObjectToLayer(_uint iObjectID, _uint iTargetLevelIndex, const _wstring& strTargetLayerTag);
 	HRESULT Remove_GameObjectFromLayer(_uint iLevelIndex, const _wstring& strLayerTag, CGameObject* pGameObject);

@@ -47,6 +47,12 @@ void CLevel_Loading::Update(_float fTimeDelta)
 			case LEVEL::EFFECT:
 				pLevel = CLevel_Effect::Create(m_pDevice, m_pContext);
 				break;
+			case LEVEL::ANIMATION:
+				pLevel = CLevel_Animation::Create(m_pDevice, m_pContext);
+				break;
+			case LEVEL::GAMEPLAY:
+				pLevel = CLevel_GamePlay::Create(m_pDevice, m_pContext);
+				break;
 			}
 
 			if (nullptr == pLevel)

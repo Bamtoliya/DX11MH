@@ -119,6 +119,9 @@ public:
     HRESULT Loading_For_Logo();
     HRESULT Loading_For_UI();
     HRESULT Loading_For_Map();
+    HRESULT Loading_For_Effect();
+    HRESULT Loading_For_Gameplay();
+    HRESULT Loading_For_Animation();
 #pragma endregion
 
 

@@ -108,13 +108,14 @@ HRESULT CSonic::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
+	
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_Sonic"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_Sonic"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Controller"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Controller"),
 		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pControllerCom))))
 		return E_FAIL;
 	
@@ -200,7 +201,7 @@ HRESULT CSonic::Bind_ShaderResources()
 
 	const LIGHT_DESC* pLightDesc = m_pGameInstance->Get_Light(0);
 	if (pLightDesc == nullptr)
-		return S_OK;
+		return S_OK;	
 
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
 		return E_FAIL;

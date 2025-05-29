@@ -187,7 +187,7 @@ CGameObject* CObject_Manager::Get_GameObjectById(_uint iId)
 	return nullptr;
 }
 
-CGameObject* CObject_Manager::Find_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName)
+CGameObject* CObject_Manager::Get_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName)
 {
 	if (iLevelIndex >= m_iNumLevels)
 		return nullptr;
@@ -195,11 +195,26 @@ CGameObject* CObject_Manager::Find_GameObjectByName(_uint iLevelIndex, const _ws
 	CLayer* pLayer = Find_Layer(iLevelIndex, strLayerTag);
 	if (nullptr == pLayer)
 		return nullptr;
-	CGameObject* pGameObject = pLayer->Find_GameObjectByName(strGameObjectName);
+	CGameObject* pGameObject = pLayer->Get_GameObjectByName(strGameObjectName);
 	if (nullptr == pGameObject)
 		return nullptr;
 	
 	return pGameObject;
+}
+
+CGameObject* CObject_Manager::Get_GameObjectByName(const _wstring& strGameObjectName)
+{
+	CGameObject* pGameObject = { nullptr };
+	for (size_t i = 0; i < m_iNumLevels; i++)
+	{
+		for (auto& Pair : m_pLayers[i])
+		{
+			pGameObject = Pair.second->Get_GameObjectByName(strGameObjectName);
+			if (pGameObject != nullptr)
+				return pGameObject;
+		}
+	}
+	return nullptr;
 }
 
 HRESULT CObject_Manager::Move_GameObjectToLayer(_uint iObjectID, _uint iTargetLevelIndex, const _wstring& strTargetLayerTag)

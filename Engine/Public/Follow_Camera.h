@@ -33,11 +33,18 @@ private:
 	// 필요하다면 수직 각도 제한 값
 	const _float m_fMinPitch = { -XM_PIDIV2 + 0.2f }; // 약 -80도
 	const _float m_fMaxPitch = { XM_PIDIV2 - 0.2f };  // 약 +80도
+
+	_wstring m_strTargetName = {};
+	_bool	 m_bFindTarget = { false };
 #pragma endregion
 #pragma region Helper
 public:
 	CGameObject* Get_Target() { return m_pTarget; }
 	void Set_Target(CGameObject* pTarget) { if (m_pTarget) Safe_Release(m_pTarget); m_pTarget = pTarget; Safe_AddRef(m_pTarget); }
+
+
+	HRESULT Find_Target();
+	void Follow(class CTransform* pTransformCom, _vector vTargetPosition, _float fTimeDelta);
 
 	// Camera Orbit Parameters
 	void AddYaw(_float fDelta);

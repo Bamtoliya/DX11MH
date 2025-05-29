@@ -27,8 +27,7 @@ public:
 	HRESULT RenderImGui(const wstring& strLayerTag);
 	HRESULT Render_ImGui_ComboBox(_uint& iGameObjectID);
 	HRESULT ToggleVisible();
-	class CGameObject* Find_GameObjectById(_uint oId);
-	class CGameObject* Find_GameObjectByName(const _wstring& strName);
+	class CGameObject* Get_GameObjectByName(const _wstring& strName);
 public:
 	HRESULT Serialize(json& outJson);
 	HRESULT Deserialize(simdjson::ondemand::object& jsonData);

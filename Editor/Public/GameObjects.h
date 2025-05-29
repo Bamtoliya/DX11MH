@@ -4,6 +4,7 @@
 
 #include "Camera_Free.h"
 #include "Camera_Follow.h"
+#include "Camera_TPS.h"
 
 #include "Monster.h"
 

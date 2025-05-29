@@ -8,6 +8,9 @@
   "Prototype_Component_Light": {
     "Class": "CLight"
   },
+  "Prototype_Component_Controller": {
+    "Class": "CController"
+  },
   "Prototype_Component_Shader_VtxAnimMesh": {
     "Class": "CShader",
     "Layout": "VTXANIMMESH",

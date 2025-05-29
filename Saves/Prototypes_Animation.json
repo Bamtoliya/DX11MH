@@ -1,0 +1,120 @@
+{
+  "Prototype_Component_Model_Fiona": {
+    "Class": "CModel",
+    "ModelFilePath": "../../Assets/Models/Fiona/Fiona.model",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "ANIM"
+  },
+  "Prototype_Component_Model_ForkLift": {
+    "Class": "CModel",
+    "ModelFilePath": "../../Assets/Models/ForkLift/ForkLift.fbx",
+    "PreTransformedMatrix": [
+      -0.009999999776482582,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.009999999776482582,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -0.009999999776482582,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "NONANIM"
+  },
+  "Prototype_Component_Model_Sonic": {
+    "Class": "CModel",
+    "ModelFilePath": "../../Assets/Models/Sonic/SonicAllActions.model",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "ANIM"
+  },
+  "Prototype_Component_Model_Test": {
+    "Class": "CModel",
+    "ModelFilePath": "../../Assets/Models/Objects/isl_obj_statuegiant/isl_obj_statuegiant2.model",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "NONANIM"
+  },
+  "Prototype_Component_Texture_Sky": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "../../Assets/Textures/Skybox/XYZ.dds"
+  },
+  "Prototype_GameObject_Camera_Free": {
+    "Class": "CCamera_Free"
+  },
+  "Prototype_GameObject_Camera_Follow": {
+    "Class": "CCamera_Follow"
+  },
+  "Prototype_GameObject_Camera_TPS": {
+    "Class": "CCamera_TPS"
+  },
+  "Prototype_GameObject_Light_Direction": {
+    "Class": "CLight_Direction"
+  },
+  "Prototype_GameObject_Monster": {
+    "Class": "CMonster"
+  },
+  "Prototype_GameObject_Skybox": {
+    "Class": "CGameObject_Skybox"
+  },
+  "Prototype_GameObject_Sonic": {
+    "Class": "CSonic"
+  }
+}

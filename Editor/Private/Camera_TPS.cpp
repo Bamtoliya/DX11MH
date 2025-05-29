@@ -96,7 +96,7 @@ void CCamera_TPS::Priority_Update(_float fTimeDelta)
 {
 	_long			MouseMove = {};
 
-	if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::X))
+	/*if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::X))
 	{
 		m_pTransformCom->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), MouseMove * fTimeDelta * m_fSensor);
 	}
@@ -104,7 +104,7 @@ void CCamera_TPS::Priority_Update(_float fTimeDelta)
 	if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::Y))
 	{
 		m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::RIGHT), MouseMove * fTimeDelta * m_fSensor);
-	}
+	}*/
 
 	//줌인 아웃
 	/*if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::WHEEL))
@@ -125,24 +125,19 @@ void CCamera_TPS::Priority_Update(_float fTimeDelta)
 
 void CCamera_TPS::Update(_float fTimeDelta)
 {
+	if (nullptr == m_pFollowTarget)
+		return;
 
-	if (KEY_DOWN(DIK_TAB))
-	{
-		m_bChanged = true;
-		g_bCameraControl = !g_bCameraControl;
-	}
+	CTransform* pTargetTranform = static_cast<CTransform*>(m_pFollowTarget->Get_Component(g_strTransformTag));
+
+	if (nullptr == pTargetTranform)
+		return;
+	Follow(pTargetTranform->Get_State(STATE::POSITION), fTimeDelta);
 }
 
 void CCamera_TPS::Late_Update(_float fTimeDelta)
 {
-	if (g_bCameraControl && m_bChanged)
-	{
-		m_bChanged = false;
-	}
-	else if (!g_bCameraControl && m_bChanged)
-	{
-		m_bChanged = false;
-	}
+
 }
 
 HRESULT CCamera_TPS::Render()
@@ -150,49 +145,45 @@ HRESULT CCamera_TPS::Render()
 
 	return S_OK;
 }
-#pragma endregion
-
-void CCamera_TPS::Focus_OnPickedObject()
+void CCamera_TPS::Follow(_vector vTargetPosition, _float fTimeDelta)
 {
-	CGameObject* pGameObject = m_pGameInstance->Get_PickedObject();
-	if (pGameObject)
-	{
-		CTransform* pTargetTransform = static_cast<CTransform*>(pGameObject->Get_Component(g_strTransformTag));
-		if (pTargetTransform)
-		{
-			// 현재 객체의 Transform 컴포넌트 (m_pTransformCom)
-			if (m_pTransformCom)
-			{
-				// 1. 타겟 객체의 위치와 현재 객체의 위치 가져오기
-				_vector vTargetPosition = pTargetTransform->Get_State(STATE::POSITION);
-				_vector vMyCurrentPosition = m_pTransformCom->Get_State(STATE::POSITION); // 현재 위치도 필요
+	// 카메라 기본 거리 및 높이 설정
+	const _float fDistance = 7.0f;      // 카메라와 타겟의 거리
+	const _float fHeightOffset = 3.0f;  // 타겟 위의 높이
+	const _float fSmoothFactor = 5.0f;  // 카메라 이동 부드러움 (높을수록 빠름)
 
-				// 2. 현재 객체에서 타겟을 향하는 방향 벡터 계산
-				_vector vDirectionFromMeToTarget = vTargetPosition - vMyCurrentPosition;
+	// 1. 카메라 방향 벡터 계산 (현재 카메라 방향 기반)
+	_vector vCameraRight = m_pTransformCom->Get_State(STATE::RIGHT);
+	_vector vCameraUp = m_pTransformCom->Get_State(STATE::UP);
+	_vector vCameraLook = m_pTransformCom->Get_State(STATE::LOOK);
 
-				// 3. 방향 벡터 정규화 (이동 방향 결정)
-				//    타겟으로부터 '멀어지는' 방향은 (나의 위치 - 타겟 위치) 또는 -(타겟 위치 - 나의 위치) 입니다.
-				//    즉, vDirectionFromMeToTarget 에 -1을 곱한 방향입니다.
-				_vector vDirectionToMove = XMVectorScale(vDirectionFromMeToTarget, -1.f);
-				_vector vNormalizedDirectionToMove = XMVector3Normalize(vDirectionToMove);
+	// 2. 타겟 기준으로 카메라 이상적 위치 계산
+	_vector vIdealPosition = vTargetPosition;
 
-				// 4. 떨어질 거리 설정
-				_float fDistance = 5.f; // 여기에 원하는 거리 값을 입력하세요. 예: 10.f
+	// 타겟 뒤로 이동
+	vIdealPosition = XMVectorAdd(vIdealPosition, XMVectorScale(XMVector3Normalize(XMVectorSet(
+		-XMVectorGetX(vCameraLook), 0.0f, -XMVectorGetZ(vCameraLook), 0.0f)), fDistance));
 
-				// 5. 새로운 위치 계산: 타겟의 위치에서 (정규화된 멀어지는 방향 벡터 * 거리) 만큼 이동
-				_vector vNewPosition = XMVectorMultiplyAdd(vNormalizedDirectionToMove, XMVectorReplicate(fDistance), vTargetPosition);
-				// vNewPosition = vTargetPosition + (vNormalizedDirectionToMove * fDistance); 와 동일
+	// 높이 오프셋 적용
+	vIdealPosition = XMVectorAdd(vIdealPosition, XMVectorSet(0.0f, fHeightOffset, 0.0f, 0.0f));
 
-				// 6. 계산된 위치로 현재 객체 이동
-				m_pTransformCom->Set_State(STATE::POSITION, vNewPosition);
+	// 3. 카메라 충돌 처리 (선택적)
+	// 여기서는 간단한 예시로 생략했지만, 필요하다면 레이캐스트를 사용하여 벽과의 충돌을 체크하고
+	// 충돌 시 카메라 위치를 조정할 수 있습니다.
 
-				// 7. (선택 사항) 이동 후 타겟을 다시 바라보도록 설정
-				m_pTransformCom->LookAt(vTargetPosition);
-			}
-		}
-	}
+	// 4. 현재 카메라 위치를 이상적 위치로 부드럽게 이동 (Lerp)
+	_vector vCurrentPosition = m_pTransformCom->Get_State(STATE::POSITION);
+	_vector vNewPosition = XMVectorLerp(vCurrentPosition, vIdealPosition, fSmoothFactor * fTimeDelta);
+
+	// 5. 카메라 위치 및 시선 방향 업데이트
+	m_pTransformCom->Set_State(STATE::POSITION, vNewPosition);
+
+	// 시선은 항상 타겟을 향하도록 (약간 위쪽을 보도록 오프셋 적용 가능)
+	_vector vLookAt = XMVectorAdd(vTargetPosition, XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)); // 타겟의 머리 위치 정도를 보도록
+	m_pTransformCom->LookAt(vLookAt);
+	return;
 }
-
+#pragma endregion
 
 #pragma region Save&Load
 

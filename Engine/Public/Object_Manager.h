@@ -28,7 +28,8 @@ public:
 public:
 	void Clear(_uint iLevelIndex);
 	class CGameObject* Get_GameObjectById(_uint iId);
-	class CGameObject* Find_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName);
+	class CGameObject* Get_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName);
+	class CGameObject* Get_GameObjectByName(const _wstring& strGameObjectName);
 public:
 	HRESULT Move_GameObjectToLayer(_uint iObjectID, _uint iTargetLevelIndex, const _wstring& strTargetLayerTag);
 	HRESULT Remove_GameObjectFromLayer(_uint iLevelIndex, const _wstring& strLayerTag, CGameObject* pGameObject);

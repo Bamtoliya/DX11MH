@@ -35,7 +35,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(CreateImGui()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::MAP)))
+	if (FAILED(Start_Level(LEVEL::ANIMATION)))
 		return E_FAIL;
 
 	return S_OK;
@@ -66,6 +66,7 @@ HRESULT CMainApp::Register_Class_Types()
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CBackGround", CBackGround::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CCamera_Free", CCamera_Free::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CCamera_Follow", CCamera_Follow::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CCamera_TPS", CCamera_TPS::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CMonster", CMonster::Create))) return E_FAIL;
 		
 	return S_OK;

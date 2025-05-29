@@ -104,7 +104,7 @@ HRESULT CToolBar::Render()
             if (ImGui::BeginMenu("File")) {
                 // 파일 메뉴 아이템들
                 if (ImGui::MenuItem("New Scene", "Ctrl+N")) {
-                    ifd::FileDialog::Instance().Open("TextureOpenDialog", "Open a texture", "Image file (*.png;*.jpg;*.jpeg;*.bmp;*.tga;*.dds){.png,.jpg,.jpeg,.bmp,.tga,.dds},.*", true, ASSETPATH);
+                    ifd::FileDialog::Instance().Open("TextureOpenDialog", "Open a texture", "Image file (*.png;*.jpg;*.jpeg;*.bmp;*.tga;*.dds){.png,.jpg,.jpeg,.bmp,.tga,.dds},.*", true, SAVEPATH);
                     
                     // 새 씬 로직
                     printf("Clicked File->New Scene\n");
@@ -124,8 +124,8 @@ HRESULT CToolBar::Render()
                 }
                 ImGui::Separator();
                 // 레벨 선택 콤보 박스 추가
-                const char* level_names[] = { "Static", "UI", "Map", "Effect", "GamePlay", "All"}; // LEVEL enum에 맞게 이름 정의
-                LEVEL level_values[] = { LEVEL::STATIC, LEVEL::UI, LEVEL::MAP, LEVEL::EFFECT, LEVEL::GAMEPLAY, LEVEL::END }; // 실제 LEVEL enum 값
+                const char* level_names[] = { "Static", "UI", "Map", "Effect", "Animation", "GamePlay", "All"}; // LEVEL enum에 맞게 이름 정의
+                LEVEL level_values[] = { LEVEL::STATIC, LEVEL::UI, LEVEL::MAP, LEVEL::EFFECT, LEVEL::ANIMATION, LEVEL::GAMEPLAY, LEVEL::END }; // 실제 LEVEL enum 값
                 static int current_level_idx = 0; // 기본 선택 인덱스 (STATIC)
 
                 // m_eLevelToSavePrototypes와 일치하는 인덱스 찾기
@@ -142,22 +142,22 @@ HRESULT CToolBar::Render()
                 }
                 ImGui::PopItemWidth();
                 if(ImGui::MenuItem("Save Prototypes", "Ctrl+Shift+S")) {
-					ifd::FileDialog::Instance().Save("PrototypeSaveDialog", "Save Prototypes", "json file (*.json){.json},.*", ASSETPATH "/Saves");
+					ifd::FileDialog::Instance().Save("PrototypeSaveDialog", "Save Prototypes", "json file (*.json){.json},.*", SAVEPATH);
 				}
                 if (ImGui::MenuItem("Load Prototypes", "Ctrl+Shift+L")) {
-                    ifd::FileDialog::Instance().Open("PrototypeLoadDialog", "Load Prototypes", "json file (*.json){.json},.*", true, ASSETPATH "/Saves");
+                    ifd::FileDialog::Instance().Open("PrototypeLoadDialog", "Load Prototypes", "json file (*.json){.json},.*", true, SAVEPATH);
                 }
                 ImGui::Separator();
 
                 if (ImGui::MenuItem("Save GameObjects", "Ctrl+Shift+S")) {
-                    ifd::FileDialog::Instance().Save("GameObjectSaveDialog", "Save Prototypes", "json file (*.json){.json},.*", ASSETPATH "/Saves");
+                    ifd::FileDialog::Instance().Save("GameObjectSaveDialog", "Save Prototypes", "json file (*.json){.json},.*", SAVEPATH);
                 }
 
                 ImGui::Text("Clear");
                 ImGui::SameLine();
                 ImGui::Toggle("Merge", &m_bMergeLoad);
                 if (ImGui::MenuItem("Load GameObjects", "Ctrl+Shift+L")) {
-                    ifd::FileDialog::Instance().Open("GameObjectLoadDialog", "Load Prototypes", "json file (*.json){.json},.*", true, ASSETPATH "/Saves");
+                    ifd::FileDialog::Instance().Open("GameObjectLoadDialog", "Load Prototypes", "json file (*.json){.json},.*", true, SAVEPATH);
                 }
 
                 ImGui::Separator();
@@ -165,7 +165,7 @@ HRESULT CToolBar::Render()
                 ImGui::SameLine();
                 ImGui::Toggle("Animation", &m_bConvertAnim);
                 if (ImGui::MenuItem("Convert Model", "Ctrl+Alt+C")) {
-                    ifd::FileDialog::Instance().Open("ModelOpenDialog", "Open a Model", "model file (*.fbx){.fbx},.*", true, ASSETPATH);
+                    ifd::FileDialog::Instance().Open("ModelOpenDialog", "Open a Model", "model file (*.fbx){.fbx},.*", true, SAVEPATH);
                     printf("Clicked File->Convert Model\n");
                 }
                 ImGui::Separator();
@@ -230,6 +230,13 @@ HRESULT CToolBar::Render()
                 }
                 if (ImGui::MenuItem("Effect Tool")) {
                     if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::EFFECT))))
+                        return E_FAIL;
+                    printf("Clicked Help->About\n");
+                    // open_about_popup = true; // 예시
+                }
+
+                if (ImGui::MenuItem("Animation Tool")) {
+                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::ANIMATION))))
                         return E_FAIL;
                     printf("Clicked Help->About\n");
                     // open_about_popup = true; // 예시

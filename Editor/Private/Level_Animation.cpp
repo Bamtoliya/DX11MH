@@ -10,20 +10,17 @@ CLevel_Animation::CLevel_Animation(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 HRESULT CLevel_Animation::Initialize()
 {
-    /*if (FAILED(m_pGameInstance->Load_GameObjects(ENUM_CLASS(LEVEL::Animation), SAVEPATH L"Terrain_Test.json")))
-        return E_FAIL;*/
-        /*if (FAILED(Ready_Layer_Terrain(L"Layer_Terrain")))
-            return E_FAIL;
-        if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
-            return E_FAIL;
-        if (FAILED(Ready_Layer_Sky(L"Layer_Sky")))
-            return E_FAIL;
-        if (FAILED(Ready_Layer_Light(L"Layer_Light")))
-            return E_FAIL;
-        if (FAILED(Ready_Layer_GameObjects(L"Layer_GameObjects")))
-            return E_FAIL;*/
-    if (FAILED(Ready_Layer_ImGui()))
+    if (FAILED(m_pGameInstance->Load_GameObjects(ENUM_CLASS(LEVEL::ANIMATION), SAVEPATH L"Animation_Test.json")))
         return E_FAIL;
+
+    /*if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
+        return E_FAIL;
+    if (FAILED(Ready_Layer_Sky(L"Layer_Sky")))
+        return E_FAIL;
+    if (FAILED(Ready_Layer_GameObjects(L"Layer_GameObjects")))
+        return E_FAIL;
+    if (FAILED(Ready_Layer_ImGui()))
+        return E_FAIL;*/
     return S_OK;
 }
 
@@ -33,7 +30,7 @@ void CLevel_Animation::Update(_float fTimeDelta)
 
 HRESULT CLevel_Animation::Render()
 {
-    SetWindowText(g_hWnd, TEXT("¸Ê ÅøÀÔ´Ï´Ù."));
+    SetWindowText(g_hWnd, TEXT("애니메이션 레벨입니다."));
 
     return S_OK;
 }
