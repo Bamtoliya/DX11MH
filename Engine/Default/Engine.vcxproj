@@ -229,12 +229,14 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\Component.h" />
     <ClInclude Include="..\Public\Devices.h" />
     <ClInclude Include="..\public\ContainerObject.h" />
+    <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
     <ClInclude Include="..\Public\Engine_Function.h" />
     <ClInclude Include="..\Public\Engine_Macro.h" />
     <ClInclude Include="..\Public\Engine_Struct.h" />
     <ClInclude Include="..\Public\Engine_Typedef.h" />
+    <ClInclude Include="..\public\Font_Manager.h" />
     <ClInclude Include="..\Public\GameInstance.h" />
     <ClInclude Include="..\Public\GameObject.h" />
     <ClInclude Include="..\public\GameObject_Capsule.h" />
@@ -373,7 +375,9 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\private\Channel.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\private\ContainerObject.cpp" />
+    <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\Engine_Struct.cpp" />
+    <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\Private\GameInstance.cpp" />
     <ClCompile Include="..\Private\GameObject.cpp" />
     <ClCompile Include="..\private\GameObject_Capsule.cpp" />

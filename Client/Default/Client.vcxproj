@@ -221,6 +221,9 @@
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxPosTex.hlsl" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Bin\ShaderFiles\Shader_Defines.hlsli" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\..\packages\Microsoft.GameInput.1.2.26100.4782\build\native\targets\Microsoft.GameInput.targets" Condition="Exists('..\..\packages\Microsoft.GameInput.1.2.26100.4782\build\native\targets\Microsoft.GameInput.targets')" />

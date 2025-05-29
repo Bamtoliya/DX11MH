@@ -10,6 +10,8 @@
 #include "DDSTextureLoader.h"
 #include "WICTextureLoader.h"
 #include <DirectXCollision.h>
+#include "SpriteBatch.h"
+#include "SpriteFont.h"
 #include "Effects.h"
 #include "d3dx11effect.h"
 #include "d3dcompiler.h"

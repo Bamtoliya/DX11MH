@@ -175,6 +175,17 @@ public:
 	HRESULT Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath);
 #pragma endregion
 
+#pragma region FONT_MANAGER
+	HRESULT Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath);
+	void Draw_Font(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f), _float fRotation = 0.f, const _float2& vOrigin = _float2(0.f, 0.f), _float fScale = 1.f);
+#pragma endregion
+
+//
+//#pragma region PICKING
+//	void Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse);
+//	_bool Picking_InWorld(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
+//	_bool Picking_InLocal(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
+//#pragma endregion
 
 private:
 #pragma region Device
@@ -188,6 +199,7 @@ private:
 #pragma endregion
 
 #pragma region Manager
+	class CFont_Manager*		m_pFont_Manager = { nullptr };
 	class CLight_Manager*		m_pLight_Manager = { nullptr };
 	class CTimer_Manager*		m_pTimer_Manager = { nullptr };
 	class CLevel_Manager*		m_pLevel_Manager = { nullptr };
@@ -204,6 +216,8 @@ private:
 	class CJson_Loader*			m_pJson_Loader = { nullptr };	
 	// class CPicking*				m_pPicking = { nullptr };
 #pragma endregion
+	
+
 
 #pragma region Boolean
 	_bool	m_bIsEditor = { true };

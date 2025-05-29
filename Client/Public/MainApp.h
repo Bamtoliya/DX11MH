@@ -28,14 +28,13 @@ private:
 	CSound_Manager*				m_pSound_Manager = { nullptr };
 
 public:
+	HRESULT Ready_Gara();
 	HRESULT Ready_Prototype_Component();
-
 	HRESULT Start_Level(LEVEL eStartLevel);
 
 public:
 	static CMainApp* Create();
 	virtual void Free() override;
-
 };
 
 NS_END
