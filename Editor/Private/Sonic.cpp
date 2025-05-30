@@ -199,7 +199,7 @@ void CSonic::Update(_float fTimeDelta)
 		m_pControllerCom->Update(fTimeDelta);
 	if (m_pAnimatorCom)
 		m_pAnimatorCom->Update(fTimeDelta);
-	m_pModelCom->Play_Animation(fTimeDelta);
+	//m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CSonic::Late_Update(_float fTimeDelta)

@@ -68,6 +68,8 @@ public:
 public:
 	_uint Get_NumMeshes() const { return m_iNumMeshes; }
 	_uint Get_NumBones() const { return static_cast<_uint>(m_Bones.size()); }
+	vector<class CBone*> Get_Bones() const { return m_Bones; }
+	_float4x4 Get_PreTransformMatrix() const { return m_PreTransformMatrix; }
 	const _float4x4* Get_BoneMatrix(const _char* pBoneName) const;
 	class CAnimation* Get_Animation(_uint iIndex) const { return m_Animations[iIndex]; }
 public:

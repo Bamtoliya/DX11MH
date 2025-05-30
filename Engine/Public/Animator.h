@@ -48,7 +48,7 @@ private:
 #pragma endregion
 
 public:
-	void Set_NextState(_uint iIndex, _bool bBlend = false) { m_iNextStateIndex = iIndex; };
+	void Set_CurState(_uint iIndex, _bool bBlend = false) { m_iCurStateIndex = iIndex; };
 	void Resize_States(_uint iSize) { m_StateLists.resize(iSize); }
 	void Add_State(_uint iIndex, CState* pState);
 
@@ -58,19 +58,19 @@ private:
 
 	CState* m_pCurState = { nullptr };
 	_uint			m_iCurStateIndex = {};
-	CAnimation* m_pCurAnimation = { nullptr };
+	CAnimation*		m_pCurAnimation = { nullptr };
 	_float			m_fCurAnimTime = { 0.f };
 	_float			m_fCurAnimPlaybackSpeed = { 1.0f };
-	_float			m_bCurAnimLoop = { true };
+	_bool			m_bCurAnimLoop = { true };
 
 
 
 	CState* m_pNextState = { nullptr };
-	_uint			m_iNextStateIndex = {};
-	CAnimation* m_pNextAnimation = { nullptr };
-	_float			m_fNextAnimTime = { 0.f };
-	_float			m_fNextAnimPlaybackSpeed = { 1.0f };
-	_float			m_bNextAnimLoop = { true };
+	_uint			m_iPreStateIndex = {};
+	CAnimation*		m_pPreAnimation = { nullptr };
+	_float			m_fPreAnimTime = { 0.f };
+	_float			m_fPreAnimPlaybackSpeed = { 1.0f };
+	_bool			m_bPreAnimLoop = { true };
 
 	_bool			m_bBlend = { false };
 	_float			m_fBlendDuration = { 0.3f };
@@ -80,7 +80,7 @@ private:
 	vector<_float4x4> m_FinalBoneTransforms;
 	// 중간 계산용 변환 행렬
 	vector<_float4x4> m_CurAnimSnapshotTransforms;
-	vector<_float4x4> m_NextAnimSnapshotTransforms;
+	vector<_float4x4> m_PreAnimSnapshotTransforms;
 	_float			m_fDelayTime = { 0.2f };
 	_float			m_fElapsedTime = { 0.0f };
 #pragma endregion

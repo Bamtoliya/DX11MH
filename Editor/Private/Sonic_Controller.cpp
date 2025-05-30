@@ -132,11 +132,11 @@ void CSonic_Controller::Update(_float fTimeDelta)
 
 		// 캐릭터 이동
 		pTransform->Go_Straight(fTimeDelta); // Go_Straight는 현재 Transform의 Look 방향으로 이동
-		pAnimator->Set_NextState(ENUM_CLASS(CSonic::STATE::RUN_LOOP), true);
+		pAnimator->Set_CurState(ENUM_CLASS(CSonic::STATE::RUN_LOOP), true);
 	}
 	else
 	{
-		pAnimator->Set_NextState(ENUM_CLASS(CSonic::STATE::IDLE_ACT00), true);
+		pAnimator->Set_CurState(ENUM_CLASS(CSonic::STATE::IDLE_ACT00), true);
 	}
 }
 void CSonic_Controller::Late_Update(_float fTimeDelta)

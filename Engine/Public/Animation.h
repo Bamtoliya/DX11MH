@@ -3,7 +3,7 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
-
+class CBone;
 class CAnimation final : public CBase
 {
 #pragma region Structures
@@ -50,7 +50,10 @@ private:
 public:	
 	_bool Update_Bones(_float fTimeDelta, const vector<CBone*>& Bones, _bool isLoop);
 	const _char* Get_Name() const { return m_szName; }
+	_float Get_Duration() const { return m_fDuration; }
+	_float Get_TickPerSecond() const { return m_fTickPerSecond; }
 	HRESULT RenderImGui(_uint i);
+
 };
 
 NS_END

@@ -75,6 +75,7 @@ public:
 	_uint Get_MaterialIndex() const {
 		return m_iMaterialIndex;
 	}
+	vector<_float4x4> Get_OffsetMatrices() { return m_OffsetMatrices; }
 public:
 	HRESULT Bind_Bone_Matrices(class CShader* pShader, const _char* pConstantName, const vector<class CBone*>& Bones);
 

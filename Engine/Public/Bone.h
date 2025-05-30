@@ -60,6 +60,8 @@ public:
 		return &m_CombinedTransformationMatrix;
 	}
 
+	const _float4x4* Get_TransfomationMatrix() const { return &m_TransformationMatrix; }
+
 	void Set_TransformationMatrix(_fmatrix TransformationMatrix) {
 		XMStoreFloat4x4(&m_TransformationMatrix, TransformationMatrix);
 	}

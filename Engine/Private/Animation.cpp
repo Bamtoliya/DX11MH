@@ -1,5 +1,6 @@
 ﻿#include "Animation.h"
 #include "Channel.h"
+#include "Bone.h"
 
 #pragma region Constructor & Destructor
 CAnimation::CAnimation()
@@ -144,9 +145,6 @@ _bool CAnimation::Update_Bones(_float fTimeDelta, const vector<CBone*>& Bones, _
 exit:
 	return isFinished;
 }
-
-
-
 
 HRESULT CAnimation::RenderImGui(_uint i)
 {
