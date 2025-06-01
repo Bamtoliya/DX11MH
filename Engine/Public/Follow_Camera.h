@@ -52,6 +52,7 @@ public:
 	void SetDistance(_float fDistance) { m_fDistance = fDistance; if (m_fDistance < 0.1f) m_fDistance = 0.1f; }
 	_float GetDistance() const { return m_fDistance; }
 	void AdjustDistance(_float fDeltaDistance); // For zooming
+	void AddDistance(_float fDistance) { m_fDistance += fDistance; if (m_fDistance < 0.1f) m_fDistance = 0.1f; }
 
 	// Smooth Factor
 	void SetSmoothFactor(_float fFactor) { m_fSmoothFactor = fFactor; }

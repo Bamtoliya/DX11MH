@@ -122,7 +122,6 @@ HRESULT CVIBuffer_Cube::Initialize_Prototype()
 
 	_ushort* pIndices = new _ushort[m_iNumIndices];
 	ZeroMemory(pIndices, sizeof(_ushort) * m_iNumIndices);
-
 	/* +x */
 	pIndices[0] = 1; pIndices[1] = 5; pIndices[2] = 6;
 	pIndices[3] = 1; pIndices[4] = 6; pIndices[5] = 2;

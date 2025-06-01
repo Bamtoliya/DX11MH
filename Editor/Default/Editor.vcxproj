@@ -72,6 +72,7 @@
     <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\public\Sonic_Controller.h" />
     <ClInclude Include="..\public\Sonic_Ground_State.h" />
+    <ClInclude Include="..\Public\Sonic_States.h" />
     <ClInclude Include="..\public\Statue.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\public\ToolBar.h" />

@@ -165,7 +165,7 @@ HRESULT CToolBar::Render()
                 ImGui::SameLine();
                 ImGui::Toggle("Animation", &m_bConvertAnim);
                 if (ImGui::MenuItem("Convert Model", "Ctrl+Alt+C")) {
-                    ifd::FileDialog::Instance().Open("ModelOpenDialog", "Open a Model", "model file (*.fbx){.fbx},.*", true, SAVEPATH);
+                    ifd::FileDialog::Instance().Open("ModelOpenDialog", "Open a Model", "model file (*.fbx){.fbx},.*", true, ASSETPATH);
                     printf("Clicked File->Convert Model\n");
                 }
                 ImGui::Separator();
@@ -338,7 +338,9 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     fs::path pBasePath = fs::current_path().parent_path().parent_path();
     pTargetPath = fs::relative(pTargetPath, pBasePath);
     fs::path pFinalPath = "../../";
+    fs::path pFinalEnumPath = "../../";
     pFinalPath.append(pTargetPath.replace_extension(".model").generic_wstring());
+    pFinalEnumPath.append(pTargetPath.replace_extension(".txt").generic_wstring());
 
     _uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
     if (!m_bConvertAnim)
@@ -347,6 +349,7 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     const aiScene* pAiScene = asImporter.ReadFile(WideToUtf8(pFilePath).c_str(), iFlag);
 
     ofstream outputFile;
+    ofstream outputEnumFile;
     outputFile.open(pFinalPath, std::ios::binary | std::ios::trunc);
     if (outputFile.is_open())
     {
@@ -442,10 +445,28 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
 #pragma region WriteAnimations
         if (m_bConvertAnim)
         {
+            outputEnumFile.open(pFinalEnumPath);
             for (_uint i = 0; i < iNumAnimations; ++i)
             {
                 aiAnimation* pAiAnimation = pAiScene->mAnimations[i];
                 _uint iNumChannels = pAiAnimation->mNumChannels;
+
+                // 애니메이션 이름 처리
+                std::string animName = pAiAnimation->mName.C_Str();
+                size_t atPos = animName.find('@');
+                if (atPos != std::string::npos) {
+                    // @ 다음 부분 추출
+                    std::string extractedName = animName.substr(atPos + 1);
+
+                    // 대문자로 변환
+                    for (char& c : extractedName) {
+                        c = std::toupper(c);
+                    }
+
+                    // outputEnumFile에 쓰기 (정렬 없이 바로 씀)
+                    outputEnumFile << extractedName << "," << std::endl;
+                }
+
                 outputFile.write(reinterpret_cast<const char*>(&pAiAnimation->mNumChannels), sizeof(_uint));
                 outputFile.write(reinterpret_cast<const char*>(&pAiAnimation->mName.length), sizeof(_uint));
                 outputFile.write(reinterpret_cast<const char*>(pAiAnimation->mName.C_Str()), sizeof(_char) * pAiAnimation->mName.length);
@@ -485,6 +506,9 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
                     }
                 }
             }
+
+            // 파일 닫기
+            outputEnumFile.close();
         }
 #pragma endregion
         outputFile.close();
@@ -585,13 +609,6 @@ HRESULT CToolBar::Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath)
 }
 
 #pragma endregion
-
-
-
-
-
-
-
 
 CToolBar* CToolBar::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {

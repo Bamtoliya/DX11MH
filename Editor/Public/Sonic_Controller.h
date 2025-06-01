@@ -1,11 +1,16 @@
-#pragma once
-#include "Component.h"
+﻿#pragma once
+#include "Controller.h"
+
+NS_BEGIN(Engine)
+class CState;
+class CController;
+NS_END
 
 NS_BEGIN(Editor)
-class CSonic_Controller : public CComponent
+class CSonic_Controller : public CController
 {
 #pragma region Constructor/Destructor
-protected:
+private:
 	CSonic_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CSonic_Controller(const CSonic_Controller& Prototype);
 	virtual ~CSonic_Controller() = default;
@@ -23,10 +28,8 @@ public:
 #pragma endregion
 
 #pragma region Variables
-	_uint			m_iNumActions = {};
-	vector<_byte>	m_pKeys = {};
+	
 #pragma endregion
-
 
 #pragma region Loops
 public:
@@ -34,6 +37,7 @@ public:
 	virtual void Update(_float fTimeDelta)  override;
 	virtual void Late_Update(_float fTimeDelta)  override;
 	virtual HRESULT Render() override;
+	virtual void Change_State(_uint iIndex) override;
 #pragma endregion
 public:
 	virtual HRESULT RenderImGui() override;

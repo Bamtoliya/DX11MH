@@ -12,7 +12,7 @@ CAnimation::CAnimation(const CAnimation& Prototype)
 	: m_fDuration{ Prototype.m_fDuration }
 	, m_fDefaultTickPerSec{ Prototype.m_fDefaultTickPerSec }
 	, m_fTickPerSecond{ Prototype.m_fTickPerSecond }
-	, m_fCurrentTrackPosition{ Prototype.m_fCurrentTrackPosition }
+	//, m_fCurrentTrackPosition{ Prototype.m_fCurrentTrackPosition }
 	, m_CurrentKeyFrameIndices{ Prototype.m_CurrentKeyFrameIndices }
 	, m_iNumChannels{ Prototype.m_iNumChannels }
 	, m_Channels{ Prototype.m_Channels }
@@ -118,32 +118,67 @@ HRESULT CAnimation::Initialize(const aiAnimation* pAIAnimation, const vector<cla
 #pragma endregion
 
 
-_bool CAnimation::Update_Bones(_float fTimeDelta, const vector<CBone*>& Bones, _bool isLoop)
+_bool CAnimation::Update_Bones(_float& fTrackPosition, const vector<CBone*>& Bones, _bool isLoop)
 {
-	_bool			isFinished = { false };
-
-	m_fCurrentTrackPosition += m_fTickPerSecond * fTimeDelta;
-
-	if (m_fCurrentTrackPosition >= m_fDuration)
+	if (fTrackPosition >= m_fDuration)
 	{
 		if (false == isLoop)
 		{
-			m_fCurrentTrackPosition = m_fDuration;
-			isFinished = true;
-			goto exit;
+			fTrackPosition = m_fDuration;
+			return true;
 		}		
 		
-		m_fCurrentTrackPosition = 0.f;			
+		fTrackPosition = 0.f;
 	}
 
-	/*for (auto& pChannel : m_Channels)*/
 	for (_uint i = 0; i < m_iNumChannels; ++i)
 	{
-		m_Channels[i]->Update_TransformationMatrix(&m_CurrentKeyFrameIndices[i], m_fCurrentTrackPosition, Bones);
+		m_Channels[i]->Update_TransformationMatrix(&m_CurrentKeyFrameIndices[i], fTrackPosition, Bones);
 	}
 
-exit:
-	return isFinished;
+	return false; 
+}
+
+void CAnimation::Sample_At_Time(_float fTime, vector<_float4x4>& outTransforms)
+{
+	// 애니메이션 시간이 범위를 벗어나면 처리
+	if (fTime < 0.f)
+		fTime = 0.f;
+	else if (fTime > m_fDuration)
+		fTime = m_fDuration;
+
+	for (_uint i = 0; i < m_iNumChannels; ++i)
+	{
+		if (m_Channels[i] != nullptr)
+		{
+			// CChannel의 Sample_Transform 함수를 호출하여 fTime에서의 변환 행렬을 계산합니다.
+			// 이 함수는 해당 채널이 어떤 뼈에 영향을 미치는지 알고 있어야 하며,
+			// 계산된 변환 행렬을 outTransforms의 적절한 위치에 저장해야 합니다.
+
+			// CChannel이 자신이 담당하는 뼈의 인덱스(Bones 벡터 내의)를 알고 있다고 가정합니다.
+			// 또는 CChannel의 이름과 Bones 벡터 내의 CBone 이름을 비교하여 일치하는 뼈를 찾아야 합니다.
+
+			// 예시: CChannel이 대상 뼈의 인덱스를 가지고 있는 경우 (m_iTargetBoneIndex는 CChannel의 멤버 변수라고 가정)
+			_uint targetBoneIndex = m_Channels[i]->Get_TargetBoneIndex();
+			if (targetBoneIndex < outTransforms.size())
+			{
+			    m_Channels[i]->Sample_Transform(fTime, &outTransforms[targetBoneIndex]);
+			}
+
+			// 예시: CChannel의 이름과 CBone의 이름을 비교하는 경우
+			//const char* channelName = m_Channels[i]->Get_Name(); // CChannel에 Get_Name()이 있다고 가정
+			//for (size_t boneIdx = 0; boneIdx < Bones.size(); ++boneIdx)
+			//{
+			//	if (Bones[boneIdx] != nullptr && Bones[boneIdx]->Compare_Name(channelName))
+			//	{
+			//		// 해당 뼈를 찾았으면, outTransforms의 해당 위치에 변환 행렬을 저장합니다.
+			//		// CChannel의 Sample_Transform은 _float4x4*를 인자로 받으므로, 주소를 전달합니다.
+			//		m_Channels[i]->Sample_Transform(fTime, &outTransforms[boneIdx]);
+			//		break; // 다음 채널로 넘어감
+			//	}
+			//}
+		}
+	}
 }
 
 HRESULT CAnimation::RenderImGui(_uint i)
@@ -160,7 +195,7 @@ HRESULT CAnimation::RenderImGui(_uint i)
 		{
 			m_fTickPerSecond = m_fDefaultTickPerSec;
 		}
-		ImGui::Text("Current Track Position : %.2f", m_fCurrentTrackPosition);
+		//ImGui::Text("Current Track Position : %.2f", m_fCurrentTrackPosition);
 		ImGui::BeginChild("ChannelsListChild", ImVec2(0, 150), true, ImGuiWindowFlags_AlwaysVerticalScrollbar);
 		for (auto& pChannel : m_Channels)
 		{

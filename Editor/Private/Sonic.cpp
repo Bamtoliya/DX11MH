@@ -141,10 +141,12 @@ HRESULT CSonic::Ready_Components()
 
 HRESULT CSonic::Ready_States()
 {
-	m_pAnimatorCom->Resize_States(STATE::END);
-	m_pAnimatorCom->Add_State(STATE::IDLE01_LOOP, CSonic_Idle_State::Create(m_pDevice, m_pContext));
-	m_pAnimatorCom->Add_State(STATE::RUN_LOOP, CSonic_Run_State::Create(m_pDevice, m_pContext));
-	
+	m_pControllerCom->Resize_StateList(ENUM_CLASS(CSonic::STATE::END));
+	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::IDLE_LOOP), CSonic_Idle_State::Create(this));
+	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::WALK_LOOP), CSonic_Walk_State::Create(this));
+	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::RUN_LOOP), CSonic_Run_State::Create(this));
+	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::BOOST_LOOP), CSonic_Boost_State::Create(this));
+	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::BRAKE_NEUTRAL), CSonic_Brake_State::Create(this));
 	return S_OK;
 }
 
@@ -199,7 +201,6 @@ void CSonic::Update(_float fTimeDelta)
 		m_pControllerCom->Update(fTimeDelta);
 	if (m_pAnimatorCom)
 		m_pAnimatorCom->Update(fTimeDelta);
-	//m_pModelCom->Play_Animation(fTimeDelta);
 }
 
 void CSonic::Late_Update(_float fTimeDelta)

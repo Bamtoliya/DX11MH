@@ -44,6 +44,9 @@ private:
 #pragma endregion
 
 public:
+	_char* Get_Name() { return m_szName; }
+	_uint Get_TargetBoneIndex() { return m_iBoneIndex; }
+	void Sample_Transform(_float fTime, _float4x4* pOutMatrix);
 	HRESULT RenderImGui();
 };
 

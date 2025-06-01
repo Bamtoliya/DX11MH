@@ -1,13 +1,10 @@
-#include "Shader_Defines.hlsli"
+#include "Engine_Shader_Defines.hlsli"
 
 /* 상수테이블 ConstantTable */
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D g_Texture;
 
-sampler DefaultSampler = sampler_state
-{
-    filter = min_mag_mip_linear;
-};
+
 
 
 /* 정점의 기초적인 변환 (월드변환, 뷰, 투영변환) */ 
@@ -85,6 +82,11 @@ technique11 DefaultTechnique
     /* 렌더스테이츠에 대한 설정*/ 
     pass Default/* 명암 + 스펙큘러 + 그림자 + ssao + 림라이트 */ 
     {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        
+
         VertexShader = compile vs_5_0 VS_MAIN();        
         PixelShader = compile ps_5_0 PS_MAIN();      
     }

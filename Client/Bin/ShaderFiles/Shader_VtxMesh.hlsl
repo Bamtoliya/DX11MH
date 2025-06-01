@@ -1,4 +1,4 @@
-#include "Shader_Defines.hlsli"
+#include "Engine_Shader_Defines.hlsli"
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
@@ -15,14 +15,6 @@ float4 g_vCamPosition;
 float4 g_vMtrlAmibient = float4(0.4f, 0.4f, 0.4f, 1.f);
 float4 g_vMtrlSpecular = float4(1.f, 1.f, 1.f, 1.f);
 
-
-sampler DefaultSampler = sampler_state
-{
-    filter = min_mag_mip_linear;
-    AddressU = wrap;
-    AddressV = wrap;
-
-};
 
 struct VS_IN
 {
@@ -103,7 +95,9 @@ technique11 DefaultTechnique
     pass Default
     {
         SetRasterizerState(RS_Default);
-   
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        
         VertexShader = compile vs_5_0 VS_MAIN();        
         PixelShader = compile ps_5_0 PS_MAIN();      
     }

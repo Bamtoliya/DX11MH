@@ -217,6 +217,7 @@ void CCamera_Follow::Free()
 #pragma region Loops
 void CCamera_Follow::Priority_Update(_float fTimeDelta)
 {
+	
 	if (KEY_PRESSING(DIK_RIGHTARROW))
 		static_cast<CFollow_Camera*>(m_pCameraCom)->AddYaw(-fTimeDelta * m_fSensor);
 
@@ -229,7 +230,26 @@ void CCamera_Follow::Priority_Update(_float fTimeDelta)
 	if (KEY_PRESSING(DIK_DOWNARROW))
 		static_cast<CFollow_Camera*>(m_pCameraCom)->AddPitch(fTimeDelta * m_fSensor);
 
+	
+	_long			MouseMove = {};
 
+	if (MOUSE_PRESSING(DIM::RBUTTON))
+	{
+		if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::X))
+			static_cast<CFollow_Camera*>(m_pCameraCom)->AddYaw(MouseMove * fTimeDelta * m_fSensor);
+		if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::Y))
+			static_cast<CFollow_Camera*>(m_pCameraCom)->AddPitch(-MouseMove * fTimeDelta * m_fSensor);
+	}
+	if (g_bCameraControl)
+	{
+		if (MouseMove = m_pGameInstance->Get_DIMouseMove(DIMM::WHEEL))
+		{
+			if (MouseMove < 0)
+				static_cast<CFollow_Camera*>(m_pCameraCom)->AddDistance(-MouseMove * fTimeDelta);
+			if (MouseMove > 0)
+				static_cast<CFollow_Camera*>(m_pCameraCom)->AddDistance(-MouseMove * fTimeDelta);
+		}
+	}
 	m_pCameraCom->Priority_Update(fTimeDelta);
 }
 

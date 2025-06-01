@@ -1,5 +1,4 @@
-﻿
-#pragma once
+﻿#pragma once
 #include "Component.h"
 
 NS_BEGIN(Engine)
@@ -32,5 +31,7 @@ public:
 #pragma endregion
 public:
 	virtual HRESULT RenderImGui() override;
+private:
+	class CBounding*	m_pBounding = { nullptr };
 };
 NS_END

@@ -2,7 +2,8 @@
 #include "Component.h"
 
 NS_BEGIN(Engine)
-class CController : public CComponent
+class CState;
+class ENGINE_DLL CController : public CComponent
 {
 #pragma region Constructor/Destructor
 protected:
@@ -23,8 +24,9 @@ public:
 #pragma endregion
 
 #pragma region Variables
-	_uint			m_iNumActions = {};
-	vector<_byte>	m_pKeys = {};
+	vector<CState*> m_States = {};
+	_uint m_iCurStateIndex = {};
+	_uint m_iPreStateIndex = {};
 #pragma endregion
 
 
@@ -37,5 +39,8 @@ public:
 #pragma endregion
 public:
 	virtual HRESULT RenderImGui() override;
+	virtual void Resize_StateList(_uint iNumStates) { m_States.resize(iNumStates); }
+	virtual void Add_State(_uint iIndex, CState* pState) { if (iIndex >= m_States.size() || nullptr == pState) return; m_States[iIndex] = pState; }
+	virtual void Change_State(_uint iIndex) {}
 };
 NS_END

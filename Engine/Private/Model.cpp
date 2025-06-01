@@ -433,6 +433,18 @@ _bool CModel::Play_Animation(_float fTimeDelta)
 	return isFinished;
 }
 
+void CModel::Set_Animation(_uint iIndex, _bool isLoop)
+{
+
+	if (iIndex != m_iCurrentAnimIndex)
+	{
+		m_iCurrentAnimIndex = iIndex;
+	}
+		
+	m_isLoop = isLoop;
+
+}
+
 HRESULT CModel::RenderImGui()
 {
 	if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen))

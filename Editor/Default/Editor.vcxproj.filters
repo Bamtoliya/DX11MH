@@ -112,10 +112,10 @@
     <Filter Include="02.GameObject\03.Monster\Giant">
       <UniqueIdentifier>{c7fef04f-0723-40b1-9160-7b9db8047c74}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\04.Player\Controller">
+    <Filter Include="02.GameObject\04.Player\Sonic\Controller">
       <UniqueIdentifier>{0ca2b876-a367-4b4e-be5a-ce466dad4c8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\04.Player\Controller\States">
+    <Filter Include="02.GameObject\04.Player\Sonic\Controller\States">
       <UniqueIdentifier>{63f9269e-617b-40be-8b1c-f14967199dfe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -193,10 +193,10 @@
       <Filter>02.GameObject\02.Camera\TPS</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Sonic_Controller.cpp">
-      <Filter>02.GameObject\04.Player\Controller</Filter>
+      <Filter>02.GameObject\04.Player\Sonic\Controller</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Sonic_Ground_State.cpp">
-      <Filter>02.GameObject\04.Player\Controller\States</Filter>
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -300,10 +300,13 @@
       <Filter>02.GameObject\02.Camera\TPS</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Sonic_Controller.h">
-      <Filter>02.GameObject\04.Player\Controller</Filter>
+      <Filter>02.GameObject\04.Player\Sonic\Controller</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Sonic_Ground_State.h">
-      <Filter>02.GameObject\04.Player\Controller\States</Filter>
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sonic_States.h">
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -47,12 +47,13 @@ private:
 	vector<class CMaterial*>	m_Materials;
 
 	vector<class CBone*>		m_Bones;
+
 	_bool						m_isLoop = {};
-	_float						m_fAnimationSpeed = {};
 	_uint						m_iCurrentAnimIndex = { };
+
 	_uint						m_iNumAnimations = {};
 	vector<class CAnimation*>	m_Animations;
-	
+
 private:
 	_char						m_szModelFilePath[MAX_PATH] = {};
 #pragma endregion
@@ -78,7 +79,7 @@ public:
 	virtual HRESULT Render(_uint iMeshIndex);
 public:
 	_bool Play_Animation(_float fTimeDelta);
-	void Set_Animation(_uint iIndex, _bool isLoop = true) { m_iCurrentAnimIndex = iIndex; m_isLoop = isLoop; }
+	void Set_Animation(_uint iIndex, _bool isLoop = true);
 public:
 	virtual HRESULT RenderImGui() override;
 

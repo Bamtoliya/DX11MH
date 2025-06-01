@@ -212,6 +212,79 @@ void CChannel::Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float 
 }
 
 
+void CChannel::Sample_Transform(_float fTime, _float4x4* pOutMatrix)
+{
+	if (m_KeyFrames.empty())
+		return;
+
+	// 위치, 회전, 크기 키프레임 값을 샘플링
+	_vector vScale = XMVectorSet(1.f, 1.f, 1.f, 0.f);
+	_vector vRotation = XMQuaternionIdentity();
+	_vector vPosition = XMVectorSet(0.f, 0.f, 0.f, 1.f);
+
+	// 시간에 맞는 키프레임 찾기
+	if (fTime <= m_KeyFrames.front().fTrackPosition)
+	{
+		// 첫 번째 키프레임보다 이전 시간
+		vScale = XMLoadFloat3(&m_KeyFrames.front().vScale);
+		vRotation = XMLoadFloat4(&m_KeyFrames.front().vRotation);
+		vPosition = XMLoadFloat3(&m_KeyFrames.front().vTranslation);
+	}
+	else if (fTime >= m_KeyFrames.back().fTrackPosition)
+	{
+		// 마지막 키프레임보다 이후 시간
+		vScale = XMLoadFloat3(&m_KeyFrames.back().vScale);
+		vRotation = XMLoadFloat4(&m_KeyFrames.back().vRotation);
+		vPosition = XMLoadFloat3(&m_KeyFrames.back().vTranslation);
+	}
+	else
+	{
+		// 두 키프레임 사이 시간 - 보간 필요
+		_uint iCurrentFrame = 0;
+
+		// 현재 시간이 속한 키프레임 구간 찾기
+		for (_uint i = 0; i < m_KeyFrames.size() - 1; ++i)
+		{
+			if (fTime >= m_KeyFrames[i].fTrackPosition && fTime < m_KeyFrames[i + 1].fTrackPosition)
+			{
+				iCurrentFrame = i;
+				break;
+			}
+		}
+
+		// 두 키프레임 사이의 보간 비율 계산
+		_float t = (fTime - m_KeyFrames[iCurrentFrame].fTrackPosition) /
+			(m_KeyFrames[iCurrentFrame + 1].fTrackPosition - m_KeyFrames[iCurrentFrame].fTrackPosition);
+
+		// 스케일 보간 (선형)
+		_vector vS0 = XMLoadFloat3(&m_KeyFrames[iCurrentFrame].vScale);
+		_vector vS1 = XMLoadFloat3(&m_KeyFrames[iCurrentFrame + 1].vScale);
+		vScale = XMVectorLerp(vS0, vS1, t);
+
+		// 회전 보간 (구면 선형)
+		_vector vQ0 = XMLoadFloat4(&m_KeyFrames[iCurrentFrame].vRotation);
+		_vector vQ1 = XMLoadFloat4(&m_KeyFrames[iCurrentFrame + 1].vRotation);
+		vRotation = XMQuaternionSlerp(vQ0, vQ1, t);
+
+		// 위치 보간 (선형)
+		_vector vP0 = XMVectorSetW(XMLoadFloat3(&m_KeyFrames[iCurrentFrame].vTranslation), 1.0f);
+		_vector vP1 = XMVectorSetW(XMLoadFloat3(&m_KeyFrames[iCurrentFrame + 1].vTranslation), 1.0f);
+		vPosition = XMVectorLerp(vP0, vP1, t);
+	}
+
+	// 행렬 조합 (크기 -> 회전 -> 이동 순서)
+	_matrix TransformationMatrix = XMMatrixAffineTransformation(
+		vScale,
+		XMVectorSet(0.f, 0.f, 0.f, 1.f), // 회전 중심점
+		vRotation,
+		vPosition
+	);
+
+	// 결과 저장
+
+	XMStoreFloat4x4(pOutMatrix, TransformationMatrix);
+}
+
 HRESULT CChannel::RenderImGui()
 {
 	ImGui::PushID(this);

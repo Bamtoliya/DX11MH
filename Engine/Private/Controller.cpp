@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Transform.h"
 #include "Animator.h"
+#include "State.h"
 
 CController::CController(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent { pDevice, pContext }
@@ -51,6 +52,10 @@ CComponent* CController::Clone(void* pArg)
 void CController::Free() 
 {
 	__super::Free();
+	for (auto& pState : m_States)
+		Safe_Release(pState);
+
+	m_States.clear();
 }
 
 HRESULT CController::Serialize(json& data)
