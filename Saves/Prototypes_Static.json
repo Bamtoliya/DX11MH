@@ -41,5 +41,10 @@
   },
   "Prototype_Component_VIBuffer_Rect": {
     "Class": "CVIBuffer_Rect"
+  },
+  "Prototype_Component_Shader_Terrain": {
+    "Class": "CShader",
+    "Layout": "VTXNORTEX",
+    "ShaderPath": "../../Assets/ShaderFiles/Shader_Terrain.hlsl"
   }
 }

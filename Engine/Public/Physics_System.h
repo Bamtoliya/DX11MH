@@ -55,7 +55,6 @@ private:
 	PxDefaultAllocator      m_Allocator;
 	PxDefaultErrorCallback   m_ErrorCallback;
 
-
 	PxScene* m_pScene = nullptr;
 	PxFoundation* m_pFoundation = nullptr;
 	PxPhysics* m_pPhysics = nullptr;

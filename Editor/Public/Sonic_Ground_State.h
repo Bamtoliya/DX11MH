@@ -6,6 +6,16 @@ class CSonic_Ground_State : public CState
 {
 protected:
 	CSonic_Ground_State(CGameObject* pOwner) : CState{ pOwner } {}
+	// 상태별 파라미터 추가
+	struct StateParams
+	{
+		float fMoveSpeed = 5.0f;
+		float fRotationSpeed = 2.0f;
+		bool bCanJump = true;
+		bool bCanDash = false;
+	};
+
+	StateParams m_tStateParams;
 public:
 	static CSonic_Ground_State* Create(CGameObject* pOwner);
 	virtual HRESULT Initialize() override;
@@ -13,6 +23,11 @@ public:
 	void Execute(_float fTimeDelta) override;
 	void HandleInput() override;
 	void Exit() override;
+	void SetMoveSpeed(float fSpeed) { m_tStateParams.fMoveSpeed = fSpeed; }
+	float GetMoveSpeed() const { return m_tStateParams.fMoveSpeed; }
+
+	void SetCanDash(bool bCanDash) { m_tStateParams.bCanDash = bCanDash; }
+	bool GetCanDash() const { return m_tStateParams.bCanDash; }
 };
 
 class CSonic_Idle_State : public CSonic_Ground_State

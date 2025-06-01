@@ -99,7 +99,7 @@ HRESULT CTerrain::Initialize(simdjson::ondemand::object& jsonData)
 HRESULT CTerrain::Ready_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxNorTex"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_Terrain"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
@@ -113,6 +113,43 @@ HRESULT CTerrain::Ready_Components()
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 
+	/* For.Com_Splat_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_SplatMap"),
+		TEXT("Com_Splat_Texture"), reinterpret_cast<CComponent**>(&m_pSplatMapTextureCom))))
+		return E_FAIL;
+
+	/* For.Com_Splat_Texture */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_Water"),
+		TEXT("Com_Water_Texture"), reinterpret_cast<CComponent**>(&m_pWaterTextureCom))))
+		return E_FAIL;
+
+
+	/* For.Com_Texture_BaseDiffuse */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_BaseDiffuse"),
+		TEXT("Com_Texture_BaseDiffuse"), reinterpret_cast<CComponent**>(&m_pBaseDiffuseCom))))
+		return E_FAIL;
+
+	/* For.Com_Texture_BaseParameter */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_BaseParameter"),
+		TEXT("Com_Texture_BaseParameter"), reinterpret_cast<CComponent**>(&m_pBaseParameterCom))))
+		return E_FAIL;
+
+
+	/* For.Com_Texture_DetailDiffuse */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_DetailDiffuse"),
+		TEXT("Com_Texture_DetailDiffuse"), reinterpret_cast<CComponent**>(&m_pDetailDiffuseCom))))
+		return E_FAIL;
+
+	/* For.Com_Texture_DetailHeight */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_DetailHeight"),
+		TEXT("Com_Texture_DetailHeight"), reinterpret_cast<CComponent**>(&m_pDetailHeightCom))))
+		return E_FAIL;
+
+	/* For.Com_Texture_DetailNormal */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_DetailNormal"),
+		TEXT("Com_Texture_DetailNormal"), reinterpret_cast<CComponent**>(&m_pDetailNormalCom))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -123,6 +160,14 @@ void CTerrain::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
+
+	Safe_Release(m_pSplatMapTextureCom);
+	Safe_Release(m_pWaterTextureCom);
+	Safe_Release(m_pBaseDiffuseCom);
+	Safe_Release(m_pBaseParameterCom);
+	Safe_Release(m_pDetailDiffuseCom);
+	Safe_Release(m_pDetailHeightCom);
+	Safe_Release(m_pDetailNormalCom);
 }
 #pragma endregion
 
@@ -183,8 +228,43 @@ HRESULT CTerrain::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", 0)))
+	if (FAILED(m_pWaterTextureCom->Bind_ShaderResource(m_pShaderCom, "g_DiffuseTexture", 0)))
 		return E_FAIL;
+
+	if (FAILED(m_pSplatMapTextureCom->Bind_ShaderResource(m_pShaderCom, "g_SplatMapTexture", 0)))
+		return E_FAIL;
+
+#pragma region TextureArray
+	if (FAILED(m_pBaseDiffuseCom->Bind_ShaderResource(m_pShaderCom, "g_BaseDiffuseMaps", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pBaseDiffuseCom->Bind_IndexMap(m_pShaderCom, "g_BaseDiffuseIndexMap")))
+		return E_FAIL;
+
+	if (FAILED(m_pBaseParameterCom->Bind_ShaderResource(m_pShaderCom, "g_BaseParameterMaps", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pBaseParameterCom->Bind_IndexMap(m_pShaderCom, "g_BaseParameterIndexMap")))
+		return E_FAIL;
+
+	if (FAILED(m_pDetailDiffuseCom->Bind_ShaderResource(m_pShaderCom, "g_DetailDiffuseMaps", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pDetailDiffuseCom->Bind_IndexMap(m_pShaderCom, "g_DetailDiffuseIndexMap")))
+		return E_FAIL;
+
+	if (FAILED(m_pDetailHeightCom->Bind_ShaderResource(m_pShaderCom, "g_DetailHeightMaps", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pDetailHeightCom->Bind_IndexMap(m_pShaderCom, "g_DetailHeightIndexMap")))
+		return E_FAIL;
+
+	if (FAILED(m_pDetailNormalCom->Bind_ShaderResource(m_pShaderCom, "g_DetailNormalMaps", 0)))
+		return E_FAIL;
+
+	if (FAILED(m_pDetailNormalCom->Bind_IndexMap(m_pShaderCom, "g_DetailNormalIndexMap")))
+		return E_FAIL;
+#pragma endregion
 
 	const LIGHT_DESC* pLightDesc = m_pGameInstance->Get_Light(0);
 	if (pLightDesc == nullptr)

@@ -118,6 +118,15 @@
     <Filter Include="02.GameObject\04.Player\Sonic\Controller\States">
       <UniqueIdentifier>{63f9269e-617b-40be-8b1c-f14967199dfe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Ground">
+      <UniqueIdentifier>{798046ee-b3d7-4cbd-97fb-6d479d40073b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Air">
+      <UniqueIdentifier>{4dbb982a-dca7-45a6-9198-c0d885b87aa7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Combat">
+      <UniqueIdentifier>{f99816ee-4b11-4adb-aff1-ef6c2f2f05ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -324,6 +333,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="..\..\ShaderFiles\Engine_Shader_Defines.hlsli">
+      <Filter>ShaderFiles</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxPosTex.hlsl">
@@ -335,9 +347,6 @@
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxNorTex.hlsl">
       <Filter>ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Struct.hlsl">
-      <Filter>ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxMesh.hlsl">
       <Filter>ShaderFiles</Filter>
     </FxCompile>
@@ -345,6 +354,12 @@
       <Filter>ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxAnimMesh.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Struct.hlsli">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Terrain.hlsl">
       <Filter>ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

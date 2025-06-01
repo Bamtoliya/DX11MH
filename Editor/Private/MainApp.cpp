@@ -29,13 +29,13 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Register_Class_Types()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Prototype_Components()))
+	if (FAILED(Ready_Prototype_Components()))	
 		return E_FAIL;
 
 	if (FAILED(CreateImGui()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::ANIMATION)))
+	if (FAILED(Start_Level(LEVEL::MAP)))
 		return E_FAIL;
 
 	return S_OK;

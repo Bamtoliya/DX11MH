@@ -470,6 +470,9 @@
     <ClInclude Include="..\public\Bounding_AABB.h">
       <Filter>01.Utility\04.Components\Collider\Bounding\AABB</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\TextureArray.h">
+      <Filter>01.Utility\04.Components\Texture</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -868,6 +871,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Bounding_AABB.cpp">
       <Filter>01.Utility\04.Components\Collider\Bounding\AABB</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TextureArray.cpp">
+      <Filter>01.Utility\04.Components\Texture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

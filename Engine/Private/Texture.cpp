@@ -12,9 +12,9 @@ CTexture::CTexture(const CTexture& Prototype)
 	, m_iNumTextures{ Prototype.m_iNumTextures }
 	, m_strTextureFilePath{ Prototype.m_strTextureFilePath }
 {
+	for (auto& pSRV : m_SRVs)
+		Safe_AddRef(pSRV);
 
-	/*for (auto& pSRV : m_SRVs)
-		Safe_AddRef(pSRV);*/
 }
 
 CTexture* CTexture::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -47,7 +47,6 @@ CComponent* CTexture::Clone(void* pArg)
 	}
 
 	return pInstance;
-
 }
 
 HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures)
@@ -55,6 +54,11 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 	_tchar			szTexturePath[MAX_PATH] = {};
 	_tchar			szExt[MAX_PATH] = {};
 	m_strTextureFilePath = pTextureFilePath;
+	m_originalToActualIndexMap.clear();
+	_uint 		iActualIndex = 0;
+
+	Safe_Release(m_pIndexMapSRV);
+	Safe_Release(m_pIndexMapTexture);
 
 	_wsplitpath_s(pTextureFilePath, nullptr, 0, nullptr, 0, nullptr, 0, szExt, MAX_PATH);
 
@@ -63,6 +67,9 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 		ID3D11ShaderResourceView* pSRV = { nullptr };
 
 		wsprintf(szTexturePath, pTextureFilePath, i);
+
+		if (!DoesFileExist(szTexturePath))
+			continue; // 파일이 존재하지 않으면 다음 반복으로 넘어감
 
 		HRESULT			hr = {};
 
@@ -81,12 +88,14 @@ HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNu
 			return E_FAIL;
 
 		m_SRVs.push_back(pSRV);
+		m_originalToActualIndexMap[i] = iActualIndex++;
 	}
 
-	m_iNumTextures = iNumTextures;
+	m_iNumTextures = iActualIndex;
 
 	return S_OK;
 }
+
 
 HRESULT CTexture::Initialize(void* pArg)
 {
@@ -131,7 +140,7 @@ HRESULT CTexture::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 	string_view texturePathSV;
 
 	if (jsonData["TextureFilePath"].get_string().get(texturePathSV) != simdjson::SUCCESS) {
-		MSG_BOX("CShader::Prototype_Deserialize - 'TextureFilePath' field is missing or not a string.");
+		MSG_BOX("CTexture::Prototype_Deserialize - 'TextureFilePath' field is missing or not a string.");
 		return E_FAIL;
 	}
 
@@ -140,7 +149,7 @@ HRESULT CTexture::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 	size_t iNumTextures = 0;
 
 	if (jsonData["NumTexture"].get_uint64().get(iNumTextures) != simdjson::SUCCESS) {
-		MSG_BOX("CShader::Prototype_Deserialize - 'NumTexture' field is missing or not a number.");
+		MSG_BOX("CTexture::Prototype_Deserialize - 'NumTexture' field is missing or not a number.");
 		return E_FAIL;
 	}
 	Initialize_Prototype(Utf8ToWide(texturePathStr).c_str(), static_cast<_uint>(iNumTextures));
@@ -158,12 +167,46 @@ HRESULT CTexture::Bind_ShaderResource(CShader* pShader, const _char* pConstantNa
 	return pShader->Bind_SRV(pConstantName, m_SRVs[iTextureIndex]);	
 }
 
+HRESULT CTexture::Bind_ShaderResourceArray(CShader* pShader, const _char* pConstantName)
+{
+	return S_OK;
+}
+
+HRESULT CTexture::Bind_IndexMap(CShader* pShader, const _char* pConstantName)
+{
+	if (nullptr == pShader || nullptr == m_pIndexMapSRV) {
+		return E_FAIL;
+	}
+	return pShader->Bind_SRV(pConstantName, m_pIndexMapSRV);
+}
+
 HRESULT CTexture::RenderImGui()
 {
+	ImGui::PushID(this);
 	if (ImGui::CollapsingHeader("Texture", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::Text("Numbers of Texture: %d", m_iNumTextures);
+		ImGui::Text(WideToUtf8(m_strTextureFilePath.c_str()).c_str());
+		for (_uint i = 0; i < m_iNumTextures; ++i)
+		{
+			ImGui::Indent();
+			if (ImGui::CollapsingHeader(to_string(i).c_str()))
+			{
+				ImGui::Image((ImTextureID)(m_SRVs[i]), ImVec2(100, 100), ImVec2(0, 0), ImVec2(1, 1), ImVec4(1, 1, 1, 1), ImVec4(0.5f, 0.5f, 0.5f, 1)); // 테두리 색상 추가
+				if (ImGui::IsItemHovered()) {
+					ImGui::BeginTooltip();
+					ImGui::Text("SRV: 0x%p", (void*)m_SRVs[i]);
+					ImGui::Image((ImTextureID)((void*)m_SRVs[i]), ImVec2(256, 256)); // 툴팁에 더 큰 이미지
+					ImGui::EndTooltip();
+				}
+			}
+			ImGui::Unindent();
+		}
+		
+		
+		
 	}
+	ImGui::PopID();
 	return S_OK;
 }
 

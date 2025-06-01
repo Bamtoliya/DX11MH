@@ -47,10 +47,14 @@ protected:
 	ID3D11DeviceContext* m_pDeferredContext = { nullptr };
 	class CGameInstance* m_pGameInstance = { nullptr };
 protected:
+	_tchar m_szName[MAX_PATH] = { L"" };	
 	class CGameObject* m_pOwner = { nullptr };
 #pragma endregion
 protected:
 	_bool m_bIsCloned = { false };
 	_bool m_bActive = { true };
+public:
+	const _tchar* GetName() const { return m_szName; }
+	void SetName(const _tchar* szName) { wcscpy_s(m_szName, szName); }
 };
 NS_END

@@ -107,4 +107,10 @@ namespace Engine
 		oss << std::fixed << std::setprecision(precision) << value;
 		return oss.str();
 	}
+
+	// 파일 존재 여부 확인 함수 (헬퍼 함수)
+	static bool DoesFileExist(const wchar_t* filePath) {
+		ifstream file(filePath);
+		return file.good();
+	}
 }

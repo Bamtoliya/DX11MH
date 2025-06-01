@@ -6,6 +6,7 @@
 NS_BEGIN(Engine)
 class CShader;
 class CTexture;
+class CTextureArray;
 class CVIBuffer_Terrain;
 NS_END
 
@@ -36,7 +37,14 @@ public:
 private:
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
-	CVIBuffer_Terrain* m_pVIBufferCom = { nullptr };
+	CVIBuffer_Terrain*		m_pVIBufferCom = { nullptr };
+	CTexture*				m_pSplatMapTextureCom	= { nullptr }; // 스플랫맵 텍스처
+	CTexture*				m_pWaterTextureCom		= { nullptr }; // 물 텍스처
+	CTextureArray*			m_pBaseDiffuseCom		= { nullptr };
+	CTextureArray*			m_pBaseParameterCom		= { nullptr };
+	CTextureArray*			m_pDetailDiffuseCom		= { nullptr };
+	CTextureArray*			m_pDetailHeightCom		= { nullptr };
+	CTextureArray*			m_pDetailNormalCom		= { nullptr };
 #pragma endregion
 
 #pragma region Save&Load

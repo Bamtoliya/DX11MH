@@ -8,6 +8,7 @@ class CModel;
 class CShader;
 class CController;
 class CAnimator;
+class CRigidBody;
 NS_END
 
 NS_BEGIN(Editor)
@@ -640,6 +641,7 @@ private:
 	CModel* m_pSpinModelCom = { nullptr };
 	CAnimator* m_pAnimatorCom = { nullptr };
 	CController* m_pControllerCom = { nullptr };
+	CRigidBody* m_pRigidBodyCom = { nullptr };
 #pragma endregion
 
 #pragma region Variables

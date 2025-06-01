@@ -16,6 +16,7 @@
 
 #pragma region Texture
 #include "Texture.h"
+#include "TextureArray.h"
 #pragma endregion
 
 #pragma region Transform

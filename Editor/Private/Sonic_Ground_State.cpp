@@ -85,6 +85,9 @@ void CSonic_Ground_State::HandleInput()
 		bIsMoving = true;
 	}
 
+	if (KEY_PRESSING(DIK_LSHIFT))
+		pController->Change_State(ENUM_CLASS(CSonic::STATE::BOOST_LOOP));
+
 	if (bIsMoving)
 	{
 		vMovementDirection = XMVector3Normalize(vMovementDirection); // 최종 이동 방향 정규화
@@ -96,9 +99,9 @@ void CSonic_Ground_State::HandleInput()
 		// 캐릭터 이동
 		//pTransform->Go_Straight(fTimeDelta); // Go_Straight는 현재 Transform의 Look 방향으로 이동
 		//pAnimator->Set_CurState(ENUM_CLASS(CSonic::STATE::RUN_LOOP), true);
-		if(KEY_PRESSING(DIK_LSHIFT))
-			pController->Change_State(ENUM_CLASS(CSonic::STATE::BOOST_LOOP));
-		else
+		if(m_tStateParams.fMoveSpeed >= 10.f)
+			pController->Change_State(ENUM_CLASS(CSonic::STATE::RUN_LOOP));
+		else 
 			pController->Change_State(ENUM_CLASS(CSonic::STATE::WALK_LOOP));
 	}
 	else

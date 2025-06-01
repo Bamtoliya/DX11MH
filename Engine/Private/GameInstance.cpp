@@ -101,16 +101,22 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	return S_OK;
 }
 
+
+#pragma region Loops
 void CGameInstance::Update_Engine(_float fTimeDelta)
 {
+	if (m_pPhysics_System)
+		m_pPhysics_System->Priority_Update(fTimeDelta);
 	m_pLight_Manager->Update();
 	m_pInput_Device->Update(fTimeDelta);
 	m_pObject_Manager->Priority_Update(fTimeDelta);
 	m_pCamera_Manager->Priority_Update(fTimeDelta);
 	m_pPipeLine->Update();
-	m_pObject_Manager->Update(fTimeDelta);	
+	m_pObject_Manager->Update(fTimeDelta);
 	m_pCamera_Manager->Update(fTimeDelta);
 	m_pObject_Manager->Late_Update(fTimeDelta);
+	if (m_pPhysics_System)
+		m_pPhysics_System->Late_Update(fTimeDelta);
 	m_pCamera_Manager->Late_Update(fTimeDelta);
 	m_pPicking_System->Update(fTimeDelta);
 
@@ -139,7 +145,7 @@ HRESULT CGameInstance::Draw()
 
 	m_pRenderer->Draw();
 
-	if(m_pMyImGui_Manager)
+	if (m_pMyImGui_Manager)
 		m_pMyImGui_Manager->Render();
 
 	m_pLevel_Manager->Render();
@@ -153,6 +159,9 @@ HRESULT CGameInstance::End_Draw()
 
 	return S_OK;
 }
+#pragma endregion
+
+
 
 void CGameInstance::Clear(_uint iLevelIndex)
 {
@@ -166,7 +175,6 @@ void CGameInstance::Clear(_uint iLevelIndex)
 	/* 특정 레벨의 원형객을 삭제한다. */
 	m_pPrototype_Manager->Clear(iLevelIndex);
 }
-
 
 _float CGameInstance::Compute_Random_Normal()
 {

@@ -1,4 +1,4 @@
-#include "Shader_Struct.hlsl"
+#include "Shader_Struct.hlsli"
 #include "Shader_Test.hlsl"
 
 VS_NOR_OUT VS_MAIN(VS_NOR_IN In)

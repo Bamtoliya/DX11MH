@@ -101,6 +101,41 @@
     "NumTexture": 2,
     "TextureFilePath": "../../Assets/Resources/Textures/Terrain/Tile%d.dds"
   },
+  "Prototype_Component_Texture_Terrain_Water": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "../../Assets/Terrain/Ocean/w1_ocean501_tk1_abd.dds"
+  },
+  "Prototype_Component_Texture_Terrain_SplatMap": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r03_splatmap.dds"
+  },
+  "Prototype_Component_Texture_Terrain_BaseDiffuse": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_base_abd.dds"
+  },
+  "Prototype_Component_Texture_Terrain_BaseParameter": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_base_prm.dds"
+  },
+  "Prototype_Component_Texture_Terrain_DetailDiffuse": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_detail_abd.dds"
+  },
+  "Prototype_Component_Texture_Terrain_DetailHeight": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_detail_hgt.dds"
+  },
+  "Prototype_Component_Texture_Terrain_DetailNormal": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_detail_nrm.dds"
+  },
   "Prototype_Component_VIBuffer_Terrain": {
     "Class": "CVIBuffer_Terrain",
     "HeightMapFilePath": "../../Assets/Resources/Textures/Terrain/Height.bmp"

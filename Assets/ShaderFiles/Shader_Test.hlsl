@@ -1,4 +1,4 @@
-#include "Shader_Struct.hlsl"
+#include "Shader_Struct.hlsli"
 uint objectId;
 
 PS_OUT PS_PICKING(PS_IN In)

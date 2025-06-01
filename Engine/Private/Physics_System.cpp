@@ -80,5 +80,42 @@ void CPhysics_System::Late_Update(_float fTimeDelta)
 
 PxScene* CPhysics_System::CreateScene()
 {
-    return nullptr;
+    // 씬 생성이 불가능한 경우 확인
+    if (m_pPhysics == nullptr || m_pDispatcher == nullptr)
+        return nullptr;
+
+    // 씬 descriptor 생성
+    PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
+
+    // 물리 속성 설정
+    sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f); // 중력 설정
+    sceneDesc.cpuDispatcher = m_pDispatcher;        // CPU 디스패처 설정
+
+    // 충돌 필터링 콜백 설정 (필요시 커스텀 필터링 셰이더 구현)
+    sceneDesc.filterShader = PxDefaultSimulationFilterShader;
+
+    // 씬 플래그 설정 (선택적)
+    sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;        // 연속 충돌 감지
+    sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION; // 안정화 기능
+
+    // GPU 물리 시뮬레이션을 위한 설정 (선택적)
+    // sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;
+    // sceneDesc.gpuDispatcher = cudaContextManager->getGpuDispatcher();
+
+    // 씬 생성
+    m_pScene = m_pPhysics->createScene(sceneDesc);
+
+    // 디버깅을 위한 시각화 설정 (선택적)
+    if (m_pScene)
+    {
+        PxPvdSceneClient* pvdClient = m_pScene->getScenePvdClient();
+        if (pvdClient)
+        {
+            pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONSTRAINTS, true);
+            pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
+            pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
+        }
+    }
+
+    return m_pScene;
 }

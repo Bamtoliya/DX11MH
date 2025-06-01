@@ -1,4 +1,4 @@
-#include "Shader_Struct.hlsl"
+#include "Shader_Struct.hlsli"
 #include "Shader_Test.hlsl"
 
 struct VS_MESH_IN
