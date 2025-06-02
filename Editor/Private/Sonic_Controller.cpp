@@ -90,7 +90,7 @@ HRESULT CSonic_Controller::Render()
 }
 void CSonic_Controller::Change_State(_uint iIndex)
 {
-	if (iIndex >= m_States.size())
+	if (iIndex == m_iCurStateIndex || iIndex >= m_States.size())
 		return;
 
 	if (m_pOwner)
@@ -104,6 +104,9 @@ void CSonic_Controller::Change_State(_uint iIndex)
 
 			pAnimator->Change_Animation(iIndex, bLoop, fPlaybackSpeed, fBlendDuration);
 		}
+		static_cast<CSonic_Ground_State*>(m_States[iIndex])->Set_Parameter(static_cast<CSonic_Ground_State*>(m_States[m_iCurStateIndex])->Get_Parameter());
+		m_iCurStateIndex = iIndex;
+		
 	}
 }
 #pragma endregion

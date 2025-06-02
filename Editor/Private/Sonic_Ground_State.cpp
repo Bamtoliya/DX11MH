@@ -66,27 +66,31 @@ void CSonic_Ground_State::HandleInput()
 
 	if (KEY_PRESSING(DIK_W))
 	{
-		//vMovementDirection = XMVectorAdd(vMovementDirection, camLookXZ);
+		vMovementDirection = XMVectorAdd(vMovementDirection, camLookXZ);
 		bIsMoving = true;
 	}
 	if (KEY_PRESSING(DIK_S))
 	{
-		//vMovementDirection = XMVectorAdd(vMovementDirection, -camLookXZ);
+		vMovementDirection = XMVectorAdd(vMovementDirection, -camLookXZ);
 		bIsMoving = true;
 	}
 	if (KEY_PRESSING(DIK_A))
 	{
-		//vMovementDirection = XMVectorAdd(vMovementDirection, -camRightXZ);
+		vMovementDirection = XMVectorAdd(vMovementDirection, -camRightXZ);
 		bIsMoving = true;
 	}
 	if (KEY_PRESSING(DIK_D))
 	{
-		//vMovementDirection = XMVectorAdd(vMovementDirection, camRightXZ);
+		vMovementDirection = XMVectorAdd(vMovementDirection, camRightXZ);
 		bIsMoving = true;
 	}
 
 	if (KEY_PRESSING(DIK_LSHIFT))
+	{
 		pController->Change_State(ENUM_CLASS(CSonic::STATE::BOOST_LOOP));
+		return;
+	}
+		
 
 	if (bIsMoving)
 	{
@@ -94,7 +98,8 @@ void CSonic_Ground_State::HandleInput()
 
 		// 캐릭터가 이동할 방향으로 회전
 		_float fTargetAngleRadians = atan2f(XMVectorGetX(vMovementDirection), XMVectorGetZ(vMovementDirection));
-		pTransform->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTargetAngleRadians);
+		//pTransform->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTargetAngleRadians);
+		pTransform->Turn_Quaternion(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTargetAngleRadians);	
 
 		// 캐릭터 이동
 		//pTransform->Go_Straight(fTimeDelta); // Go_Straight는 현재 Transform의 Look 방향으로 이동
@@ -136,9 +141,7 @@ void CSonic_Idle_State::Enter()
 
 void CSonic_Idle_State::Execute(_float fTimeDelta)
 {
-	CModel* pModel = static_cast<CModel*>(m_pOwner->Get_Component(L"Com_Model"));
-	if (nullptr == pModel) return;
-	pModel->Set_Animation(ENUM_CLASS(CSonic::STATE::IDLE_LOOP));
+	m_tStateParams.fMoveSpeed = 0.f;
 }
 
 void CSonic_Idle_State::HandleInput()
@@ -173,9 +176,8 @@ void CSonic_Walk_State::Enter()
 
 void CSonic_Walk_State::Execute(_float fTimeDelta)
 {
-	CModel* pModel = static_cast<CModel*>(m_pOwner->Get_Component(L"Com_Model"));
-	if (nullptr == pModel) return;
-	pModel->Set_Animation(ENUM_CLASS(CSonic::STATE::WALK_LOOP));
+	if (m_tStateParams.fMoveSpeed < 10.f)
+		m_tStateParams.fMoveSpeed += fTimeDelta;
 }
 
 void CSonic_Walk_State::HandleInput()
@@ -209,14 +211,94 @@ void CSonic_Run_State::Enter()
 
 void CSonic_Run_State::Execute(_float fTimeDelta)
 {
-	CModel* pModel = static_cast<CModel*>(m_pOwner->Get_Component(L"Com_Model"));
-	if (nullptr == pModel) return;
-	pModel->Set_Animation(ENUM_CLASS(CSonic::STATE::RUN_LOOP));
+	if(m_tStateParams.fMoveSpeed > 10.f)
+		m_tStateParams.fMoveSpeed -= fTimeDelta;
+
+	if (m_tStateParams.fMoveSpeed < 10.f)
+		m_tStateParams.fMoveSpeed = 10.f;
+
 }
 
 void CSonic_Run_State::HandleInput()
 {
-	__super::HandleInput();
+	if (!m_pOwner) return;
+
+	CModel* pModel = static_cast<CModel*>(m_pOwner->Get_Component(L"Com_Model"));
+	if (nullptr == pModel) return;
+
+	CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
+	if (nullptr == pAnimator) return;
+	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+	if (nullptr == pTransform) return;
+
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	if (nullptr == pTransform) return;
+
+	// 1. 카메라의 뷰 행렬 가져오기
+	_matrix camWorldMatrix = m_pGameInstance->Get_Transform_MatrixInverse(D3DTS::VIEW);
+
+	// 3. 카메라의 월드 공간 기준 Forward 및 Right 벡터 추출
+	_vector camLookWorld = camWorldMatrix.r[2]; // 카메라의 Z축 (바라보는 방향)
+	_vector camRightWorld = camWorldMatrix.r[0]; // 카메라의 X축 (오른쪽 방향)
+
+	// 4. 카메라 방향 벡터를 XZ 평면에 투영하고 정규화 (수평 이동을 위해 Y성분 제거)
+	_vector camLookXZ = XMVectorSet(XMVectorGetX(camLookWorld), 0.f, XMVectorGetZ(camLookWorld), 0.f);
+	camLookXZ = XMVector3Normalize(camLookXZ);
+
+	_vector camRightXZ = XMVectorSet(XMVectorGetX(camRightWorld), 0.f, XMVectorGetZ(camRightWorld), 0.f);
+	camRightXZ = XMVector3Normalize(camRightXZ);
+	// 또는 camRightXZ = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), camLookXZ); 로 계산 가능
+
+	_vector vMovementDirection = XMVectorZero();
+	_bool bIsMoving = false;
+
+	if (KEY_PRESSING(DIK_W))
+	{
+		vMovementDirection = XMVectorAdd(vMovementDirection, camLookXZ);
+		bIsMoving = true;
+	}
+	if (KEY_PRESSING(DIK_S))
+	{
+		vMovementDirection = XMVectorAdd(vMovementDirection, -camLookXZ);
+		bIsMoving = true;
+	}
+	if (KEY_PRESSING(DIK_A))
+	{
+		vMovementDirection = XMVectorAdd(vMovementDirection, -camRightXZ);
+		bIsMoving = true;
+	}
+	if (KEY_PRESSING(DIK_D))
+	{
+		vMovementDirection = XMVectorAdd(vMovementDirection, camRightXZ);
+		bIsMoving = true;
+	}
+
+	if (KEY_PRESSING(DIK_LSHIFT))
+	{
+		pController->Change_State(ENUM_CLASS(CSonic::STATE::BOOST_LOOP));
+		return;
+	}
+		
+
+	if (bIsMoving)
+	{
+		vMovementDirection = XMVector3Normalize(vMovementDirection); // 최종 이동 방향 정규화
+
+		// 캐릭터가 이동할 방향으로 회전
+		_float fTargetAngleRadians = atan2f(XMVectorGetX(vMovementDirection), XMVectorGetZ(vMovementDirection));
+		pTransform->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTargetAngleRadians);
+		
+
+		// 캐릭터 이동
+		//pTransform->Go_Straight(fTimeDelta); // Go_Straight는 현재 Transform의 Look 방향으로 이동
+		//pAnimator->Set_CurState(ENUM_CLASS(CSonic::STATE::RUN_LOOP), true);
+		//if (m_tStateParams.fMoveSpeed >= 10.f)
+		pController->Change_State(ENUM_CLASS(CSonic::STATE::RUN_LOOP));
+	}
+	else
+	{
+		pController->Change_State(ENUM_CLASS(CSonic::STATE::BRAKE_NEUTRAL));
+	}
 }
 
 void CSonic_Run_State::Exit()
@@ -239,19 +321,96 @@ HRESULT CSonic_Boost_State::Initialize()
 }
 
 void CSonic_Boost_State::Enter()
-{
+{/*
 	CModel* pModel = static_cast<CModel*>(m_pOwner->Get_Component(L"Com_Model"));
 	if (nullptr == pModel) return;
-	pModel->Set_Animation(ENUM_CLASS(CSonic::STATE::BOOST_LOOP));
+	pModel->Set_Animation(ENUM_CLASS(CSonic::STATE::BOOST_LOOP));*/
 }
 
 void CSonic_Boost_State::Execute(_float fTimeDelta)
 {
+	m_tStateParams.fMoveSpeed = 15.f;
 }
 
 void CSonic_Boost_State::HandleInput()
 {
-	__super::HandleInput();
+	if (!m_pOwner) return;
+
+	CModel* pModel = static_cast<CModel*>(m_pOwner->Get_Component(L"Com_Model"));
+	if (nullptr == pModel) return;
+
+	CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
+	if (nullptr == pAnimator) return;
+	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+	if (nullptr == pTransform) return;
+
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	if (nullptr == pTransform) return;
+
+	// 1. 카메라의 뷰 행렬 가져오기
+	_matrix camWorldMatrix = m_pGameInstance->Get_Transform_MatrixInverse(D3DTS::VIEW);
+
+	// 3. 카메라의 월드 공간 기준 Forward 및 Right 벡터 추출
+	_vector camLookWorld = camWorldMatrix.r[2]; // 카메라의 Z축 (바라보는 방향)
+	_vector camRightWorld = camWorldMatrix.r[0]; // 카메라의 X축 (오른쪽 방향)
+
+	// 4. 카메라 방향 벡터를 XZ 평면에 투영하고 정규화 (수평 이동을 위해 Y성분 제거)
+	_vector camLookXZ = XMVectorSet(XMVectorGetX(camLookWorld), 0.f, XMVectorGetZ(camLookWorld), 0.f);
+	camLookXZ = XMVector3Normalize(camLookXZ);
+
+	_vector camRightXZ = XMVectorSet(XMVectorGetX(camRightWorld), 0.f, XMVectorGetZ(camRightWorld), 0.f);
+	camRightXZ = XMVector3Normalize(camRightXZ);
+	// 또는 camRightXZ = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), camLookXZ); 로 계산 가능
+
+	_vector vMovementDirection = XMVectorZero();
+	_bool bIsMoving = false;
+
+	if (KEY_PRESSING(DIK_W))
+	{
+		vMovementDirection = XMVectorAdd(vMovementDirection, camLookXZ);
+		bIsMoving = true;
+	}
+	if (KEY_PRESSING(DIK_S))
+	{
+		vMovementDirection = XMVectorAdd(vMovementDirection, -camLookXZ);
+		bIsMoving = true;
+	}
+	if (KEY_PRESSING(DIK_A))
+	{
+		vMovementDirection = XMVectorAdd(vMovementDirection, -camRightXZ);
+		bIsMoving = true;
+	}
+	if (KEY_PRESSING(DIK_D))
+	{
+		vMovementDirection = XMVectorAdd(vMovementDirection, camRightXZ);
+		bIsMoving = true;
+	}
+
+	if (KEY_PRESSING(DIK_LSHIFT))
+	{
+		pController->Change_State(ENUM_CLASS(CSonic::STATE::BOOST_LOOP));
+		return;
+	}
+
+
+	if (bIsMoving)
+	{
+		vMovementDirection = XMVector3Normalize(vMovementDirection); // 최종 이동 방향 정규화
+
+		// 캐릭터가 이동할 방향으로 회전
+		_float fTargetAngleRadians = atan2f(XMVectorGetX(vMovementDirection), XMVectorGetZ(vMovementDirection));
+		pTransform->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTargetAngleRadians);
+
+		// 캐릭터 이동
+		//pTransform->Go_Straight(fTimeDelta); // Go_Straight는 현재 Transform의 Look 방향으로 이동
+		//pAnimator->Set_CurState(ENUM_CLASS(CSonic::STATE::RUN_LOOP), true);
+		//if (m_tStateParams.fMoveSpeed >= 10.f)
+		pController->Change_State(ENUM_CLASS(CSonic::STATE::RUN_LOOP));
+	}
+	else
+	{
+		pController->Change_State(ENUM_CLASS(CSonic::STATE::BRAKE_NEUTRAL));
+	}
 }
 
 void CSonic_Boost_State::Exit()
@@ -278,13 +437,16 @@ HRESULT CSonic_Brake_State::Initialize()
 
 void CSonic_Brake_State::Enter()
 {
+
 }
 
 void CSonic_Brake_State::Execute(_float fTimeDelta)
 {
-	CModel* pModel = static_cast<CModel*>(m_pOwner->Get_Component(L"Com_Model"));
-	if (nullptr == pModel) return;
-	pModel->Set_Animation(ENUM_CLASS(CSonic::STATE::BRAKE_NEUTRAL));
+	if (m_tStateParams.fMoveSpeed > 0.f)
+		m_tStateParams.fMoveSpeed -= fTimeDelta;
+
+	if (m_tStateParams.fMoveSpeed < 0.f)
+		m_tStateParams.fMoveSpeed = 0.f;
 }
 
 void CSonic_Brake_State::HandleInput()

@@ -35,7 +35,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(CreateImGui()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::MAP)))
+	if (FAILED(Start_Level(LEVEL::ANIMATION)))
 		return E_FAIL;
 
 	return S_OK;

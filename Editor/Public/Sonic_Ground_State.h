@@ -13,9 +13,10 @@ protected:
 		float fRotationSpeed = 2.0f;
 		bool bCanJump = true;
 		bool bCanDash = false;
+		_float3 vMoveDirection = {};
 	};
 
-	StateParams m_tStateParams;
+	StateParams m_tStateParams = {};
 public:
 	static CSonic_Ground_State* Create(CGameObject* pOwner);
 	virtual HRESULT Initialize() override;
@@ -28,6 +29,8 @@ public:
 
 	void SetCanDash(bool bCanDash) { m_tStateParams.bCanDash = bCanDash; }
 	bool GetCanDash() const { return m_tStateParams.bCanDash; }
+	void Set_Parameter(const StateParams& parameter) { memcpy(&m_tStateParams, &parameter, sizeof(StateParams)); }
+	StateParams Get_Parameter() const { return m_tStateParams; }
 };
 
 class CSonic_Idle_State : public CSonic_Ground_State
