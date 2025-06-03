@@ -21,7 +21,6 @@ CAnimator::CAnimator(const CAnimator& Prototype)
 
 HRESULT CAnimator::Initialize_Prototype()
 {
-	XMMatrixIdentity();
 	return S_OK;
 }
 HRESULT CAnimator::Initialize(void* pArg)
@@ -91,6 +90,8 @@ CAnimator* CAnimator::Clone(void* pArg)
 void CAnimator::Free()
 {
 	__super::Free();
+	Safe_Release(m_pCurAnimation);
+	Safe_Release(m_pPreAnimation);
 }
 #pragma endregion
 #pragma region Save&Load
@@ -126,6 +127,7 @@ HRESULT CAnimator::Render()
 
 _bool CAnimator::Play_Animation(_float fTimeDelta)
 {
+	m_bIsFinished = false;
 	if (!m_pOwner)
 		return false;
 
@@ -134,7 +136,6 @@ _bool CAnimator::Play_Animation(_float fTimeDelta)
 		return false;
 
 	vector<CBone*>& bones = pModelCom->Get_Bones();
-	_bool isFinished = false;
 
 	UpdateAnimationTimes(fTimeDelta);
 
@@ -182,11 +183,11 @@ _bool CAnimator::Play_Animation(_float fTimeDelta)
 		{
 			m_bBlend = false; // 블렌딩 종료
 			m_pPreAnimation = nullptr; // 이전 애니메이션 참조 해제
-			m_fPreTrackPosition = 0.f;
+			//m_fPreTrackPosition = 0.f;
 		
 			// 현재 애니메이션이 루프되지 않고 재생 시간이 총 시간을 초과했는지 확인하여 종료 여부 결정
 			if (!m_bCurAnimLoop && m_fCurTrackPosition >= m_pCurAnimation->Get_Duration()) {
-				isFinished = true;
+				m_bIsFinished = true;
 			}
 		}
 
@@ -207,7 +208,7 @@ _bool CAnimator::Play_Animation(_float fTimeDelta)
 			// 현재 애니메이션이 루프되지 않고 재생 시간이 총 시간을 초과했는지 확인하여 종료 여부 결정
 			if (!m_bCurAnimLoop && m_fCurTrackPosition >= m_pCurAnimation->Get_Duration())
 			{
-				isFinished = true;
+				m_bIsFinished = true;
 			}
 		}
 	}
@@ -219,12 +220,11 @@ _bool CAnimator::Play_Animation(_float fTimeDelta)
 		pBone->Update_CombinedTransformationMatrix(bones, XMLoadFloat4x4(&preTransformMatrix));
 	}
 
-	return isFinished;
+	return m_bIsFinished;
 }
 
 void CAnimator::Change_Animation(_uint animationIndex, _bool bLoop, _float fPlaybackSpeed, _float fBlendDuration)
 {
-	_bool isFinished = false;
 	CModel* pModelCom = static_cast<CModel*>(m_pOwner->Get_Component(L"Com_Model"));
 	if (nullptr == pModelCom)
 		return;

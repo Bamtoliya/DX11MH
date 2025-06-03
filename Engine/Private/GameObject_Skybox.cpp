@@ -85,21 +85,22 @@ HRESULT CGameObject_Skybox::Initialize(simdjson::ondemand::object& jsonData)
 
 HRESULT CGameObject_Skybox::Ready_Components()
 {
+	_uint curLevelIndex = m_pGameInstance->Get_CurrentLevelIndex();
+	
 	/* For.Com_Texture */
-	m_pTextureCom = CTexture::Create(m_pDevice, m_pContext, L"../../Assets/Textures/Skybox/XYZ.dds", 1);
-	m_Components.emplace(L"Com_Texture", m_pTextureCom);
-	//Safe_AddRef(m_pTextureCom);
+	if (FAILED(__super::Add_Component(ENUM_CLASS(curLevelIndex), TEXT("Prototype_Component_Texture_Sky"),
+		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
+		return E_FAIL;
+
 	/* For.Com_VIBuffer */
-	m_pVIBufferCom = CVIBuffer_Cube::Create(m_pDevice, m_pContext);
-	m_Components.emplace(L"Com_VIBuffer", m_pVIBufferCom);
-	//Safe_AddRef(m_pVIBufferCom);
+	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Cube"),
+		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
+		return E_FAIL;
+
 	/* For.Com_Shader */
-	m_pShaderCom = CShader::Create(m_pDevice, m_pContext, L"../../Assets/ShaderFiles/Shader_VtxCubeTex.hlsl", VTXCUBETEX::Elements, VTXCUBETEX::iNumElements, "VTXCUBETEX");
-	m_Components.emplace(L"Com_Shader", m_pShaderCom);
-	//Safe_AddRef(m_pShaderCom);
-	/*if (FAILED(__super::Add_Component(ENUM_CLASS(0), TEXT("Prototype_Component_Shader_Cube"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(0), TEXT("Prototype_Component_Shader_VtxCubeTex"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-		return E_FAIL;*/
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -107,9 +108,9 @@ HRESULT CGameObject_Skybox::Ready_Components()
 void CGameObject_Skybox::Free()
 {
 	__super::Free();
-	//Safe_Release(m_pShaderCom);
-	//Safe_Release(m_pTextureCom);
-	//Safe_Release(m_pVIBufferCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pVIBufferCom);
 }
 
 #pragma endregion

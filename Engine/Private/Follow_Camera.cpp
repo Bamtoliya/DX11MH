@@ -183,8 +183,11 @@ HRESULT CFollow_Camera::Find_Target()
 	}
 
 	CGameObject* pGameObject = m_pGameInstance->Get_GameObjectByName(m_strTargetName);
-	if(nullptr != pGameObject)
+	if (nullptr != pGameObject)
+	{
 		Set_Target(pGameObject);
+		m_bFindTarget = false;
+	}
 	return S_OK;
 }
 

@@ -23,13 +23,14 @@ CModel::CModel(const CModel& Prototype)
 	, m_Materials{ Prototype.m_Materials }
 	, m_eType{ Prototype.m_eType }
 	, m_PreTransformMatrix{ Prototype.m_PreTransformMatrix }
-	//, m_Bones { Prototype.m_Bones }
+	, m_Bones { Prototype.m_Bones }
 	, m_iNumAnimations{ Prototype.m_iNumAnimations }
-	// , m_Animations { Prototype.m_Animations }
+	, m_Animations { Prototype.m_Animations }
 {
 	strcpy_s(m_szModelFilePath, Prototype.m_szModelFilePath);
-	for (auto& pPrototypeBone : Prototype.m_Bones)
-		m_Bones.push_back(pPrototypeBone->Clone());
+	for (auto& pBone : m_Bones)
+		Safe_AddRef(pBone);
+		//m_Bones.push_back(pBone->Clone());
 
 	for (auto& pMaterial : m_Materials)
 		Safe_AddRef(pMaterial);
@@ -37,8 +38,9 @@ CModel::CModel(const CModel& Prototype)
 	for (auto& pMesh : m_Meshes)
 		Safe_AddRef(pMesh);
 
-	for (auto& pPrototypeAnim : Prototype.m_Animations)
-		m_Animations.push_back(pPrototypeAnim->Clone());
+	for (auto& pAnim : m_Animations)
+		Safe_AddRef(pAnim);
+		
 }
 
 CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -275,6 +277,10 @@ void CModel::Free()
 	for (auto& pAnimation : m_Animations)
 		Safe_Release(pAnimation);
 	m_Animations.clear();
+
+	for (auto& pBone : m_Bones)
+		Safe_Release(pBone);
+	m_Bones.clear();
 
 	m_Importer.FreeScene();
 }

@@ -54,7 +54,6 @@ HRESULT CMainApp::Render()
 
 	m_pGameInstance->End_Draw();
 
-
 	return S_OK;
 }
 

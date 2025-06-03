@@ -158,14 +158,6 @@ HRESULT CRenderer::Draw()
 
 HRESULT CRenderer::Render_Priority()
 {
-	ID3D11RasterizerState* pOldRasterizerState = nullptr;
-	ID3D11DepthStencilState* pOldDepthStencilState = nullptr;
-	UINT oldStencilRef;
-
-	// 현재 상태 백업
-	m_pContext->RSGetState(&pOldRasterizerState);
-	m_pContext->OMGetDepthStencilState(&pOldDepthStencilState, &oldStencilRef);
-
 	for (auto& pGameObject : m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_PRIORITY)])
 	{
 		if (nullptr != pGameObject)
@@ -174,12 +166,6 @@ HRESULT CRenderer::Render_Priority()
 		Safe_Release(pGameObject);
 	}
 	m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_PRIORITY)].clear();
-
-	m_pContext->RSSetState(pOldRasterizerState);
-	m_pContext->OMSetDepthStencilState(pOldDepthStencilState, oldStencilRef);
-
-	if (pOldRasterizerState) pOldRasterizerState->Release();
-	if (pOldDepthStencilState) pOldDepthStencilState->Release();
 
 	return S_OK;
 }

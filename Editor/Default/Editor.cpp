@@ -188,7 +188,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         return true;
 
     switch (message)
-    {
+    {    
     case WM_SIZE:
         if (wParam != SIZE_MINIMIZED) { // 최소화 상태가 아닐 때만 처리
             g_iWinResizeX = LOWORD(lParam); // 새 너비

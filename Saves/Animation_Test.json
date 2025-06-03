@@ -19,8 +19,8 @@
                                 1.0
                             ]
                         },
-                        "CameraPitch": -0.7853981852531433,
-                        "CameraYaw": 0.0,
+                        "CameraPitch": -0.6003515720367432,
+                        "CameraYaw": 0.35007527470588684,
                         "Distance": 5.0,
                         "SmoothFactor": 1.0,
                         "TargetName": "Sonic"
@@ -41,15 +41,15 @@
                             0.9744197130203247
                         ],
                         "Position": [
-                            -16.347057342529297,
-                            4.535603046417236,
-                            23.16015625
+                            -1.4149833917617798,
+                            3.824669122695923,
+                            -3.875443696975708
                         ],
                         "RotationPerSec": 1.0,
                         "Scale": [
-                            0.99993896484375,
-                            0.9999434947967529,
-                            0.9999600052833557
+                            0.9999050498008728,
+                            0.9999067783355713,
+                            0.9999291300773621
                         ],
                         "SpeedPerSec": 10.0
                     },
@@ -80,8 +80,8 @@
                     },
                     "CTransform": {
                         "EulerRotation": [
-                            0.0,
-                            0.0,
+                            -0.0,
+                            3.021684169769287,
                             0.0
                         ],
                         "IsRelativePosition": false,
@@ -89,25 +89,74 @@
                         "IsRelativeScale": false,
                         "Orientation": [
                             0.0,
+                            0.9982032775878906,
                             0.0,
-                            0.0,
-                            1.0
+                            0.05991837754845619
                         ],
                         "Position": [
-                            -16.347007751464844,
                             0.0,
-                            26.695755004882813
+                            0.0,
+                            0.0
                         ],
                         "RotationPerSec": 0.0,
                         "Scale": [
-                            1.0,
-                            1.0,
-                            1.0
+                            0.9999978542327881,
+                            0.9999997019767761,
+                            0.9999978542327881
                         ],
                         "SpeedPerSec": 10.0
                     },
                     "LayerTag": "Layer_GameObject",
                     "Name": "Sonic",
+                    "PrototypeTag": "Prototype_GameObject_Sonic",
+                    "Visible": true
+                }
+            },
+            {
+                "CSonic": {
+                    "Active": true,
+                    "CShader": {
+                        "Layout": "VTXANIMMESH",
+                        "Tiling": true,
+                        "TilingOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "TilingScale": [
+                            1.0,
+                            1.0
+                        ]
+                    },
+                    "CTransform": {
+                        "EulerRotation": [
+                            -0.0,
+                            3.021684169769287,
+                            0.0
+                        ],
+                        "IsRelativePosition": false,
+                        "IsRelativeRotation": false,
+                        "IsRelativeScale": false,
+                        "Orientation": [
+                            0.0,
+                            0.9982032775878906,
+                            0.0,
+                            0.05991837754845619
+                        ],
+                        "Position": [
+                            2.0,
+                            0.0,
+                            0.0
+                        ],
+                        "RotationPerSec": 0.0,
+                        "Scale": [
+                            0.999997615814209,
+                            0.9999997019767761,
+                            0.999997615814209
+                        ],
+                        "SpeedPerSec": 0.0
+                    },
+                    "LayerTag": "Layer_GameObject",
+                    "Name": "Sonic2",
                     "PrototypeTag": "Prototype_GameObject_Sonic",
                     "Visible": true
                 }
@@ -241,9 +290,9 @@
                             1.0
                         ],
                         "Position": [
-                            -16.347057342529297,
-                            4.535604953765869,
-                            23.160152435302734
+                            -1.4149833917617798,
+                            3.82466983795166,
+                            -3.875443458557129
                         ],
                         "RotationPerSec": 0.0,
                         "Scale": [

@@ -9,24 +9,6 @@ NS_BEGIN(Engine)
 
 class CBone final : public CBase
 {
-#pragma region Structures
-public:
-	typedef struct tagBoneNodeFromModel
-	{
-		_char* szName = {};
-		_float4x4 mTransformationMatrix = {};
-		_uint	iParentIndex = {};
-		_uint	iNumChildren = {};
-	} MODEL_BONE_NODE;
-	typedef struct tagBoneFromMesh
-	{
-		_char* szName;
-		_float4x4 mOffSetMatrix;
-		_uint	iVertexIndex;
-		_float	fWeight;
-	} MESH_BONE;
-#pragma endregion
-
 #pragma region Constructor & Destructor
 private:
 	CBone();

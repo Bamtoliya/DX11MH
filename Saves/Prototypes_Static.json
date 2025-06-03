@@ -34,6 +34,11 @@
     "Layout": "VTXPOSTEX",
     "ShaderPath": "../../Assets/ShaderFiles/Shader_VtxPosTex.hlsl"
   },
+  "Prototype_Component_Shader_VtxCubeTex": {
+    "Class": "CShader",
+    "Layout": "VTXCUBETEX",
+    "ShaderPath": "../../Assets/ShaderFiles/Shader_VtxCubeTex.hlsl"
+  },
   "Prototype_Component_Texture_BackGround": {
     "Class": "CTexture",
     "NumTexture": 2,
@@ -41,6 +46,9 @@
   },
   "Prototype_Component_VIBuffer_Rect": {
     "Class": "CVIBuffer_Rect"
+  },
+  "Prototype_Component_VIBuffer_Cube": {
+    "Class": "CVIBuffer_Cube"
   },
   "Prototype_Component_Shader_Terrain": {
     "Class": "CShader",

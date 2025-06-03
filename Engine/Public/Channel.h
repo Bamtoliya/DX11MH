@@ -8,17 +8,6 @@ NS_BEGIN(Engine)
 
 class CChannel final : public CBase
 {
-#pragma region Structure
-public:
-	typedef struct tagChannelFromModel
-	{
-		_char* m_szName;
-		_uint iNumKeyFrames;
-		KEYFRAME* pKeyFrames;
-		_uint iBoneIndex;
-	} MODEL_CHANNEL;
-#pragma endregion
-
 #pragma region Constructor & Destructor
 private:
 	CChannel();

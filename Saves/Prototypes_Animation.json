@@ -1,50 +1,4 @@
 {
-  "Prototype_Component_Model_Fiona": {
-    "Class": "CModel",
-    "ModelFilePath": "../../Assets/Models/Fiona/Fiona.model",
-    "PreTransformedMatrix": [
-      -1.0,
-      0.0,
-      -0.0,
-      0.0,
-      0.0,
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      -1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ],
-    "Type": "ANIM"
-  },
-  "Prototype_Component_Model_ForkLift": {
-    "Class": "CModel",
-    "ModelFilePath": "../../Assets/Models/ForkLift/ForkLift.fbx",
-    "PreTransformedMatrix": [
-      -0.009999999776482582,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      0.009999999776482582,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      -0.009999999776482582,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ],
-    "Type": "NONANIM"
-  },
   "Prototype_Component_Model_Sonic": {
     "Class": "CModel",
     "ModelFilePath": "../../Assets/Models/Sonic/SonicAllActions.model",
@@ -90,6 +44,9 @@
       1.0
     ],
     "Type": "NONANIM"
+  },
+  "Prototype_Component_RigidBody": {
+    "Class": "CRigidBody"
   },
   "Prototype_Component_Texture_Sky": {
     "Class": "CTexture",

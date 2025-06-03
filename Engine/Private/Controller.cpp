@@ -54,7 +54,6 @@ void CController::Free()
 	__super::Free();
 	for (auto& pState : m_States)
 		Safe_Release(pState);
-
 	m_States.clear();
 }
 

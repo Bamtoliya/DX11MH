@@ -9,6 +9,14 @@
 #include "Editor_Enum.h"
 #include "Editor_Macro.h"
 
+#ifdef _DEBUG
+#ifdef UNICODE
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+#else
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+#endif
+#endif
+
 namespace Editor
 {
 	const unsigned int			g_iWinSizeX = 1920;

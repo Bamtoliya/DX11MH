@@ -219,6 +219,21 @@ ID3D11ShaderResourceView* CGameInstance::Get_BackBufferSRV() const
 }
 #pragma endregion
 
+#pragma region PHYSICS_SYSTEM
+PxPhysics* CGameInstance::Get_Physics()
+{
+	return m_pPhysics_System->Get_Physics();
+}
+PxScene* CGameInstance::Get_PhysicsScene(_uint iIndex)
+{
+	return m_pPhysics_System->Get_PhysicsScene(iIndex);
+}
+PxScene* CGameInstance::Create_Scene()
+{
+	return m_pPhysics_System->Create_Scene();
+}
+#pragma endregion
+
 #pragma region LEVEL_MANAGER
 
 HRESULT CGameInstance::Change_Level(_uint iLevelIndex, CLevel* pNewLevel)
@@ -605,6 +620,14 @@ HRESULT CGameInstance::PickObjectById(_uint iId)
 CGameObject* CGameInstance::Get_PickedObject() const
 {
 	return m_pPicking_System->Get_PickedObject();
+}
+void CGameInstance::Set_PickedObject(CGameObject* pGameObject)
+{
+	m_pPicking_System->Set_PickedObject(pGameObject);
+}
+void CGameInstance::Clear_PickedObject()
+{
+	m_pPicking_System->Clear_PickedObject();
 }
 #pragma endregion
 

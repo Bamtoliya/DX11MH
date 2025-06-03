@@ -20,11 +20,9 @@ CVIBuffer::CVIBuffer(const CVIBuffer& Prototype)
     , m_ePrimitiveTopology      { Prototype.m_ePrimitiveTopology }
     /*, m_BufferDesc{Prototype.m_BufferDesc}
     , m_SubResourceData         { Prototype.m_SubResourceData }*/
-    , m_pVertexPositions{Prototype.m_pVertexPositions}
+    , m_pVertexPositions        { nullptr }
     , m_vLocalSize              { Prototype.m_vLocalSize }
 {
-	m_pVertexPositions = new _float3[m_iNumVertices];
-	memcpy(m_pVertexPositions, Prototype.m_pVertexPositions, sizeof(_float3) * m_iNumVertices);
     Safe_AddRef(m_pVB);
     Safe_AddRef(m_pIB);
 }

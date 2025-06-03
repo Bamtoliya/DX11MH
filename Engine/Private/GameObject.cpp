@@ -96,6 +96,9 @@ void CGameObject::Free()
 {
 	__super::Free();
 
+	if (m_pGameInstance->Get_PickedObject() == this)
+		m_pGameInstance->Clear_PickedObject();
+
 	Safe_Release(m_pParent);
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pTransformCom);
@@ -110,6 +113,8 @@ void CGameObject::Free()
 
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
+
+	cout << m_oID << " Object Free Called\n";
 }
 
 CGameObject* CGameObject::Clone(CGameObject* pGameObject, void* pArg)

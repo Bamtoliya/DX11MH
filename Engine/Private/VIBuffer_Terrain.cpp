@@ -214,7 +214,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 	std::wstring fileExtension = filePathObj.extension().wstring();
 	std::transform(fileExtension.begin(), fileExtension.end(), fileExtension.begin(), ::towlower); // 소문자로 변환
 
-	std::vector<float> heightValues; // 0.0f ~ 1.0f 범위의 정규화된 높이값 저장
+	vector<_float> heightValues; // 0.0f ~ 1.0f 범위의 정규화된 높이값 저장
 
 	if (fileExtension == L".dds")
 	{
@@ -426,6 +426,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 
 	Safe_Delete_Array(pIndices);
 
+	heightValues.clear();
 
 
 	return S_OK;

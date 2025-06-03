@@ -207,6 +207,7 @@
     <ClCompile Include="..\private\Sonic_Ground_State.cpp">
       <Filter>02.GameObject\04.Player\Sonic\Controller\States</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Sonic_Air_State.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor.h">
@@ -317,6 +318,7 @@
     <ClInclude Include="..\Public\Sonic_States.h">
       <Filter>02.GameObject\04.Player\Sonic\Controller\States</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Sonic_Air_State.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Editor.ico">

@@ -35,36 +35,6 @@ PS_OUT PS_MAIN(PS_CUBE_IN In)
     return Out;    
 }
 
-
-RasterizerState RS_Default
-{
-    CullMode = Back; // D3DCULL_CCW (FrontCounterClockwise가 false일 때)
-};
-
-RasterizerState RS_Sky
-{
-    CullMode = None; // D3DRS_CULLMODE, D3DCULL_NONE
-                     // 또는 CullMode = Front; (큐브 안에서 볼 때)
-    // FillMode = Solid; (기본값)
-    // FrontCounterClockwise = false; (기본값)
-};
-
-// 스카이박스 렌더링을 위한 DepthStencilState
-DepthStencilState DS_Sky
-{
-    DepthEnable = true;     // D3DRS_ZENABLE, TRUE (또는 FALSE)
-                            // Skybox.fx의 VS에서 Out.PosH.z = Out.PosH.w; 트릭을 사용한다면
-                            // DepthEnable = true로 하고, DepthFunc = LESS_EQUAL로 설정합니다.
-                            // 만약 깊이 테스트를 완전히 무시하고 싶다면 DepthEnable = false;
-    DepthWriteMask = ZERO;  // D3DRS_ZWRITEENABLE, FALSE
-    DepthFunc = LESS_EQUAL; // 또는 LESS (z = w 트릭 사용 시)
-                            // DepthEnable이 false면 DepthFunc은 의미 없음
-    
-    // Stencil 관련 설정은 필요시 추가
-    // StencilEnable = false;
-};
-
-
 technique11 DefaultTechnique
 {
     /* 패스를 생성하는 기준을 뭘로? */ 
@@ -75,17 +45,24 @@ technique11 DefaultTechnique
     /* 어떤 쉐이더를 사용할건지? */ 
     /* 진입점 함수 결정 */
     /* 렌더스테이츠에 대한 설정*/ 
-    pass Default/* 명암 + 스펙큘러 + 그림자 + ssao + 림라이트 */ 
+    /* 명암 + 스펙큘러 + 그림자 + ssao + 림라이트 */ 
+    pass sky
     {
-        SetRasterizerState( RS_Sky );
-        SetDepthStencilState( DS_Sky, 0 );
+        SetRasterizerState(RS_Cull_Front);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
         VertexShader = compile vs_5_0 VS_MAIN();        
-        PixelShader = compile ps_5_0 PS_MAIN();      
+        PixelShader = compile ps_5_0 PS_MAIN();
     }
 
-    pass Picking /* 명암 + 스펙큘러 + 그림자 + ssao + 림라이트 */
+    pass Default
     {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
         VertexShader = compile vs_5_0 VS_MAIN();
-        PixelShader = compile ps_5_0 PS_PICKING_CUBE();
+        PixelShader = compile ps_5_0 PS_MAIN();
     }
 }

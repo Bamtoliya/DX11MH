@@ -37,6 +37,7 @@ public:
 #pragma region Animation Control
 public:
 	_bool Play_Animation(_float fTimeDelta);
+	_bool Get_AnimationFinished() { return m_bIsFinished; }
 	void Change_Animation(_uint animationIndex, _bool bLoop = true, _float fPlaybackSpeed = 1.0f, _float fBlendDuration = 0.0f);
 	const vector<_float4x4>& GetFinalBoneTransforms() const { return m_FinalBoneTransforms; }
 
@@ -63,6 +64,8 @@ private:
 	_bool			m_bBlend = { false };
 	_float			m_fBlendDuration = { 0.1f };
 	_float			m_fBlendElapsedTime = { 0.f };
+
+	_bool			m_bIsFinished = { false };
 
 	// 최종 뼈 변환 행렬 (스키닝 매트릭스)
 	vector<_float4x4> m_FinalBoneTransforms;

@@ -420,7 +420,7 @@ void CSonic_Boost_State::Exit()
 
 #pragma endregion
 
-#pragma region Break
+#pragma region Brake
 CSonic_Brake_State* CSonic_Brake_State::Create(CGameObject* pOwner)
 {
 	CSonic_Brake_State* pInstance = new CSonic_Brake_State(pOwner);
@@ -432,6 +432,8 @@ CSonic_Brake_State* CSonic_Brake_State::Create(CGameObject* pOwner)
 HRESULT CSonic_Brake_State::Initialize()
 {
 	strcpy_s(m_szName, "Sonic_Break_State");
+	m_bLoop = false;
+	m_fBlendDuration = 0.5f;
 	return S_OK;
 }
 
@@ -442,16 +444,22 @@ void CSonic_Brake_State::Enter()
 
 void CSonic_Brake_State::Execute(_float fTimeDelta)
 {
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
+
 	if (m_tStateParams.fMoveSpeed > 0.f)
 		m_tStateParams.fMoveSpeed -= fTimeDelta;
 
 	if (m_tStateParams.fMoveSpeed < 0.f)
 		m_tStateParams.fMoveSpeed = 0.f;
+
+	if (pAnimator->Get_AnimationFinished())
+		pController->Change_State(ENUM_CLASS(CSonic::STATE::IDLE_LOOP));
 }
 
 void CSonic_Brake_State::HandleInput()
 {
-	__super::HandleInput();
+	//__super::HandleInput();
 }
 
 void CSonic_Brake_State::Exit()

@@ -2,6 +2,7 @@
 #include "Sonic_Controller.h"
 #include "GameInstance.h"
 #include "Sonic_Ground_State.h"
+#include "RigidBody.h"
 
 #pragma region Constructor / Destructor
 CSonic::CSonic(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -82,9 +83,8 @@ HRESULT CSonic::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pModelCom->Set_Animation(ENUM_CLASS(STATE::RUN_LOOP), true);
-
-	Ready_States();
+	if (FAILED(Ready_States()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -99,9 +99,9 @@ HRESULT CSonic::Initialize(simdjson::ondemand::object& jsonData)
 
 	if(FAILED(Deserialize(jsonData)))
 		return E_FAIL;
-	m_pModelCom->Set_Animation(ENUM_CLASS(STATE::RUN_LOOP), true);
 
-	Ready_States();
+	if (FAILED(Ready_States()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -128,7 +128,12 @@ HRESULT CSonic::Ready_Components()
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Animator"),
 		TEXT("Com_Animator"), reinterpret_cast<CComponent**>(&m_pAnimatorCom))))
 		return E_FAIL;
-	
+
+	/* For.Com_RigidBody */
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom))))
+		return E_FAIL;
+
 
 	/* For.Com_Model */
 	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_SonicSpin"),
@@ -142,7 +147,7 @@ HRESULT CSonic::Ready_Components()
 HRESULT CSonic::Ready_States()
 {
 	m_pControllerCom->Resize_StateList(ENUM_CLASS(CSonic::STATE::END));
-	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::IDLE_LOOP), CSonic_Idle_State::Create(this));
+	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::IDLE_LOOP), CSonic_Idle_State::Create(this)); 
 	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::WALK_LOOP), CSonic_Walk_State::Create(this));
 	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::RUN_LOOP), CSonic_Run_State::Create(this));
 	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::BOOST_LOOP), CSonic_Boost_State::Create(this));
@@ -154,10 +159,12 @@ void CSonic::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pModelCom);
-	Safe_Release(m_pSpinModelCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pControllerCom);
+	Safe_Release(m_pAnimatorCom);
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pRigidBodyCom);
+	Safe_Release(m_pSpinModelCom);
 }
 #pragma endregion
 
@@ -192,7 +199,8 @@ HRESULT CSonic::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 #pragma region Loops
 void CSonic::Priority_Update(_float fTimeDelta)
 {
-
+	if(m_pRigidBodyCom)
+		m_pRigidBodyCom->Priority_Update(fTimeDelta);
 }
 
 void CSonic::Update(_float fTimeDelta)
@@ -205,6 +213,9 @@ void CSonic::Update(_float fTimeDelta)
 
 void CSonic::Late_Update(_float fTimeDelta)
 {
+	if (m_pRigidBodyCom)
+		m_pRigidBodyCom->Late_Update(fTimeDelta);
+
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
 }
 

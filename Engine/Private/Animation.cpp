@@ -18,8 +18,10 @@ CAnimation::CAnimation(const CAnimation& Prototype)
 	, m_Channels{ Prototype.m_Channels }
 {
 	strcpy_s(m_szName, Prototype.m_szName);
-	for (auto& pChannel : m_Channels)
+	for (auto& pChannel : Prototype.m_Channels)
 		Safe_AddRef(pChannel);
+	/*for (auto& pChannel : m_Channels)
+		Safe_AddRef(pChannel);*/
 }
 
 CAnimation* CAnimation::Create(ifstream& ifs, const vector<class CBone*>& Bones)
@@ -151,32 +153,11 @@ void CAnimation::Sample_At_Time(_float fTime, vector<_float4x4>& outTransforms)
 	{
 		if (m_Channels[i] != nullptr)
 		{
-			// CChannel의 Sample_Transform 함수를 호출하여 fTime에서의 변환 행렬을 계산합니다.
-			// 이 함수는 해당 채널이 어떤 뼈에 영향을 미치는지 알고 있어야 하며,
-			// 계산된 변환 행렬을 outTransforms의 적절한 위치에 저장해야 합니다.
-
-			// CChannel이 자신이 담당하는 뼈의 인덱스(Bones 벡터 내의)를 알고 있다고 가정합니다.
-			// 또는 CChannel의 이름과 Bones 벡터 내의 CBone 이름을 비교하여 일치하는 뼈를 찾아야 합니다.
-
-			// 예시: CChannel이 대상 뼈의 인덱스를 가지고 있는 경우 (m_iTargetBoneIndex는 CChannel의 멤버 변수라고 가정)
 			_uint targetBoneIndex = m_Channels[i]->Get_TargetBoneIndex();
 			if (targetBoneIndex < outTransforms.size())
 			{
 			    m_Channels[i]->Sample_Transform(fTime, &outTransforms[targetBoneIndex]);
 			}
-
-			// 예시: CChannel의 이름과 CBone의 이름을 비교하는 경우
-			//const char* channelName = m_Channels[i]->Get_Name(); // CChannel에 Get_Name()이 있다고 가정
-			//for (size_t boneIdx = 0; boneIdx < Bones.size(); ++boneIdx)
-			//{
-			//	if (Bones[boneIdx] != nullptr && Bones[boneIdx]->Compare_Name(channelName))
-			//	{
-			//		// 해당 뼈를 찾았으면, outTransforms의 해당 위치에 변환 행렬을 저장합니다.
-			//		// CChannel의 Sample_Transform은 _float4x4*를 인자로 받으므로, 주소를 전달합니다.
-			//		m_Channels[i]->Sample_Transform(fTime, &outTransforms[boneIdx]);
-			//		break; // 다음 채널로 넘어감
-			//	}
-			//}
 		}
 	}
 }

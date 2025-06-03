@@ -20,6 +20,8 @@ public:
 	HRESULT PickObjectByColor(_float4* pColor);
 	HRESULT PickObjectById(_uint iId);
 	CGameObject* Get_PickedObject() const { return m_pPickedObject; }
+	void Set_PickedObject(CGameObject* pGameObject) { m_pPickedObject = pGameObject; }
+	void Clear_PickedObject() { m_pPickedObject = nullptr; }
 public:
 	virtual HRESULT Initialize();
 public:

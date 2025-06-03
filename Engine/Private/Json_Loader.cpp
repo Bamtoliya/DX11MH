@@ -77,7 +77,7 @@ HRESULT CJson_Loader::Initialize() {
 
 #pragma region VIBuffer
     RegisterBaseCreator<CVIBuffer_Rect>("CVIBuffer_Rect");
-    RegisterBaseCreator<CVIBuffer_Rect>("CVIBuffer_Cube");
+    RegisterBaseCreator<CVIBuffer_Cube>("CVIBuffer_Cube");
     RegisterBaseCreator<CVIBuffer_Terrain>("CVIBuffer_Terrain");
 #pragma endregion
     

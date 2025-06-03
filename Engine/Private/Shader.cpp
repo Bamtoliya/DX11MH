@@ -13,8 +13,9 @@ CShader::CShader(const CShader& Prototype)
 	, m_strShaderFile{ Prototype.m_strShaderFile }
 	, m_strLayoutName { Prototype.m_strLayoutName }
 {
-	/*for (auto& pInputLayout : m_InputLayouts)
-		Safe_AddRef(pInputLayout);*/
+	Safe_AddRef(m_pEffect);
+	for (auto& pInputLayout : m_InputLayouts)
+		Safe_AddRef(pInputLayout);
 }
 
 CShader* CShader::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -274,6 +275,7 @@ HRESULT CShader::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 	if (layoutTag == "VTXNORTEX") { layoutDetails = { VTXNORTEX::Elements, VTXNORTEX::iNumElements }; }
 	if (layoutTag == "VTXMESH") { layoutDetails = { VTXMESH::Elements, VTXMESH::iNumElements }; }
 	if (layoutTag == "VTXANIMMESH") { layoutDetails = { VTXANIMMESH::Elements, VTXANIMMESH::iNumElements }; }
+	if (layoutTag == "VTXCUBETEX") { layoutDetails = { VTXCUBETEX::Elements, VTXCUBETEX::iNumElements }; }
 
 	if (FAILED(Initialize_Prototype(wsShaderPath.c_str(), layoutDetails.first, layoutDetails.second, layoutTag.c_str()))) {
 		return E_FAIL;

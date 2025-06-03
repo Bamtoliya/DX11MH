@@ -35,6 +35,15 @@ public:
 	ID3D11ShaderResourceView* Get_BackBufferSRV() const;
 #pragma endregion
 
+
+#pragma region PHYSICS_SYSTEM
+	PxPhysics* Get_Physics();
+	PxScene* Get_PhysicsScene(_uint iIndex = 0);
+	PxScene* Create_Scene();
+
+#pragma endregion
+
+
 #pragma region INPUT_DEVICE
 	_byte	Get_DIKeyState(_ubyte byKeyID);
 	_byte	Get_DIMouseState(DIM eMouse);	
@@ -144,6 +153,8 @@ public:
 	HRESULT PickObjectByColor(_float4* pColor);
 	HRESULT PickObjectById(_uint iId);
 	class CGameObject* Get_PickedObject() const;
+	void Set_PickedObject(CGameObject* pGameObject);
+	void Clear_PickedObject();
 //	void Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse);
 //	_bool Picking_InWorld(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
 //	_bool Picking_InLocal(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);

@@ -211,7 +211,6 @@ void CChannel::Update_TransformationMatrix(_uint* pCurrentKeyFrameIndex, _float 
 	Bones[m_iBoneIndex]->Set_TransformationMatrix(TransformationMatrix);
 }
 
-
 void CChannel::Sample_Transform(_float fTime, _float4x4* pOutMatrix)
 {
 	if (m_KeyFrames.empty())

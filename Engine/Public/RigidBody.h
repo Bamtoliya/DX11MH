@@ -28,7 +28,7 @@ class ENGINE_DLL CRigidBody : public CComponent
         _bool       bKinematicTarget = false;           // 키네마틱 컨트롤 시 사용
 
         // 메시 타입일 경우 모델 컴포넌트 필요 (추후 구현 시 사용)
-        // class CModel* pModelForMesh = nullptr;
+        class CModel* pModelForMesh = nullptr;
 
     } RIGIDBODY_DESC;
 
