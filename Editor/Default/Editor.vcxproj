@@ -94,6 +94,7 @@
     <ResourceCompile Include="Editor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_DebugLine.hlsl" />
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Struct.hlsli">
       <FileType>Document</FileType>
     </FxCompile>

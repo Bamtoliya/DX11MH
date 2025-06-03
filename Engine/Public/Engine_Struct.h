@@ -13,6 +13,22 @@ namespace Engine
 	}ENGINE_DESC;
 
 #pragma region VIBuffer
+
+	typedef struct tagPhysXDebugLine
+	{
+		XMFLOAT3 vP0;
+		XMFLOAT3 vP1;
+		XMFLOAT4 vColor;
+	} DEBUG_LINE;
+
+	typedef struct tagPhysXDebugTriangle
+	{
+		XMFLOAT3 vP0;
+		XMFLOAT3 vP1;
+		XMFLOAT3 vP2;
+		XMFLOAT4 vColor;
+	} DEBUG_TRIANGLE;
+
 	typedef struct tagLineIndices16
 	{
 		unsigned short		_0, _1;
@@ -123,6 +139,17 @@ namespace Engine
 
 
 #pragma region VTX Structures
+
+	typedef struct ENGINE_DLL tagVertexDebugDraw
+	{
+		XMFLOAT3 vPosition;
+		XMFLOAT4 vColor;
+
+		static const unsigned int					iNumElements = { 2 };
+
+		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
+	} VTXDEBUGDRAW;
+
 	typedef struct ENGINE_DLL tagVertexPositionTexcoord
 	{
 		XMFLOAT3		vPosition;

@@ -364,5 +364,8 @@
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Terrain.hlsl">
       <Filter>ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_DebugLine.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

@@ -76,6 +76,14 @@ HRESULT CPhysics_System::Initialize()
     if (!m_pPhysics)
         return E_FAIL;
 
+
+    if (!PxInitExtensions(*m_pPhysics, m_pPvd)) // PVD는 디버그 빌드에서만 유효할 수 있음
+    {
+        MSG_BOX("PxInitExtensions failed!");
+        // ... (Physics, Foundation, PVD 해제) ...
+        return E_FAIL;
+    }
+
     // CPU Dispatcher 생성 (멀티스레딩 지원)
     unsigned int numThreads = std::thread::hardware_concurrency();
     m_pDispatcher = PxDefaultCpuDispatcherCreate(numThreads > 0 ? numThreads : 2); // 스레드 2개 사용
@@ -91,6 +99,13 @@ void CPhysics_System::Priority_Update(_float fTimeDelta)
 
 void CPhysics_System::Update(_float fTimeDelta)
 {
+    if (m_pScene)
+    {
+        m_pScene->simulate(fTimeDelta);
+        m_pScene->fetchResults(true);
+
+        CollectDebugRenderData(); // 매 프레임 디버그 데이터 수집
+    }
 }
 
 void CPhysics_System::Late_Update(_float fTimeDelta)
@@ -137,7 +152,69 @@ PxScene* CPhysics_System::Create_Scene()
             pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
             pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
         }
+
+        // 디버그 시각화 파라미터 설정
+        m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0f);
+        // 가장 중요한 eCOLLISION_SHAPES 활성화
+        m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
+        // 필요에 따라 다른 파라미터도 활성화 가능
+        // m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_AABBS, 1.0f);
+        // m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCONTACT_POINT, 1.0f);
+        // m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);
     }
 
+    //m_pScene->getRenderBuffer();
+
     return m_pScene;
+}
+
+_float3 FromPxVec3(const physx::PxVec3& vec)
+{
+    return _float3(vec.x, vec.y, vec.z);
+}
+
+void CPhysics_System::CollectDebugRenderData()
+{
+    m_DebugLines.clear();
+    m_DebugTriangles.clear();
+
+    if (!m_pScene)
+        return;
+
+    const physx::PxRenderBuffer& rb = m_pScene->getRenderBuffer();
+
+    // 라인 정보 수집
+    for (physx::PxU32 i = 0; i < rb.getNbLines(); ++i)
+    {
+        const physx::PxDebugLine& pxLine = rb.getLines()[i];
+        DEBUG_LINE line;
+        line.vP0 = FromPxVec3(pxLine.pos0); // FromPxVec3 헬퍼 함수 필요 (PxVec3 -> _float3)
+        line.vP1 = FromPxVec3(pxLine.pos1);
+        // PhysX 색상은 0xAARRGGBB (uint32) 또는 각 정점별 색상. 여기서는 pos0의 색상만 사용.
+        // 필요시 color0, color1 모두 고려.
+        line.vColor = _float4(
+            ((pxLine.color0 >> 16) & 0xFF) / 255.f, // R
+            ((pxLine.color0 >> 8) & 0xFF) / 255.f,  // G
+            (pxLine.color0 & 0xFF) / 255.f,         // B
+            1.f                                     // A (Alpha - 항상 1로 설정 또는 필요에 따라 ((pxLine.color0 >> 24) & 0xFF) / 255.f)
+        );
+        m_DebugLines.push_back(line);
+    }
+
+    // 삼각형 정보 수집 (필요한 경우)
+    for (physx::PxU32 i = 0; i < rb.getNbTriangles(); ++i)
+    {
+        const physx::PxDebugTriangle& pxTri = rb.getTriangles()[i];
+        DEBUG_TRIANGLE tri;
+        tri.vP0 = FromPxVec3(pxTri.pos0);
+        tri.vP1 = FromPxVec3(pxTri.pos1);
+        tri.vP2 = FromPxVec3(pxTri.pos2);
+        tri.vColor = _float4(
+            ((pxTri.color0 >> 16) & 0xFF) / 255.f,
+            ((pxTri.color0 >> 8) & 0xFF) / 255.f,
+            (pxTri.color0 & 0xFF) / 255.f,
+            1.f
+        );
+        m_DebugTriangles.push_back(tri);
+    }
 }

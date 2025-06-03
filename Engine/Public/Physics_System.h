@@ -7,7 +7,6 @@ NS_BEGIN(physx)
 class PxFoundation;
 class PxPhysics;
 class PxPvd; // PhysX Visual Debugger
-class PxCooking; // Runtime cooking
 class PxDefaultCpuDispatcher;
 class PxMaterial;
 class PxScene; // 씬은 보통 별도로 관리하거나 나중에 생성
@@ -42,7 +41,6 @@ public:
 	// 다른 시스템에서 PhysX 객체에 접근해야 할 경우 getter 함수 제공
 	PxPhysics*	Get_Physics() const { return m_pPhysics; }
 	PxScene*	Get_PhysicsScene(_uint iIndex = 0) const { return m_pScene; }
-	PxCooking*	Get_PhysicsCooking() const { return m_pCooking; }
 	PxScene*	Create_Scene(); // 씬 생성 함수 (예시)
 
 #pragma endregion
@@ -57,13 +55,21 @@ private:
 	PxDefaultAllocator      m_Allocator;
 	PxDefaultErrorCallback   m_ErrorCallback;
 
-	PxCooking* m_pCooking = nullptr;
 	PxScene* m_pScene = nullptr;
 	PxFoundation* m_pFoundation = nullptr;
 	PxPhysics* m_pPhysics = nullptr;
 	PxDefaultCpuDispatcher* m_pDispatcher = nullptr;
 	PxCudaContextManager* m_pCudaContextManager = nullptr;
 	PxPvd* m_pPvd = nullptr;
+
+public:
+	void CollectDebugRenderData(); // 디버그 데이터 수집 함수
+	const vector<DEBUG_LINE>& GetDebugLines() const { return m_DebugLines; }
+	const vector<DEBUG_TRIANGLE>& GetDebugTriangles() const { return m_DebugTriangles; }
+
+private:
+	vector<DEBUG_LINE>      m_DebugLines;
+	vector<DEBUG_TRIANGLE>  m_DebugTriangles;
 };
 
 NS_END
