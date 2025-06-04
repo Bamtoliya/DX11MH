@@ -411,7 +411,12 @@ void CRigidBody::Set_Linear_Velocity(const _float3& vVelocity)
 		physx::PxRigidBody* pBody = static_cast<physx::PxRigidBody*>(m_pActor);
 		if (pBody)
 		{
+			
+			PxVec3 velocityChange = ToPxVec3(vVelocity) - pBody->getLinearVelocity();
+			//pBody->setlin
+			pBody->addForce(velocityChange, PxForceMode::eVELOCITY_CHANGE);
 			//pBody->setLinearVelocity(ToPxVec3(vVelocity));
+			//pBody->set
 		}
 	}
 }

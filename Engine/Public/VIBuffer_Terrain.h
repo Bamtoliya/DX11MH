@@ -47,6 +47,11 @@ private:
 
 public:
 	virtual HRESULT RenderImGui() override;
+
+public:
+	_uint Get_NumVerticeX() const { return m_iNumVerticesX; }
+	_uint Get_NumVerticeZ() const { return m_iNumVerticesZ; }
+	_float Get_HeightScale() const { return m_fHeightScale; }
 };
 
 NS_END

@@ -29,12 +29,12 @@ void CSonic_Ground_State::Enter()
 
 void CSonic_Ground_State::Execute(_float fTimeDelta)
 {
-	CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
-	if (pRigidBody)
+	
+	/*if (pRigidBody)
 	{
 		_float3 vCurrentVelocity = pRigidBody->Get_Linear_Velocity();
 		m_tStateParams.fMoveSpeed = XMVectorGetX(XMVector3Length(XMLoadFloat3(&vCurrentVelocity)));
-	}
+	}*/
 }
 
 void CSonic_Ground_State::HandleInput()
@@ -98,6 +98,13 @@ void CSonic_Ground_State::HandleInput()
 		pController->Change_State(ENUM_CLASS(CSonic::STATE::BOOST_LOOP));
 		return;
 	}
+
+	if (KEY_DOWN(DIK_SPACE))
+	{
+		m_tStateParams.bCanJump = false;
+		pController->Change_State(ENUM_CLASS(CSonic::STATE::JUMP_U));
+	}
+		
 		
 
 	if (bIsMoving)
@@ -126,7 +133,7 @@ void CSonic_Ground_State::HandleInput()
 		_float3 vAppliedForce = { vForceDirection.x * fAccelerationMagnitude, 0.f, vForceDirection.z * fAccelerationMagnitude };
 		// Y축 힘은 중력이나 점프 로직에서 별도 처리 가정
 
-		pRigidBody->Add_Force(vAppliedForce, physx::PxForceMode::eACCELERATION);
+		pRigidBody->Add_Force(vAppliedForce, physx::PxForceMode::eVELOCITY_CHANGE);
 
 
 		// 상태 전환 로직 (현재 속도에 따라 상태 변경)
@@ -177,6 +184,8 @@ void CSonic_Idle_State::Enter()
 void CSonic_Idle_State::Execute(_float fTimeDelta)
 {
 	m_tStateParams.fMoveSpeed = 0.f;
+	CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
+	pRigidBody->Set_Linear_Velocity(_float3(0.f, 0.f, 0.f));
 }
 
 void CSonic_Idle_State::HandleInput()

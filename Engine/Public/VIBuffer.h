@@ -26,6 +26,8 @@ public:
 	_float3 Get_LocalSize() { return m_vLocalSize; }
 	void Set_LocalSize(const _float3& vSize) { memcpy(&m_vLocalSize, &vSize, sizeof(_float3)); }
 	void Set_LocalSize(_float x = 1.f, _float y = 1.f, _float z = 1.f) { m_vLocalSize = { x, y, z }; }
+	const _float3* Get_VertexPositions() const { return m_pVertexPositions; }
+	const _uint Get_NumVertices() const { return m_iNumVertices; }
 
 protected:
 	HRESULT Create_VertexBuffer();
