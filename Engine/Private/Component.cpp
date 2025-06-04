@@ -2,10 +2,10 @@
 #include "GameObject.h"
 #include "GameInstance.h"
 CComponent::CComponent(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: m_pDevice			{ pDevice }
-	, m_pContext		{ pContext }
-	, m_pGameInstance	{ CGameInstance::Get_Instance() }
-	, m_bIsCloned		{ false }
+	: m_pDevice { pDevice }
+	, m_pContext { pContext }
+	, m_bIsCloned { false } 
+	, m_pGameInstance{ CGameInstance::Get_Instance() }
 {
 	Safe_AddRef(m_pGameInstance);
 	Safe_AddRef(m_pDevice);
@@ -13,11 +13,11 @@ CComponent::CComponent(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 }
 
 CComponent::CComponent(const CComponent& Prototype)
-	: m_pDevice			{ Prototype.m_pDevice }
-	, m_pContext		{ Prototype.m_pContext }
-	, m_pGameInstance	{ Prototype.m_pGameInstance }
-	, m_bIsCloned		{ true }
-	, m_bActive			{ Prototype.m_bActive }
+	: m_pDevice{ Prototype.m_pDevice }
+	, m_pContext{ Prototype.m_pContext }
+	, m_pGameInstance{ Prototype.m_pGameInstance }
+	, m_bIsCloned{ true }
+	, m_bActive{ Prototype.m_bActive }
 {
 	Safe_AddRef(m_pGameInstance);
 	Safe_AddRef(m_pDevice);

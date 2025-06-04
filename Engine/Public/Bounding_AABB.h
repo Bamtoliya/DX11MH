@@ -17,10 +17,16 @@ private:
 
 public:
 	HRESULT Initialize(const CBounding::BOUNDING_DESC* pDesc);
+	virtual void Update(_fmatrix WorldMatrix) override;
+
+#ifdef _DEBUG
+public:
+	virtual HRESULT Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
+#endif
 
 private:
 	/* 채워지는 초기정보는 로컬상에 상태대로 셋팅한다. */
-	BoundingBox* m_pOriginalDesc = {nullptr};
+	BoundingBox* m_pOriginalDesc = { nullptr };
 	BoundingBox* m_pDesc = { nullptr };
 
 public:

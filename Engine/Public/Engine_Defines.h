@@ -12,10 +12,12 @@
 #include <DirectXCollision.h>
 #include "SpriteBatch.h"
 #include "SpriteFont.h"
-#include "Effects.h"
 #include "d3dx11effect.h"
 #include "d3dcompiler.h"
 #include "SimpleMath.h"
+#include "VertexTypes.h"
+#include "PrimitiveBatch.h"
+#include "tk/Inc/Effects.h"
 using namespace DirectX;
 #pragma endregion
 

@@ -42,7 +42,7 @@ HRESULT CRigidBody::Initialize(void* pArg)
 	{
 		m_tRigidBodyDesc = *static_cast<RIGIDBODY_DESC*>(pArg);
 	}
-	//Deserialize();
+	
 	return S_OK;
 }
 HRESULT CRigidBody::Late_Initialize()

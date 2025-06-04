@@ -216,10 +216,11 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\Base_Objects.h" />
     <ClInclude Include="..\public\BlendNode.h" />
     <ClInclude Include="..\Public\Bounding_Box.h" />
-    <ClInclude Include="..\Public\Bounding_Sphere.h" />
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\public\Bounding.h" />
     <ClInclude Include="..\public\Bounding_AABB.h" />
+    <ClInclude Include="..\Public\Bounding_OBB.h" />
+    <ClInclude Include="..\Public\Bounding_Sphere.h" />
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\public\Camera_Manager.h" />
     <ClInclude Include="..\public\Collider.h" />
@@ -232,6 +233,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\Devices.h" />
     <ClInclude Include="..\public\ContainerObject.h" />
     <ClInclude Include="..\public\CustomFont.h" />
+    <ClInclude Include="..\Public\DebugDraw.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
     <ClInclude Include="..\Public\Engine_Function.h" />
@@ -370,6 +372,8 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\private\Bone.cpp" />
     <ClCompile Include="..\private\Bounding.cpp" />
     <ClCompile Include="..\private\Bounding_AABB.cpp" />
+    <ClCompile Include="..\Private\Bounding_OBB.cpp" />
+    <ClCompile Include="..\Private\Bounding_Sphere.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Camera_Manager.cpp" />
     <ClCompile Include="..\private\Collider.cpp" />
@@ -380,6 +384,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\private\ContainerObject.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
+    <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\Engine_Struct.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\Private\GameInstance.cpp" />
