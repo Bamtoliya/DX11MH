@@ -38,13 +38,6 @@ class ENGINE_DLL CRigidBody : public CComponent
         // 메시 타입일 경우 모델 컴포넌트 필요 (추후 구현 시 사용)
         class CModel* pModelForMesh = nullptr;
         _bool       bIsConvex = true; // Triangle Mesh가 Convex인지 여부 (Static일 때만 Triangle Mesh 가능)
-
-        // HeightField 정보 (EShapeType::HEIGHTFIELD 일 때 사용)
-        physx::PxHeightField* pHeightField = nullptr; // CVIBuffer_Terrain에서 생성된 PxHeightField
-        _float				  fHfHeightScale = 1.f;   // HeightField의 Y축 스케일
-        _float				  fHfRowScale = 1.f;    // HeightField의 X축 스케일 (정점 간 간격)
-        _float				  fHfColumnScale = 1.f; // HeightField의 Z축 스케일 (정점 간 간격)
-
     } RIGIDBODY_DESC;
 
 #pragma region Constructor/Destructor

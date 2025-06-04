@@ -253,6 +253,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\public\Height_Field.h" />
     <ClInclude Include="..\public\Input_Device.h" />
     <ClInclude Include="..\public\InterpolationNode.h" />
     <ClInclude Include="..\public\Json_Loader.h" />
@@ -399,6 +400,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\private\Height_Field.cpp" />
     <ClCompile Include="..\Private\Input_Device.cpp" />
     <ClCompile Include="..\private\InterpolationNode.cpp" />
     <ClCompile Include="..\private\Json_Loader.cpp" />

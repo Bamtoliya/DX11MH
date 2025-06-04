@@ -461,6 +461,9 @@
     <ClInclude Include="..\Public\Bounding_Sphere.h">
       <Filter>01.Utility\04.Components\Collider\Bounding\Sphere</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Height_Field.h">
+      <Filter>01.Utility\04.Components\RigidBody\Height_Field</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -854,6 +857,9 @@
     <ClCompile Include="..\Private\Bounding_Sphere.cpp">
       <Filter>01.Utility\04.Components\Collider\Bounding\Sphere</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Height_Field.cpp">
+      <Filter>01.Utility\04.Components\RigidBody\Height_Field</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -1149,6 +1155,9 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\Controller\BlendTree\Node\InterpolationNode">
       <UniqueIdentifier>{ba124921-b205-4e34-b2a5-f9f9661ea9bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\RigidBody\Height_Field">
+      <UniqueIdentifier>{77276ddb-5bee-4b7d-b712-d6d183f996b0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
