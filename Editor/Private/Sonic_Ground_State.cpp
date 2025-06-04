@@ -29,6 +29,12 @@ void CSonic_Ground_State::Enter()
 
 void CSonic_Ground_State::Execute(_float fTimeDelta)
 {
+	CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
+	if (pRigidBody)
+	{
+		_float3 vCurrentVelocity = pRigidBody->Get_Linear_Velocity();
+		m_tStateParams.fMoveSpeed = XMVectorGetX(XMVector3Length(XMLoadFloat3(&vCurrentVelocity)));
+	}
 }
 
 void CSonic_Ground_State::HandleInput()
@@ -44,7 +50,9 @@ void CSonic_Ground_State::HandleInput()
 	if (nullptr == pTransform) return;
 
 	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
-	if (nullptr == pTransform) return;
+
+	CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
+	if (nullptr == pRigidBody) return;
 
 	// 1. 카메라의 뷰 행렬 가져오기
 	_matrix camWorldMatrix = m_pGameInstance->Get_Transform_MatrixInverse(D3DTS::VIEW);
@@ -96,18 +104,45 @@ void CSonic_Ground_State::HandleInput()
 	{
 		vMovementDirection = XMVector3Normalize(vMovementDirection); // 최종 이동 방향 정규화
 
-		// 캐릭터가 이동할 방향으로 회전
+		// 캐릭터가 이동할 방향으로 회전 (이 부분은 유지하거나 물리 기반 회전으로 변경 가능)
 		_float fTargetAngleRadians = atan2f(XMVectorGetX(vMovementDirection), XMVectorGetZ(vMovementDirection));
-		//pTransform->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTargetAngleRadians);
-		pTransform->Turn_Quaternion(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTargetAngleRadians);	
+		pTransform->Turn_Quaternion(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTargetAngleRadians);
 
-		// 캐릭터 이동
-		//pTransform->Go_Straight(fTimeDelta); // Go_Straight는 현재 Transform의 Look 방향으로 이동
-		//pAnimator->Set_CurState(ENUM_CLASS(CSonic::STATE::RUN_LOOP), true);
-		if(m_tStateParams.fMoveSpeed >= 10.f)
-			pController->Change_State(ENUM_CLASS(CSonic::STATE::RUN_LOOP));
-		else 
-			pController->Change_State(ENUM_CLASS(CSonic::STATE::WALK_LOOP));
+		// 캐릭터 이동 (물리 기반으로 변경)
+		_float3 vForceDirection;
+		XMStoreFloat3(&vForceDirection, vMovementDirection);
+
+		// 적용할 힘의 크기 (m_tStateParams.fMoveSpeed는 상태별 목표 속도이므로, 가속도로 변환하거나 직접 힘의 크기를 설정)
+		// 예시: 일정한 가속도 적용
+		_float fAccelerationMagnitude = 20.f; // 예시 가속도 값, 필요에 따라 조절
+		//if (pController->Get_CurStateIndex() == ENUM_CLASS(CSonic::STATE::WALK_LOOP))
+		//	fAccelerationMagnitude = 10.f; // 걷기 상태일 때 가속도
+		//else if (pController->Get_CurStateIndex() == ENUM_CLASS(CSonic::STATE::RUN_LOOP))
+		//	fAccelerationMagnitude = 20.f; // 달리기 상태일 때 가속도
+		//else if (pController->Get_CurStateIndex() == ENUM_CLASS(CSonic::STATE::BOOST_LOOP))
+		//	fAccelerationMagnitude = 30.f; // 부스트 상태일 때 가속도
+
+
+		_float3 vAppliedForce = { vForceDirection.x * fAccelerationMagnitude, 0.f, vForceDirection.z * fAccelerationMagnitude };
+		// Y축 힘은 중력이나 점프 로직에서 별도 처리 가정
+
+		pRigidBody->Add_Force(vAppliedForce, physx::PxForceMode::eACCELERATION);
+
+
+		// 상태 전환 로직 (현재 속도에 따라 상태 변경)
+		// Execute 함수에서 현재 속도를 기반으로 m_tStateParams.fMoveSpeed를 업데이트하고,
+		// 그 값을 기준으로 상태를 변경하도록 할 수 있습니다.
+		// 또는 여기서 직접 pRigidBody->Get_Linear_Velocity()를 사용하여 상태 변경
+		_float3 currentVelocity = pRigidBody->Get_Linear_Velocity();
+		_float currentSpeed = XMVectorGetX(XMVector3Length(XMLoadFloat3(&currentVelocity)));
+
+		//if (pController->Get_CurStateIndex() != ENUM_CLASS(CSonic::STATE::BOOST_LOOP)) // 부스트 중이 아닐 때만 속도 기반 상태 변경
+		//{
+			if (currentSpeed >= 10.f) // 이 값은 m_tStateParams.fMoveSpeed와 연동되거나, 별도 임계값 사용
+				pController->Change_State(ENUM_CLASS(CSonic::STATE::RUN_LOOP));
+			else
+				pController->Change_State(ENUM_CLASS(CSonic::STATE::WALK_LOOP));
+		//}
 	}
 	else
 	{
@@ -232,7 +267,9 @@ void CSonic_Run_State::HandleInput()
 	if (nullptr == pTransform) return;
 
 	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
-	if (nullptr == pTransform) return;
+
+	CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
+	if (nullptr == pRigidBody) return;
 
 	// 1. 카메라의 뷰 행렬 가져오기
 	_matrix camWorldMatrix = m_pGameInstance->Get_Transform_MatrixInverse(D3DTS::VIEW);
@@ -278,26 +315,55 @@ void CSonic_Run_State::HandleInput()
 		pController->Change_State(ENUM_CLASS(CSonic::STATE::BOOST_LOOP));
 		return;
 	}
-		
+
 
 	if (bIsMoving)
 	{
 		vMovementDirection = XMVector3Normalize(vMovementDirection); // 최종 이동 방향 정규화
 
-		// 캐릭터가 이동할 방향으로 회전
+		// 캐릭터가 이동할 방향으로 회전 (이 부분은 유지하거나 물리 기반 회전으로 변경 가능)
 		_float fTargetAngleRadians = atan2f(XMVectorGetX(vMovementDirection), XMVectorGetZ(vMovementDirection));
-		pTransform->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTargetAngleRadians);
-		
+		pTransform->Turn_Quaternion(XMVectorSet(0.f, 1.f, 0.f, 0.f), fTargetAngleRadians);
 
-		// 캐릭터 이동
-		//pTransform->Go_Straight(fTimeDelta); // Go_Straight는 현재 Transform의 Look 방향으로 이동
-		//pAnimator->Set_CurState(ENUM_CLASS(CSonic::STATE::RUN_LOOP), true);
-		//if (m_tStateParams.fMoveSpeed >= 10.f)
-		pController->Change_State(ENUM_CLASS(CSonic::STATE::RUN_LOOP));
+		// 캐릭터 이동 (물리 기반으로 변경)
+		_float3 vForceDirection;
+		XMStoreFloat3(&vForceDirection, vMovementDirection);
+
+		// 적용할 힘의 크기 (m_tStateParams.fMoveSpeed는 상태별 목표 속도이므로, 가속도로 변환하거나 직접 힘의 크기를 설정)
+		// 예시: 일정한 가속도 적용
+		_float fAccelerationMagnitude = 20.f; // 예시 가속도 값, 필요에 따라 조절
+		//if (pController->Get_CurStateIndex() == ENUM_CLASS(CSonic::STATE::WALK_LOOP))
+		//	fAccelerationMagnitude = 10.f; // 걷기 상태일 때 가속도
+		//else if (pController->Get_CurStateIndex() == ENUM_CLASS(CSonic::STATE::RUN_LOOP))
+		//	fAccelerationMagnitude = 20.f; // 달리기 상태일 때 가속도
+		//else if (pController->Get_CurStateIndex() == ENUM_CLASS(CSonic::STATE::BOOST_LOOP))
+		//	fAccelerationMagnitude = 30.f; // 부스트 상태일 때 가속도
+
+
+		_float3 vAppliedForce = { vForceDirection.x * fAccelerationMagnitude, 0.f, vForceDirection.z * fAccelerationMagnitude };
+		// Y축 힘은 중력이나 점프 로직에서 별도 처리 가정
+
+		pRigidBody->Add_Force(vAppliedForce, physx::PxForceMode::eACCELERATION);
+
+
+		// 상태 전환 로직 (현재 속도에 따라 상태 변경)
+		// Execute 함수에서 현재 속도를 기반으로 m_tStateParams.fMoveSpeed를 업데이트하고,
+		// 그 값을 기준으로 상태를 변경하도록 할 수 있습니다.
+		// 또는 여기서 직접 pRigidBody->Get_Linear_Velocity()를 사용하여 상태 변경
+		_float3 currentVelocity = pRigidBody->Get_Linear_Velocity();
+		_float currentSpeed = XMVectorGetX(XMVector3Length(XMLoadFloat3(&currentVelocity)));
+
+		//if (pController->Get_CurStateIndex() != ENUM_CLASS(CSonic::STATE::BOOST_LOOP)) // 부스트 중이 아닐 때만 속도 기반 상태 변경
+		//{
+		if (currentSpeed >= 10.f) // 이 값은 m_tStateParams.fMoveSpeed와 연동되거나, 별도 임계값 사용
+			pController->Change_State(ENUM_CLASS(CSonic::STATE::RUN_LOOP));
+		else
+			pController->Change_State(ENUM_CLASS(CSonic::STATE::WALK_LOOP));
+		//}
 	}
 	else
 	{
-		pController->Change_State(ENUM_CLASS(CSonic::STATE::BRAKE_NEUTRAL));
+		pController->Change_State(ENUM_CLASS(CSonic::STATE::IDLE_LOOP));
 	}
 }
 

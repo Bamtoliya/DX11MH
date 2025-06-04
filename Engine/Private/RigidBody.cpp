@@ -48,6 +48,7 @@ HRESULT CRigidBody::Initialize(void* pArg)
 HRESULT CRigidBody::Late_Initialize()
 {
 	Create_Actor();
+	m_bIsLateInitialized = true;
 	return S_OK;
 }
 
