@@ -33,6 +33,7 @@ HRESULT CComponent::Initialize(void* pArg)
 {
 	return S_OK;
 }
+
 CComponent* CComponent::Clone(CGameObject* pGameObject, void* pArg)
 {
 	CComponent* pInstance = Clone(pArg);

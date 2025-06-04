@@ -11,7 +11,7 @@ CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	, m_pMaterial{ nullptr }
 	, m_bIsLateInitialized{ false }
 {
-	ZeroMemory(&m_tRigidBodyDesc, sizeof(RIGIDBODY_DESC));
+	//ZeroMemory(&m_tRigidBodyDesc, sizeof(RIGIDBODY_DESC));
 }
 
 CRigidBody::CRigidBody(const CRigidBody& Prototype)
@@ -42,11 +42,12 @@ HRESULT CRigidBody::Initialize(void* pArg)
 	{
 		m_tRigidBodyDesc = *static_cast<RIGIDBODY_DESC*>(pArg);
 	}
-
+	//Deserialize();
 	return S_OK;
 }
 HRESULT CRigidBody::Late_Initialize()
 {
+	Create_Actor();
 	return S_OK;
 }
 
@@ -77,16 +78,100 @@ void CRigidBody::Free()
 #pragma endregion
 
 #pragma region Save&Load
-HRESULT CRigidBody::Serialize(json& data)
+HRESULT CRigidBody::Serialize(json& outJson)
 {
-	if (FAILED(__super::Serialize(data)))
+	if (FAILED(__super::Serialize(outJson)))
 		return E_FAIL;
+	json rbData;
+	rbData["BodyType"] = static_cast<int>(m_tRigidBodyDesc.eBodyType);
+	rbData["ShapeType"] = static_cast<int>(m_tRigidBodyDesc.eShapeType);
+	rbData["ShapeSize"] = { m_tRigidBodyDesc.vShapeSize.x, m_tRigidBodyDesc.vShapeSize.y, m_tRigidBodyDesc.vShapeSize.z };
+	rbData["LocalPosition"] = { m_tRigidBodyDesc.vLocalPosition.x, m_tRigidBodyDesc.vLocalPosition.y, m_tRigidBodyDesc.vLocalPosition.z };
+	rbData["LocalEulerRotation"] = { m_tRigidBodyDesc.fCurRotationX, m_tRigidBodyDesc.fCurRotationY, m_tRigidBodyDesc.fCurRotationZ };
+	// qRotation은 fCurRotationX/Y/Z로부터 Create_Actor 시 계산되므로 별도 저장 필요 없음
+
+	rbData["Mass"] = m_tRigidBodyDesc.fMass;
+	rbData["Gravity"] = m_tRigidBodyDesc.bGravity;
+	rbData["StaticFriction"] = m_tRigidBodyDesc.fStaticFriction;
+	rbData["DynamicFriction"] = m_tRigidBodyDesc.fDynamicFriction;
+	rbData["Restitution"] = m_tRigidBodyDesc.fRestitution;
+	rbData["LockRotX"] = m_tRigidBodyDesc.bLockRotX;
+	rbData["LockRotY"] = m_tRigidBodyDesc.bLockRotY;
+	rbData["LockRotZ"] = m_tRigidBodyDesc.bLockRotZ;
+	rbData["KinematicTarget"] = m_tRigidBodyDesc.bKinematicTarget;
+	// pModelForMesh는 현재 직렬화/역직렬화에서 제외 (포인터 직접 저장은 부적절)
+
+	outJson["CRigidBody"] = rbData;
 	return S_OK;
 }
 HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 {
 	if (FAILED(__super::Deserialize(jsonData)))
 		return E_FAIL;
+
+	simdjson::ondemand::object rbObject;
+	if (jsonData["CRigidBody"].get_object().get(rbObject) == simdjson::SUCCESS)
+	{
+		m_tRigidBodyDesc.eBodyType = static_cast<EBodyType>(int(rbObject["BodyType"].get_int64().value_unsafe()));
+		m_tRigidBodyDesc.eShapeType = static_cast<EShapeType>(int(rbObject["ShapeType"].get_int64().value_unsafe()));
+
+		simdjson::ondemand::array shapeSizeArray;
+		if (rbObject["ShapeSize"].get_array().get(shapeSizeArray) == simdjson::SUCCESS && shapeSizeArray.count_elements() == 3) {
+			auto iter = shapeSizeArray.begin();
+			m_tRigidBodyDesc.vShapeSize.x = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			m_tRigidBodyDesc.vShapeSize.y = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			m_tRigidBodyDesc.vShapeSize.z = static_cast<_float>((*iter).get_double().value_unsafe());
+		}
+
+		simdjson::ondemand::array localPosArray;
+		if (rbObject["LocalPosition"].get_array().get(localPosArray) == simdjson::SUCCESS && localPosArray.count_elements() == 3) {
+			auto iter = localPosArray.begin();
+			m_tRigidBodyDesc.vLocalPosition.x = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			m_tRigidBodyDesc.vLocalPosition.y = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			m_tRigidBodyDesc.vLocalPosition.z = static_cast<_float>((*iter).get_double().value_unsafe());
+		}
+
+		simdjson::ondemand::array localEulerArray;
+		if (rbObject["LocalEulerRotation"].get_array().get(localEulerArray) == simdjson::SUCCESS && localEulerArray.count_elements() == 3) {
+			auto iter = localEulerArray.begin();
+			m_tRigidBodyDesc.fCurRotationX = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			m_tRigidBodyDesc.fCurRotationY = static_cast<_float>((*iter).get_double().value_unsafe());
+			++iter;
+			m_tRigidBodyDesc.fCurRotationZ = static_cast<_float>((*iter).get_double().value_unsafe());
+		}
+		// qRotation은 fCurRotationX/Y/Z 로드 후 Create_Actor에서 계산됨
+
+		m_tRigidBodyDesc.fMass = static_cast<_float>(rbObject["Mass"].get_double().value_unsafe());
+		m_tRigidBodyDesc.bGravity = rbObject["Gravity"].get_bool().value_unsafe();
+		m_tRigidBodyDesc.fStaticFriction = static_cast<_float>(rbObject["StaticFriction"].get_double().value_unsafe());
+		m_tRigidBodyDesc.fDynamicFriction = static_cast<_float>(rbObject["DynamicFriction"].get_double().value_unsafe());
+		m_tRigidBodyDesc.fRestitution = static_cast<_float>(rbObject["Restitution"].get_double().value_unsafe());
+		m_tRigidBodyDesc.bLockRotX = rbObject["LockRotX"].get_bool().value_unsafe();
+		m_tRigidBodyDesc.bLockRotY = rbObject["LockRotY"].get_bool().value_unsafe();
+		m_tRigidBodyDesc.bLockRotZ = rbObject["LockRotZ"].get_bool().value_unsafe();
+		m_tRigidBodyDesc.bKinematicTarget = rbObject["KinematicTarget"].get_bool().value_unsafe();
+	}
+	else
+	{
+		// CRigidBody 데이터가 없을 경우 경고 또는 기본값 사용
+		MSG_BOX("CRigidBody::Deserialize - CRigidBody data not found in JSON. Using defaults or previously set values.");
+	}
+
+	// 역직렬화 후 액터 상태를 업데이트해야 할 수 있음
+	// 예를 들어, 이미 Late_Initialize가 호출된 상태에서 Deserialize가 호출된다면,
+	// 액터를 재생성하거나 업데이트해야 함.
+	//if (m_bIsLateInitialized) // 이미 초기화(액터 생성)가 완료된 경우
+	//{
+	Release_Actor();
+	Create_Actor(); // 새 설정으로 액터 재생성
+	//}
+
+
 	return S_OK;
 }
 #pragma endregion
@@ -112,7 +197,6 @@ void CRigidBody::Late_Update(_float fTimeDelta)
 {
 	if (!m_bActive || !m_bIsLateInitialized || !m_pActor)
 		return;
-
 	// Dynamic 또는 Kinematic 액터의 경우, 물리 시뮬레이션 결과를 Transform에 반영
 	if (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC)
 	{
@@ -162,7 +246,47 @@ HRESULT CRigidBody::RenderImGui()
 			Release_Actor();
 			Create_Actor();
 		}
+
+		if (ImGui::DragFloat3("Local Position", &m_tRigidBodyDesc.vLocalPosition.x, 0.1f))
+		{
+			Release_Actor(); // 로컬 위치 변경 시 액터 즉시 재생성
+			Create_Actor();
+			// m_bIsTransformDirty = true; // 또는 다음 프레임에 동기화
+		}
+
 		ImGui::Text("Box:(HalfExtents), Sphere:(Radius,0,0), Capsule:(Radius,HalfHeight,0)");
+
+		// Rotation (Euler Angles from m_tRigidBodyDesc.qRotation)
+		// 이 부분은 m_tRigidBodyDesc.qRotation을 오일러 각도로 변환하여 표시하고,
+		// ImGui에서 오일러 각도를 수정하면 m_tRigidBodyDesc.qRotation을 업데이트하고 액터를 재생성합니다.
+		// Create_Actor에서는 m_tRigidBodyDesc.fCurRotationX/Y/Z를 사용하여 m_tRigidBodyDesc.qRotation을 설정하므로,
+		// ImGui는 항상 최신의 qRotation을 기반으로 작동합니다.
+
+		_float3 eulerAnglesDegrees = {
+			XMConvertToDegrees(m_tRigidBodyDesc.fCurRotationX),
+			XMConvertToDegrees(m_tRigidBodyDesc.fCurRotationY),
+			XMConvertToDegrees(m_tRigidBodyDesc.fCurRotationZ)
+		};
+
+		if (ImGui::DragFloat3(u8"Rotation (Euler °)", &eulerAnglesDegrees.x, 1.0f, -360.f, 360.f))
+		{
+			_float3 newEulerAnglesRadians = {
+				XMConvertToRadians(eulerAnglesDegrees.x), // Roll
+				XMConvertToRadians(eulerAnglesDegrees.y), // Pitch
+				XMConvertToRadians(eulerAnglesDegrees.z)  // Yaw
+			};
+			// XMQuaternionRotationRollPitchYaw expects Pitch, Yaw, Roll order
+			XMVECTOR newQuaternion = XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&_float3(m_tRigidBodyDesc.fCurRotationX, m_tRigidBodyDesc.fCurRotationY, m_tRigidBodyDesc.fCurRotationZ)));
+			XMStoreFloat4(&m_tRigidBodyDesc.qRotation, XMQuaternionNormalize(newQuaternion));
+
+			// ImGui에서 변경 시 fCurRotationX/Y/Z도 동기화 (선택 사항, Create_Actor에서만 사용된다면 불필요할 수 있음)
+			m_tRigidBodyDesc.fCurRotationX = newEulerAnglesRadians.x; // Roll
+			m_tRigidBodyDesc.fCurRotationY = newEulerAnglesRadians.y; // Pitch
+			m_tRigidBodyDesc.fCurRotationZ = newEulerAnglesRadians.z; // Yaw
+
+			Release_Actor();
+			Create_Actor();
+		}
 
 
 		//if (m_tRigidBodyDesc.eShapeType == EShapeType::CONVEX_MESH || m_tRigidBodyDesc.eShapeType == EShapeType::TRIANGLE_MESH)
@@ -236,11 +360,21 @@ namespace { // 익명 네임스페이스 사용
 		XMStoreFloat4x4(&matrix, XMLoadFloat4x4(reinterpret_cast<const XMFLOAT4X4*>(&physx::PxMat44(transform))));
 		return matrix;
 	}
+
 	physx::PxVec3 ToPxVec3(const _float3& vec) {
 		return physx::PxVec3(vec.x, vec.y, vec.z);
 	}
 	_float3 ToFloat3(const physx::PxVec3& vec) {
 		return _float3(vec.x, vec.y, vec.z);
+	}
+
+	_float4 ToFloat4(const PxQuat& quat)
+	{
+		return _float4(quat.x, quat.y, quat.z, quat.z);
+	}
+
+	PxQuat ToPxQuat(const _float4& quat) {
+		return PxQuat(quat.x, quat.y, quat.z, quat.w);
 	}
 }
 
@@ -586,8 +720,31 @@ HRESULT CRigidBody::Create_Actor()
 	}
 
 	// 3. Actor 생성
-	_float4x4 matWorld = *pTransform->Get_WorldMatrix_Ptr();
-	PxTransform actorPose = ToPxTransform(matWorld);
+	// CTransform의 월드 정보 가져오기
+	_matrix cTransformWorldMatrix = pTransform->Get_WorldMatrix();
+
+	_float3 rbLocalPos = m_tRigidBodyDesc.vLocalPosition;
+	XMVECTOR rbLocalRotQuatVec = XMQuaternionRotationRollPitchYaw(
+		m_tRigidBodyDesc.fCurRotationY, // Pitch
+		m_tRigidBodyDesc.fCurRotationZ, // Yaw
+		m_tRigidBodyDesc.fCurRotationX  // Roll
+	);
+	rbLocalRotQuatVec = XMQuaternionNormalize(rbLocalRotQuatVec);
+	XMStoreFloat4(&m_tRigidBodyDesc.qRotation, rbLocalRotQuatVec); // Update desc's qRotation
+
+	_matrix rbLocalTranslationMatrix = XMMatrixTranslation(rbLocalPos.x, rbLocalPos.y, rbLocalPos.z);
+	_matrix rbLocalRotationMatrix = XMMatrixRotationQuaternion(rbLocalRotQuatVec);
+	_matrix rbLocalMatrix = rbLocalRotationMatrix * rbLocalTranslationMatrix;
+
+	_matrix finalActorWorldMatrix = rbLocalMatrix * cTransformWorldMatrix;
+
+	_vector scale, rot, trans;
+	XMMatrixDecompose(&scale, &rot, &trans, finalActorWorldMatrix);
+
+	_float3 finalActorPos; XMStoreFloat3(&finalActorPos, trans);
+	_float4 finalActorRot; XMStoreFloat4(&finalActorRot, rot);
+
+	PxTransform actorPose(ToPxVec3(finalActorPos), ToPxQuat(finalActorRot));
 
 	switch (m_tRigidBodyDesc.eBodyType)
 	{
@@ -681,26 +838,36 @@ void CRigidBody::Release_Actor()
 
 void CRigidBody::Synchronize_Transform_To_Physics()
 {
-	if (!m_pActor || !m_pOwner)
-		return;
-
+	if (!m_pActor || !m_pOwner) return;
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
-	if (!pTransform)
-		return;
+	if (!pTransform) return;
 
-	_float4x4 matWorld = *pTransform->Get_WorldMatrix_Ptr();
-	PxTransform physxTransform = ToPxTransform(matWorld);
+	_matrix cTransformWorldMatrix = pTransform->Get_WorldMatrix();
+
+	_float3 rbLocalPos = m_tRigidBodyDesc.vLocalPosition;
+	XMVECTOR rbLocalRotQuatVec = XMLoadFloat4(&m_tRigidBodyDesc.qRotation); // qRotation is RB's local rotation
+
+	_matrix rbLocalTranslationMatrix = XMMatrixTranslation(rbLocalPos.x, rbLocalPos.y, rbLocalPos.z);
+	_matrix rbLocalRotationMatrix = XMMatrixRotationQuaternion(rbLocalRotQuatVec);
+	_matrix rbLocalMatrix = rbLocalRotationMatrix * rbLocalTranslationMatrix;
+
+	_matrix finalActorWorldMatrix = rbLocalMatrix * cTransformWorldMatrix;
+
+	_vector s, finalActorRotVec, finalActorPosVec;
+	XMMatrixDecompose(&s, &finalActorRotVec, &finalActorPosVec, finalActorWorldMatrix);
+
+	_float3 finalActorPos; XMStoreFloat3(&finalActorPos, finalActorPosVec);
+	_float4 finalActorRot; XMStoreFloat4(&finalActorRot, finalActorRotVec);
+
+	PxTransform physxActorWorldPose(ToPxVec3(finalActorPos), ToPxQuat(finalActorRot));
 
 	if (m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC)
 	{
-		physx::PxRigidDynamic* pKinematicActor = static_cast<physx::PxRigidDynamic*>(m_pActor);
-		pKinematicActor->setKinematicTarget(physxTransform);
+		static_cast<physx::PxRigidDynamic*>(m_pActor)->setKinematicTarget(physxActorWorldPose);
 	}
 	else
 	{
-		// Static 또는 Dynamic 액터의 경우, 일반적으로 게임 로직에서 직접 위치를 강제 설정하는 것은 물리 시뮬레이션과 충돌할 수 있습니다.
-		// 필요한 경우에만 사용해야 하며, Dynamic 액터의 경우 깨어있는 상태로 만들 수 있습니다.
-		m_pActor->setGlobalPose(physxTransform);
+		m_pActor->setGlobalPose(physxActorWorldPose);
 		if (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
 		{
 			physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(m_pActor);
@@ -714,29 +881,29 @@ void CRigidBody::Synchronize_Transform_To_Physics()
 
 void CRigidBody::Synchronize_Physics_To_Transform()
 {
-	if (!m_pActor || !m_pOwner)
-		return;
-
+	if (!m_pActor || !m_pOwner) return;
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
-	if (!pTransform)
-		return;
+	if (!pTransform) return;
 
-	if (m_tRigidBodyDesc.eBodyType == EBodyType::STATIC) // Static 액터는 움직이지 않음
-		return;
+	if (m_tRigidBodyDesc.eBodyType == EBodyType::STATIC) return;
 
-	physx::PxTransform physxTransform = m_pActor->getGlobalPose();
-	_float4x4 matWorld = ToFloat4x4(physxTransform);
+	physx::PxTransform physxActorCurrentWorldPose = m_pActor->getGlobalPose();
+	_matrix actorWorldMatrix = XMLoadFloat4x4(&ToFloat4x4(physxActorCurrentWorldPose));
 
-	// 부모가 있을 경우 로컬 트랜스폼으로 변환 필요
-	CGameObject* pParent = m_pOwner->Get_Parent();
-	if (pParent && static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag)))
-	{
-		_float4x4 matParentInverse;
-		XMStoreFloat4x4(&matParentInverse, static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag))->Get_WorldMatrix_Inverse());
-		XMStoreFloat4x4(&matWorld, XMLoadFloat4x4(&matWorld) * XMLoadFloat4x4(&matParentInverse));
-	}
+	_float3 rbLocalPos = m_tRigidBodyDesc.vLocalPosition;
+	XMVECTOR rbLocalRotQuatVec = XMLoadFloat4(&m_tRigidBodyDesc.qRotation); // qRotation is RB's local rotation
 
-	pTransform->Set_WorldMatrix(XMLoadFloat4x4(&matWorld));
+	_matrix rbLocalTranslationMatrix = XMMatrixTranslation(rbLocalPos.x, rbLocalPos.y, rbLocalPos.z);
+	_matrix rbLocalRotationMatrix = XMMatrixRotationQuaternion(rbLocalRotQuatVec);
+	_matrix rbLocalMatrix = rbLocalRotationMatrix * rbLocalTranslationMatrix;
+
+	_matrix invRbLocalMatrix = XMMatrixInverse(nullptr, rbLocalMatrix);
+	_matrix targetCTransformWorldMatrix = invRbLocalMatrix * actorWorldMatrix;
+
+	pTransform->Set_WorldMatrix(targetCTransformWorldMatrix);
+
+	// CTransform의 오일러 각도도 동기화 (선택 사항, Set_WorldMatrix 내부에서 처리될 수 있음)
+	// pTransform->SynchronizeRotationRepresentations(); // CTransform에 이런 함수가 있다면 호출
 }
 
 #pragma endregion

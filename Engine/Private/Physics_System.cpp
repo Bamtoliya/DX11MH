@@ -90,6 +90,9 @@ HRESULT CPhysics_System::Initialize()
     if (!m_pDispatcher)
         return E_FAIL;
 
+    m_pScene = Create_Scene();
+    if (!m_pScene) return E_FAIL;
+
     return S_OK;
 }
 
@@ -99,12 +102,17 @@ void CPhysics_System::Priority_Update(_float fTimeDelta)
 
 void CPhysics_System::Update(_float fTimeDelta)
 {
+#ifdef _DEBUG
+    if (KEY_DOWN(DIK_F3))
+        m_bPhysicsDebugDraw = !m_bPhysicsDebugDraw;
+#endif // _DEBUG
+
     if (m_pScene)
     {
         m_pScene->simulate(fTimeDelta);
         m_pScene->fetchResults(true);
 
-        CollectDebugRenderData(); // 매 프레임 디버그 데이터 수집
+        Collect_DebugRenderData(); // 매 프레임 디버그 데이터 수집
     }
 }
 
@@ -173,7 +181,7 @@ _float3 FromPxVec3(const physx::PxVec3& vec)
     return _float3(vec.x, vec.y, vec.z);
 }
 
-void CPhysics_System::CollectDebugRenderData()
+void CPhysics_System::Collect_DebugRenderData()
 {
     m_DebugLines.clear();
     m_DebugTriangles.clear();

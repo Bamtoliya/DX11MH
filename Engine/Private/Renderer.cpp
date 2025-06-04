@@ -17,7 +17,7 @@ HRESULT CRenderer::Initialize()
 	D3D11_VIEWPORT ViewportDesc = {};
 	_uint iNumViewports = 1;
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
-
+#pragma region Prepare RenderTargets
 	if (FAILED(m_pGameInstance->Add_RenderTarget(
 		L"RT_FinalScene",                // 렌더 타겟 고유 태그
 		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
@@ -73,19 +73,32 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	}
 
-	vector<wstring> FinalTargets = { L"RT_ObjectsOnly", L"RT_Picking"};
+	vector<wstring> FinalTargets = { L"RT_ObjectsOnly", L"RT_Picking" };
 	if (FAILED(m_pGameInstance->Add_MRT(L"RT_FinalScene_Group", FinalTargets)))
 	{
 		MSG_BOX("Failed to create RT_FinalScene group");
 		return E_FAIL;
 	}
+#pragma endregion
 
-	/*vector<wstring> PickingTargets = { L"RT_Picking" };
-	if (FAILED(m_pGameInstance->Add_MRT(L"RT_Picking_Group", PickingTargets)))
+#pragma region Prepare Physx DebugDraw
+	m_iNumMaxDebugLineVertices = 20000;
+	D3D11_BUFFER_DESC BufferDesc;
+	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
+	BufferDesc.ByteWidth = sizeof(VTXDEBUGDRAW) * m_iNumMaxDebugLineVertices;
+	BufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	BufferDesc.MiscFlags = 0;
+	BufferDesc.StructureByteStride = 0;
+
+	if (FAILED(m_pDevice->CreateBuffer(&BufferDesc, nullptr, &m_pVB_DebugLine)))
 	{
-		MSG_BOX("Failed to create RT_Picking group");
+		MSG_BOX("CRenderer::Initialize - Failed to create m_pVB_DebugLine");
 		return E_FAIL;
-	}*/
+	}
+#pragma endregion
+
 	return S_OK;
 }
 
@@ -135,7 +148,12 @@ HRESULT CRenderer::Draw()
 		return E_FAIL;
 	if (FAILED(Render_UI()))
 		return E_FAIL;
-
+	if (m_pGameInstance->Get_IsDebugDraw())
+	{
+		if (FAILED(Render_Debug()))
+			return E_FAIL;
+	}
+	
 	ID3D11ShaderResourceView* pFinalSceneSRV = m_pGameInstance->Get_SRV(L"RT_FinalScene");
 	if (pFinalSceneSRV)
 	{
@@ -184,8 +202,74 @@ HRESULT CRenderer::Render_NonBlend()
 	return S_OK;
 }
 HRESULT CRenderer::Render_Debug()
-{
-	for (auto& pGameObject : m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_DEBUG)])
+{	
+	const auto& debugLines = m_pGameInstance->Get_DebugLines();
+	if (debugLines.empty())
+	{
+		return S_OK;
+	}
+
+	_uint iNumVerticesToRender = static_cast<_uint>(debugLines.size() * 2);
+	if (iNumVerticesToRender == 0) {
+		return S_OK;
+	}
+
+	if (iNumVerticesToRender > m_iNumMaxDebugLineVertices) {
+		iNumVerticesToRender = m_iNumMaxDebugLineVertices;
+		// MSG_BOX("CRenderer::Render_Debug_PhysX - Debug line vertex count exceeds buffer capacity. Clamping.");
+	}
+
+	D3D11_MAPPED_SUBRESOURCE MappedSubResource;
+	if (FAILED(m_pContext->Map(m_pVB_DebugLine, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource)))
+	{
+		return E_FAIL;
+	}
+
+	VTXDEBUGDRAW* pVertices = (VTXDEBUGDRAW*)MappedSubResource.pData;
+	_uint iVertexIndex = 0;
+	for (const auto& line : debugLines)
+	{
+		if (iVertexIndex + 1 >= iNumVerticesToRender) break;
+		pVertices[iVertexIndex].vPosition = line.vP0;
+		pVertices[iVertexIndex].vColor = line.vColor;
+		iVertexIndex++;
+
+		pVertices[iVertexIndex].vPosition = line.vP1;
+		pVertices[iVertexIndex].vColor = line.vColor;
+		iVertexIndex++;
+	}
+	m_pContext->Unmap(m_pVB_DebugLine, 0);
+
+	CShader* pShader = static_cast<CShader*>(m_pGameInstance->Clone_Prototype(PROTOTYPE::TYPE_COMPONENT, 0, TEXT("Prototype_Component_Shader_VtxDebugDraw"), nullptr, nullptr));
+
+	if (nullptr == pShader) {
+		MSG_BOX("Render_Debug_PhysX - Failed to Get Prototype_Shader_DebugLine");
+		return E_FAIL;
+	}
+	// 프로토타입을 직접 사용하는 경우 AddRef/Release는 필요 없음. 복제해서 사용한다면 Release 필요.
+	// 여기서는 직접 사용한다고 가정.
+
+	_float4x4 matWorld, matView, matProj;
+	XMStoreFloat4x4(&matWorld, XMMatrixIdentity()); // 디버그 라인은 이미 월드 좌표
+	XMStoreFloat4x4(&matView, m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW));
+	XMStoreFloat4x4(&matProj, m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ));
+
+	pShader->Bind_Matrix("g_WorldMatrix", &matWorld);
+	pShader->Bind_Matrix("g_ViewMatrix", &matView);
+	pShader->Bind_Matrix("g_ProjMatrix", &matProj);
+
+	// 중요: 셰이더의 Begin을 호출하기 전에 입력 레이아웃 설정이 필요할 수 있음
+	// CShader::Create에서 입력 레이아웃을 이미 생성했으므로, Begin에서 자동으로 바인딩됨.
+	pShader->Begin(0); // 디버그 셰이더의 0번 패스 사용
+
+	_uint iStride = sizeof(VTXDEBUGDRAW);
+	_uint iOffset = 0;
+	m_pContext->IASetVertexBuffers(0, 1, &m_pVB_DebugLine, &iStride, &iOffset);
+	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST); // 라인 리스트로 설정
+	m_pContext->Draw(iVertexIndex, 0);
+	Safe_Release(pShader);
+	return S_OK;
+	/*for (auto& pGameObject : m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_DEBUG)])
 	{
 		if (nullptr != pGameObject)
 			pGameObject->Render();
@@ -194,7 +278,7 @@ HRESULT CRenderer::Render_Debug()
 	}
 	m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_NONBLEND)].clear();
 
-	return S_OK;
+	return S_OK;*/
 }
 //
 //_bool Compare(CGameObject* pSour, CGameObject* pDest)

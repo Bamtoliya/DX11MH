@@ -41,15 +41,15 @@
                             0.9744197130203247
                         ],
                         "Position": [
-                            -1.4149833917617798,
-                            3.824669122695923,
-                            -3.875443696975708
+                            -1.4149775505065918,
+                            3.824657440185547,
+                            -3.875455379486084
                         ],
                         "RotationPerSec": 1.0,
                         "Scale": [
-                            0.9999050498008728,
-                            0.9999067783355713,
-                            0.9999291300773621
+                            0.9998800754547119,
+                            0.999908447265625,
+                            0.9998321533203125
                         ],
                         "SpeedPerSec": 10.0
                     },
@@ -66,6 +66,34 @@
             {
                 "CSonic": {
                     "Active": true,
+                    "CRigidBody": {
+                        "BodyType": 0,
+                        "DynamicFriction": 0.5,
+                        "Gravity": true,
+                        "KinematicTarget": false,
+                        "LocalEulerRotation": [
+                            1.5707963705062866,
+                            0.0,
+                            0.0
+                        ],
+                        "LocalPosition": [
+                            0.0,
+                            0.5,
+                            0.0
+                        ],
+                        "LockRotX": false,
+                        "LockRotY": false,
+                        "LockRotZ": false,
+                        "Mass": 1.0,
+                        "Restitution": 0.5,
+                        "ShapeSize": [
+                            0.25,
+                            0.25,
+                            1.0
+                        ],
+                        "ShapeType": 2,
+                        "StaticFriction": 0.5
+                    },
                     "CShader": {
                         "Layout": "VTXANIMMESH",
                         "Tiling": true,
@@ -100,9 +128,9 @@
                         ],
                         "RotationPerSec": 0.0,
                         "Scale": [
-                            0.9999978542327881,
+                            0.9999977946281433,
                             0.9999997019767761,
-                            0.9999978542327881
+                            0.9999977946281433
                         ],
                         "SpeedPerSec": 10.0
                     },
@@ -115,6 +143,34 @@
             {
                 "CSonic": {
                     "Active": true,
+                    "CRigidBody": {
+                        "BodyType": 0,
+                        "DynamicFriction": 0.5,
+                        "Gravity": true,
+                        "KinematicTarget": false,
+                        "LocalEulerRotation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "LocalPosition": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "LockRotX": false,
+                        "LockRotY": false,
+                        "LockRotZ": false,
+                        "Mass": 1.0,
+                        "Restitution": 0.5,
+                        "ShapeSize": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "ShapeType": 0,
+                        "StaticFriction": 0.5
+                    },
                     "CShader": {
                         "Layout": "VTXANIMMESH",
                         "Tiling": true,
@@ -149,9 +205,9 @@
                         ],
                         "RotationPerSec": 0.0,
                         "Scale": [
-                            0.999997615814209,
+                            0.9999975562095642,
                             0.9999997019767761,
-                            0.999997615814209
+                            0.9999975562095642
                         ],
                         "SpeedPerSec": 0.0
                     },
@@ -290,9 +346,9 @@
                             1.0
                         ],
                         "Position": [
-                            -1.4149833917617798,
-                            3.82466983795166,
-                            -3.875443458557129
+                            -1.4149774312973022,
+                            3.8246572017669678,
+                            -3.875455379486084
                         ],
                         "RotationPerSec": 0.0,
                         "Scale": [

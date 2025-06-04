@@ -40,6 +40,9 @@ public:
 	PxPhysics* Get_Physics();
 	PxScene* Get_PhysicsScene(_uint iIndex = 0);
 	PxScene* Create_Scene();
+	const vector<DEBUG_LINE>& Get_DebugLines();
+	const vector<DEBUG_TRIANGLE>& Get_DebugTriangles();
+	const _bool	Get_IsDebugDraw();
 
 #pragma endregion
 

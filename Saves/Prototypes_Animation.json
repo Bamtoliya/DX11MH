@@ -1,7 +1,7 @@
 {
   "Prototype_Component_Model_Sonic": {
     "Class": "CModel",
-    "ModelFilePath": "../../Assets/Models/Sonic/SonicAllActions.model",
+    "ModelFilePath": "G:/Computers/Desktop/Assets/Models/Sonic/SonicAllActions.model",
     "PreTransformedMatrix": [
       -1.0,
       0.0,

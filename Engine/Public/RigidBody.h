@@ -16,9 +16,17 @@ class ENGINE_DLL CRigidBody : public CComponent
     // 리지드바디 초기화 정보 구조체
     typedef struct tagRigidBodyDesc
     {
+        //Shape Information
         EBodyType   eBodyType = EBodyType::STATIC;
         EShapeType  eShapeType = EShapeType::BOX;
         _float3     vShapeSize = _float3(1.f, 1.f, 1.f); // Box: (halfExtents), Sphere: (radius,0,0), Capsule: (radius, halfHeight,0)
+        _float3     vLocalPosition = _float3(0.f, 0.f, 0.f);
+        _float4     qRotation = _float4(0.f, 0.f, 0.f, 1.f);
+        _float      fCurRotationX = { 0.f };
+        _float      fCurRotationY = { 0.f };
+        _float      fCurRotationZ = { 0.f };
+
+        //Material Information
         _float      fMass = 1.f;                        // Dynamic body의 질량
         _bool       bGravity = true;                    // 중력 적용 여부 (Dynamic body)
         _float      fStaticFriction = 0.5f;
@@ -46,7 +54,7 @@ public:
 	virtual CRigidBody* Clone(void* pArg)  override;
 	virtual void Free() override;
 public:
-	virtual HRESULT Serialize(json& data) override;
+	virtual HRESULT Serialize(json& outJson) override;
 	virtual HRESULT Deserialize(simdjson::ondemand::object& jsonData) override;
 #pragma endregion
 

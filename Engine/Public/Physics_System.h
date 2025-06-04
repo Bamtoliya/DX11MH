@@ -38,11 +38,9 @@ public:
 
 #pragma region Public Accessors (예시)
 public:
-	// 다른 시스템에서 PhysX 객체에 접근해야 할 경우 getter 함수 제공
 	PxPhysics*	Get_Physics() const { return m_pPhysics; }
 	PxScene*	Get_PhysicsScene(_uint iIndex = 0) const { return m_pScene; }
 	PxScene*	Create_Scene(); // 씬 생성 함수 (예시)
-
 #pragma endregion
 
 private:
@@ -63,13 +61,15 @@ private:
 	PxPvd* m_pPvd = nullptr;
 
 public:
-	void CollectDebugRenderData(); // 디버그 데이터 수집 함수
-	const vector<DEBUG_LINE>& GetDebugLines() const { return m_DebugLines; }
-	const vector<DEBUG_TRIANGLE>& GetDebugTriangles() const { return m_DebugTriangles; }
+	void Collect_DebugRenderData(); // 디버그 데이터 수집 함수
+	const vector<DEBUG_LINE>& Get_DebugLines() const { return m_DebugLines; }
+	const vector<DEBUG_TRIANGLE>& Get_DebugTriangles() const { return m_DebugTriangles; }
+	const _bool	Get_IsDebugDraw() const { return m_bPhysicsDebugDraw; }
 
 private:
 	vector<DEBUG_LINE>      m_DebugLines;
 	vector<DEBUG_TRIANGLE>  m_DebugTriangles;
+	_bool					m_bPhysicsDebugDraw = { false };
 };
 
 NS_END

@@ -39,6 +39,11 @@
     "Layout": "VTXCUBETEX",
     "ShaderPath": "../../Assets/ShaderFiles/Shader_VtxCubeTex.hlsl"
   },
+  "Prototype_Component_Shader_VtxDebugDraw": {
+    "Class": "CShader",
+    "Layout": "VTXDEBUGDRAW",
+    "ShaderPath": "../../Assets/ShaderFiles/Shader_DebugLine.hlsl"
+  },
   "Prototype_Component_Texture_BackGround": {
     "Class": "CTexture",
     "NumTexture": 2,

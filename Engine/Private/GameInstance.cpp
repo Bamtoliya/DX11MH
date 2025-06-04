@@ -114,6 +114,8 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pPipeLine->Update();
 	m_pObject_Manager->Update(fTimeDelta);
 	m_pCamera_Manager->Update(fTimeDelta);
+	if(m_pPhysics_System)
+		m_pPhysics_System->Update(fTimeDelta);
 	m_pObject_Manager->Late_Update(fTimeDelta);
 	if (m_pPhysics_System)
 		m_pPhysics_System->Late_Update(fTimeDelta);
@@ -231,6 +233,18 @@ PxScene* CGameInstance::Get_PhysicsScene(_uint iIndex)
 PxScene* CGameInstance::Create_Scene()
 {
 	return m_pPhysics_System->Create_Scene();
+}
+const vector<DEBUG_LINE>& CGameInstance::Get_DebugLines()
+{
+	return m_pPhysics_System->Get_DebugLines();
+}
+const vector<DEBUG_TRIANGLE>& CGameInstance::Get_DebugTriangles()
+{
+	return m_pPhysics_System->Get_DebugTriangles();
+}
+const _bool CGameInstance::Get_IsDebugDraw()
+{
+	return m_pPhysics_System->Get_IsDebugDraw();
 }
 #pragma endregion
 
