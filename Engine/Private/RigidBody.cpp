@@ -883,8 +883,7 @@ HRESULT CRigidBody::Create_Actor()
 	m_pActor->userData = this; // 액터의 userData에 CRigidBody 인스턴스 포인터 저장 (콜백 등에서 사용 가능)
 	pScene->addActor(*m_pActor);
 
-	return S_OK;
-	return S_OK;
+ 	return S_OK;
 }
 
 void CRigidBody::Release_Actor()

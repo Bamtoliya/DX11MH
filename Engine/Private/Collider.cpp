@@ -1,27 +1,29 @@
-﻿
-#include "Collider.h"
+﻿#include "Collider.h"
+
 #include "GameInstance.h"
 
 
 CCollider::CCollider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CComponent{ pDevice, pContext }
+	: CComponent { pDevice, pContext }
 {
+
 }
 
 CCollider::CCollider(const CCollider& Prototype)
 	: CComponent{ Prototype }
-	, m_eType{ Prototype.m_eType }
-	, m_pBounding{ Prototype.m_pBounding }
-	, m_pBatch{ Prototype.m_pBatch }
-	, m_pEffect{ Prototype.m_pEffect }
+	, m_eType { Prototype.m_eType }
+	, m_pBounding { Prototype.m_pBounding }
+	, m_pBatch { Prototype.m_pBatch }
+	, m_pEffect { Prototype.m_pEffect }
 #ifdef _DEBUG
-	, m_pInputLayout{ Prototype.m_pInputLayout }
+	, m_pInputLayout { Prototype.m_pInputLayout}
 #endif
 {
 #ifdef _DEBUG
 	Safe_AddRef(m_pInputLayout);
 #endif
 }
+
 HRESULT CCollider::Initialize_Prototype(COLLIDER eType)
 {
 	m_eType = eType;
@@ -41,6 +43,9 @@ HRESULT CCollider::Initialize_Prototype(COLLIDER eType)
 	if (FAILED(m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount,
 		pShaderByteCode, iShaderByteCodeLength, &m_pInputLayout)))
 		return E_FAIL;
+
+
+
 #endif
 
 	return S_OK;
@@ -49,6 +54,8 @@ HRESULT CCollider::Initialize_Prototype(COLLIDER eType)
 HRESULT CCollider::Initialize(void* pArg)
 {
 	CBounding::BOUNDING_DESC* pDesc = static_cast<CBounding::BOUNDING_DESC*>(pArg);
+
+	pDesc->eType = m_eType;
 
 	switch (m_eType)
 	{
@@ -66,77 +73,18 @@ HRESULT CCollider::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CCollider::Late_Initialize()
-{
-	return S_OK;
-}
-
-CCollider* CCollider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, COLLIDER eType)
-{
-	CCollider* pInstance = new CCollider(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype(eType)))
-	{
-		MSG_BOX("Failed to Created : CCollider");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
-CComponent* CCollider::Clone(void* pArg)
-{
-	CCollider* pInstance = new CCollider(*this);
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Created : CCollider");
-		Safe_Release(pInstance);
-	}
-	return pInstance;
-}
-void CCollider::Free()
-{
-	__super::Free();
-
-
-
-	Safe_Release(m_pBounding);
-
-#ifdef _DEBUG
-	Safe_Release(m_pInputLayout);
-	if (false == m_bIsCloned)
-	{
-		Safe_Delete(m_pBatch);
-		Safe_Delete(m_pEffect);
-	}
-#endif
-}
-
-HRESULT CCollider::Serialize(json& data)
-{
-	if (FAILED(__super::Serialize(data)))
-		return E_FAIL;
-	return S_OK;
-}
-HRESULT CCollider::Deserialize(simdjson::ondemand::object& jsonData)
-{
-	if (FAILED(__super::Deserialize(jsonData)))
-		return E_FAIL;
-	return S_OK;
-}
-
-#pragma region Loops
-void CCollider::Priority_Update(_float fTimeDelta)
-{
-}
-void CCollider::Update(_float fTimeDelta)
-{
-}
 void CCollider::Update(_fmatrix WorldMatrix)
 {
 	m_pBounding->Update(WorldMatrix);
 }
-void CCollider::Late_Update(_float fTimeDelta)
+
+_bool CCollider::Intersect(CCollider* pTargetCollider)
 {
+	m_isColl = m_pBounding->Intersect(pTargetCollider->m_pBounding);
+
+	return m_isColl;
 }
+
 #ifdef _DEBUG
 HRESULT CCollider::Render()
 {
@@ -157,14 +105,47 @@ HRESULT CCollider::Render()
 	return S_OK;
 }
 #endif
-#pragma endregion
-HRESULT CCollider::RenderImGui()
-{
-	ImGui::PushID(this);
-	if (ImGui::CollapsingHeader("Collider", ImGuiTreeNodeFlags_DefaultOpen))
-	{
 
+CCollider* CCollider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, COLLIDER eType)
+{
+	CCollider* pInstance = new CCollider(pDevice, pContext);
+
+	if (FAILED(pInstance->Initialize_Prototype(eType)))
+	{
+		MSG_BOX("Failed to Created : CCollider");
+		Safe_Release(pInstance);
 	}
-	ImGui::PopID();
-	return S_OK;
+
+	return pInstance;
+}
+
+CComponent* CCollider::Clone(void* pArg)
+{
+	CCollider* pInstance = new CCollider(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
+	{
+		MSG_BOX("Failed to Cloned : CCollider");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+void CCollider::Free()
+{
+	__super::Free();
+
+
+
+	Safe_Release(m_pBounding);
+
+#ifdef _DEBUG
+	Safe_Release(m_pInputLayout);
+	if (false == m_bIsCloned)
+	{
+		Safe_Delete(m_pBatch);
+		Safe_Delete(m_pEffect);
+	}
+#endif
 }

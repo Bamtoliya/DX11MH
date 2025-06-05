@@ -62,6 +62,8 @@ private:
 
 public:
 	void Collect_DebugRenderData(); // 디버그 데이터 수집 함수
+	void AddDebugLine(const physx::PxVec3& p0, const physx::PxVec3& p1, const _float4& color);
+	void AddDebugTriangle(const physx::PxVec3& p0, const physx::PxVec3& p1, const physx::PxVec3& p2, const _float4& color);
 	const vector<DEBUG_LINE>& Get_DebugLines() const { return m_DebugLines; }
 	const vector<DEBUG_TRIANGLE>& Get_DebugTriangles() const { return m_DebugTriangles; }
 	const _bool	Get_IsDebugDraw() const { return m_bPhysicsDebugDraw; }

@@ -115,6 +115,7 @@ public:
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, class CGameObject* pGameObject, simdjson::ondemand::object& jsonData);
 	
 	CComponent* Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strComponentTag, _uint iIndex = 0);
+	CComponent* Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, _uint iPartID, const _wstring& strComponentTag, _uint iIndex = 0);	
 	class CGameObject* Get_GameObjectById(_uint iId);
 	class CGameObject* Get_GameObjectByName(_uint iLevelIndex, const _wstring& strLayerTag, const _wstring& strGameObjectName);
 	class CGameObject* Get_GameObjectByName(const _wstring& strGameObjectName);

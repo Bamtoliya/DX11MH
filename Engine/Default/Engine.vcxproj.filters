@@ -461,7 +461,9 @@
     <ClInclude Include="..\Public\Bounding_Sphere.h">
       <Filter>01.Utility\04.Components\Collider\Bounding\Sphere</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\HeightField.h" />
+    <ClInclude Include="..\public\HeightField.h">
+      <Filter>01.Utility\04.Components\RigidBody\HeightField</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -855,7 +857,9 @@
     <ClCompile Include="..\Private\Bounding_Sphere.cpp">
       <Filter>01.Utility\04.Components\Collider\Bounding\Sphere</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\HeightField.cpp" />
+    <ClCompile Include="..\private\HeightField.cpp">
+      <Filter>01.Utility\04.Components\RigidBody\HeightField</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">

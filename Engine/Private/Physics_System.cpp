@@ -58,11 +58,20 @@ HRESULT CPhysics_System::Initialize()
 
     // CUDA Context Manager 생성 (GPU 물리 사용 시)
     physx::PxCudaContextManagerDesc cudaContextManagerDesc;
+	
     // 필요에 따라 cudaContextManagerDesc 설정 (예: 그래픽 장치 지정)
     // cudaContextManagerDesc.graphicsDevice = m_pDevice; // DirectX 장치 전달 (D3D11Device 사용 시)
     // 주의: PxCudaContextManagerDesc에 D3D 장치를 직접 할당하는 것은 PhysX 버전에 따라 다를 수 있습니다.
     //       일반적으로 PhysX는 자체적으로 CUDA 장치를 찾거나, 사용자가 명시적으로 인터페이스를 통해 설정합니다.
     //       PxCreateCudaContextManager는 PxFoundation을 인자로 받습니다.
+
+    #if defined(PX_WINDOWS) && PX_SUPPORT_GPU_PHYSX
+        // Direct3D 장치와 CUDA 연결
+        cudaContextManagerDesc.graphicsDevice = m_pDevice;
+        cudaContextManagerDesc.deviceOrdinal = 0; // 기본 CUDA 디바이스 사용 (여러 GPU가 있는 경우 적절히 설정 필요)
+    #endif
+        // 추가 CUDA 설정
+        cudaContextManagerDesc.appGUID = "Sonic_Frontier_Test"; // 고유한 GUID 설정 (선택사항)
     m_pCudaContextManager = PxCreateCudaContextManager(*m_pFoundation, cudaContextManagerDesc);
     if (!m_pCudaContextManager) {
         // CUDA 컨텍스트 매니저 생성 실패 (예: CUDA 지원 GPU 없음, 드라이버 문제 등)
@@ -138,8 +147,9 @@ PxScene* CPhysics_System::Create_Scene()
         sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS; // GPU 다이나믹스 활성화 플래그 (버전에 따라 다를 수 있음, 일반적으로는 gpuDispatcher 설정으로 충분)
         sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;    // GPU 브로드페이즈 사용
         sceneDesc.cudaContextManager = m_pCudaContextManager;
-        sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS; // GPU 다이나믹스 활성화 (버전에 따라 이 플래그가 없거나, cudaContextManager 설정만으로 충분할 수 있음)
+        sceneDesc.flags |= PxSceneFlag::eENABLE_DIRECT_GPU_API; // GPU 다이나믹스 활성화 (버전에 따라 이 플래그가 없거나, cudaContextManager 설정만으로 충분할 수 있음)
         sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;    // GPU 브로드페이즈 사용
+        sceneDesc.solverType = PxSolverType::eTGS; // GPU 가속에 최적화된 솔버
     }
     else
     {
@@ -165,10 +175,20 @@ PxScene* CPhysics_System::Create_Scene()
         m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eSCALE, 1.0f);
         // 가장 중요한 eCOLLISION_SHAPES 활성화
         m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
+        m_pScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_EDGES, 0.0f);
         // 필요에 따라 다른 파라미터도 활성화 가능
         // m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCOLLISION_AABBS, 1.0f);
         // m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eCONTACT_POINT, 1.0f);
-        // m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);
+        // m_pScene->setVisualizationParameter(physx::PxVisualizationParameter::eACTOR_AXES, 1.0f);   
+    }
+
+    // GPU 물리 시각화 최적화
+    if (m_pScene && m_pCudaContextManager && m_pCudaContextManager->contextIsValid()) {
+        // GPU 시뮬레이션에 최적화된 시각화 설정
+        m_pScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
+        m_pScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
+        m_pScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_AABBS, 0.5f);
+        m_pScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_EDGES, 0.0f);
     }
 
     //m_pScene->getRenderBuffer();
@@ -189,40 +209,208 @@ void CPhysics_System::Collect_DebugRenderData()
     if (!m_pScene)
         return;
 
-    const physx::PxRenderBuffer& rb = m_pScene->getRenderBuffer();
+    //const physx::PxRenderBuffer& rb = m_pScene->getRenderBuffer();
 
-    // 라인 정보 수집
-    for (physx::PxU32 i = 0; i < rb.getNbLines(); ++i)
-    {
-        const physx::PxDebugLine& pxLine = rb.getLines()[i];
-        DEBUG_LINE line;
-        line.vP0 = FromPxVec3(pxLine.pos0); // FromPxVec3 헬퍼 함수 필요 (PxVec3 -> _float3)
-        line.vP1 = FromPxVec3(pxLine.pos1);
-        // PhysX 색상은 0xAARRGGBB (uint32) 또는 각 정점별 색상. 여기서는 pos0의 색상만 사용.
-        // 필요시 color0, color1 모두 고려.
-        line.vColor = _float4(
-            ((pxLine.color0 >> 16) & 0xFF) / 255.f, // R
-            ((pxLine.color0 >> 8) & 0xFF) / 255.f,  // G
-            (pxLine.color0 & 0xFF) / 255.f,         // B
-            1.f                                     // A (Alpha - 항상 1로 설정 또는 필요에 따라 ((pxLine.color0 >> 24) & 0xFF) / 255.f)
-        );
-        m_DebugLines.push_back(line);
-    }
+    // 1. 씬의 모든 액터 가져오기
+    PxU32 actorCount = m_pScene->getNbActors(physx::PxActorTypeFlag::eRIGID_STATIC | physx::PxActorTypeFlag::eRIGID_DYNAMIC);
+    std::vector<physx::PxActor*> actors(actorCount);
+    m_pScene->getActors(physx::PxActorTypeFlag::eRIGID_STATIC | physx::PxActorTypeFlag::eRIGID_DYNAMIC, actors.data(), actorCount);
 
-    // 삼각형 정보 수집 (필요한 경우)
-    for (physx::PxU32 i = 0; i < rb.getNbTriangles(); ++i)
+    for (PxU32 i = 0; i < actorCount; ++i)
     {
-        const physx::PxDebugTriangle& pxTri = rb.getTriangles()[i];
-        DEBUG_TRIANGLE tri;
-        tri.vP0 = FromPxVec3(pxTri.pos0);
-        tri.vP1 = FromPxVec3(pxTri.pos1);
-        tri.vP2 = FromPxVec3(pxTri.pos2);
-        tri.vColor = _float4(
-            ((pxTri.color0 >> 16) & 0xFF) / 255.f,
-            ((pxTri.color0 >> 8) & 0xFF) / 255.f,
-            (pxTri.color0 & 0xFF) / 255.f,
-            1.f
-        );
-        m_DebugTriangles.push_back(tri);
+        physx::PxRigidActor* rigidActor = static_cast<physx::PxRigidActor*>(actors[i]);
+        PxU32 shapeCount = rigidActor->getNbShapes();
+        std::vector<physx::PxShape*> shapes(shapeCount);
+        rigidActor->getShapes(shapes.data(), shapeCount);
+
+        for (PxU32 j = 0; j < shapeCount; ++j)
+        {
+            physx::PxShape* shape = shapes[j];
+            physx::PxGeometryType::Enum geoType = shape->getGeometry().getType();
+            if (geoType == physx::PxGeometryType::eHEIGHTFIELD)
+                continue; // HeightField는 디버그 드로우 제외
+
+            // 액터의 전역 포즈와 형상의 로컬 포즈 결합
+            PxTransform shapePose = PxShapeExt::getGlobalPose(*shape, *rigidActor);
+
+            // 디버그 색상 설정 (예: 정적 액터는 초록색, 동적 액터는 빨간색)
+            _float4 debugColor = (rigidActor->getType() == PxActorType::eRIGID_STATIC)
+                ? _float4(0.0f, 1.0f, 0.0f, 1.0f)  // 초록색 (정적)
+                : _float4(1.0f, 0.0f, 0.0f, 1.0f); // 빨간색 (동적)
+
+            // 형상 타입에 따라 적절한 디버그 정보 생성
+            switch (geoType)
+            {
+            case physx::PxGeometryType::eBOX:
+            {
+                // 박스 형상 정보 가져오기
+                const PxBoxGeometry boxGeom = static_cast<const PxBoxGeometry&>(shape->getGeometry());
+
+                // 박스의 8개 꼭지점 계산
+                PxVec3 vertices[8];
+                vertices[0] = PxVec3(-boxGeom.halfExtents.x, -boxGeom.halfExtents.y, -boxGeom.halfExtents.z);
+                vertices[1] = PxVec3(boxGeom.halfExtents.x, -boxGeom.halfExtents.y, -boxGeom.halfExtents.z);
+                vertices[2] = PxVec3(boxGeom.halfExtents.x, -boxGeom.halfExtents.y, boxGeom.halfExtents.z);
+                vertices[3] = PxVec3(-boxGeom.halfExtents.x, -boxGeom.halfExtents.y, boxGeom.halfExtents.z);
+                vertices[4] = PxVec3(-boxGeom.halfExtents.x, boxGeom.halfExtents.y, -boxGeom.halfExtents.z);
+                vertices[5] = PxVec3(boxGeom.halfExtents.x, boxGeom.halfExtents.y, -boxGeom.halfExtents.z);
+                vertices[6] = PxVec3(boxGeom.halfExtents.x, boxGeom.halfExtents.y, boxGeom.halfExtents.z);
+                vertices[7] = PxVec3(-boxGeom.halfExtents.x, boxGeom.halfExtents.y, boxGeom.halfExtents.z);
+
+                // 각 꼭지점을 전역 좌표로 변환
+                for (int v = 0; v < 8; v++)
+                    vertices[v] = shapePose.transform(vertices[v]);
+
+                // 박스의 12개 에지 (라인) 추가
+                // 아래 면
+                AddDebugLine(vertices[0], vertices[1], debugColor);
+                AddDebugLine(vertices[1], vertices[2], debugColor);
+                AddDebugLine(vertices[2], vertices[3], debugColor);
+                AddDebugLine(vertices[3], vertices[0], debugColor);
+                // 위 면
+                AddDebugLine(vertices[4], vertices[5], debugColor);
+                AddDebugLine(vertices[5], vertices[6], debugColor);
+                AddDebugLine(vertices[6], vertices[7], debugColor);
+                AddDebugLine(vertices[7], vertices[4], debugColor);
+                // 수직 연결 에지
+                AddDebugLine(vertices[0], vertices[4], debugColor);
+                AddDebugLine(vertices[1], vertices[5], debugColor);
+                AddDebugLine(vertices[2], vertices[6], debugColor);
+                AddDebugLine(vertices[3], vertices[7], debugColor);
+                break;
+            }
+            case physx::PxGeometryType::eSPHERE:
+            {
+                // 구체 형상 정보 가져오기
+                const PxSphereGeometry sphereGeom = static_cast<const PxSphereGeometry&>(shape->getGeometry());
+
+                const int numSegments = 16; // 원 분할 수
+                const float stepAngle = PxTwoPi / numSegments;
+
+                // XY 평면에 원 그리기
+                for (int i = 0; i < numSegments; i++)
+                {
+                    float angle1 = i * stepAngle;
+                    float angle2 = (i + 1) * stepAngle;
+
+                    PxVec3 p1(sphereGeom.radius * PxCos(angle1), sphereGeom.radius * PxSin(angle1), 0.0f);
+                    PxVec3 p2(sphereGeom.radius * PxCos(angle2), sphereGeom.radius * PxSin(angle2), 0.0f);
+
+                    AddDebugLine(shapePose.transform(p1), shapePose.transform(p2), debugColor);
+                }
+
+                // XZ 평면에 원 그리기
+                for (int i = 0; i < numSegments; i++)
+                {
+                    float angle1 = i * stepAngle;
+                    float angle2 = (i + 1) * stepAngle;
+
+                    PxVec3 p1(sphereGeom.radius * PxCos(angle1), 0.0f, sphereGeom.radius * PxSin(angle1));
+                    PxVec3 p2(sphereGeom.radius * PxCos(angle2), 0.0f, sphereGeom.radius * PxSin(angle2));
+
+                    AddDebugLine(shapePose.transform(p1), shapePose.transform(p2), debugColor);
+                }
+
+                // YZ 평면에 원 그리기
+                for (int i = 0; i < numSegments; i++)
+                {
+                    float angle1 = i * stepAngle;
+                    float angle2 = (i + 1) * stepAngle;
+
+                    PxVec3 p1(0.0f, sphereGeom.radius * PxCos(angle1), sphereGeom.radius * PxSin(angle1));
+                    PxVec3 p2(0.0f, sphereGeom.radius * PxCos(angle2), sphereGeom.radius * PxSin(angle2));
+
+                    AddDebugLine(shapePose.transform(p1), shapePose.transform(p2), debugColor);
+                }
+                break;
+            }
+            case physx::PxGeometryType::eCAPSULE:
+            {
+                // 캡슐 형상 정보 가져오기
+                const PxCapsuleGeometry capsuleGeom = static_cast<const PxCapsuleGeometry&>(shape->getGeometry());
+
+                const int numSegments = 16; // 원 분할 수
+                const float stepAngle = PxTwoPi / numSegments;
+                const float halfHeight = capsuleGeom.halfHeight;
+                const float radius = capsuleGeom.radius;
+
+                // 캡슐의 원통 부분 (XY 평면에 직사각형으로 표현)
+                for (int i = 0; i < numSegments; i++)
+                {
+                    float angle1 = i * stepAngle;
+                    float angle2 = (i + 1) * stepAngle;
+
+                    // 아래쪽 원
+                    PxVec3 p1(radius * PxCos(angle1), radius * PxSin(angle1), -halfHeight);
+                    PxVec3 p2(radius * PxCos(angle2), radius * PxSin(angle2), -halfHeight);
+                    AddDebugLine(shapePose.transform(p1), shapePose.transform(p2), debugColor);
+
+                    // 위쪽 원
+                    PxVec3 p3(radius * PxCos(angle1), radius * PxSin(angle1), halfHeight);
+                    PxVec3 p4(radius * PxCos(angle2), radius * PxSin(angle2), halfHeight);
+                    AddDebugLine(shapePose.transform(p3), shapePose.transform(p4), debugColor);
+
+                    // 수직 연결선
+                    if (i % 4 == 0) // 4개마다 하나씩만 그림 (너무 많지 않게)
+                    {
+                        AddDebugLine(shapePose.transform(p1), shapePose.transform(p3), debugColor);
+                    }
+                }
+
+                // 양쪽 반구 (반원으로 표현)
+                for (int i = 0; i < numSegments / 2; i++)
+                {
+                    float angle1 = i * stepAngle;
+                    float angle2 = (i + 1) * stepAngle;
+
+                    // 아래쪽 반구 (XZ 평면)
+                    PxVec3 p1(radius * PxCos(angle1), 0.0f, -halfHeight - radius * PxSin(angle1));
+                    PxVec3 p2(radius * PxCos(angle2), 0.0f, -halfHeight - radius * PxSin(angle2));
+                    AddDebugLine(shapePose.transform(p1), shapePose.transform(p2), debugColor);
+
+                    // 위쪽 반구 (XZ 평면)
+                    PxVec3 p3(radius * PxCos(angle1), 0.0f, halfHeight + radius * PxSin(angle1));
+                    PxVec3 p4(radius * PxCos(angle2), 0.0f, halfHeight + radius * PxSin(angle2));
+                    AddDebugLine(shapePose.transform(p3), shapePose.transform(p4), debugColor);
+
+                    // 아래쪽 반구 (YZ 평면)
+                    PxVec3 p5(0.0f, radius * PxCos(angle1), -halfHeight - radius * PxSin(angle1));
+                    PxVec3 p6(0.0f, radius * PxCos(angle2), -halfHeight - radius * PxSin(angle2));
+                    AddDebugLine(shapePose.transform(p5), shapePose.transform(p6), debugColor);
+
+                    // 위쪽 반구 (YZ 평면)
+                    PxVec3 p7(0.0f, radius * PxCos(angle1), halfHeight + radius * PxSin(angle1));
+                    PxVec3 p8(0.0f, radius * PxCos(angle2), halfHeight + radius * PxSin(angle2));
+                    AddDebugLine(shapePose.transform(p7), shapePose.transform(p8), debugColor);
+                }
+                break;
+            }
+            // TODO: 다른 형상 타입 추가 (CONVEX_MESH, TRIANGLE_MESH 등)
+            default:
+                break;
+            }
+        }
     }
+}
+
+
+// 헬퍼 함수: 디버그 라인 추가
+void CPhysics_System::AddDebugLine(const PxVec3& p0, const PxVec3& p1, const _float4& color)
+{
+    DEBUG_LINE line;
+    line.vP0 = FromPxVec3(p0);
+    line.vP1 = FromPxVec3(p1);
+    line.vColor = color;
+    m_DebugLines.push_back(line);
+}
+
+// 헬퍼 함수: 디버그 삼각형 추가
+void CPhysics_System::AddDebugTriangle(const PxVec3& p0, const PxVec3& p1, const PxVec3& p2, const _float4& color)
+{
+    DEBUG_TRIANGLE tri;
+    tri.vP0 = FromPxVec3(p0);
+    tri.vP1 = FromPxVec3(p1);
+    tri.vP2 = FromPxVec3(p2);
+    tri.vColor = color;
+    m_DebugTriangles.push_back(tri);
 }

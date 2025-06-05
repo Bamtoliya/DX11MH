@@ -430,6 +430,10 @@ CComponent* CGameInstance::Get_Component(_uint iLevelIndex, const _wstring& strL
 	return m_pObject_Manager->Get_Component(iLevelIndex, strLayerTag, strComponentTag, iIndex);
 	
 }
+CComponent* CGameInstance::Get_Component(_uint iLevelIndex, const _wstring& strLayerTag, _uint iPartID, const _wstring& strComponentTag, _uint iIndex)
+{
+	return m_pObject_Manager->Get_Component(iLevelIndex, strLayerTag, iPartID, strComponentTag, iIndex);
+}
 
 CGameObject* CGameInstance::Get_GameObjectById(_uint iId)
 {
