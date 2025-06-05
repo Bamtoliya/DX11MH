@@ -3,19 +3,19 @@
 #include "Component.h"
 
 NS_BEGIN(Engine)
-class ENGINE_DLL CHeight_Field : public CComponent
+class ENGINE_DLL CHeightField : public CComponent
 {
 #pragma region Constructor/Destructor
 protected:
-	CHeight_Field(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CHeight_Field(const CHeight_Field& Prototype);
-	virtual ~CHeight_Field() = default;
+	CHeightField(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CHeightField(const CHeightField& Prototype);
+	virtual ~CHeightField() = default;
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual HRESULT Late_Initialize();
 public:
-	static CHeight_Field* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CHeightField* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg)  override;
 	virtual void Free() override;
 public:

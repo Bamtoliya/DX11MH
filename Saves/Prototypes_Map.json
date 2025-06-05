@@ -48,6 +48,9 @@
   "Prototype_Component_RigidBody": {
     "Class": "CRigidBody"
   },
+  "Prototype_Component_HeightField": {
+    "Class": "CHeightField"
+  },
   "Prototype_Component_Texture_Sky": {
     "Class": "CTexture",
     "NumTexture": 1,
@@ -65,7 +68,7 @@
   },
   "Prototype_Component_Texture_Terrain_SplatMap": {
     "Class": "CTexture",
-    "NumTexture": 1,  
+    "NumTexture": 1,
     "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r03_splatmap.dds"
   },
   "Prototype_Component_Texture_Terrain_BaseDiffuse": {

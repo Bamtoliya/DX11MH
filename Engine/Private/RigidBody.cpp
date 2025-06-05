@@ -75,6 +75,10 @@ CRigidBody* CRigidBody::Clone(void* pArg)
 void CRigidBody::Free()
 {
 	__super::Free();
+	/*Safe_Release(m_pActor);
+	Safe_Release(m_pShape);
+	Safe_Release(m_pMaterial);
+	Safe_Release(m_pHeightField);*/
 }
 #pragma endregion
 
@@ -217,7 +221,7 @@ HRESULT CRigidBody::RenderImGui()
 	if (ImGui::CollapsingHeader("RigidBody", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		// Body Type
-		const char* bodyTypes[] = { "Static", "Dynamic", "Kinematic" };
+		const char* bodyTypes[] = { "Static", "Dynamic", "Kinematic"};
 		int currentBodyType = static_cast<int>(m_tRigidBodyDesc.eBodyType);
 		if (ImGui::Combo("Body Type", &currentBodyType, bodyTypes, IM_ARRAYSIZE(bodyTypes)))
 		{
@@ -225,7 +229,7 @@ HRESULT CRigidBody::RenderImGui()
 		}
 
 		// Shape Type
-		const char* shapeTypes[] = { "Box", "Sphere", "Capsule", "Convex Mesh", "Triangle Mesh" };
+		const char* shapeTypes[] = { "Box", "Sphere", "Capsule", "Convex Mesh", "Triangle Mesh", "HeightField" };
 		int currentShapeType = static_cast<int>(m_tRigidBodyDesc.eShapeType);
 		if (ImGui::Combo("Shape Type", &currentShapeType, shapeTypes, IM_ARRAYSIZE(shapeTypes)))
 		{
@@ -715,6 +719,74 @@ HRESULT CRigidBody::Create_Actor()
 	}
 		break;
 		// TODO: MESH 타입 처리 (PxTriangleMeshGeometry 또는 PxConvexMeshGeometry)
+
+	case EShapeType::HEIGHTFIELD:
+	{
+		CVIBuffer_Terrain* pTerrain = dynamic_cast<CVIBuffer_Terrain*>(m_pOwner->Get_Component(L"Com_VIBuffer"));
+		if (nullptr == pTerrain) break;
+		// CVIBuffer_Terrain으로부터 높이 필드 데이터 가져오기 (가상 인터페이스)
+		// 실제 CVIBuffer_Terrain 클래스의 인터페이스에 맞게 수정 필요
+		PxU32 nbRows = pTerrain->Get_NumVerticeZ(); // 예시: 지형의 Z축 정점 수
+		PxU32 nbCols = pTerrain->Get_NumVerticeX(); // 예시: 지형의 X축 정점 수
+		PxHeightFieldSample* pHeightSamples = new PxHeightFieldSample[nbRows * nbCols];
+		for (_uint row = 0; row < nbRows; ++row)
+		{
+			for (_uint col = 0; col < nbCols; ++col)
+			{
+				_uint index = row * nbCols + col;
+				pHeightSamples[index].height = static_cast<physx::PxI16>(pTerrain->Get_VertexPositions()[index].y); // GetHeightFromTerrain() is a hypothetical function to retrieve height data
+				pHeightSamples[index].materialIndex0 = 0;
+				pHeightSamples[index].materialIndex1 = 0;
+			}
+		}
+
+		if (nullptr == pHeightSamples || nbRows == 0 || nbCols == 0)
+		{
+			MSG_BOX("CRigidBody::Create_Actor - Invalid data from CVIBuffer_Terrain for HEIGHTFIELD.");
+			break;
+		}
+
+		// 기존 m_pHeightField 해제 (액터 재생성 시 필요)
+		if (m_pHeightField)
+		{
+			m_pHeightField->release();
+			m_pHeightField = nullptr;
+		}
+
+		physx::PxHeightFieldDesc hfDesc;
+		hfDesc.nbRows = nbRows;                     // Z축 방향의 샘플 수
+		hfDesc.nbColumns = nbCols;                  // X축 방향의 샘플 수
+		hfDesc.format = physx::PxHeightFieldFormat::eS16_TM; // 각 샘플은 PxHeightFieldSample 구조체
+		hfDesc.samples.data = pHeightSamples;         // PxHeightFieldSample 배열의 시작 주소
+		hfDesc.samples.stride = sizeof(physx::PxHeightFieldSample); // 각 샘플의 바이트 크기
+		hfDesc.samples.count = nbCols * nbRows;
+
+		// 필요에 따라 플래그 설정 (예: 경계면 처리 방식)
+		hfDesc.flags = physx::PxHeightFieldFlag::eNO_BOUNDARY_EDGES;
+
+		// PxPhysics 객체를 사용하여 HeightField 생성
+		// createHeightField의 두 번째 인자는 PxInsertionCallback입니다.
+		// 일반적으로 pPhysics->getPhysicsInsertionCallback()을 사용합니다.
+		//m_pHeightField = pPhysics->createHeightField(reinterpret_cast<PxInputStream&>(hfDesc));
+		m_pHeightField = PxCreateHeightField(hfDesc);
+		delete[] pHeightSamples; // PhysX가 데이터를 복사하므로 원본 샘플 데이터는 해제
+		if (!m_pHeightField)
+		{
+			MSG_BOX("CRigidBody::Create_Actor - Failed to create PxHeightField.");
+			break;
+		}
+
+		// PxHeightFieldGeometry 생성
+		// m_tRigidBodyDesc.vShapeSize 사용: x=columnScale, y=heightScale, z=rowScale
+		// 이 값들은 지형 데이터 자체의 스케일과 별개로 적용되는 추가 스케일입니다.
+		// 만약 지형 데이터가 이미 월드 스케일이라면, 이 값들은 1.0f로 설정될 수 있습니다.
+		PxReal heightScale = m_tRigidBodyDesc.vShapeSize.y; // Y축 (높이) 스케일
+		PxReal columnScale = m_tRigidBodyDesc.vShapeSize.x; // X축 (열) 스케일
+		PxReal rowScale = m_tRigidBodyDesc.vShapeSize.z;    // Z축 (행) 스케일
+
+		pGeometry = new PxHeightFieldGeometry(m_pHeightField, PxMeshGeometryFlags(), heightScale, rowScale, columnScale);
+	}
+		break;
 	default:
 		return E_FAIL; // 지원하지 않는 모양 타입
 	}

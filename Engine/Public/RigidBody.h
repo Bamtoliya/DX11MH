@@ -97,6 +97,7 @@ private:
     PxRigidActor*    m_pActor = nullptr;           // PhysX 액터 (Static 또는 Dynamic)
     PxShape*         m_pShape = nullptr;           // PhysX 충돌 형태
     PxMaterial*      m_pMaterial = nullptr;        // PhysX 재질
+    PxHeightField*      m_pHeightField = nullptr;
 
     RIGIDBODY_DESC          m_tRigidBodyDesc;             // 리지드바디 설정값
 

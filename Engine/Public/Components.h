@@ -33,6 +33,7 @@
 
 #pragma region RigidBody
 #include "RigidBody.h"
+#include "HeightField.h"
 #pragma endregion
 
 #pragma region Controller

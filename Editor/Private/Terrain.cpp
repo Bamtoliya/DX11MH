@@ -150,6 +150,11 @@ HRESULT CTerrain::Ready_Components()
 		TEXT("Com_Texture_DetailNormal"), reinterpret_cast<CComponent**>(&m_pDetailNormalCom))))
 		return E_FAIL;
 
+	/* For.Com_HeightField */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -160,6 +165,7 @@ void CTerrain::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pRigidBodyCom);
 
 	Safe_Release(m_pSplatMapTextureCom);
 	Safe_Release(m_pWaterTextureCom);

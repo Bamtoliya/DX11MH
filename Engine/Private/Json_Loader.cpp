@@ -74,6 +74,7 @@ HRESULT CJson_Loader::Initialize() {
     RegisterBaseCreator<CTextureArray>("CTextureArray");
     //RegisterBaseCreator<CCollider>("CColider");
     RegisterBaseCreator<CRigidBody>("CRigidBody");
+    //RegisterBaseCreator<CHeightField>("CHeightField");
 
 #pragma region VIBuffer
     RegisterBaseCreator<CVIBuffer_Rect>("CVIBuffer_Rect");

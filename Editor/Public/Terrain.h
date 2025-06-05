@@ -8,6 +8,7 @@ class CShader;
 class CTexture;
 class CTextureArray;
 class CVIBuffer_Terrain;
+class CRigidBody;
 NS_END
 
 NS_BEGIN(Editor)
@@ -38,6 +39,7 @@ private:
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
 	CVIBuffer_Terrain*		m_pVIBufferCom = { nullptr };
+	CRigidBody*				m_pRigidBodyCom = { nullptr };
 	CTexture*				m_pSplatMapTextureCom	= { nullptr }; // 스플랫맵 텍스처
 	CTexture*				m_pWaterTextureCom		= { nullptr }; // 물 텍스처
 	CTextureArray*			m_pBaseDiffuseCom		= { nullptr };
