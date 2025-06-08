@@ -1,4 +1,4 @@
-﻿
+﻿#pragma once
 #include "RigidBody.h"
 #include "Transform.h"
 #include "GameInstance.h"
@@ -7,9 +7,8 @@
 CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent{ pDevice, pContext }
 	, m_pActor{ nullptr }
-	, m_pShape{ nullptr }
-	, m_pMaterial{ nullptr }
-	, m_bIsLateInitialized{ false }
+	, m_pShapes{ nullptr }
+	, m_Materials{ nullptr }
 {
 	//ZeroMemory(&m_tRigidBodyDesc, sizeof(RIGIDBODY_DESC));
 }
@@ -18,9 +17,8 @@ CRigidBody::CRigidBody(const CRigidBody& Prototype)
 	: CComponent{ Prototype }
 	, m_tRigidBodyDesc{ Prototype.m_tRigidBodyDesc }	// 생성 시 디스크립션 복사
 	, m_pActor{ nullptr }								// 복제 후 Initialize에서 새로 생성
-	, m_pShape{ nullptr }
-	, m_pMaterial{ nullptr }
-	, m_bIsLateInitialized{ false }
+	, m_pShapes{ nullptr }
+	, m_Materials{ nullptr }
 {
 }
 
@@ -47,8 +45,9 @@ HRESULT CRigidBody::Initialize(void* pArg)
 }
 HRESULT CRigidBody::Late_Initialize()
 {
+	Release_Actor();
 	Create_Actor();
-	m_bIsLateInitialized = true;
+	m_bLateInitialized = true;
 	return S_OK;
 }
 
@@ -75,26 +74,22 @@ CRigidBody* CRigidBody::Clone(void* pArg)
 void CRigidBody::Free()
 {
 	__super::Free();
-	/*Safe_Release(m_pActor);
-	Safe_Release(m_pShape);
-	Safe_Release(m_pMaterial);
-	Safe_Release(m_pHeightField);*/
+	Release_Actor();
 }
 #pragma endregion
 
 #pragma region Save&Load
 HRESULT CRigidBody::Serialize(json& outJson)
 {
-	if (FAILED(__super::Serialize(outJson)))
+	if(FAILED(__super::Serialize(outJson)))
 		return E_FAIL;
+
 	json rbData;
 	rbData["BodyType"] = static_cast<int>(m_tRigidBodyDesc.eBodyType);
-	rbData["ShapeType"] = static_cast<int>(m_tRigidBodyDesc.eShapeType);
-	rbData["ShapeSize"] = { m_tRigidBodyDesc.vShapeSize.x, m_tRigidBodyDesc.vShapeSize.y, m_tRigidBodyDesc.vShapeSize.z };
 	rbData["LocalPosition"] = { m_tRigidBodyDesc.vLocalPosition.x, m_tRigidBodyDesc.vLocalPosition.y, m_tRigidBodyDesc.vLocalPosition.z };
 	rbData["LocalEulerRotation"] = { m_tRigidBodyDesc.fCurRotationX, m_tRigidBodyDesc.fCurRotationY, m_tRigidBodyDesc.fCurRotationZ };
-	// qRotation은 fCurRotationX/Y/Z로부터 Create_Actor 시 계산되므로 별도 저장 필요 없음
 
+	// 기본 속성
 	rbData["Mass"] = m_tRigidBodyDesc.fMass;
 	rbData["Gravity"] = m_tRigidBodyDesc.bGravity;
 	rbData["StaticFriction"] = m_tRigidBodyDesc.fStaticFriction;
@@ -104,7 +99,22 @@ HRESULT CRigidBody::Serialize(json& outJson)
 	rbData["LockRotY"] = m_tRigidBodyDesc.bLockRotY;
 	rbData["LockRotZ"] = m_tRigidBodyDesc.bLockRotZ;
 	rbData["KinematicTarget"] = m_tRigidBodyDesc.bKinematicTarget;
-	// pModelForMesh는 현재 직렬화/역직렬화에서 제외 (포인터 직접 저장은 부적절)
+
+	// 쉐이프 정보 직렬화 추가
+	json shapesArray = json::array();
+	for (const auto& shape : m_tRigidBodyDesc.vShapeDescs)
+	{
+		json shapeData;
+		shapeData["ShapeType"] = static_cast<int>(shape.eShapeType);
+		shapeData["ShapeSize"] = { shape.vShapeSize.x, shape.vShapeSize.y, shape.vShapeSize.z };
+		shapeData["LocalPosition"] = { shape.vLocalPosition.x, shape.vLocalPosition.y, shape.vLocalPosition.z };
+		shapeData["Rotation"] = { shape.qRotation.x, shape.qRotation.y, shape.qRotation.z, shape.qRotation.w };
+		shapeData["RotationX"] = shape.fCurRotationX;
+		shapeData["RotationY"] = shape.fCurRotationY;
+		shapeData["RotationZ"] = shape.fCurRotationZ;
+		shapesArray.push_back(shapeData);
+	}
+	rbData["Shapes"] = shapesArray;
 
 	outJson["CRigidBody"] = rbData;
 	return S_OK;
@@ -118,16 +128,15 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 	if (jsonData["CRigidBody"].get_object().get(rbObject) == simdjson::SUCCESS)
 	{
 		m_tRigidBodyDesc.eBodyType = static_cast<EBodyType>(int(rbObject["BodyType"].get_int64().value_unsafe()));
-		m_tRigidBodyDesc.eShapeType = static_cast<EShapeType>(int(rbObject["ShapeType"].get_int64().value_unsafe()));
 
 		simdjson::ondemand::array shapeSizeArray;
 		if (rbObject["ShapeSize"].get_array().get(shapeSizeArray) == simdjson::SUCCESS && shapeSizeArray.count_elements() == 3) {
 			auto iter = shapeSizeArray.begin();
-			m_tRigidBodyDesc.vShapeSize.x = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			m_tRigidBodyDesc.vShapeSize.y = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			m_tRigidBodyDesc.vShapeSize.z = static_cast<_float>((*iter).get_double().value_unsafe());
+			//m_tRigidBodyDesc.vShapeSize.x = static_cast<_float>((*iter).get_double().value_unsafe());
+			//++iter;
+			//m_tRigidBodyDesc.vShapeSize.y = static_cast<_float>((*iter).get_double().value_unsafe());
+			//++iter;
+			//m_tRigidBodyDesc.vShapeSize.z = static_cast<_float>((*iter).get_double().value_unsafe());
 		}
 
 		simdjson::ondemand::array localPosArray;
@@ -184,7 +193,7 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 #pragma region Loops
 void CRigidBody::Priority_Update(_float fTimeDelta)
 {
-	if (!m_bActive || !m_bIsLateInitialized || !m_pActor)
+	if (!m_bActive || !m_bLateInitialized || !m_pActor)
 		return;
 
 	// 게임 오브젝트의 Transform이 변경되었다면 PhysX 액터에 반영
@@ -200,7 +209,7 @@ void CRigidBody::Update(_float fTimeDelta)
 }
 void CRigidBody::Late_Update(_float fTimeDelta)
 {
-	if (!m_bActive || !m_bIsLateInitialized || !m_pActor)
+	if (!m_bActive || !m_bLateInitialized || !m_pActor)
 		return;
 	// Dynamic 또는 Kinematic 액터의 경우, 물리 시뮬레이션 결과를 Transform에 반영
 	if (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC)
@@ -217,90 +226,22 @@ HRESULT CRigidBody::Render()
 #pragma region Debug
 HRESULT CRigidBody::RenderImGui()
 {
-	ImGui::PushID(this); // 고유 ID 보장
+	ImGui::PushID(this);
 	if (ImGui::CollapsingHeader("RigidBody", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		// Body Type
-		const char* bodyTypes[] = { "Static", "Dynamic", "Kinematic"};
+		const char* bodyTypes[] = { "Static", "Dynamic", "Kinematic" };
 		int currentBodyType = static_cast<int>(m_tRigidBodyDesc.eBodyType);
 		if (ImGui::Combo("Body Type", &currentBodyType, bodyTypes, IM_ARRAYSIZE(bodyTypes)))
 		{
-			Set_Body_Type(static_cast<EBodyType>(currentBodyType)); // 변경 시 액터 재생성
-		}
-
-		// Shape Type
-		const char* shapeTypes[] = { "Box", "Sphere", "Capsule", "Convex Mesh", "Triangle Mesh", "HeightField" };
-		int currentShapeType = static_cast<int>(m_tRigidBodyDesc.eShapeType);
-		if (ImGui::Combo("Shape Type", &currentShapeType, shapeTypes, IM_ARRAYSIZE(shapeTypes)))
-		{
-			// Shape Type 변경 시에도 액터 재생성이 필요할 수 있음 (현재 Set_Body_Type에서 처리)
-			// 별도의 Set_Shape_Type 함수를 만들거나, 여기서 직접 Release_Actor/Create_Actor 호출 고려
-			EBodyType prevBodyType = m_tRigidBodyDesc.eBodyType; // 임시 저장
-			Release_Actor();
-			m_tRigidBodyDesc.eShapeType = static_cast<EShapeType>(currentShapeType);
-			Create_Actor();
-			// 만약 Create_Actor가 실패하면 이전 타입으로 복구하는 로직이 필요할 수 있음
-			// 또는, Set_Body_Type처럼 내부에서 처리하도록 함수화
-		}
-
-		// Shape Size (Shape Type에 따라 다르게 표시)
-		// TODO: EShapeType에 따라 vShapeSize의 의미가 달라지므로, 레이블 등을 적절히 변경
-		if (ImGui::DragFloat3("Shape Size", &m_tRigidBodyDesc.vShapeSize.x, 0.1f))
-		{
-			// 크기 변경 시 액터 재생성 필요
-			Release_Actor();
-			Create_Actor();
+			Set_Body_Type(static_cast<EBodyType>(currentBodyType));
 		}
 
 		if (ImGui::DragFloat3("Local Position", &m_tRigidBodyDesc.vLocalPosition.x, 0.1f))
 		{
-			Release_Actor(); // 로컬 위치 변경 시 액터 즉시 재생성
-			Create_Actor();
-			// m_bIsTransformDirty = true; // 또는 다음 프레임에 동기화
-		}
-
-		ImGui::Text("Box:(HalfExtents), Sphere:(Radius,0,0), Capsule:(Radius,HalfHeight,0)");
-
-		// Rotation (Euler Angles from m_tRigidBodyDesc.qRotation)
-		// 이 부분은 m_tRigidBodyDesc.qRotation을 오일러 각도로 변환하여 표시하고,
-		// ImGui에서 오일러 각도를 수정하면 m_tRigidBodyDesc.qRotation을 업데이트하고 액터를 재생성합니다.
-		// Create_Actor에서는 m_tRigidBodyDesc.fCurRotationX/Y/Z를 사용하여 m_tRigidBodyDesc.qRotation을 설정하므로,
-		// ImGui는 항상 최신의 qRotation을 기반으로 작동합니다.
-
-		_float3 eulerAnglesDegrees = {
-			XMConvertToDegrees(m_tRigidBodyDesc.fCurRotationX),
-			XMConvertToDegrees(m_tRigidBodyDesc.fCurRotationY),
-			XMConvertToDegrees(m_tRigidBodyDesc.fCurRotationZ)
-		};
-
-		if (ImGui::DragFloat3(u8"Rotation (Euler °)", &eulerAnglesDegrees.x, 1.0f, -360.f, 360.f))
-		{
-			_float3 newEulerAnglesRadians = {
-				XMConvertToRadians(eulerAnglesDegrees.x), // Roll
-				XMConvertToRadians(eulerAnglesDegrees.y), // Pitch
-				XMConvertToRadians(eulerAnglesDegrees.z)  // Yaw
-			};
-			// XMQuaternionRotationRollPitchYaw expects Pitch, Yaw, Roll order
-			XMVECTOR newQuaternion = XMQuaternionRotationRollPitchYawFromVector(XMLoadFloat3(&_float3(m_tRigidBodyDesc.fCurRotationX, m_tRigidBodyDesc.fCurRotationY, m_tRigidBodyDesc.fCurRotationZ)));
-			XMStoreFloat4(&m_tRigidBodyDesc.qRotation, XMQuaternionNormalize(newQuaternion));
-
-			// ImGui에서 변경 시 fCurRotationX/Y/Z도 동기화 (선택 사항, Create_Actor에서만 사용된다면 불필요할 수 있음)
-			m_tRigidBodyDesc.fCurRotationX = newEulerAnglesRadians.x; // Roll
-			m_tRigidBodyDesc.fCurRotationY = newEulerAnglesRadians.y; // Pitch
-			m_tRigidBodyDesc.fCurRotationZ = newEulerAnglesRadians.z; // Yaw
-
 			Release_Actor();
 			Create_Actor();
 		}
-
-
-		//if (m_tRigidBodyDesc.eShapeType == EShapeType::CONVEX_MESH || m_tRigidBodyDesc.eShapeType == EShapeType::TRIANGLE_MESH)
-		//{
-		//	ImGui::Checkbox("Is Convex (for Static Mesh)", &m_tRigidBodyDesc.bIsConvex); // bIsConvex가 RigidBody.h에 추가되었다고 가정
-		//	// pModelForMesh는 ImGui로 직접 설정하기 어려움 (파일 경로 입력 또는 드래그앤드롭 필요)
-		//	ImGui::Text("Model for Mesh: %s", m_tRigidBodyDesc.pModelForMesh ? "Set" : "None");
-		//}
-
 
 		// Dynamic Body 속성들
 		if (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
@@ -340,6 +281,107 @@ HRESULT CRigidBody::RenderImGui()
 			ImGui::TreePop();
 		}
 
+		// 쉐이프 목록 관리
+		if (ImGui::TreeNode("Shapes"))
+		{
+			// 새 쉐이프 추가 버튼
+			if (ImGui::Button("Add Shape"))
+			{
+				SHAPE_DESC newShape;
+				newShape.eShapeType = EShapeType::BOX;
+				newShape.vShapeSize = _float3(0.5f, 0.5f, 0.5f);
+				m_tRigidBodyDesc.vShapeDescs.push_back(newShape);
+
+				// 쉐이프 추가 시 즉시 액터 재생성
+				Release_Actor();
+				Create_Actor();
+			}
+			const char* shapeTypes[] = { "Box", "Sphere", "Capsule", "Convex Mesh", "Triangle Mesh" };
+			// 기존 쉐이프 편집
+			for (size_t i = 0; i < m_tRigidBodyDesc.vShapeDescs.size(); ++i)
+			{
+				ImGui::PushID(static_cast<int>(i));
+
+				bool shapeModified = false;
+				SHAPE_DESC& shape = m_tRigidBodyDesc.vShapeDescs[i];
+
+				// 쉐이프 헤더 (삭제 버튼 포함)
+				char shapeName[64];
+				sprintf_s(shapeName, "Shape %zu: %s", i, shapeTypes[static_cast<int>(shape.eShapeType)]);
+
+				bool shapeOpen = ImGui::TreeNode(shapeName);
+				ImGui::SameLine();
+
+				if (ImGui::Button("X"))
+				{
+					m_tRigidBodyDesc.vShapeDescs.erase(m_tRigidBodyDesc.vShapeDescs.begin() + i);
+					Release_Actor();
+					Create_Actor();
+					ImGui::PopID();
+					continue;
+				}
+
+				if (shapeOpen)
+				{
+					// 쉐이프 타입
+					int currentShapeType = static_cast<int>(shape.eShapeType);
+					if (ImGui::Combo("Shape Type", &currentShapeType, shapeTypes, IM_ARRAYSIZE(shapeTypes)))
+					{
+						shape.eShapeType = static_cast<EShapeType>(currentShapeType);
+						shapeModified = true;
+					}
+
+					// 쉐이프 크기
+					if (ImGui::DragFloat3("Size", &shape.vShapeSize.x, 0.1f, 0.01f, 100.0f))
+					{
+						shapeModified = true;
+					}
+
+					// 쉐이프 로컬 위치
+					if (ImGui::DragFloat3("Local Position", &shape.vLocalPosition.x, 0.1f))
+					{
+						shapeModified = true;
+					}
+
+					// 쉐이프 로컬 회전
+					_float3 eulerAnglesDegrees = {
+						XMConvertToDegrees(shape.fCurRotationX),
+						XMConvertToDegrees(shape.fCurRotationY),
+						XMConvertToDegrees(shape.fCurRotationZ)
+					};
+
+					if (ImGui::DragFloat3(u8"Rotation (Euler °)", &eulerAnglesDegrees.x, 1.0f, -360.f, 360.f))
+					{
+						shape.fCurRotationX = XMConvertToRadians(eulerAnglesDegrees.x);
+						shape.fCurRotationY = XMConvertToRadians(eulerAnglesDegrees.y);
+						shape.fCurRotationZ = XMConvertToRadians(eulerAnglesDegrees.z);
+
+						XMVECTOR newQuaternion = XMQuaternionRotationRollPitchYaw(
+							shape.fCurRotationX,  // Pitch
+							shape.fCurRotationY,  // Yaw
+							shape.fCurRotationZ   // Roll
+						);
+						XMStoreFloat4(&shape.qRotation, XMQuaternionNormalize(newQuaternion));
+
+						shapeModified = true;
+					}
+
+					ImGui::TreePop();
+				}
+
+				// 수정 사항이 있으면 액터 재생성
+				if (shapeModified)
+				{
+					Release_Actor();
+					Create_Actor();
+				}
+
+				ImGui::PopID();
+			}
+
+			ImGui::TreePop();
+		}
+
 		// 현재 속도 정보 (읽기 전용)
 		if (m_pActor && (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC))
 		{
@@ -351,6 +393,41 @@ HRESULT CRigidBody::RenderImGui()
 	}
 	ImGui::PopID();
 	return S_OK;
+}
+
+HRESULT CRigidBody::Add_Shape(const SHAPE_DESC& shapeDesc)
+{
+	m_tRigidBodyDesc.vShapeDescs.push_back(shapeDesc);
+
+	if (m_bLateInitialized)
+	{
+		Release_Actor();
+		return Create_Actor();
+	}
+
+	return S_OK;
+}
+HRESULT CRigidBody::Remove_Shape(_uint iIndex)
+{
+	if (iIndex >= m_tRigidBodyDesc.vShapeDescs.size())
+		return E_FAIL;
+
+	m_tRigidBodyDesc.vShapeDescs.erase(m_tRigidBodyDesc.vShapeDescs.begin() + iIndex);
+
+	if (m_bLateInitialized)
+	{
+		Release_Actor();
+		return Create_Actor();
+	}
+
+	return S_OK;
+}
+CRigidBody::SHAPE_DESC* CRigidBody::Get_Shape(_uint iIndex)
+{
+	if (iIndex >= m_tRigidBodyDesc.vShapeDescs.size())
+        return nullptr;
+    
+    return &m_tRigidBodyDesc.vShapeDescs[iIndex];
 }
 #pragma endregion
 
@@ -417,6 +494,7 @@ void CRigidBody::Set_Linear_Velocity(const _float3& vVelocity)
 		{
 			
 			PxVec3 velocityChange = ToPxVec3(vVelocity) - pBody->getLinearVelocity();
+			velocityChange.y = pBody->getLinearVelocity().y;
 			//pBody->setlin
 			pBody->addForce(velocityChange, PxForceMode::eVELOCITY_CHANGE);
 			//pBody->setLinearVelocity(ToPxVec3(vVelocity));
@@ -510,14 +588,19 @@ void CRigidBody::Enable_Gravity(_bool bEnable)
 
 void CRigidBody::Set_Material_Properties(_float fStaticFriction, _float fDynamicFriction, _float fRestitution)
 {
-	if (m_pMaterial)
+	m_tRigidBodyDesc.fStaticFriction = fStaticFriction;
+	m_tRigidBodyDesc.fDynamicFriction = fDynamicFriction;
+	m_tRigidBodyDesc.fRestitution = fRestitution;
+
+	// 모든 재질에 적용
+	for (auto& pMaterial : m_Materials)
 	{
-		m_tRigidBodyDesc.fStaticFriction = fStaticFriction;
-		m_tRigidBodyDesc.fDynamicFriction = fDynamicFriction;
-		m_tRigidBodyDesc.fRestitution = fRestitution;
-		m_pMaterial->setStaticFriction(fStaticFriction);
-		m_pMaterial->setDynamicFriction(fDynamicFriction);
-		m_pMaterial->setRestitution(fRestitution);
+		if (pMaterial)
+		{
+			pMaterial->setStaticFriction(fStaticFriction);
+			pMaterial->setDynamicFriction(fDynamicFriction);
+			pMaterial->setRestitution(fRestitution);
+		}
 	}
 }
 
@@ -551,264 +634,17 @@ HRESULT CRigidBody::Create_Actor()
 	if (pTransform == nullptr)
 		return E_FAIL;
 
-	// 1. Material 생성
-	m_pMaterial = pPhysics->createMaterial(m_tRigidBodyDesc.fStaticFriction, m_tRigidBodyDesc.fDynamicFriction, m_tRigidBodyDesc.fRestitution);
-	if (!m_pMaterial)
-		return E_FAIL;
-	
-
-	// 2. Shape Geometry 생성
-	PxGeometry* pGeometry = nullptr;
-	PxTriangleMesh* triangleMesh = nullptr; // Triangle Mesh 리소스
-	PxConvexMesh* convexMesh = nullptr;     // Convex Mesh 리소스
-	switch (m_tRigidBodyDesc.eShapeType)
-	{
-	case EShapeType::BOX:
-		pGeometry = new physx::PxBoxGeometry(m_tRigidBodyDesc.vShapeSize.x, m_tRigidBodyDesc.vShapeSize.y, m_tRigidBodyDesc.vShapeSize.z);
-		break;
-	case EShapeType::SPHERE:
-		pGeometry = new physx::PxSphereGeometry(m_tRigidBodyDesc.vShapeSize.x); // radius
-		break;
-	case EShapeType::CAPSULE:
-		pGeometry = new physx::PxCapsuleGeometry(m_tRigidBodyDesc.vShapeSize.x, m_tRigidBodyDesc.vShapeSize.y); // radius, halfHeight
-		break;
-	case EShapeType::TRIANGLE_MESH:
-	case EShapeType::CONVEX_MESH:
-	{
-		//if (!m_tRigidBodyDesc.pModelForMesh) // RigidBody.h에서 pModelForMesh 주석 해제 및 값 설정 필요
-		//{
-		//	MSG_BOX("CRigidBody::Create_Actor - pModelForMesh is null for MESH shape type.");
-		//	m_pMaterial->release(); m_pMaterial = nullptr;
-		//	return E_FAIL;
-		//}
-
-		//PxVec3* verticesData = nullptr;
-		//PxU32 numVertices = 0;
-		//void* indicesData = nullptr;
-		//PxU32 numIndices = 0;
-		//PxMeshFlag::Enum indexFormat = PxMeshFlag::Enum(0);
-
-		//// CModel에서 정점 및 인덱스 데이터 가져오기 (가정)
-		//// 실제 모델/메시 구조에 맞게 이 부분을 수정해야 합니다.
-		//// 예시: 모델의 모든 메시를 병합하거나 첫 번째 메시만 사용
-		//std::vector<physx::PxVec3> pxVertices;
-		//std::vector<PxU32> pxIndices; // Triangle Mesh에만 필요
-
-		//// --- 모델 데이터 로드 시작 (플레이스홀더) ---
-		//// 이 부분은 프로젝트의 CModel, CMesh 구조에 따라 실제 데이터를 로드해야 합니다.
-		//// 예를 들어, m_tRigidBodyDesc.pModelForMesh->Get_Meshes() 등으로 메시 목록을 가져오고,
-		//// 각 CMesh에서 Get_Vertices_Position(), Get_Indices() 등으로 데이터를 가져와 pxVertices, pxIndices에 채웁니다.
-		//// 여기서는 간단한 예시로 하나의 메시에서 데이터를 가져온다고 가정합니다.
-		//// CModel* pModel = m_tRigidBodyDesc.pModelForMesh;
-		//// if (pModel->Get_MeshCount() > 0) {
-		////    CMesh* pMesh = pModel->Get_Mesh(0); // 첫 번째 메시 사용 가정
-		////    const auto& modelVertices = pMesh->Get_Vertices(); // _float3 타입의 정점 배열 가정
-		////    for(const auto& vert : modelVertices) {
-		////        pxVertices.push_back(ToPxVec3(vert.vPosition)); // 정점 구조체에 vPosition이 있다고 가정
-		////    }
-		////    if (m_tRigidBodyDesc.eShapeType == EShapeType::TRIANGLE_MESH && !m_tRigidBodyDesc.bIsConvex) { // bIsConvex는 RigidBody.h에 추가 필요
-		////        const auto& modelIndices = pMesh->Get_Indices32(); // _uint 타입의 인덱스 배열 가정
-		////        pxIndices.insert(pxIndices.end(), modelIndices.begin(), modelIndices.end());
-		////    }
-		//// }
-		//// --- 임시 플레이스홀더 데이터 (실제로는 모델에서 가져와야 함) ---
-		//// 예: 큐브 정점 데이터 (Convex 및 Triangle Mesh 공통)
-		//pxVertices.push_back(physx::PxVec3(-0.5f, -0.5f, -0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-		//pxVertices.push_back(physx::PxVec3(0.5f, -0.5f, -0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-		//pxVertices.push_back(physx::PxVec3(-0.5f, 0.5f, -0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-		//pxVertices.push_back(physx::PxVec3(0.5f, 0.5f, -0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-		//pxVertices.push_back(physx::PxVec3(-0.5f, -0.5f, 0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-		//pxVertices.push_back(physx::PxVec3(0.5f, -0.5f, 0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-		//pxVertices.push_back(physx::PxVec3(-0.5f, 0.5f, 0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-		//pxVertices.push_back(physx::PxVec3(0.5f, 0.5f, 0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-		//// --- 임시 플레이스홀더 데이터 끝 ---
-
-
-		//if (pxVertices.empty()) {
-		//	MSG_BOX("CRigidBody::Create_Actor - No vertices found for MESH shape type.");
-		//	m_pMaterial->release(); m_pMaterial = nullptr;
-		//	return E_FAIL;
-		//}
-
-		//// 동적 액터는 항상 Convex Mesh를 사용해야 합니다.
-		//// 정적 액터는 Triangle Mesh 또는 Convex Mesh를 사용할 수 있습니다.
-		//// m_tRigidBodyDesc.bIsConvex 플래그를 사용하여 정적일 때 어떤 메시를 사용할지 결정할 수 있습니다.
-		//bool bForceConvex = (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC);
-
-		//if (m_tRigidBodyDesc.eShapeType == EShapeType::TRIANGLE_MESH && !bForceConvex && !m_tRigidBodyDesc.bIsConvex)
-		//{
-		//	// --- 임시 플레이스홀더 인덱스 데이터 (실제로는 모델에서 가져와야 함) ---
-		//	// 큐브 인덱스 데이터 (Triangle List)
-		//	PxU32 inds[] = {
-		//		0,2,1, 1,2,3, 4,5,6, 5,7,6, 0,1,5, 0,5,4,
-		//		2,6,7, 2,7,3, 0,4,2, 2,4,6, 1,3,7, 1,7,5
-		//	};
-		//	pxIndices.assign(inds, inds + _countof(inds));
-		//	// --- 임시 플레이스홀더 인덱스 데이터 끝 ---
-
-		//	if (pxIndices.empty()) {
-		//		MSG_BOX("CRigidBody::Create_Actor - No indices found for TRIANGLE_MESH shape type.");
-		//		m_pMaterial->release(); m_pMaterial = nullptr;
-		//		return E_FAIL;
-		//	}
-
-		//	physx::PxTriangleMeshDesc meshDesc;
-		//	meshDesc.points.count = static_cast<PxU32>(pxVertices.size());
-		//	meshDesc.points.stride = sizeof(physx::PxVec3);
-		//	meshDesc.points.data = pxVertices.data();
-
-		//	meshDesc.triangles.count = static_cast<PxU32>(pxIndices.size() / 3);
-		//	meshDesc.triangles.stride = 3 * sizeof(PxU32);
-		//	meshDesc.triangles.data = pxIndices.data();
-		//	// 만약 16비트 인덱스를 사용한다면:
-		//	// meshDesc.flags = PxMeshFlag::e16_BIT_INDICES;
-		//	// meshDesc.triangles.stride = 3 * sizeof(PxU16);
-
-		//	physx::PxDefaultMemoryOutputStream writeBuffer;
-		//	physx::PxTriangleMeshCookingResult::Enum cookResult;
-		//	if (!pCooking->cookTriangleMesh(meshDesc, writeBuffer, &cookResult))
-		//	{
-		//		MSG_BOX("CRigidBody::Create_Actor - Failed to cook triangle mesh.");
-		//		m_pMaterial->release(); m_pMaterial = nullptr;
-		//		return E_FAIL;
-		//	}
-		//	physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
-		//	triangleMesh = pPhysics->createTriangleMesh(readBuffer);
-		//	if (!triangleMesh) {
-		//		MSG_BOX("CRigidBody::Create_Actor - Failed to create PxTriangleMesh from cooked data.");
-		//		m_pMaterial->release(); m_pMaterial = nullptr;
-		//		return E_FAIL;
-		//	}
-		//	// 스케일 적용은 PxTriangleMeshGeometry의 PxMeshScale에서 수행
-		//	pGeometry = new physx::PxTriangleMeshGeometry(triangleMesh /*, PxMeshScale(ToPxVec3(m_tRigidBodyDesc.vShapeSize))*/);
-		//	// vShapeSize를 정점 데이터에 미리 곱했으므로 여기서는 스케일 1.0으로 처리하거나,
-		//	// 정점 데이터는 원본으로 두고 여기서 PxMeshScale을 사용합니다.
-		//	// 현재 코드는 정점에 미리 곱하는 방식을 사용했습니다.
-		//}
-		//else // CONVEX_MESH 또는 Dynamic/Kinematic Triangle Mesh (Convex로 강제)
-		//{
-		//	physx::PxConvexMeshDesc convexDesc;
-		//	convexDesc.points.count = static_cast<PxU32>(pxVertices.size());
-		//	convexDesc.points.stride = sizeof(physx::PxVec3);
-		//	convexDesc.points.data = pxVertices.data();
-		//	convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX; // 볼록 헐 계산
-		//	// | physx::PxConvexFlag::eINFLATE_CONVEX; // 필요시 사용
-		//	// | physx::PxConvexFlag::eSHIFT_VERTICES; // 원점으로 이동시킬 경우
-
-		//	physx::PxDefaultMemoryOutputStream writeBuffer;
-		//	physx::PxConvexMeshCookingResult::Enum cookResult;
-		//	if (!pCooking->cookConvexMesh(convexDesc, writeBuffer, &cookResult))
-		//	{
-		//		MSG_BOX("CRigidBody::Create_Actor - Failed to cook convex mesh.");
-		//		m_pMaterial->release(); m_pMaterial = nullptr;
-		//		return E_FAIL;
-		//	}
-		//	physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
-		//	convexMesh = pPhysics->createConvexMesh(readBuffer);
-		//	if (!convexMesh) {
-		//		MSG_BOX("CRigidBody::Create_Actor - Failed to create PxConvexMesh from cooked data.");
-		//		m_pMaterial->release(); m_pMaterial = nullptr;
-		//		return E_FAIL;
-		//	}
-		//	// 스케일 적용은 PxConvexMeshGeometry의 PxMeshScale에서 수행
-		//	pGeometry = new physx::PxConvexMeshGeometry(convexMesh /*, PxMeshScale(ToPxVec3(m_tRigidBodyDesc.vShapeSize))*/);
-		//	// vShapeSize를 정점 데이터에 미리 곱했으므로 여기서는 스케일 1.0으로 처리하거나,
-		//	// 정점 데이터는 원본으로 두고 여기서 PxMeshScale을 사용합니다.
-		//	// 현재 코드는 정점에 미리 곱하는 방식을 사용했습니다.
-		//}
-	}
-		break;
-		// TODO: MESH 타입 처리 (PxTriangleMeshGeometry 또는 PxConvexMeshGeometry)
-
-	case EShapeType::HEIGHTFIELD:
-	{
-		CVIBuffer_Terrain* pTerrain = dynamic_cast<CVIBuffer_Terrain*>(m_pOwner->Get_Component(L"Com_VIBuffer"));
-		if (nullptr == pTerrain) break;
-		// CVIBuffer_Terrain으로부터 높이 필드 데이터 가져오기 (가상 인터페이스)
-		// 실제 CVIBuffer_Terrain 클래스의 인터페이스에 맞게 수정 필요
-		PxU32 nbRows = pTerrain->Get_NumVerticeZ(); // 예시: 지형의 Z축 정점 수
-		PxU32 nbCols = pTerrain->Get_NumVerticeX(); // 예시: 지형의 X축 정점 수
-		PxHeightFieldSample* pHeightSamples = new PxHeightFieldSample[nbRows * nbCols];
-		for (_uint row = 0; row < nbRows; ++row)
-		{
-			for (_uint col = 0; col < nbCols; ++col)
-			{
-				_uint index = row * nbCols + col;
-				pHeightSamples[index].height = static_cast<physx::PxI16>(pTerrain->Get_VertexPositions()[index].y); // GetHeightFromTerrain() is a hypothetical function to retrieve height data
-				pHeightSamples[index].materialIndex0 = 0;
-				pHeightSamples[index].materialIndex1 = 0;
-			}
-		}
-
-		if (nullptr == pHeightSamples || nbRows == 0 || nbCols == 0)
-		{
-			MSG_BOX("CRigidBody::Create_Actor - Invalid data from CVIBuffer_Terrain for HEIGHTFIELD.");
-			break;
-		}
-
-		// 기존 m_pHeightField 해제 (액터 재생성 시 필요)
-		if (m_pHeightField)
-		{
-			m_pHeightField->release();
-			m_pHeightField = nullptr;
-		}
-
-		physx::PxHeightFieldDesc hfDesc;
-		hfDesc.nbRows = nbRows;                     // Z축 방향의 샘플 수
-		hfDesc.nbColumns = nbCols;                  // X축 방향의 샘플 수
-		hfDesc.format = physx::PxHeightFieldFormat::eS16_TM; // 각 샘플은 PxHeightFieldSample 구조체
-		hfDesc.samples.data = pHeightSamples;         // PxHeightFieldSample 배열의 시작 주소
-		hfDesc.samples.stride = sizeof(physx::PxHeightFieldSample); // 각 샘플의 바이트 크기
-		hfDesc.samples.count = nbCols * nbRows;
-
-		// 필요에 따라 플래그 설정 (예: 경계면 처리 방식)
-		hfDesc.flags = physx::PxHeightFieldFlag::eNO_BOUNDARY_EDGES;
-
-		// PxPhysics 객체를 사용하여 HeightField 생성
-		// createHeightField의 두 번째 인자는 PxInsertionCallback입니다.
-		// 일반적으로 pPhysics->getPhysicsInsertionCallback()을 사용합니다.
-		//m_pHeightField = pPhysics->createHeightField(reinterpret_cast<PxInputStream&>(hfDesc));
-		m_pHeightField = PxCreateHeightField(hfDesc);
-		delete[] pHeightSamples; // PhysX가 데이터를 복사하므로 원본 샘플 데이터는 해제
-		if (!m_pHeightField)
-		{
-			MSG_BOX("CRigidBody::Create_Actor - Failed to create PxHeightField.");
-			break;
-		}
-
-		// PxHeightFieldGeometry 생성
-		// m_tRigidBodyDesc.vShapeSize 사용: x=columnScale, y=heightScale, z=rowScale
-		// 이 값들은 지형 데이터 자체의 스케일과 별개로 적용되는 추가 스케일입니다.
-		// 만약 지형 데이터가 이미 월드 스케일이라면, 이 값들은 1.0f로 설정될 수 있습니다.
-		PxReal heightScale = m_tRigidBodyDesc.vShapeSize.y; // Y축 (높이) 스케일
-		PxReal columnScale = m_tRigidBodyDesc.vShapeSize.x; // X축 (열) 스케일
-		PxReal rowScale = m_tRigidBodyDesc.vShapeSize.z;    // Z축 (행) 스케일
-
-		pGeometry = new PxHeightFieldGeometry(m_pHeightField, PxMeshGeometryFlags(), heightScale, rowScale, columnScale);
-	}
-		break;
-	default:
-		return E_FAIL; // 지원하지 않는 모양 타입
-	}
-
-	if (!pGeometry) {
-		m_pMaterial->release();
-		m_pMaterial = nullptr;
-		return E_FAIL;
-	}
-
-	// 3. Actor 생성
-	// CTransform의 월드 정보 가져오기
+	// 1. Actor 생성 및 위치 설정 준비
 	_matrix cTransformWorldMatrix = pTransform->Get_WorldMatrix();
 
 	_float3 rbLocalPos = m_tRigidBodyDesc.vLocalPosition;
 	XMVECTOR rbLocalRotQuatVec = XMQuaternionRotationRollPitchYaw(
-		m_tRigidBodyDesc.fCurRotationY, // Pitch
-		m_tRigidBodyDesc.fCurRotationZ, // Yaw
-		m_tRigidBodyDesc.fCurRotationX  // Roll
+		m_tRigidBodyDesc.fCurRotationX, // Pitch
+		m_tRigidBodyDesc.fCurRotationY, // Yaw
+		m_tRigidBodyDesc.fCurRotationZ  // Roll
 	);
 	rbLocalRotQuatVec = XMQuaternionNormalize(rbLocalRotQuatVec);
-	XMStoreFloat4(&m_tRigidBodyDesc.qRotation, rbLocalRotQuatVec); // Update desc's qRotation
+	XMStoreFloat4(&m_tRigidBodyDesc.qRotation, rbLocalRotQuatVec);
 
 	_matrix rbLocalTranslationMatrix = XMMatrixTranslation(rbLocalPos.x, rbLocalPos.y, rbLocalPos.z);
 	_matrix rbLocalRotationMatrix = XMMatrixRotationQuaternion(rbLocalRotQuatVec);
@@ -852,32 +688,245 @@ HRESULT CRigidBody::Create_Actor()
 		}
 		break;
 	default:
-		delete pGeometry; // 생성된 geometry 해제
-		m_pMaterial->release();
-		m_pMaterial = nullptr;
 		return E_FAIL; // 지원하지 않는 바디 타입
 	}
 
-	if (!m_pActor)
+	
+
+	// 2. Shape Geometry 생성
+	PxGeometry* pGeometry = nullptr;
+	PxTriangleMesh* triangleMesh = nullptr; // Triangle Mesh 리소스
+	PxConvexMesh* convexMesh = nullptr;     // Convex Mesh 리소스
+
+	if (m_tRigidBodyDesc.vShapeDescs.empty())
 	{
-		delete pGeometry;
-		m_pMaterial->release();
-		m_pMaterial = nullptr;
-		return E_FAIL;
+		// 기존 단일 쉐이프 정보를 vShapeDescs에 추가
+		SHAPE_DESC singleShapeDesc;
+		singleShapeDesc.vShapeSize = m_tRigidBodyDesc.vActorSize;
+		singleShapeDesc.vLocalPosition = _float3(0.f, 0.f, 0.f); // 액터 위치에 직접 생성
+		singleShapeDesc.qRotation = m_tRigidBodyDesc.qRotation;
+		singleShapeDesc.fCurRotationX = m_tRigidBodyDesc.fCurRotationX;
+		singleShapeDesc.fCurRotationY = m_tRigidBodyDesc.fCurRotationY;
+		singleShapeDesc.fCurRotationZ = m_tRigidBodyDesc.fCurRotationZ;
+
+		m_tRigidBodyDesc.vShapeDescs.push_back(singleShapeDesc);
 	}
 
-	// 4. Shape 생성 및 Actor에 부착
-	m_pShape = physx::PxRigidActorExt::createExclusiveShape(*m_pActor, *pGeometry, *m_pMaterial);
-	if (!m_pShape)
+	for (const auto& shapeDesc : m_tRigidBodyDesc.vShapeDescs)
 	{
-		m_pActor->release();
-		m_pActor = nullptr;
-		m_pMaterial->release();
-		m_pMaterial = nullptr;
-		return E_FAIL;
+
+		physx::PxMaterial* pMaterial = pPhysics->createMaterial(
+			m_tRigidBodyDesc.fStaticFriction,
+			m_tRigidBodyDesc.fDynamicFriction,
+			m_tRigidBodyDesc.fRestitution);
+
+		if (!pMaterial)
+			continue;
+
+		XMVECTOR shapeLocalRotQuatVec = XMQuaternionRotationRollPitchYaw(
+			shapeDesc.fCurRotationY, // Pitch
+			shapeDesc.fCurRotationZ, // Yaw
+			shapeDesc.fCurRotationX  // Roll
+		);
+
+		// 쉐이프 지오메트리 생성
+		PxGeometry* pGeometry = nullptr;
+
+		switch (shapeDesc.eShapeType)
+		{
+		case EShapeType::BOX:
+			pGeometry = new physx::PxBoxGeometry(shapeDesc.vShapeSize.x, shapeDesc.vShapeSize.y, shapeDesc.vShapeSize.z);
+			break;
+		case EShapeType::SPHERE:
+			pGeometry = new physx::PxSphereGeometry(shapeDesc.vShapeSize.x); // radius
+			break;
+		case EShapeType::CAPSULE:
+			pGeometry = new physx::PxCapsuleGeometry(shapeDesc.vShapeSize.x, shapeDesc.vShapeSize.y); // radius, halfHeight
+			break;
+		case EShapeType::TRIANGLE_MESH:
+		case EShapeType::CONVEX_MESH:
+		{
+			//if (!m_tRigidBodyDesc.pModelForMesh) // RigidBody.h에서 pModelForMesh 주석 해제 및 값 설정 필요
+			//{
+			//	MSG_BOX("CRigidBody::Create_Actor - pModelForMesh is null for MESH shape type.");
+			//	m_pMaterial->release(); m_pMaterial = nullptr;
+			//	return E_FAIL;
+			//}
+
+			//PxVec3* verticesData = nullptr;
+			//PxU32 numVertices = 0;
+			//void* indicesData = nullptr;
+			//PxU32 numIndices = 0;
+			//PxMeshFlag::Enum indexFormat = PxMeshFlag::Enum(0);
+
+			//// CModel에서 정점 및 인덱스 데이터 가져오기 (가정)
+			//// 실제 모델/메시 구조에 맞게 이 부분을 수정해야 합니다.
+			//// 예시: 모델의 모든 메시를 병합하거나 첫 번째 메시만 사용
+			//std::vector<physx::PxVec3> pxVertices;
+			//std::vector<PxU32> pxIndices; // Triangle Mesh에만 필요
+
+			//// --- 모델 데이터 로드 시작 (플레이스홀더) ---
+			//// 이 부분은 프로젝트의 CModel, CMesh 구조에 따라 실제 데이터를 로드해야 합니다.
+			//// 예를 들어, m_tRigidBodyDesc.pModelForMesh->Get_Meshes() 등으로 메시 목록을 가져오고,
+			//// 각 CMesh에서 Get_Vertices_Position(), Get_Indices() 등으로 데이터를 가져와 pxVertices, pxIndices에 채웁니다.
+			//// 여기서는 간단한 예시로 하나의 메시에서 데이터를 가져온다고 가정합니다.
+			//// CModel* pModel = m_tRigidBodyDesc.pModelForMesh;
+			//// if (pModel->Get_MeshCount() > 0) {
+			////    CMesh* pMesh = pModel->Get_Mesh(0); // 첫 번째 메시 사용 가정
+			////    const auto& modelVertices = pMesh->Get_Vertices(); // _float3 타입의 정점 배열 가정
+			////    for(const auto& vert : modelVertices) {
+			////        pxVertices.push_back(ToPxVec3(vert.vPosition)); // 정점 구조체에 vPosition이 있다고 가정
+			////    }
+			////    if (m_tRigidBodyDesc.eShapeType == EShapeType::TRIANGLE_MESH && !m_tRigidBodyDesc.bIsConvex) { // bIsConvex는 RigidBody.h에 추가 필요
+			////        const auto& modelIndices = pMesh->Get_Indices32(); // _uint 타입의 인덱스 배열 가정
+			////        pxIndices.insert(pxIndices.end(), modelIndices.begin(), modelIndices.end());
+			////    }
+			//// }
+			//// --- 임시 플레이스홀더 데이터 (실제로는 모델에서 가져와야 함) ---
+			//// 예: 큐브 정점 데이터 (Convex 및 Triangle Mesh 공통)
+			//pxVertices.push_back(physx::PxVec3(-0.5f, -0.5f, -0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
+			//pxVertices.push_back(physx::PxVec3(0.5f, -0.5f, -0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
+			//pxVertices.push_back(physx::PxVec3(-0.5f, 0.5f, -0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
+			//pxVertices.push_back(physx::PxVec3(0.5f, 0.5f, -0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
+			//pxVertices.push_back(physx::PxVec3(-0.5f, -0.5f, 0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
+			//pxVertices.push_back(physx::PxVec3(0.5f, -0.5f, 0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
+			//pxVertices.push_back(physx::PxVec3(-0.5f, 0.5f, 0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
+			//pxVertices.push_back(physx::PxVec3(0.5f, 0.5f, 0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
+			//// --- 임시 플레이스홀더 데이터 끝 ---
+
+
+			//if (pxVertices.empty()) {
+			//	MSG_BOX("CRigidBody::Create_Actor - No vertices found for MESH shape type.");
+			//	m_pMaterial->release(); m_pMaterial = nullptr;
+			//	return E_FAIL;
+			//}
+
+			//// 동적 액터는 항상 Convex Mesh를 사용해야 합니다.
+			//// 정적 액터는 Triangle Mesh 또는 Convex Mesh를 사용할 수 있습니다.
+			//// m_tRigidBodyDesc.bIsConvex 플래그를 사용하여 정적일 때 어떤 메시를 사용할지 결정할 수 있습니다.
+			//bool bForceConvex = (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC);
+
+			//if (m_tRigidBodyDesc.eShapeType == EShapeType::TRIANGLE_MESH && !bForceConvex && !m_tRigidBodyDesc.bIsConvex)
+			//{
+			//	// --- 임시 플레이스홀더 인덱스 데이터 (실제로는 모델에서 가져와야 함) ---
+			//	// 큐브 인덱스 데이터 (Triangle List)
+			//	PxU32 inds[] = {
+			//		0,2,1, 1,2,3, 4,5,6, 5,7,6, 0,1,5, 0,5,4,
+			//		2,6,7, 2,7,3, 0,4,2, 2,4,6, 1,3,7, 1,7,5
+			//	};
+			//	pxIndices.assign(inds, inds + _countof(inds));
+			//	// --- 임시 플레이스홀더 인덱스 데이터 끝 ---
+
+			//	if (pxIndices.empty()) {
+			//		MSG_BOX("CRigidBody::Create_Actor - No indices found for TRIANGLE_MESH shape type.");
+			//		m_pMaterial->release(); m_pMaterial = nullptr;
+			//		return E_FAIL;
+			//	}
+
+			//	physx::PxTriangleMeshDesc meshDesc;
+			//	meshDesc.points.count = static_cast<PxU32>(pxVertices.size());
+			//	meshDesc.points.stride = sizeof(physx::PxVec3);
+			//	meshDesc.points.data = pxVertices.data();
+
+			//	meshDesc.triangles.count = static_cast<PxU32>(pxIndices.size() / 3);
+			//	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+			//	meshDesc.triangles.data = pxIndices.data();
+			//	// 만약 16비트 인덱스를 사용한다면:
+			//	// meshDesc.flags = PxMeshFlag::e16_BIT_INDICES;
+			//	// meshDesc.triangles.stride = 3 * sizeof(PxU16);
+
+			//	physx::PxDefaultMemoryOutputStream writeBuffer;
+			//	physx::PxTriangleMeshCookingResult::Enum cookResult;
+			//	if (!pCooking->cookTriangleMesh(meshDesc, writeBuffer, &cookResult))
+			//	{
+			//		MSG_BOX("CRigidBody::Create_Actor - Failed to cook triangle mesh.");
+			//		m_pMaterial->release(); m_pMaterial = nullptr;
+			//		return E_FAIL;
+			//	}
+			//	physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+			//	triangleMesh = pPhysics->createTriangleMesh(readBuffer);
+			//	if (!triangleMesh) {
+			//		MSG_BOX("CRigidBody::Create_Actor - Failed to create PxTriangleMesh from cooked data.");
+			//		m_pMaterial->release(); m_pMaterial = nullptr;
+			//		return E_FAIL;
+			//	}
+			//	// 스케일 적용은 PxTriangleMeshGeometry의 PxMeshScale에서 수행
+			//	pGeometry = new physx::PxTriangleMeshGeometry(triangleMesh /*, PxMeshScale(ToPxVec3(m_tRigidBodyDesc.vShapeSize))*/);
+			//	// vShapeSize를 정점 데이터에 미리 곱했으므로 여기서는 스케일 1.0으로 처리하거나,
+			//	// 정점 데이터는 원본으로 두고 여기서 PxMeshScale을 사용합니다.
+			//	// 현재 코드는 정점에 미리 곱하는 방식을 사용했습니다.
+			//}
+			//else // CONVEX_MESH 또는 Dynamic/Kinematic Triangle Mesh (Convex로 강제)
+			//{
+			//	physx::PxConvexMeshDesc convexDesc;
+			//	convexDesc.points.count = static_cast<PxU32>(pxVertices.size());
+			//	convexDesc.points.stride = sizeof(physx::PxVec3);
+			//	convexDesc.points.data = pxVertices.data();
+			//	convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX; // 볼록 헐 계산
+			//	// | physx::PxConvexFlag::eINFLATE_CONVEX; // 필요시 사용
+			//	// | physx::PxConvexFlag::eSHIFT_VERTICES; // 원점으로 이동시킬 경우
+
+			//	physx::PxDefaultMemoryOutputStream writeBuffer;
+			//	physx::PxConvexMeshCookingResult::Enum cookResult;
+			//	if (!pCooking->cookConvexMesh(convexDesc, writeBuffer, &cookResult))
+			//	{
+			//		MSG_BOX("CRigidBody::Create_Actor - Failed to cook convex mesh.");
+			//		m_pMaterial->release(); m_pMaterial = nullptr;
+			//		return E_FAIL;
+			//	}
+			//	physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+			//	convexMesh = pPhysics->createConvexMesh(readBuffer);
+			//	if (!convexMesh) {
+			//		MSG_BOX("CRigidBody::Create_Actor - Failed to create PxConvexMesh from cooked data.");
+			//		m_pMaterial->release(); m_pMaterial = nullptr;
+			//		return E_FAIL;
+			//	}
+			//	// 스케일 적용은 PxConvexMeshGeometry의 PxMeshScale에서 수행
+			//	pGeometry = new physx::PxConvexMeshGeometry(convexMesh /*, PxMeshScale(ToPxVec3(m_tRigidBodyDesc.vShapeSize))*/);
+			//	// vShapeSize를 정점 데이터에 미리 곱했으므로 여기서는 스케일 1.0으로 처리하거나,
+			//	// 정점 데이터는 원본으로 두고 여기서 PxMeshScale을 사용합니다.
+			//	// 현재 코드는 정점에 미리 곱하는 방식을 사용했습니다.
+			//}
+		}
+		break;
+		// TODO: MESH 타입 처리 (PxTriangleMeshGeometry 또는 PxConvexMeshGeometry)
+		default:
+			pMaterial->release();
+			m_Materials.pop_back();
+			continue;
+		}
+
+		if (!pGeometry)
+		{
+			pMaterial->release();
+			m_Materials.pop_back();
+			continue;
+		}
+
+		// 쉐이프 로컬 변환 설정
+		physx::PxTransform shapePose(
+			ToPxVec3(shapeDesc.vLocalPosition),
+			ToPxQuat(shapeDesc.qRotation));
+
+		// 쉐이프 생성 및 액터에 부착
+		physx::PxShape* pShape = pPhysics->createShape(*pGeometry, *pMaterial, true);
+		if (pShape)
+		{
+			pShape->setSimulationFilterData(physx::PxFilterData(1, 1, 0, 0));
+			pShape->setLocalPose(shapePose);
+			m_pActor->attachShape(*pShape);
+			m_pShapes.push_back(pShape);
+		}
+
+		delete pGeometry; // 지오메트리는 쉐이프 생성 후 필요 없음
 	}
 
-	delete pGeometry; // Geometry는 Shape 생성 시 복사되므로 원본은 삭제
+	// 쉐이프가 하나도 생성되지 않았다면 실패
+	if (m_pShapes.empty())
+	{
+		Release_Actor();
+		return E_FAIL;
+	}
 
 	// 5. Actor를 Scene에 추가
 	m_pActor->userData = this; // 액터의 userData에 CRigidBody 인스턴스 포인터 저장 (콜백 등에서 사용 가능)
@@ -894,22 +943,31 @@ void CRigidBody::Release_Actor()
 		pScene->removeActor(*m_pActor);
 	}
 
-	if (m_pShape)
+	// 모든 쉐이프 해제
+	//for (auto& pShape : m_pShapes)
+	//{
+	//	if (pShape)
+	//	{
+	//		/*m_pActor->detachShape(*pShape);
+	//		pShape->release();*/
+	//	}
+	//}
+	m_pShapes.clear();
+	
+	
+
+	// 모든 재질 해제
+	for (auto& pMaterial : m_Materials)
 	{
-		// Shape은 Actor에 의해 소유되므로 Actor 해제 시 자동으로 해제됨.
-		// 명시적으로 release() 호출 불필요. 단, createExclusiveShape가 아닌 경우 별도 관리 필요.
-		// 여기서는 createExclusiveShape를 사용했으므로 Actor 해제 시 같이 정리됨.
-		m_pShape = nullptr;
+		if (pMaterial)
+			pMaterial->release();
 	}
+	m_Materials.clear();
+
 	if (m_pActor)
 	{
 		m_pActor->release();
 		m_pActor = nullptr;
-	}
-	if (m_pMaterial)
-	{
-		m_pMaterial->release();
-		m_pMaterial = nullptr;
 	}
 }
 

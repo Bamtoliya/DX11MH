@@ -18,6 +18,7 @@
 #include "VertexTypes.h"
 #include "PrimitiveBatch.h"
 #include "tk/Inc/Effects.h"
+#include "../../packages/directxtex_uwp.2025.3.25.2/include/DirectXTex.h"
 using namespace DirectX;
 #pragma endregion
 
@@ -46,6 +47,7 @@ using json = nlohmann::json;
 #include <filesystem>
 #include <queue>
 #include <mutex>
+#include <future>
 using namespace std;
 #pragma endregion
 

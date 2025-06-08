@@ -93,6 +93,8 @@ HRESULT CTerrain::Initialize(simdjson::ondemand::object& jsonData)
 		return E_FAIL;
 	if(FAILED(Deserialize(jsonData)))
 		return E_FAIL;
+	if (FAILED(Late_Initialize()))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -104,55 +106,55 @@ HRESULT CTerrain::Ready_Components()
 		return E_FAIL;
 
 	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_VIBuffer_Terrain"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_VIBuffer_Terrain"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Texture_Terrain"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 
 	/* For.Com_Splat_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_SplatMap"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Texture_Terrain_SplatMap"),
 		TEXT("Com_Splat_Texture"), reinterpret_cast<CComponent**>(&m_pSplatMapTextureCom))))
 		return E_FAIL;
 
 	/* For.Com_Splat_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_Water"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Texture_Terrain_Water"),
 		TEXT("Com_Water_Texture"), reinterpret_cast<CComponent**>(&m_pWaterTextureCom))))
 		return E_FAIL;
 
 
 	/* For.Com_Texture_BaseDiffuse */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_BaseDiffuse"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Texture_Terrain_BaseDiffuse"),
 		TEXT("Com_Texture_BaseDiffuse"), reinterpret_cast<CComponent**>(&m_pBaseDiffuseCom))))
 		return E_FAIL;
 
 	/* For.Com_Texture_BaseParameter */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_BaseParameter"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Texture_Terrain_BaseParameter"),
 		TEXT("Com_Texture_BaseParameter"), reinterpret_cast<CComponent**>(&m_pBaseParameterCom))))
 		return E_FAIL;
 
 
 	/* For.Com_Texture_DetailDiffuse */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_DetailDiffuse"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Texture_Terrain_DetailDiffuse"),
 		TEXT("Com_Texture_DetailDiffuse"), reinterpret_cast<CComponent**>(&m_pDetailDiffuseCom))))
 		return E_FAIL;
 
 	/* For.Com_Texture_DetailHeight */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_DetailHeight"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Texture_Terrain_DetailHeight"),
 		TEXT("Com_Texture_DetailHeight"), reinterpret_cast<CComponent**>(&m_pDetailHeightCom))))
 		return E_FAIL;
 
 	/* For.Com_Texture_DetailNormal */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Texture_Terrain_DetailNormal"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Texture_Terrain_DetailNormal"),
 		TEXT("Com_Texture_DetailNormal"), reinterpret_cast<CComponent**>(&m_pDetailNormalCom))))
 		return E_FAIL;
 
 	/* For.Com_HeightField */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom))))
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_HeightField"),
+		TEXT("Com_HeightField"), reinterpret_cast<CComponent**>(&m_pHeightFieldCom))))
 		return E_FAIL;
 
 	return S_OK;
@@ -165,7 +167,7 @@ void CTerrain::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pRigidBodyCom);
+	Safe_Release(m_pHeightFieldCom);
 
 	Safe_Release(m_pSplatMapTextureCom);
 	Safe_Release(m_pWaterTextureCom);

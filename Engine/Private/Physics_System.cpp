@@ -1,5 +1,14 @@
-﻿#include "Physics_System.h"
+﻿#pragma once
+#include "Physics_System.h"
 #include "GameInstance.h"
+
+#pragma region OmniPvd
+#include "../../External Libraries/physx/include/omnipvd/PxOmniPvd.h"
+#include "../../External Libraries/physx/include/OmniPvdWriter.h"
+#include "../../External Libraries/physx/include/OmniPvdFileWriteStream.h"  
+#pragma endregion
+
+
 
 #pragma region Constructor/Destructor
 CPhysics_System::CPhysics_System(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -145,11 +154,13 @@ PxScene* CPhysics_System::Create_Scene()
     if (m_pCudaContextManager && m_pCudaContextManager->contextIsValid()) // CUDA 컨텍스트 매니저가 유효한지 확인
     {
         sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS; // GPU 다이나믹스 활성화 플래그 (버전에 따라 다를 수 있음, 일반적으로는 gpuDispatcher 설정으로 충분)
+        //sceneDesc.flags |= PxSceneFlag::eENABLE_DIRECT_GPU_API; // GPU 다이나믹스 활성화 (버전에 따라 이 플래그가 없거나, cudaContextManager 설정만으로 충분할 수 있음)
         sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;    // GPU 브로드페이즈 사용
         sceneDesc.cudaContextManager = m_pCudaContextManager;
-        sceneDesc.flags |= PxSceneFlag::eENABLE_DIRECT_GPU_API; // GPU 다이나믹스 활성화 (버전에 따라 이 플래그가 없거나, cudaContextManager 설정만으로 충분할 수 있음)
-        sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;    // GPU 브로드페이즈 사용
         sceneDesc.solverType = PxSolverType::eTGS; // GPU 가속에 최적화된 솔버
+
+        //sceneDesc.gpuMaxNumPartitions = 8;  // 병렬 처리 파티션 최적화
+        //sceneDesc.gpuDynamicsConfig.capa *= 2;  // 제약 버퍼 증가
     }
     else
     {

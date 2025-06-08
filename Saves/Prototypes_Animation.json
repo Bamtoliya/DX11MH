@@ -1,7 +1,7 @@
 {
   "Prototype_Component_Model_Sonic": {
     "Class": "CModel",
-    "ModelFilePath": "G:/My Drive/Assets/Models/Sonic/SonicAllActions.model",
+    "ModelFilePath": "../../Assets/Models/Sonic/SonicAllActions.model",
     "PreTransformedMatrix": [
       -1.0,
       0.0,
@@ -76,5 +76,55 @@
   },
   "Prototype_GameObject_Sonic": {
     "Class": "CSonic"
+  },
+  "Prototype_Component_HeightField": {
+    "Class": "CHeightField"
+  },
+  "Prototype_Component_Texture_Terrain": {
+    "Class": "CTexture",
+    "NumTexture": 2,
+    "TextureFilePath": "../../Assets/Resources/Textures/Terrain/Tile%d.dds"
+  },
+  "Prototype_Component_VIBuffer_Terrain": {
+    "Class": "CVIBuffer_Terrain",
+    "HeightMapFilePath": "../../Assets/Resources/Textures/Terrain/Height.bmp"
+  },
+  "Prototype_GameObject_Terrain": {
+    "Class": "CTerrain"
+  },
+  "Prototype_Component_Texture_Terrain_Water": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "../../Assets/Terrain/Ocean/w1_ocean501_tk1_abd.dds"
+  },
+  "Prototype_Component_Texture_Terrain_SplatMap": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r03_splatmap.dds"
+  },
+  "Prototype_Component_Texture_Terrain_BaseDiffuse": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_base_abd.dds"
+  },
+  "Prototype_Component_Texture_Terrain_BaseParameter": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_base_prm.dds"
+  },
+  "Prototype_Component_Texture_Terrain_DetailDiffuse": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_detail_abd.dds"
+  },
+  "Prototype_Component_Texture_Terrain_DetailHeight": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_detail_hgt.dds"
+  },
+  "Prototype_Component_Texture_Terrain_DetailNormal": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_detail_nrm.dds"
   }
 }

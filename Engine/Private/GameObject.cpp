@@ -64,8 +64,12 @@ HRESULT CGameObject::Initialize(void* pArg)
 
 HRESULT CGameObject::Late_Initialize(void* pArg)
 {
+	if (m_bLateInitialized)
+		return S_OK;
 	for (auto& pair : m_Components)
 		pair.second->Late_Initialize();
+
+	m_bLateInitialized = true;
 	return S_OK;
 }
 

@@ -102,7 +102,7 @@ void CSonic_Ground_State::HandleInput()
 	if (KEY_DOWN(DIK_SPACE))
 	{
 		m_tStateParams.bCanJump = false;
-		pController->Change_State(ENUM_CLASS(CSonic::STATE::JUMP_U));
+		//pController->Change_State(ENUM_CLASS(CSonic::STATE::JUMP_U));
 	}
 		
 		
@@ -184,8 +184,8 @@ void CSonic_Idle_State::Enter()
 void CSonic_Idle_State::Execute(_float fTimeDelta)
 {
 	m_tStateParams.fMoveSpeed = 0.f;
-	CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
-	pRigidBody->Set_Linear_Velocity(_float3(0.f, 0.f, 0.f));
+	/*CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
+	pRigidBody->Set_Linear_Velocity(_float3(0.f, 0.f, 0.f));*/
 }
 
 void CSonic_Idle_State::HandleInput()

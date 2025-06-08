@@ -37,7 +37,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
-	virtual HRESULT Late_Initialize(void* pArg);
+	virtual HRESULT Late_Initialize(void* pArg = nullptr);
 	virtual HRESULT Initialize(simdjson::ondemand::object& jsonData);
 #pragma endregion
 
@@ -125,6 +125,9 @@ protected:
 	_bool									m_bActive = { true };
 	_bool									m_bDead = { false };
 	_bool									m_bToDestroy = { false };
+
+protected:
+	_bool									m_bLateInitialized = { false };
 #pragma endregion
 
 };

@@ -45,11 +45,6 @@ CComponent* CComponent::Clone(CGameObject* pGameObject, void* pArg)
 	else
 	{
 		pInstance->m_pOwner = pGameObject;
-		if (FAILED(pInstance->Late_Initialize()))
-		{
-			MSG_BOX("Failed to Late Initialize : CComponent");
-			Safe_Release(pInstance);
-		}
 	}
 	
 	return pInstance;

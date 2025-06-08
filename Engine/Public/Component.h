@@ -14,7 +14,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
-	virtual HRESULT Late_Initialize() { return S_OK; }
+	virtual HRESULT Late_Initialize() { if (m_bLateInitialized) return S_OK; m_bLateInitialized = true; return S_OK; }
 public:
 	virtual void Priority_Update(_float fTimeDelta) { if (!m_bActive) return; }
 	virtual void Update(_float fTimeDelta) { if (!m_bActive) return; }
@@ -53,6 +53,7 @@ protected:
 protected:
 	_bool m_bIsCloned = { false };
 	_bool m_bActive = { true };
+	_bool	m_bLateInitialized = { false };
 public:
 	const _tchar* GetName() const { return m_szName; }
 	void SetName(const _tchar* szName) { wcscpy_s(m_szName, szName); }

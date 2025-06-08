@@ -48,6 +48,9 @@
   "Prototype_Component_RigidBody": {
     "Class": "CRigidBody"
   },
+  "Prototype_Component_Sonic_Controller": {
+    "Class": "CSonic_Controller"
+  },
   "Prototype_Component_HeightField": {
     "Class": "CHeightField"
   },

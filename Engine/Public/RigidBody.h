@@ -7,24 +7,36 @@ class CPhysics_System;
 class CTransform;
 class ENGINE_DLL CRigidBody : public CComponent
 {
+public:
     // 리지드바디 타입
     enum class EBodyType { STATIC, DYNAMIC, KINEMATIC };
 
     // 충돌체 모양 타입
-    enum class EShapeType { BOX, SPHERE, CAPSULE, CONVEX_MESH, TRIANGLE_MESH, HEIGHTFIELD };
+    enum class EShapeType { BOX, SPHERE, CAPSULE, CONVEX_MESH, TRIANGLE_MESH };
+
+    typedef struct tagShapeDesc
+    {
+        EShapeType  eShapeType = EShapeType::BOX; // 충돌체 모양 타입
+        _float3     vShapeSize = _float3(1.f, 1.f, 1.f); // Box: (halfExtents), Sphere: (radius,0,0), Capsule: (radius, halfHeight,0)
+        _float4     qRotation = _float4(0.f, 0.f, 0.f, 1.f); // 회전 정보
+        _float3     vLocalPosition = _float3(0.f, 0.f, 0.f);
+        _float      fCurRotationX = { 0.f };
+        _float      fCurRotationY = { 0.f };
+        _float      fCurRotationZ = { 0.f };
+	} SHAPE_DESC;
 
     // 리지드바디 초기화 정보 구조체
     typedef struct tagRigidBodyDesc
     {
         //Shape Information
         EBodyType   eBodyType = EBodyType::STATIC;
-        EShapeType  eShapeType = EShapeType::BOX;
-        _float3     vShapeSize = _float3(1.f, 1.f, 1.f); // Box: (halfExtents), Sphere: (radius,0,0), Capsule: (radius, halfHeight,0)
+        _float3     vActorSize = _float3(1.f, 1.f, 1.f); // Box: (halfExtents), Sphere: (radius,0,0), Capsule: (radius, halfHeight,0)
         _float3     vLocalPosition = _float3(0.f, 0.f, 0.f);
-        _float4     qRotation = _float4(0.f, 0.f, 0.f, 1.f);
+        _float4     qRotation = _float4(0.f, 0.f, 0.f, 1.f); // 회전 정보
         _float      fCurRotationX = { 0.f };
         _float      fCurRotationY = { 0.f };
         _float      fCurRotationZ = { 0.f };
+		vector<SHAPE_DESC> vShapeDescs; // 여러 개의 충돌체 모양을 가질 수 있음 (예: 복합체)
 
         //Material Information
         _float      fMass = 1.f;                        // Dynamic body의 질량
@@ -66,9 +78,14 @@ public:
 	virtual HRESULT Render() override;
 #pragma endregion
 public:
+    
 	virtual HRESULT RenderImGui() override;
 public:
-    // PhysX Actor 접근
+    HRESULT Add_Shape(const SHAPE_DESC& shapeDesc);
+    HRESULT Remove_Shape(_uint iIndex);
+    _uint Get_Shape_Count() const { return static_cast<_uint>(m_tRigidBodyDesc.vShapeDescs.size()); }
+    SHAPE_DESC* Get_Shape(_uint iIndex);
+    const vector<SHAPE_DESC>& Get_Shapes() const { return m_tRigidBodyDesc.vShapeDescs; }
     PxRigidActor* Get_Actor() const { return m_pActor; }
 
     // 힘 및 속도 제어 (Dynamic Body용)
@@ -94,14 +111,12 @@ private:
     void Synchronize_Physics_To_Transform(); // PxActor -> CTransform
 
 private:
-    PxRigidActor*    m_pActor = nullptr;           // PhysX 액터 (Static 또는 Dynamic)
-    PxShape*         m_pShape = nullptr;           // PhysX 충돌 형태
-    PxMaterial*      m_pMaterial = nullptr;        // PhysX 재질
-    PxHeightField*      m_pHeightField = nullptr;
+    PxRigidActor*           m_pActor = nullptr;           // PhysX 액터 (Static 또는 Dynamic)
+    vector<PxShape*>        m_pShapes = {};           // PhysX 충돌 형태
+    vector<PxMaterial*>     m_Materials = {};        // PhysX 재질
 
     RIGIDBODY_DESC          m_tRigidBodyDesc;             // 리지드바디 설정값
 
-    _bool                   m_bIsLateInitialized = false;
     _bool                   m_bIsTransformDirty = true; // Transform이 변경되었는지 여부
 };
 NS_END

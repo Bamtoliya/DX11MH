@@ -86,6 +86,9 @@ HRESULT CSonic::Initialize(void* pArg)
 	if (FAILED(Ready_States()))
 		return E_FAIL;
 
+	if (FAILED(Late_Initialize()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -101,6 +104,9 @@ HRESULT CSonic::Initialize(simdjson::ondemand::object& jsonData)
 		return E_FAIL;
 
 	if (FAILED(Ready_States()))
+		return E_FAIL;
+
+	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
 	return S_OK;
