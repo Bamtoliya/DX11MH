@@ -56,8 +56,8 @@ private:
 	vector<TRIANGLEMESH_DESC>	m_TriangleMeshDescs = {};	// HeightField 정보 벡터
 	_uint						m_iHeightFieldCount = 0;	// HeightField 개수
 	_uint						m_iTileSize = 1;			// HeightField 타일 크기
-	_uint						m_iTileCountX = 2;
-	_uint						m_iTileCountZ = 2;
+	_uint						m_iTileCountX = 8;
+	_uint						m_iTileCountZ = 8;
 	_float						m_fHfHeightScale = 1.f;			// HeightField의 Y축 스케일
 	_float						m_fHfRowScale = 1.f;				// HeightField의 X축 스케일 (정점 간 간격)
 	_float						m_fHfColumnScale = 1.f;			// HeightField의 Z축 스케일 (정점 간 간격)

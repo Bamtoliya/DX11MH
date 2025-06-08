@@ -38,7 +38,7 @@ HRESULT CHeightField::Late_Initialize()
 
 	const _float3* pVertexPositions = pTerrain->Get_VertexPositions();
     m_TriangleMeshDescs.resize(m_iTileCountX * m_iTileCountZ);
-    //m_HeightFieldDescs.resize(m_iTileCountX * m_iTileCountZ);
+	m_HeightFieldDescs.resize(m_iTileCountX * m_iTileCountZ);
 
     //Create_TriangleMesh();
 
@@ -270,174 +270,353 @@ HRESULT CHeightField::Create_HeightField(const _float3* pVertexPositions, _uint 
     return S_OK;
 }
 
-HRESULT CHeightField::Create_TriangleMesh(const _float3* pVertexPositions, _uint totalVerticesX, _uint totalVerticesZ, _uint startX, _uint startZ, _uint gridVerticesX, _uint gridVerticesZ, _uint tileIndex)
+//HRESULT CHeightField::Create_TriangleMesh(const _float3* pVertexPositions, _uint totalVerticesX, _uint totalVerticesZ, _uint startX, _uint startZ, _uint gridVerticesX, _uint gridVerticesZ, _uint tileIndex)
+//{
+//    _uint numCols = gridVerticesX;
+//    _uint numRows = gridVerticesZ;
+//
+//    PxPhysics* pPhysics = m_pGameInstance->Get_Physics();
+//    if (!pPhysics) return E_FAIL;
+//
+//    // 1. 타일에 해당하는 버텍스 데이터 추출
+//    
+//    PxVec3* vertices = new PxVec3[numCols * numRows];
+//
+//    for (_uint z = 0; z < numRows; ++z)
+//    {
+//        for (_uint x = 0; x < numCols; ++x)
+//        {
+//            _uint localIndex = z * numCols + x;
+//            _uint terrainX = startX + z; // row가 X축
+//            _uint terrainZ = startZ + x; // col이 Z축
+//            _uint globalIndex = terrainZ * totalVerticesX + terrainX;
+//            vertices[localIndex] = (PxVec3(
+//                (pVertexPositions[globalIndex].x) * m_fHfColumnScale,
+//                (pVertexPositions[globalIndex].y) * m_fHfHeightScale,
+//                (pVertexPositions[globalIndex].z) * m_fHfRowScale
+//            ));
+//        }
+//    }
+//
+//
+//    std::vector<PxU32> indices;
+//    for (_uint z = 0; z < numRows - 1; ++z)
+//    {
+//        for (_uint x = 0; x < numCols - 1; ++x)
+//        {
+//
+//            PxU32 i0 = z * numCols + x;         // 현재 로컬 타일의 (z, x)
+//            PxU32 i1 = z * numCols + (x + 1);   // 현재 로컬 타일의 (z, x+1)
+//            PxU32 i2 = (z + 1) * numCols + x;   // 현재 로컬 타일의 (z+1, x)
+//            PxU32 i3 = (z + 1) * numCols + (x + 1); // 현재 로컬 타일의 (z+1, x+1)
+//
+//            //PxU32 i0 = z * numVerticesX + x;
+//            //PxU32 i1 = z * numVerticesX + (x + 1);
+//            //PxU32 i2 = (z + 1) * numVerticesX + x;
+//            //PxU32 i3 = (z + 1) * numVerticesX + (x + 1);
+//    
+//
+//            indices.push_back(i0); indices.push_back(i2); indices.push_back(i1);
+//            indices.push_back(i1); indices.push_back(i2); indices.push_back(i3);
+//
+//            //indices.push_back(i2); indices.push_back(i3); indices.push_back(i1);
+//            //indices.push_back(i2); indices.push_back(i1); indices.push_back(i0);
+//        }
+//    }
+//    if (indices.empty()) return S_OK; // 인덱스가 없으면 생성하지 않음
+//
+//
+//    // 3. TriangleMesh 설명자 생성
+//    PxTriangleMeshDesc meshDesc;
+//    meshDesc.points.count = static_cast<PxU32>(numCols * numRows);
+//    meshDesc.points.stride = sizeof(PxVec3);
+//    meshDesc.points.data = vertices;
+//
+//    meshDesc.triangles.count = static_cast<PxU32>(indices.size() / 3);
+//    meshDesc.triangles.stride = 3 * sizeof(PxU32);
+//    meshDesc.triangles.data = indices.data();
+//
+//    // 4. 메쉬 쿠킹
+//    PxCookingParams cookingParams(pPhysics->getTolerancesScale());
+//    cookingParams.meshPreprocessParams |= PxMeshPreprocessingFlag::eDISABLE_CLEAN_MESH;
+//    cookingParams.meshPreprocessParams |= PxMeshPreprocessingFlag::eDISABLE_ACTIVE_EDGES_PRECOMPUTE;
+//    //cookingParams.meshWeldTolerance = 0.001f; // 필요에 따라 설정
+//    //cookingParams.meshPreprocessParams = PxMeshPreprocessingFlags(PxMeshPreprocessingFlag::eWELD_VERTICES); // 필요에 따라 설정
+//    //cookingParams.midphaseDesc = PxMeshMidPhase::eBVH34; // 성능 향상을 위해 BVH34 사용 고려
+//
+//    PxDefaultMemoryOutputStream writeBuffer;
+//    PxTriangleMeshCookingResult::Enum result;
+//    bool bSuccess = PxCookTriangleMesh(cookingParams, meshDesc, writeBuffer, &result);
+//    if (!bSuccess) {
+//        MSG_BOX("PxCookTriangleMesh failed.");
+//        switch (result)
+//        {
+//        case PxTriangleMeshCookingResult::eSUCCESS:
+//            // 이 경우는 bSuccess가 false인데 eSUCCESS가 오는 경우는 거의 없음
+//            MSG_BOX("Cooking failed but result is eSUCCESS (unexpected).");
+//            break;
+//        case PxTriangleMeshCookingResult::eLARGE_TRIANGLE:
+//            MSG_BOX("Cooking failed: A triangle is too large. Increase PxCookingParams::areaTestEpsilon or subdivide the triangle.");
+//            // 이 경우, 스케일 값(m_fHfColumnScale 등)이 너무 크거나, 특정 삼각형의 면적이 과도하게 클 수 있습니다.
+//            // 또는 PxTolerancesScale 값을 조정해야 할 수도 있습니다.
+//            break;
+//        case PxTriangleMeshCookingResult::eFAILURE: // 일반적인 실패
+//            MSG_BOX("Cooking failed: Generic failure (eFAILURE). Check input mesh data for degeneracies (zero-area triangles, non-manifold geometry, etc.).");
+//            // "internal error: BV4 tree failed to build"는 종종 이 eFAILURE와 함께 발생합니다.
+//            // 입력 데이터(vertices, indices)의 유효성을 철저히 검사해야 합니다.
+//            // - 정점 중복 (같은 위치에 여러 정점)
+//            // - 매우 좁거나 긴 삼각형 (degenerate triangles)
+//            // - 인덱스가 잘못되어 삼각형이 제대로 정의되지 않는 경우
+//            // - Non-manifold geometry (메쉬가 물리적으로 불가능한 형태)
+//            break;
+//            // 추가적인 PxTriangleMeshCookingResult::Enum 값들에 대한 case를 넣어줄 수 있습니다.
+//        default:
+//            MSG_BOX("Cooking failed: Unknown cooking result enum.");
+//            break;
+//        }
+//        return E_FAIL;
+//    }
+//
+//    // 5. 쿠킹된 데이터로 TriangleMesh 생성
+//    PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+//    PxTriangleMesh* pTriangleMesh = pPhysics->createTriangleMesh(readBuffer);
+//    if (!pTriangleMesh) {
+//        return E_FAIL;
+//    }
+//
+//    // 6. 액터 및 형상 생성
+//    // 타일의 월드 위치 계산: HeightField와 유사하게 startX, startZ와 스케일을 사용
+//    // 단, 버텍스 자체에 스케일을 적용했으므로, 액터의 트랜스폼은 타일의 시작점을 기준으로 해야 합니다.
+//    // 버텍스 좌표가 이미 월드 좌표 기준이라면 PxIdentity 사용 가능
+//    // 여기서는 버텍스 좌표가 로컬(0,0 시작)이라고 가정하고, 액터 트랜스폼으로 위치를 잡습니다.
+//    // 하지만 위에서 pAllVertexPositions를 사용했으므로, 각 타일의 버텍스는 이미 월드 공간상의 상대적 위치를 가집니다.
+//    // 따라서 액터의 위치는 (0,0,0) 또는 타일링을 하지 않는 경우 지형의 원점이 됩니다.
+//    // 타일링을 한다면, 각 타일의 버텍스는 해당 타일의 로컬 원점을 기준으로 생성하고, 액터 트랜스폼으로 배치해야 합니다.
+//    // 현재 코드는 전체 지형에서 타일 부분의 버텍스를 '잘라내어' 사용하므로, 버텍스 좌표는 이미 월드 공간 기준입니다.
+//    // 따라서 액터의 Transform은 PxIdentity가 되어야 합니다.
+//    // 만약 각 타일의 버텍스를 (0,0)에서 시작하도록 재계산한다면, 아래 Transform이 필요합니다.
+//    
+//    /*physx::PxTransform transform(
+//        physx::PxVec3(startX * m_fHfColumnScale, 0.0f, startZ * m_fHfRowScale)
+//    );*/
+//    
+//    physx::PxTransform transform(physx::PxIdentity); // 버텍스가 이미 월드 좌표 기준이므로 Identity 사용
+//
+//    physx::PxRigidStatic* pActor = pPhysics->createRigidStatic(transform);
+//    if (!pActor) {
+//        pTriangleMesh->release();
+//        return E_FAIL;
+//    }
+//
+//    physx::PxMaterial* pMaterial = pPhysics->createMaterial(0.5f, 0.5f, 0.1f); // 기본 재질
+//    // TriangleMeshGeometry 생성 시 스케일링은 이미 버텍스에 적용했으므로 PxVec3(1.f) 사용
+//    physx::PxTriangleMeshGeometry triGeom(pTriangleMesh, PxVec3(1.0f, 1.0f, 1.0f));
+//
+//
+//    physx::PxShape* pShape = pPhysics->createShape(triGeom, *pMaterial, true);
+//    if (!pShape) {
+//        pMaterial->release();
+//        pActor->release();
+//        pTriangleMesh->release();
+//        return E_FAIL;
+//    }
+//    // pShape->setLocalPose(physx::PxIdentity); // 액터 내 로컬 포즈, 보통 Identity
+//    pShape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+//    pShape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
+//    pShape->setSimulationFilterData(physx::PxFilterData(1, 0, 0, 0));
+//    pShape->setContactOffset(0.1f); // 필요에 따라 조정
+//    pActor->attachShape(*pShape);
+//
+//    pShape->release(); // 액터에 attach 후 release
+//    pMaterial->release(); // 액터에 attach 후 release
+//
+//    // 7. 물리 씬에 액터 추가
+//    m_pGameInstance->Get_PhysicsScene()->addActor(*pActor);
+//
+//    m_TriangleMeshDescs[tileIndex].pTriangleMesh = pTriangleMesh; // m_HeightFieldDescs 대신 사용
+//    m_TriangleMeshDescs[tileIndex].pActor = pActor;
+//    Safe_Delete_Array(vertices);
+//
+//    return S_OK;
+//}
+
+// 새로 작성된 Create_TriangleMesh 함수
+HRESULT CHeightField::Create_TriangleMesh(
+	const _float3* pAllGlobalVertexPositions,
+	_uint totalGlobalVerticesX,
+	_uint totalGlobalVerticesZ,
+	_uint tileWorldStartX,
+	_uint tileWorldStartZ,
+	_uint numVerticesXInCurrentTile,
+	_uint numVerticesZInCurrentTile,
+	_uint tileDescIndex)
 {
-    _uint numCols = gridVerticesX;
-    _uint numRows = gridVerticesZ;
+	if (numVerticesXInCurrentTile < 2 || numVerticesZInCurrentTile < 2) {
+		// 이 타일은 너무 작아서 유효한 삼각형 메쉬를 만들 수 없습니다.
+		return S_OK;
+	}
 
-    PxPhysics* pPhysics = m_pGameInstance->Get_Physics();
-    if (!pPhysics) return E_FAIL;
+	PxPhysics* pPhysics = m_pGameInstance->Get_Physics();
+	if (!pPhysics) {
+		MSG_BOX("PhysX SDK PxPhysics not initialized.");
+		return E_FAIL;
+	}
 
-    // 1. 타일에 해당하는 버텍스 데이터 추출
-    
-    PxVec3* vertices = new PxVec3[numCols * numRows];
+	// 1. 현재 타일에 해당하는 로컬 정점 데이터 추출 및 생성
+	//    정점 좌표는 (0,0,0)을 기준으로 생성하고, 액터의 Transform으로 타일의 실제 월드 위치와 스케일을 적용합니다.
+	std::vector<PxVec3> localVertices;
+	localVertices.reserve(numVerticesXInCurrentTile * numVerticesZInCurrentTile);
 
-    for (_uint z = 0; z < numRows; ++z)
-    {
-        for (_uint x = 0; x < numCols; ++x)
-        {
-            _uint localIndex = z * numCols + x;
-            _uint terrainX = startX + z; // row가 X축
-            _uint terrainZ = startZ + x; // col이 Z축
-            _uint globalIndex = terrainZ * totalVerticesX + terrainX;
-            vertices[localIndex] = (PxVec3(
-                (pVertexPositions[globalIndex].x) * m_fHfColumnScale,
-                (pVertexPositions[globalIndex].y) * m_fHfHeightScale,
-                (pVertexPositions[globalIndex].z) * m_fHfRowScale
-            ));
-        }
-    }
+	for (_uint z_local = 0; z_local < numVerticesZInCurrentTile; ++z_local) {
+		for (_uint x_local = 0; x_local < numVerticesXInCurrentTile; ++x_local) {
+			_uint globalX = tileWorldStartX + x_local;
+			_uint globalZ = tileWorldStartZ + z_local;
+			// global 인덱스가 전체 지형 범위를 벗어나지 않도록 방어
+			if (globalX >= totalGlobalVerticesX || globalZ >= totalGlobalVerticesZ) {
+				// 이 경우는 Late_Initialize에서 이미 필터링되어야 하지만, 안전을 위해 추가
+				// 예를 들어, 마지막 타일의 정점 수가 정확히 계산되지 않은 경우 발생 가능
+				// 여기서는 간단히 잘못된 정점 대신 (0,0,0) 또는 이전 정점 사용 등의 대체 로직이 필요할 수 있으나,
+				// 우선은 유효한 데이터만 들어온다고 가정.
+				// 실제로는 이 상황이 발생하면 Late_Initialize의 타일 분할 로직 점검 필요.
+				continue;
+			}
+			_uint globalIndex = globalZ * totalGlobalVerticesX + globalX;
 
-
-    std::vector<PxU32> indices;
-    for (_uint z = 0; z < numRows - 1; ++z)
-    {
-        for (_uint x = 0; x < numCols - 1; ++x)
-        {
-
-            PxU32 i0 = z * numCols + x;         // 현재 로컬 타일의 (z, x)
-            PxU32 i1 = z * numCols + (x + 1);   // 현재 로컬 타일의 (z, x+1)
-            PxU32 i2 = (z + 1) * numCols + x;   // 현재 로컬 타일의 (z+1, x)
-            PxU32 i3 = (z + 1) * numCols + (x + 1); // 현재 로컬 타일의 (z+1, x+1)
-
-            //PxU32 i0 = z * numVerticesX + x;
-            //PxU32 i1 = z * numVerticesX + (x + 1);
-            //PxU32 i2 = (z + 1) * numVerticesX + x;
-            //PxU32 i3 = (z + 1) * numVerticesX + (x + 1);
-    
-
-            indices.push_back(i0); indices.push_back(i2); indices.push_back(i1);
-            indices.push_back(i1); indices.push_back(i2); indices.push_back(i3);
-
-            //indices.push_back(i2); indices.push_back(i3); indices.push_back(i1);
-            //indices.push_back(i2); indices.push_back(i1); indices.push_back(i0);
-        }
-    }
-    if (indices.empty()) return S_OK; // 인덱스가 없으면 생성하지 않음
+			// 로컬 정점: X, Z는 (0,0)에서 시작, Y는 원본 높이 사용
+			// 스케일은 나중에 PxTriangleMeshGeometry 또는 Actor Transform에서 적용
+			localVertices.push_back(PxVec3(
+				static_cast<float>(x_local), // 로컬 X 좌표 (0부터 시작)
+				pAllGlobalVertexPositions[globalIndex].y, // 원본 Y 높이
+				static_cast<float>(z_local)  // 로컬 Z 좌표 (0부터 시작)
+			));
+		}
+	}
+	// 로컬 정점 수가 예상과 다르면 (위의 continue 등으로 인해) 처리
+	if (localVertices.size() != numVerticesXInCurrentTile * numVerticesZInCurrentTile) {
+		// MSG_BOX("Vertex count mismatch for tile.");
+		// 이 경우, 인덱싱 문제 발생 가능성이 높으므로 실패 처리 또는 빈 메쉬 처리
+		return E_FAIL; // 또는 S_OK로 빈 메쉬 처리
+	}
 
 
-    // 3. TriangleMesh 설명자 생성
-    PxTriangleMeshDesc meshDesc;
-    meshDesc.points.count = static_cast<PxU32>(numCols * numRows);
-    meshDesc.points.stride = sizeof(PxVec3);
-    meshDesc.points.data = vertices;
+	// 2. 로컬 인덱스 데이터 생성 (현재 타일의 로컬 정점 기준)
+	std::vector<PxU32> localIndices;
+	_uint numCellsXInTile = numVerticesXInCurrentTile - 1;
+	_uint numCellsZInTile = numVerticesZInCurrentTile - 1;
+	localIndices.reserve(numCellsXInTile * numCellsZInTile * 6);
 
-    meshDesc.triangles.count = static_cast<PxU32>(indices.size() / 3);
-    meshDesc.triangles.stride = 3 * sizeof(PxU32);
-    meshDesc.triangles.data = indices.data();
+	for (_uint z_local_cell = 0; z_local_cell < numCellsZInTile; ++z_local_cell) {
+		for (_uint x_local_cell = 0; x_local_cell < numCellsXInTile; ++x_local_cell) {
+			PxU32 i0 = z_local_cell * numVerticesXInCurrentTile + x_local_cell;
+			PxU32 i1 = z_local_cell * numVerticesXInCurrentTile + (x_local_cell + 1);
+			PxU32 i2 = (z_local_cell + 1) * numVerticesXInCurrentTile + x_local_cell;
+			PxU32 i3 = (z_local_cell + 1) * numVerticesXInCurrentTile + (x_local_cell + 1);
 
-    // 4. 메쉬 쿠킹
-    PxCookingParams cookingParams(pPhysics->getTolerancesScale());
-    cookingParams.meshPreprocessParams |= PxMeshPreprocessingFlag::eDISABLE_CLEAN_MESH;
-    cookingParams.meshPreprocessParams |= PxMeshPreprocessingFlag::eDISABLE_ACTIVE_EDGES_PRECOMPUTE;
-    //cookingParams.meshWeldTolerance = 0.001f; // 필요에 따라 설정
-    //cookingParams.meshPreprocessParams = PxMeshPreprocessingFlags(PxMeshPreprocessingFlag::eWELD_VERTICES); // 필요에 따라 설정
-    //cookingParams.midphaseDesc = PxMeshMidPhase::eBVH34; // 성능 향상을 위해 BVH34 사용 고려
+			// CCW 와인딩 순서 (DirectX 스타일과 유사)
+			localIndices.push_back(i0); localIndices.push_back(i2); localIndices.push_back(i1);
+			localIndices.push_back(i1); localIndices.push_back(i2); localIndices.push_back(i3);
+		}
+	}
 
-    PxDefaultMemoryOutputStream writeBuffer;
-    PxTriangleMeshCookingResult::Enum result;
-    bool bSuccess = PxCookTriangleMesh(cookingParams, meshDesc, writeBuffer, &result);
-    if (!bSuccess) {
-        MSG_BOX("PxCookTriangleMesh failed.");
-        switch (result)
-        {
-        case PxTriangleMeshCookingResult::eSUCCESS:
-            // 이 경우는 bSuccess가 false인데 eSUCCESS가 오는 경우는 거의 없음
-            MSG_BOX("Cooking failed but result is eSUCCESS (unexpected).");
-            break;
-        case PxTriangleMeshCookingResult::eLARGE_TRIANGLE:
-            MSG_BOX("Cooking failed: A triangle is too large. Increase PxCookingParams::areaTestEpsilon or subdivide the triangle.");
-            // 이 경우, 스케일 값(m_fHfColumnScale 등)이 너무 크거나, 특정 삼각형의 면적이 과도하게 클 수 있습니다.
-            // 또는 PxTolerancesScale 값을 조정해야 할 수도 있습니다.
-            break;
-        case PxTriangleMeshCookingResult::eFAILURE: // 일반적인 실패
-            MSG_BOX("Cooking failed: Generic failure (eFAILURE). Check input mesh data for degeneracies (zero-area triangles, non-manifold geometry, etc.).");
-            // "internal error: BV4 tree failed to build"는 종종 이 eFAILURE와 함께 발생합니다.
-            // 입력 데이터(vertices, indices)의 유효성을 철저히 검사해야 합니다.
-            // - 정점 중복 (같은 위치에 여러 정점)
-            // - 매우 좁거나 긴 삼각형 (degenerate triangles)
-            // - 인덱스가 잘못되어 삼각형이 제대로 정의되지 않는 경우
-            // - Non-manifold geometry (메쉬가 물리적으로 불가능한 형태)
-            break;
-            // 추가적인 PxTriangleMeshCookingResult::Enum 값들에 대한 case를 넣어줄 수 있습니다.
-        default:
-            MSG_BOX("Cooking failed: Unknown cooking result enum.");
-            break;
-        }
-        return E_FAIL;
-    }
+	if (localIndices.empty()) {
+		// MSG_BOX("No indices generated for triangle mesh tile (tile too thin).");
+		return S_OK;
+	}
 
-    // 5. 쿠킹된 데이터로 TriangleMesh 생성
-    PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
-    PxTriangleMesh* pTriangleMesh = pPhysics->createTriangleMesh(readBuffer);
-    if (!pTriangleMesh) {
-        return E_FAIL;
-    }
+	// 3. TriangleMesh 설명자 생성
+	PxTriangleMeshDesc meshDesc;
+	meshDesc.points.count = static_cast<PxU32>(localVertices.size());
+	meshDesc.points.stride = sizeof(PxVec3);
+	meshDesc.points.data = localVertices.data();
 
-    // 6. 액터 및 형상 생성
-    // 타일의 월드 위치 계산: HeightField와 유사하게 startX, startZ와 스케일을 사용
-    // 단, 버텍스 자체에 스케일을 적용했으므로, 액터의 트랜스폼은 타일의 시작점을 기준으로 해야 합니다.
-    // 버텍스 좌표가 이미 월드 좌표 기준이라면 PxIdentity 사용 가능
-    // 여기서는 버텍스 좌표가 로컬(0,0 시작)이라고 가정하고, 액터 트랜스폼으로 위치를 잡습니다.
-    // 하지만 위에서 pAllVertexPositions를 사용했으므로, 각 타일의 버텍스는 이미 월드 공간상의 상대적 위치를 가집니다.
-    // 따라서 액터의 위치는 (0,0,0) 또는 타일링을 하지 않는 경우 지형의 원점이 됩니다.
-    // 타일링을 한다면, 각 타일의 버텍스는 해당 타일의 로컬 원점을 기준으로 생성하고, 액터 트랜스폼으로 배치해야 합니다.
-    // 현재 코드는 전체 지형에서 타일 부분의 버텍스를 '잘라내어' 사용하므로, 버텍스 좌표는 이미 월드 공간 기준입니다.
-    // 따라서 액터의 Transform은 PxIdentity가 되어야 합니다.
-    // 만약 각 타일의 버텍스를 (0,0)에서 시작하도록 재계산한다면, 아래 Transform이 필요합니다.
-    
-    /*physx::PxTransform transform(
-        physx::PxVec3(startX * m_fHfColumnScale, 0.0f, startZ * m_fHfRowScale)
-    );*/
-    
-    physx::PxTransform transform(physx::PxIdentity); // 버텍스가 이미 월드 좌표 기준이므로 Identity 사용
+	meshDesc.triangles.count = static_cast<PxU32>(localIndices.size() / 3);
+	meshDesc.triangles.stride = 3 * sizeof(PxU32);
+	meshDesc.triangles.data = localIndices.data();
 
-    physx::PxRigidStatic* pActor = pPhysics->createRigidStatic(transform);
-    if (!pActor) {
-        pTriangleMesh->release();
-        return E_FAIL;
-    }
-
-    physx::PxMaterial* pMaterial = pPhysics->createMaterial(0.5f, 0.5f, 0.1f); // 기본 재질
-    // TriangleMeshGeometry 생성 시 스케일링은 이미 버텍스에 적용했으므로 PxVec3(1.f) 사용
-    physx::PxTriangleMeshGeometry triGeom(pTriangleMesh, PxVec3(1.0f, 1.0f, 1.0f));
+	// 4. 메쉬 쿠킹
+	PxCookingParams cookingParams(pPhysics->getTolerancesScale());
+	// cookingParams.midphaseDesc = PxMeshMidPhase::eBVH34; // 성능 향상을 위해 사용 고려
+	// 기본값으로 먼저 테스트, 문제 발생 시 플래그 조정
+	// cookingParams.meshPreprocessParams |= PxMeshPreprocessingFlag::eDISABLE_CLEAN_MESH;
+	// cookingParams.meshPreprocessParams |= PxMeshPreprocessingFlag::eDISABLE_ACTIVE_EDGES_PRECOMPUTE;
 
 
-    physx::PxShape* pShape = pPhysics->createShape(triGeom, *pMaterial, true);
-    if (!pShape) {
-        pMaterial->release();
-        pActor->release();
-        pTriangleMesh->release();
-        return E_FAIL;
-    }
-    // pShape->setLocalPose(physx::PxIdentity); // 액터 내 로컬 포즈, 보통 Identity
-    pShape->setFlag(physx::PxShapeFlag::eSCENE_QUERY_SHAPE, true);
-    pShape->setFlag(physx::PxShapeFlag::eVISUALIZATION, false);
-    pShape->setSimulationFilterData(physx::PxFilterData(1, 0, 0, 0));
-    pShape->setContactOffset(0.1f); // 필요에 따라 조정
-    pActor->attachShape(*pShape);
+	PxDefaultMemoryOutputStream writeBuffer;
+	PxTriangleMeshCookingResult::Enum cookResult;
+	bool bSuccess = PxCookTriangleMesh(cookingParams, meshDesc, writeBuffer, &cookResult);
 
-    pShape->release(); // 액터에 attach 후 release
-    pMaterial->release(); // 액터에 attach 후 release
+	if (!bSuccess) {
+		char msg[512];
+		sprintf_s(msg, sizeof(msg), "PxCookTriangleMesh failed for tile index %u. Result: %d. Vertices: %u, Triangles: %u",
+			tileDescIndex, static_cast<int>(cookResult), meshDesc.points.count, meshDesc.triangles.count);
+		// 실패 시 생성된 로컬 버텍스/인덱스 정보 등을 로그로 남기면 디버깅에 도움됨
+		return E_FAIL;
+	}
 
-    // 7. 물리 씬에 액터 추가
-    m_pGameInstance->Get_PhysicsScene()->addActor(*pActor);
+	PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+	PxTriangleMesh* pTriangleMesh = pPhysics->createTriangleMesh(readBuffer);
+	if (!pTriangleMesh) {
+		MSG_BOX("Failed to create PxTriangleMesh from cooked data.");
+		return E_FAIL;
+	}
 
-    m_TriangleMeshDescs[tileIndex].pTriangleMesh = pTriangleMesh; // m_HeightFieldDescs 대신 사용
-    m_TriangleMeshDescs[tileIndex].pActor = pActor;
-    Safe_Delete_Array(vertices);
+	// 5. 액터 및 형상 생성
+	// 액터의 위치: 현재 타일의 월드 시작 위치.
+	// CVIBuffer_Terrain의 정점 좌표가 (0,0)에서 시작하고 간격이 1이라고 가정.
+	// 이 시작 위치에 m_fHfColumnScale과 m_fHfRowScale을 곱하여 실제 월드 위치를 계산.
+	// Y 좌표는 지형의 실제 높이에 따라 달라지지만, 여기서는 편의상 0으로 설정하거나,
+	// pAllGlobalVertexPositions에서 해당 타일의 (0,0) 정점의 Y값을 가져와 m_fHfHeightScale을 곱한 값을 사용.
+	_float3 tileWorldOriginPos = pAllGlobalVertexPositions[tileWorldStartZ * totalGlobalVerticesX + tileWorldStartX];
 
-    return S_OK;
+	physx::PxTransform actorPose(
+		PxVec3(tileWorldOriginPos.x * m_fHfColumnScale,
+			0.f, // 액터의 Y 위치는 타일의 (0,0) 정점의 스케일된 높이
+			tileWorldOriginPos.z * m_fHfRowScale),
+		PxQuat(PxIdentity)
+	);
+
+	physx::PxRigidStatic* pActor = pPhysics->createRigidStatic(actorPose);
+	if (!pActor) {
+		pTriangleMesh->release();
+		MSG_BOX("Failed to create PxRigidStatic actor for tile.");
+		return E_FAIL;
+	}
+
+	physx::PxMaterial* pMaterial = pPhysics->createMaterial(0.5f, 0.5f, 0.1f); // 기본 재질
+
+	// TriangleMeshGeometry 생성 시 스케일 적용
+	// 로컬 정점은 (0,0) 기준으로 생성되었고, 각 정점 간 간격은 1.0으로 가정.
+	// 여기에 m_fHfColumnScale, m_fHfHeightScale, m_fHfRowScale을 곱하여 실제 크기 및 높이 비율을 맞춤.
+	physx::PxMeshScale geomScale(
+		PxVec3(m_fHfColumnScale, m_fHfHeightScale, m_fHfRowScale),
+		PxQuat(PxIdentity)
+	);
+	physx::PxTriangleMeshGeometry triGeom(pTriangleMesh, geomScale);
+
+	physx::PxShape* pShape = pPhysics->createShape(triGeom, *pMaterial, true);
+	if (!pShape) {
+		pMaterial->release();
+		pActor->release();
+		pTriangleMesh->release();
+		MSG_BOX("Failed to create PxShape for tile.");
+		return E_FAIL;
+	}
+
+	pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+	pShape->setFlag(PxShapeFlag::eVISUALIZATION, false); // 디버깅 시 true로 변경 가능
+	pActor->attachShape(*pShape);
+
+	pShape->release();
+	pMaterial->release();
+
+	// 6. 물리 씬에 액터 추가
+	m_pGameInstance->Get_PhysicsScene()->addActor(*pActor);
+
+	// 7. 생성된 리소스 관리
+	m_TriangleMeshDescs[tileDescIndex].pTriangleMesh = pTriangleMesh;
+	m_TriangleMeshDescs[tileDescIndex].pActor = pActor;
+
+	return S_OK;
 }
 
 HRESULT CHeightField::RenderImGui()
