@@ -28,6 +28,12 @@ public:
 	void Set_LocalSize(_float x = 1.f, _float y = 1.f, _float z = 1.f) { m_vLocalSize = { x, y, z }; }
 	const _float3* Get_VertexPositions() const { return m_pVertexPositions; }
 	const _uint Get_NumVertices() const { return m_iNumVertices; }
+	const _uint Get_NumIndices() const { return m_iNumIndices; }
+	const ID3D11Buffer* Get_VertexBuffer() const { return m_pVB; }
+	const ID3D11Buffer* Get_IndexBuffer() const { return m_pIB; }
+	const _uint Get_NumVertexBuffers() const { return m_iNumVertexBuffers; }
+	const _uint Get_NumPrimitive() const { return m_iNumPrimitive; }
+	const _uint Get_NumIndicesPerPrimitive() const { return m_iNumIndicesPerPrimitive; }
 
 protected:
 	HRESULT Create_VertexBuffer();

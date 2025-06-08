@@ -340,8 +340,8 @@
               1,
               1
             ],
-            "HeightMapFilePath": "../../Assets/Resources/Textures/Terrain/Test.bmp",
-            "HeightScale": 10.0,
+            "HeightMapFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r03_heightmap_015.dds",
+            "HeightScale": 1024.0,
             "Maps": 1
           },
           "LayerTag": "Layer_Terrain",

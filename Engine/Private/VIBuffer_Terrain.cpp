@@ -72,14 +72,14 @@ HRESULT CVIBuffer_Terrain::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _u
 	_uint gridTexWidth = static_cast<_uint>(metadata.width);
 	_uint gridTexHeight = static_cast<_uint>(metadata.height);
 
-	width = gridTexWidth * m_iGridWidth;
-	height = gridTexHeight * m_iGridHeight;
+	width = gridTexWidth * m_iGridWidth + 1;
+	height = gridTexHeight * m_iGridHeight + 1;
 	DXGI_FORMAT gridTexFormat = metadata.format;
-	m_fHeightScale = static_cast<_float>(gridTexHeight);
+	//m_fHeightScale = static_cast<_float>(gridTexHeight);
 	heightData.resize(width * height, 0.0f);
 
 	// Phase 2: 각 그리드 파일을 병렬로 로드 및 데이터 복사
-	vector<future<HRESULT>> futures;
+ 	vector<future<HRESULT>> futures;
 
 	for (_uint h = 0; h < m_iGridHeight; ++h)
 	{
@@ -140,7 +140,8 @@ HRESULT CVIBuffer_Terrain::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _u
 						for (_uint x_local = 0; x_local < image->width; ++x_local)
 						{
 							float normalizedHeight = 0.0f;
-							size_t pixelOffset = (y_local * rowPitch) + (x_local * sizeof(_ushort));
+							size_t bytesPerPixel  = BitsPerPixel(gridTexFormat) / 8;
+							size_t pixelOffset = (y_local * rowPitch) + (x_local * bytesPerPixel);
 
 							switch (gridTexFormat)
 							{
@@ -186,62 +187,6 @@ HRESULT CVIBuffer_Terrain::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _u
 					}
 					return S_OK;
 				}));
-
-			//// 픽셀 데이터 추출 및 병합
-			//const BYTE* pSrcBits = image->pixels;
-			//size_t rowPitch = image->rowPitch;
-
-			//for (_uint y = 0; y < image->height; ++y)
-			//{
-			//	for (_uint x = 0; x < image->width; ++x)
-			//	{
-			//		float normalizedHeight = 0.0f;
-			//		size_t pixelOffset = (y * rowPitch) + (x * sizeof(_ushort));
-
-			//		// 픽셀 형식에 따라 높이 데이터 추출
-			//		switch (metadata.format)
-			//		{
-			//		case DXGI_FORMAT_R8_UNORM:
-			//		{
-			//			normalizedHeight = static_cast<_float>(pSrcBits[pixelOffset]) / 255.0f;
-			//			break;
-			//		}
-			//		case DXGI_FORMAT_R16_UNORM:
-			//		{
-			//			const _ushort* pPixel = reinterpret_cast<const _ushort*>(pSrcBits + pixelOffset);
-			//			normalizedHeight = static_cast<_float>(*pPixel) / 65535.0f;
-			//			break;
-			//		}
-			//		case DXGI_FORMAT_R32_FLOAT:
-			//		{
-			//			const _float* pPixel = reinterpret_cast<const _float*>(pSrcBits + pixelOffset);
-			//			normalizedHeight = *pPixel;
-			//			break;
-			//		}
-			//		case DXGI_FORMAT_R8G8B8A8_UNORM: // 4채널 이미지일 경우 Red 채널 사용
-			//		case DXGI_FORMAT_B8G8R8A8_UNORM:
-			//		{
-			//			normalizedHeight = static_cast<_float>(pSrcBits[pixelOffset]) / 255.0f; // Red 채널
-			//			break;
-			//		}
-			//		default:
-			//		{
-			//			MSG_BOX("Unsupported DDS pixel format for heightmap.");
-			//			return E_FAIL;
-			//		}
-			//		}
-
-			//		// 전체 높이맵 데이터 배열에 저장
-			//		_uint globalX = startGlobalX + x;
-			//		_uint globalY = startGlobalY + y;
-			//		size_t globalIndex = static_cast<size_t>(globalY) * width + globalX;
-
-			//		if (globalIndex < heightData.size()) // 경계 확인
-			//		{
-			//			heightData[globalIndex] = normalizedHeight;
-			//		}
-			//	}
-			//}
 		}
 	}
 
@@ -255,14 +200,14 @@ HRESULT CVIBuffer_Terrain::LoadHeightMapPixelsFromDDS(const _tchar* filePath, _u
 		}
 	}
 
-	//// 마지막 행/열 처리 (+1 경계값)
-	//for (_uint y = 0; y < height - 1; ++y) {
-	//	heightData[y * width + (width - 1)] = heightData[y * width + (width - 2)];
-	//}
-
-	//for (_uint x = 0; x < width; ++x) {
-	//	heightData[(height - 1) * width + x] = heightData[(height - 2) * width + x];
-	//}
+	// 마지막 행/열 처리 (+1 경계값)
+	for (_uint y = 0; y < height - 1; ++y) {
+		heightData[y * width + (width - 1)] = heightData[y * width + (width - 2)];
+	}
+	
+	for (_uint x = 0; x < width; ++x) {
+		heightData[(height - 1) * width + x] = heightData[(height - 2) * width + x];
+	}
 
 	return S_OK;
 }
@@ -304,7 +249,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 		HANDLE hFile = CreateFile(pHeightMapFilePath, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 		if (INVALID_HANDLE_VALUE == hFile) {
 			MSG_BOX("Failed to open BMP file: ");
-			return E_FAIL;
+			return E_FAIL;	
 		}
 
 		_ulong dwByte = {};
@@ -318,7 +263,7 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 
 		m_iNumVerticesX = ih.biWidth;
 		m_iNumVerticesZ = ih.biHeight;
-		if (m_iNumVerticesX <= 0 || m_iNumVerticesZ <= 0) {
+ 		if (m_iNumVerticesX <= 0 || m_iNumVerticesZ <= 0) {
 			CloseHandle(hFile); MSG_BOX("BMP has invalid dimensions."); return E_FAIL;
 		}
 
@@ -393,7 +338,8 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 			_float actualHeight = heightValues[(_uint)i * m_iNumVerticesX + (m_iNumVerticesX - 1 - (_uint)j)] * m_fHeightScale;
 
 			_float test = heightValues[iIndex] * m_fHeightScale;
-			m_pVertexPositions[iIndex] = pVertices[iIndex].vPosition = _float3(xPos, (actualHeight), zPos);
+			pVertices[iIndex].vPosition = _float3(xPos, (actualHeight), zPos);
+			m_pVertexPositions[iIndex] = pVertices[iIndex].vPosition;
 			pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);
 			pVertices[iIndex].vTexcoord = _float2(j / (m_iNumVerticesX - 1.f), i / (m_iNumVerticesZ - 1.f));
 		}

@@ -118,6 +118,9 @@
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxNorTex.hlsl" />
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxPosTex.hlsl" />
   </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="NatvisFile.natvis" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

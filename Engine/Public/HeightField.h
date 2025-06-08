@@ -5,6 +5,7 @@
 NS_BEGIN(Engine)
 class ENGINE_DLL CHeightField : public CComponent
 {
+public:
 #pragma region Structs
 	typedef struct tagHeightFieldDesc {
 		PxRigidActor* pActor = nullptr;			// PhysX 액터
@@ -12,6 +13,10 @@ class ENGINE_DLL CHeightField : public CComponent
 		PxHeightField* pHeightField = nullptr;	// PhysX HeightField
 		
 	}HEIGHTFIELD_DESC;
+	typedef struct tagTriangleMeshDesc {
+		PxRigidActor* pActor = nullptr;			// PhysX 액터
+		PxTriangleMesh* pTriangleMesh = nullptr;	// PhysX TriangleMesh
+	}TRIANGLEMESH_DESC;
 #pragma endregion
 
 #pragma region Constructor/Destructor
@@ -43,14 +48,16 @@ public:
 	virtual HRESULT RenderImGui() override;
 private:
 	HRESULT Create_HeightField(const _float3* pVertexPositions, _uint totalVerticesX, _uint totalVerticesZ, _uint startX, _uint startZ, _uint gridVerticesX, _uint gridVerticesZ, _uint tileIndex);		// HeightField 생성 로직
+	HRESULT Create_TriangleMesh(const _float3* pVertexPositions, _uint totalVerticesX, _uint totalVerticesZ, _uint startX, _uint startZ, _uint gridVerticesX, _uint gridVerticesZ, _uint tileIndex);
 	HRESULT Create_Actor();			// PhysX 액터 생성 로직
 	void Release_Actor();			// PhysX 액터 해제 로직
 private:
 	vector<HEIGHTFIELD_DESC>	m_HeightFieldDescs = {};	// HeightField 정보 벡터
+	vector<TRIANGLEMESH_DESC>	m_TriangleMeshDescs = {};	// HeightField 정보 벡터
 	_uint						m_iHeightFieldCount = 0;	// HeightField 개수
 	_uint						m_iTileSize = 1;			// HeightField 타일 크기
-	_uint						m_iTileCountX = 1;
-	_uint						m_iTileCountZ = 1;
+	_uint						m_iTileCountX = 2;
+	_uint						m_iTileCountZ = 2;
 	_float						m_fHfHeightScale = 1.f;			// HeightField의 Y축 스케일
 	_float						m_fHfRowScale = 1.f;				// HeightField의 X축 스케일 (정점 간 간격)
 	_float						m_fHfColumnScale = 1.f;			// HeightField의 Z축 스케일 (정점 간 간격)
