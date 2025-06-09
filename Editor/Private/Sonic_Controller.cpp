@@ -77,8 +77,8 @@ void CSonic_Controller::Update(_float fTimeDelta)
 {
 	if (m_States[m_iCurStateIndex])
 	{
-		m_States[m_iCurStateIndex]->HandleInput(fTimeDelta);
 		m_States[m_iCurStateIndex]->Execute(fTimeDelta);
+		m_States[m_iCurStateIndex]->HandleInput(fTimeDelta);
 	}
 }
 void CSonic_Controller::Late_Update(_float fTimeDelta)

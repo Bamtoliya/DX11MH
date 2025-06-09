@@ -138,6 +138,16 @@ void CPhysics_System::Late_Update(_float fTimeDelta)
 {
 }
 
+physx::PxFilterFlags CustomFilterShader(
+    physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0,
+    physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
+    physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
+{
+    // 충돌 콜백을 받기 위한 플래그 설정
+    pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND | PxPairFlag::eNOTIFY_TOUCH_PERSISTS | PxPairFlag::eNOTIFY_TOUCH_LOST;
+    return physx::PxFilterFlag::eDEFAULT;
+}
+
 PxScene* CPhysics_System::Create_Scene()
 {
     if (m_pPhysics == nullptr || m_pDispatcher == nullptr)
@@ -149,6 +159,8 @@ PxScene* CPhysics_System::Create_Scene()
     sceneDesc.filterShader = PxDefaultSimulationFilterShader;
     sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
     sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
+    sceneDesc.simulationEventCallback = this;
+    sceneDesc.filterShader = CustomFilterShader;
 
     // GPU 물리 시뮬레이션을 위한 설정
     if (m_pCudaContextManager && m_pCudaContextManager->contextIsValid()) // CUDA 컨텍스트 매니저가 유효한지 확인
@@ -425,3 +437,31 @@ void CPhysics_System::AddDebugTriangle(const PxVec3& p0, const PxVec3& p1, const
     tri.vColor = color;
     m_DebugTriangles.push_back(tri);
 }
+
+
+#pragma region Collision Event
+void CPhysics_System::onConstraintBreak(PxConstraintInfo* constraints, PxU32 count)
+{
+}
+
+void CPhysics_System::onWake(PxActor** actors, PxU32 count)
+{
+}
+
+void CPhysics_System::onSleep(PxActor** actors, PxU32 count)
+{
+}
+
+void CPhysics_System::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
+{
+}
+
+void CPhysics_System::onTrigger(PxTriggerPair* pairs, PxU32 count)
+{
+}
+
+void CPhysics_System::onAdvance(const PxRigidBody* const* bodyBuffer, const PxTransform* poseBuffer, const PxU32 count)
+{
+}
+
+#pragma endregion

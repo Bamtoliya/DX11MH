@@ -41,6 +41,7 @@
     <ClCompile Include="..\private\Sonic_Combat_State.cpp" />
     <ClCompile Include="..\private\Sonic_Controller.cpp" />
     <ClCompile Include="..\private\Sonic_Ground_State.cpp" />
+    <ClCompile Include="..\private\Sonic_Spin_State.cpp" />
     <ClCompile Include="..\private\Sonic_State.cpp" />
     <ClCompile Include="..\private\Statue.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
@@ -77,6 +78,7 @@
     <ClInclude Include="..\public\Sonic_Combat_State.h" />
     <ClInclude Include="..\public\Sonic_Controller.h" />
     <ClInclude Include="..\public\Sonic_Ground_State.h" />
+    <ClInclude Include="..\public\Sonic_Spin_State.h" />
     <ClInclude Include="..\public\Sonic_State.h" />
     <ClInclude Include="..\Public\Sonic_States.h" />
     <ClInclude Include="..\public\Statue.h" />

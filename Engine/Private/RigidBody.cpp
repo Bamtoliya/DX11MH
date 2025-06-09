@@ -957,6 +957,7 @@ HRESULT CRigidBody::Create_Actor()
 		if (pShape)
 		{
 			pShape->setSimulationFilterData(physx::PxFilterData(1, 1, 0, 0));
+			pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
 			pShape->setLocalPose(shapePose);
 			m_pActor->attachShape(*pShape);
 			m_pShapes.push_back(pShape);

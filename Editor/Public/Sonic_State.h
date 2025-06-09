@@ -11,10 +11,11 @@ public:
 	// 상태별 파라미터 추가
 	struct StateParams
 	{
-		float fMoveSpeed = 5.0f;
-		float fRotationSpeed = 2.0f;
-		bool bCanJump = true;
-		bool bCanDash = false;
+		_float fMoveSpeed = 5.0f;
+		_float fRotationSpeed = 2.0f;
+		_bool bCanJump = true;
+		_bool bCanDash = false;
+		_bool bInvincible = false;
 		_float3 vMoveDirection = {};
 	};
 	HRESULT Initialize() override;

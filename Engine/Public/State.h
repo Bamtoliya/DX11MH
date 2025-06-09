@@ -21,6 +21,7 @@ public:
 protected:
 	CGameObject*	m_pOwner = { nullptr };
 	CGameInstance*	m_pGameInstance = { nullptr };
+	_uint			m_iCurState = {};
 	_char			m_szName[MAX_PATH] = {};
 	_bool			m_bLoop = { true };
 	_float			m_fBlendDuration = { 0.5f };
