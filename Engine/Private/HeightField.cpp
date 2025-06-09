@@ -104,9 +104,12 @@ void CHeightField::Free()
 
     for (auto& desc : m_HeightFieldDescs)
     {
-        m_pGameInstance->Get_PhysicsScene()->removeActor(*desc.pActor);
-        if(desc.pActor != nullptr)
-            desc.pActor->release();
+        
+		if (desc.pActor != nullptr)
+		{
+			m_pGameInstance->Get_PhysicsScene()->removeActor(*desc.pActor);
+			desc.pActor->release();
+		}
         if(desc.pHeightField != nullptr)
             desc.pHeightField->release();
         if(desc.pShape != nullptr)

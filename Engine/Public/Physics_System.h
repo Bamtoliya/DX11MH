@@ -16,7 +16,7 @@ NS_END
 
 NS_BEGIN(Engine)
 class CGameInstance;
-class CPhysics_System final : public CBase
+class CPhysics_System final : public CBase, public PxSimulationEventCallback
 {
 #pragma region Constructor/Destructor
 private:

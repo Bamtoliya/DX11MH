@@ -127,6 +127,18 @@
     <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Combat">
       <UniqueIdentifier>{f99816ee-4b11-4adb-aff1-ef6c2f2f05ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\NewFilter1">
+      <UniqueIdentifier>{15efde67-b98d-446f-9459-ec8652aa5f99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Interact">
+      <UniqueIdentifier>{e0f6bc24-01e4-4441-8414-d2dab1283624}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Skills">
+      <UniqueIdentifier>{ace9e492-eebb-4052-ab64-ca0f828c516c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Spin">
+      <UniqueIdentifier>{61f3e31a-5ebe-4906-a77a-252230212648}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -209,6 +221,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Sonic_Ground_State.cpp">
       <Filter>02.GameObject\04.Player\Sonic\Controller\States\Ground</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sonic_Combat_State.cpp">
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sonic_State.cpp">
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -322,6 +340,12 @@
     </ClInclude>
     <ClInclude Include="..\public\Sonic_Ground_State.h">
       <Filter>02.GameObject\04.Player\Sonic\Controller\States\Ground</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sonic_Combat_State.h">
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sonic_State.h">
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

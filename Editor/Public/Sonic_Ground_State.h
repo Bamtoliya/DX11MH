@@ -1,29 +1,19 @@
 ﻿#pragma once
 #include "State.h"
+#include "Sonic_State.h"
 
 NS_BEGIN(Editor)
-class CSonic_Ground_State : public CState
+class CSonic_Ground_State : public CSonic_State
 {
 protected:
-	CSonic_Ground_State(CGameObject* pOwner) : CState{ pOwner } {}
+	CSonic_Ground_State(CGameObject* pOwner) : CSonic_State{ pOwner } {}
 	virtual ~CSonic_Ground_State() = default;
-	// 상태별 파라미터 추가
-	struct StateParams
-	{
-		float fMoveSpeed = 5.0f;
-		float fRotationSpeed = 2.0f;
-		bool bCanJump = true;
-		bool bCanDash = false;
-		_float3 vMoveDirection = {};
-	};
-
-	StateParams m_tStateParams = {};
 public:
 	static CSonic_Ground_State* Create(CGameObject* pOwner);
 	virtual HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
-	void HandleInput() override;
+	void HandleInput(_float fTimeDelta) override;
 	void Exit() override;
 	virtual void Free() override { __super::Free(); }
 	void SetMoveSpeed(float fSpeed) { m_tStateParams.fMoveSpeed = fSpeed; }
@@ -45,7 +35,7 @@ public:
 	virtual HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
-	void HandleInput() override;
+	void HandleInput(_float fTimeDelta) override;
 	void Exit() override;
 	virtual void Free() override { __super::Free(); }
 };
@@ -60,7 +50,7 @@ public:
 	virtual HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
-	void HandleInput() override;
+	void HandleInput(_float fTimeDelta) override;
 	void Exit() override;
 	virtual void Free() override { __super::Free(); }
 };
@@ -75,7 +65,7 @@ public:
 	virtual HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
-	void HandleInput() override;
+	void HandleInput(_float fTimeDelta) override;
 	void Exit() override;
 	virtual void Free() override { __super::Free(); }
 };
@@ -90,7 +80,7 @@ public:
 	virtual HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
-	void HandleInput() override;
+	void HandleInput(_float fTimeDelta) override;
 	void Exit() override;
 	virtual void Free() override { __super::Free(); }
 };
@@ -105,7 +95,7 @@ public:
 	virtual HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
-	void HandleInput() override;
+	void HandleInput(_float fTimeDelta) override;
 	void Exit() override;
 	virtual void Free() override { __super::Free(); }
 };

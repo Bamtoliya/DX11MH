@@ -1,0 +1,21 @@
+충돌, 플레이어 상태 처리. 전투 및 콤보 구현. 지형 띄워서 테스트 해봐.
+
+1. 플레이어 상태 제어 추가하기(전투, 콤보)
+2. 몬스터 1종, 보스 1종 추가하기(패턴 정하기)
+3. 공중액션과 락온 카메라 만들기(몬스터 혹은 오브젝트에 카메라 락온)
+4. 물리 충돌 체크하기(Optional)
+
+시간나면 할것:
+UI Element들 작성하기
+버튼(콜백함수로 OnClick, Hover Enter, Hover Exit) 등록하기
+패널
+텍스트
+이미지
+
+링 오브젝트, 스프링 오브젝트, 박스 오브젝트 준비하기
+
+지형 노말맵을 사용해서 UV 타일링 비율 정하기(?)
+.pccol을 사용한 인스턴싱으로 절벽, 돌, 나무, 잔디 등 지형에 깔기
+
+Make Convex Shape with Mesh(If they're Dynamic or Kinematic)
+each Mesh have Convex Shape for large kinematic object

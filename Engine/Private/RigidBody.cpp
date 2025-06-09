@@ -32,9 +32,7 @@ HRESULT CRigidBody::Initialize(void* pArg)
 		return E_FAIL;
 	if (pArg == nullptr)
 	{
-		// 기본값으로 초기화 또는 에러 처리
 		MSG_BOX("CRigidBody::Initialize - pArg is nullptr. Using default RIGIDBODY_DESC.");
-		// m_tRigidBodyDesc는 이미 생성자에서 ZeroMemory 되었고, 기본값이 설정되어 있을 수 있음.
 	}
 	else
 	{
@@ -129,16 +127,7 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 	{
 		m_tRigidBodyDesc.eBodyType = static_cast<EBodyType>(int(rbObject["BodyType"].get_int64().value_unsafe()));
 
-		simdjson::ondemand::array shapeSizeArray;
-		if (rbObject["ShapeSize"].get_array().get(shapeSizeArray) == simdjson::SUCCESS && shapeSizeArray.count_elements() == 3) {
-			auto iter = shapeSizeArray.begin();
-			//m_tRigidBodyDesc.vShapeSize.x = static_cast<_float>((*iter).get_double().value_unsafe());
-			//++iter;
-			//m_tRigidBodyDesc.vShapeSize.y = static_cast<_float>((*iter).get_double().value_unsafe());
-			//++iter;
-			//m_tRigidBodyDesc.vShapeSize.z = static_cast<_float>((*iter).get_double().value_unsafe());
-		}
-
+		// LocalPosition 역직렬화
 		simdjson::ondemand::array localPosArray;
 		if (rbObject["LocalPosition"].get_array().get(localPosArray) == simdjson::SUCCESS && localPosArray.count_elements() == 3) {
 			auto iter = localPosArray.begin();
@@ -149,6 +138,7 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 			m_tRigidBodyDesc.vLocalPosition.z = static_cast<_float>((*iter).get_double().value_unsafe());
 		}
 
+		// LocalEulerRotation 역직렬화
 		simdjson::ondemand::array localEulerArray;
 		if (rbObject["LocalEulerRotation"].get_array().get(localEulerArray) == simdjson::SUCCESS && localEulerArray.count_elements() == 3) {
 			auto iter = localEulerArray.begin();
@@ -160,6 +150,7 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 		}
 		// qRotation은 fCurRotationX/Y/Z 로드 후 Create_Actor에서 계산됨
 
+		// 기본 속성 역직렬화
 		m_tRigidBodyDesc.fMass = static_cast<_float>(rbObject["Mass"].get_double().value_unsafe());
 		m_tRigidBodyDesc.bGravity = rbObject["Gravity"].get_bool().value_unsafe();
 		m_tRigidBodyDesc.fStaticFriction = static_cast<_float>(rbObject["StaticFriction"].get_double().value_unsafe());
@@ -169,6 +160,64 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 		m_tRigidBodyDesc.bLockRotY = rbObject["LockRotY"].get_bool().value_unsafe();
 		m_tRigidBodyDesc.bLockRotZ = rbObject["LockRotZ"].get_bool().value_unsafe();
 		m_tRigidBodyDesc.bKinematicTarget = rbObject["KinematicTarget"].get_bool().value_unsafe();
+
+		// 쉐이프 정보 역직렬화
+		m_tRigidBodyDesc.vShapeDescs.clear(); // 기존 쉐이프 정보 초기화
+		simdjson::ondemand::array shapesJsonArray;
+		if (rbObject["Shapes"].get_array().get(shapesJsonArray) == simdjson::SUCCESS)
+		{
+			for (auto shapeValue : shapesJsonArray)
+			{
+				simdjson::ondemand::object shapeObject;
+				if (shapeValue.get_object().get(shapeObject) == simdjson::SUCCESS)
+				{
+					SHAPE_DESC shapeDesc;
+					shapeDesc.eShapeType = static_cast<EShapeType>(int(shapeObject["ShapeType"].get_int64().value_unsafe()));
+
+					simdjson::ondemand::array shapeSizeArray;
+					if (shapeObject["ShapeSize"].get_array().get(shapeSizeArray) == simdjson::SUCCESS && shapeSizeArray.count_elements() == 3)
+					{
+						auto iter = shapeSizeArray.begin();
+						shapeDesc.vShapeSize.x = static_cast<_float>((*iter).get_double().value_unsafe());
+						++iter;
+						shapeDesc.vShapeSize.y = static_cast<_float>((*iter).get_double().value_unsafe());
+						++iter;
+						shapeDesc.vShapeSize.z = static_cast<_float>((*iter).get_double().value_unsafe());
+					}
+
+					simdjson::ondemand::array shapeLocalPosArray;
+					if (shapeObject["LocalPosition"].get_array().get(shapeLocalPosArray) == simdjson::SUCCESS && shapeLocalPosArray.count_elements() == 3)
+					{
+						auto iter = shapeLocalPosArray.begin();
+						shapeDesc.vLocalPosition.x = static_cast<_float>((*iter).get_double().value_unsafe());
+						++iter;
+						shapeDesc.vLocalPosition.y = static_cast<_float>((*iter).get_double().value_unsafe());
+						++iter;
+						shapeDesc.vLocalPosition.z = static_cast<_float>((*iter).get_double().value_unsafe());
+					}
+
+					simdjson::ondemand::array shapeRotationArray;
+					if (shapeObject["Rotation"].get_array().get(shapeRotationArray) == simdjson::SUCCESS && shapeRotationArray.count_elements() == 4)
+					{
+						auto iter = shapeRotationArray.begin();
+						shapeDesc.qRotation.x = static_cast<_float>((*iter).get_double().value_unsafe());
+						++iter;
+						shapeDesc.qRotation.y = static_cast<_float>((*iter).get_double().value_unsafe());
+						++iter;
+						shapeDesc.qRotation.z = static_cast<_float>((*iter).get_double().value_unsafe());
+						++iter;
+						shapeDesc.qRotation.w = static_cast<_float>((*iter).get_double().value_unsafe());
+					}
+					// 오일러 각도도 로드 (qRotation이 우선시되지만, 필요시 사용 가능)
+					shapeDesc.fCurRotationX = static_cast<_float>(shapeObject["RotationX"].get_double().value_unsafe());
+					shapeDesc.fCurRotationY = static_cast<_float>(shapeObject["RotationY"].get_double().value_unsafe());
+					shapeDesc.fCurRotationZ = static_cast<_float>(shapeObject["RotationZ"].get_double().value_unsafe());
+
+
+					m_tRigidBodyDesc.vShapeDescs.push_back(shapeDesc);
+				}
+			}
+		}
 	}
 	else
 	{
@@ -176,15 +225,8 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 		MSG_BOX("CRigidBody::Deserialize - CRigidBody data not found in JSON. Using defaults or previously set values.");
 	}
 
-	// 역직렬화 후 액터 상태를 업데이트해야 할 수 있음
-	// 예를 들어, 이미 Late_Initialize가 호출된 상태에서 Deserialize가 호출된다면,
-	// 액터를 재생성하거나 업데이트해야 함.
-	//if (m_bIsLateInitialized) // 이미 초기화(액터 생성)가 완료된 경우
-	//{
 	Release_Actor();
-	Create_Actor(); // 새 설정으로 액터 재생성
-	//}
-
+	Create_Actor();
 
 	return S_OK;
 }
@@ -206,6 +248,7 @@ void CRigidBody::Priority_Update(_float fTimeDelta)
 }
 void CRigidBody::Update(_float fTimeDelta)
 {
+
 }
 void CRigidBody::Late_Update(_float fTimeDelta)
 {
@@ -549,6 +592,7 @@ void CRigidBody::Set_Kinematic_Target(const _float4x4& matTargetWorld)
 		if (pKinematicActor)
 		{
 			pKinematicActor->setKinematicTarget(ToPxTransform(matTargetWorld));
+			m_bIsTransformDirty = true;
 		}
 	}
 }
@@ -999,6 +1043,7 @@ void CRigidBody::Synchronize_Transform_To_Physics()
 	if (m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC)
 	{
 		static_cast<physx::PxRigidDynamic*>(m_pActor)->setKinematicTarget(physxActorWorldPose);
+		m_bIsTransformDirty = true;
 	}
 	else
 	{
@@ -1016,7 +1061,8 @@ void CRigidBody::Synchronize_Transform_To_Physics()
 
 void CRigidBody::Synchronize_Physics_To_Transform()
 {
-	if (!m_pActor || !m_pOwner) return;
+	
+	if (!m_pActor || !m_pOwner || !m_bIsTransformDirty) return;
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
 	if (!pTransform) return;
 

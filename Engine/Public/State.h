@@ -12,7 +12,7 @@ public:
 	virtual HRESULT Initialize() = 0;
 	virtual void Enter() = 0;
 	virtual void Execute(_float fTimeDelta) = 0;
-	virtual void HandleInput() = 0;
+	virtual void HandleInput(_float fTimeDelta) = 0;
 	virtual void Exit() = 0;
 	virtual void Free();
 	virtual HRESULT RenderImGui() { ImGui::PushID(this); ImGui::Text(m_szName); ImGui::PopID(); return S_OK; }

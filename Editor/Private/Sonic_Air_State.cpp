@@ -13,7 +13,7 @@ void CSonic_Air_State::Execute(_float fTimeDelta)
 {
 }
 
-void CSonic_Air_State::HandleInput()
+void CSonic_Air_State::HandleInput(_float fTimeDelta)
 {
 }
 

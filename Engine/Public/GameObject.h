@@ -99,6 +99,11 @@ public:
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr);
 	//HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CGameObject* pOwner, void* pArg = nullptr);
 
+public:
+	void OnCollisionEnter() {}
+	void OnCollisionOverlapping() {}
+	void OnCollisionExit() {}
+
 #pragma endregion
 
 #pragma region Serialize
@@ -119,7 +124,7 @@ protected:
 	_tchar									m_szName[MAX_PATH] = {};
 
 protected:
-	list<_wstring>					m_Tags = {};
+	list<_wstring>							m_Tags = {};
 protected:
 	_bool									m_bVisible = { true };	
 	_bool									m_bActive = { true };
