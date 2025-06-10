@@ -26,7 +26,7 @@ public:
 	_bool Key_Down(_ubyte eKeyID);
 	_bool Key_Up(_ubyte eKeyID);
 	_bool Key_Pressing(_ubyte eKeyID);
-
+	_bool Any_KeyDown();
 	
 #pragma endregion
 

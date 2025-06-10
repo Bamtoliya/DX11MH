@@ -75,6 +75,8 @@ void CSonic_Controller::Priority_Update(_float fTimeDelta)
 }
 void CSonic_Controller::Update(_float fTimeDelta)
 {
+	UpdateInputBuffer(fTimeDelta);
+
 	if (m_States[m_iCurStateIndex])
 	{
 		m_States[m_iCurStateIndex]->Execute(fTimeDelta);
@@ -95,13 +97,14 @@ void CSonic_Controller::Change_State(_uint iIndex)
 
 	if (m_pOwner)
 	{
-		static_cast<CSonic_Ground_State*>(m_States[iIndex])->Set_Parameter(static_cast<CSonic_Ground_State*>(m_States[m_iCurStateIndex])->Get_Parameter());
+		m_States[m_iCurStateIndex]->Exit();
 		m_iCurStateIndex = iIndex;
+		m_States[m_iCurStateIndex]->Enter();
 		CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
 		if (pAnimator)
 		{
 			_bool bLoop = m_States[m_iCurStateIndex]->Get_IsLoop();
-			_float fPlaybackSpeed = 1.0f;
+			_float fPlaybackSpeed = m_tInfo.fMoveSpeed.first <= 1.5f ? 1.5f : m_tInfo.fMoveSpeed.first;
 			_float fBlendDuration = m_States[m_iCurStateIndex]->Get_BlendDuration();
 
 			pAnimator->Change_Animation(m_iCurStateIndex, bLoop, fPlaybackSpeed, fBlendDuration);
@@ -112,11 +115,98 @@ void CSonic_Controller::Change_State(_uint iIndex)
 HRESULT CSonic_Controller::RenderImGui()
 {
 	ImGui::PushID(this);
-	if (ImGui::CollapsingHeader("Sonic Controller", ImGuiTreeNodeFlags_DefaultOpen))
+	if (ImGui::CollapsingHeader("Sonic Status Controller", ImGuiTreeNodeFlags_DefaultOpen))
 	{
-		if(m_States[m_iCurStateIndex])
+		ImGui::Indent();
+
+		if (m_States[m_iCurStateIndex])
 			m_States[m_iCurStateIndex]->RenderImGui();
+
+		ImGui::Separator();
+
+		if (ImGui::TreeNode("Default Movement"))
+		{
+			ImGui::InputFloat3("Move Direction", &m_tInfo.vMoveDirection.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::Text("Move Speed: %.2f / %.2f", m_tInfo.fMoveSpeed.first, m_tInfo.fMoveSpeed.second);
+			ImGui::InputFloat("Move Acceleration", &m_tInfo.fMoveAccelration, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::InputFloat("Rotation Speed", &m_tInfo.fRotationSpeed, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+			ImGui::Checkbox("Can Jump", &m_tInfo.bCanJump);
+			ImGui::Checkbox("Can Double Jump", &m_tInfo.bCanDoubleJump);
+			ImGui::Checkbox("Sliding", &m_tInfo.bSliding);
+
+			ImGui::Text("Boost Gauge: %.2f / %.2f", m_tInfo.fBoostGauge.first, m_tInfo.fBoostGauge.second);
+			ImGui::ProgressBar(m_tInfo.fBoostGauge.first / m_tInfo.fBoostGauge.second, ImVec2(0.0f, 0.0f));
+			ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
+			ImGui::Text("Boost");
+
+			ImGui::InputFloat("Slope Limit Angle", &m_tInfo.fSlopeLimitAngle, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::TreePop();
+		}
+		ImGui::Separator();
+
+		if (ImGui::TreeNode("Combat"))
+		{
+			ImGui::Text("Attack Damage: %.2f - %.2f", m_tInfo.fAtkDamage.first, m_tInfo.fAtkDamage.second);
+			ImGui::InputFloat("Combo Delay", &m_tInfo.fComboDelay, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::InputFloat("Hit Delay", &m_tInfo.fHitDelay, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::Checkbox("Can Hit", &m_tInfo.bCanHit);
+			ImGui::Text("Combo Count: %u", m_tInfo.iCombo); // _uint는 %u로 표시
+
+			ImGui::SeparatorText("Input Buffering");
+			ImGui::Checkbox("Combo Input Buffered", &m_tInfo.bComboInputBuffered);
+			ImGui::InputFloat("Buffer Timer", &m_tInfo.fComboInputBufferTimer, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::InputFloat("Buffer Duration (Const)", (float*)&m_tInfo.fComboInputBufferDuration, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly); // const_cast 대신 포인터 캐스팅
+			ImGui::TreePop();
+		}
+		ImGui::Separator();
+
+		if (ImGui::TreeNode("Status"))
+		{
+			ImGui::Text("Rings: %u / %u", m_tInfo.iRings.first, m_tInfo.iRings.second); // _uint는 %u로 표시
+			ImGui::ProgressBar((float)m_tInfo.iRings.first / m_tInfo.iRings.second, ImVec2(0.0f, 0.0f));
+			ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
+			ImGui::Text("Rings");
+			ImGui::TreePop();
+		}
+
+		ImGui::Unindent();
 	}
 	ImGui::PopID();
 	return S_OK;
+}
+
+void CSonic_Controller::BufferComboInput()
+{
+	m_tInfo.bComboInputBuffered = true;
+	m_tInfo.fComboInputBufferTimer = m_tInfo.fComboInputBufferDuration; // 타이머 초기화
+}
+
+_bool CSonic_Controller::ConsumeComboInput()
+{
+	if (m_tInfo.bComboInputBuffered)
+	{
+		m_tInfo.bComboInputBuffered = false;
+		m_tInfo.fComboInputBufferTimer = 0.f;
+		return true;
+	}
+	return false;
+}
+
+void CSonic_Controller::ClearComboInputBuffer()
+{
+	m_tInfo.bComboInputBuffered = false;
+	m_tInfo.fComboInputBufferTimer = 0.f;
+}
+
+void CSonic_Controller::UpdateInputBuffer(_float fTimeDelta)
+{
+	if (m_tInfo.bComboInputBuffered)
+	{
+		m_tInfo.fComboInputBufferTimer -= fTimeDelta;
+		if (m_tInfo.fComboInputBufferTimer <= 0.f)
+		{
+			ClearComboInputBuffer(); // 유효 시간 초과 시 버퍼 초기화
+		}
+	}
 }

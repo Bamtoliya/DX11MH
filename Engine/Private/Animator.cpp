@@ -223,6 +223,11 @@ _bool CAnimator::Play_Animation(_float fTimeDelta)
 	return m_bIsFinished;
 }
 
+_float CAnimator::Get_AnimationProgress()
+{
+	return m_fCurTrackPosition / m_pCurAnimation->Get_Duration();
+}
+
 void CAnimator::Change_Animation(_uint animationIndex, _bool bLoop, _float fPlaybackSpeed, _float fBlendDuration)
 {
 	CModel* pModelCom = static_cast<CModel*>(m_pOwner->Get_Component(L"Com_Model"));
@@ -231,7 +236,10 @@ void CAnimator::Change_Animation(_uint animationIndex, _bool bLoop, _float fPlay
 
 	CAnimation* pNewAnim = pModelCom->Get_Animation(animationIndex);
 
-	if (m_pCurAnimation == pNewAnim && m_bCurAnimLoop == bLoop && m_fCurAnimPlaybackSpeed == fPlaybackSpeed)
+	if (fPlaybackSpeed != m_fCurAnimPlaybackSpeed)
+		m_fCurAnimPlaybackSpeed = fPlaybackSpeed;
+
+	if (m_pCurAnimation == pNewAnim && m_bCurAnimLoop == bLoop)
 		return;
 
 	if (fBlendDuration > 0.f && m_pCurAnimation != nullptr)

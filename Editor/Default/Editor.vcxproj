@@ -40,9 +40,10 @@
     <ClCompile Include="..\private\Sonic_Air_State.cpp" />
     <ClCompile Include="..\private\Sonic_Combat_State.cpp" />
     <ClCompile Include="..\private\Sonic_Controller.cpp" />
-    <ClCompile Include="..\private\Sonic_Ground_State.cpp" />
+    <ClCompile Include="..\private\Sonic_Movement_State.cpp" />
     <ClCompile Include="..\private\Sonic_Spin_State.cpp" />
     <ClCompile Include="..\private\Sonic_State.cpp" />
+    <ClCompile Include="..\private\Sonic_Wall_State.cpp" />
     <ClCompile Include="..\private\Statue.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\private\ToolBar.cpp" />
@@ -77,10 +78,11 @@
     <ClInclude Include="..\public\Sonic_Air_State.h" />
     <ClInclude Include="..\public\Sonic_Combat_State.h" />
     <ClInclude Include="..\public\Sonic_Controller.h" />
-    <ClInclude Include="..\public\Sonic_Ground_State.h" />
+    <ClInclude Include="..\public\Sonic_Movement_State.h" />
     <ClInclude Include="..\public\Sonic_Spin_State.h" />
     <ClInclude Include="..\public\Sonic_State.h" />
     <ClInclude Include="..\Public\Sonic_States.h" />
+    <ClInclude Include="..\public\Sonic_Wall_State.h" />
     <ClInclude Include="..\public\Statue.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\public\ToolBar.h" />

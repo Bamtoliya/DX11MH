@@ -102,6 +102,16 @@ _bool CInput_Device::Key_Pressing(_ubyte eKeyID)
 	return false;
 }
 
+_bool CInput_Device::Any_KeyDown()
+{
+	for (_uint i = 0; i < 256; ++i)
+	{
+		//if (m_preKeyState[i] & 0x80) return true;
+		if (m_curKeyState[i] & 0x80) return true;
+	}
+	return false;
+}
+
 _bool CInput_Device::Mouse_Down(DIM eMouseKeyID)
 {
 	if (m_preMouseState.rgbButtons[ENUM_CLASS(eMouseKeyID)] != m_curMouseState.rgbButtons[ENUM_CLASS(eMouseKeyID)])

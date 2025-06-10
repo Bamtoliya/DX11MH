@@ -54,6 +54,7 @@ public:
 	_bool	Key_Down(_ubyte eKeyID);
 	_bool	Key_Up(_ubyte eKeyID);
 	_bool	Key_Pressing(_ubyte eKeyID);
+	_bool	Any_KeyDown();
 	_bool	Mouse_Down(DIM eMouseKeyID);
 	_bool	Mouse_Up(DIM eMouseKeyID);
 	_bool	Mouse_Pressing(DIM eMouseKeyID);

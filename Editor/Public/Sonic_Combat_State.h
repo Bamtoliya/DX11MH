@@ -4,19 +4,23 @@
 NS_BEGIN(Editor)
 class CSonic_Combat_State : public CSonic_State
 {
+protected:
+	CSonic_Combat_State(CGameObject* pOwner) : CSonic_State{ pOwner } { m_bLoop = false; }
+	virtual ~CSonic_Combat_State() = default;
 public:
+	void Idle();
 	HRESULT Initialize() override;
-	void Enter() override;
 	void Execute(_float fTimeDelta) override;
 	void HandleInput(_float fTimeDelta) override;
-	void Exit() override;
 };
-
-
 
 class CSonic_Combo_Accel_01_State : public CSonic_Combat_State
 {
+private:
+	CSonic_Combo_Accel_01_State(CGameObject* pOwner) : CSonic_Combat_State{ pOwner } {}
+	virtual ~CSonic_Combo_Accel_01_State() = default;
 public:
+	static CSonic_Combo_Accel_01_State* Create(CGameObject* pOwner);
 	HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
@@ -26,8 +30,11 @@ public:
 
 class CSonic_Combo_Accel_02_State : public CSonic_Combat_State
 {
+private:
+	CSonic_Combo_Accel_02_State(CGameObject* pOwner) : CSonic_Combat_State{ pOwner } {}
+	virtual ~CSonic_Combo_Accel_02_State() = default;
 public:
-	HRESULT Initialize() override;
+	static CSonic_Combo_Accel_02_State* Create(CGameObject* pOwner);
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
 	void HandleInput(_float fTimeDelta) override;
@@ -36,7 +43,11 @@ public:
 
 class CSonic_Combo_Accel_Kick01_State : public CSonic_Combat_State
 {
+private:
+	CSonic_Combo_Accel_Kick01_State(CGameObject* pOwner) : CSonic_Combat_State{ pOwner } {}
+	virtual ~CSonic_Combo_Accel_Kick01_State() = default;
 public:
+	static CSonic_Combo_Accel_Kick01_State* Create(CGameObject* pOwner);
 	HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
@@ -46,8 +57,11 @@ public:
 
 class CSonic_Combo_Accel_Kick02_State : public CSonic_Combat_State
 {
+private:
+	CSonic_Combo_Accel_Kick02_State(CGameObject* pOwner) : CSonic_Combat_State{ pOwner } {}
+	virtual ~CSonic_Combo_Accel_Kick02_State() = default;
 public:
-	HRESULT Initialize() override;
+	static CSonic_Combo_Accel_Kick02_State* Create(CGameObject* pOwner);
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
 	void HandleInput(_float fTimeDelta) override;
@@ -55,7 +69,11 @@ public:
 };
 class CSonic_Combo_Accel_Kick03_State : public CSonic_Combat_State
 {
+private:
+	CSonic_Combo_Accel_Kick03_State(CGameObject* pOwner) : CSonic_Combat_State{ pOwner } {}
+	virtual ~CSonic_Combo_Accel_Kick03_State() = default;
 public:
+	static CSonic_Combo_Accel_Kick03_State* Create(CGameObject* pOwner);
 	HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
@@ -65,8 +83,11 @@ public:
 
 class CSonic_Combo_Accel_Kick04_State : public CSonic_Combat_State
 {
+private:
+	CSonic_Combo_Accel_Kick04_State(CGameObject* pOwner) : CSonic_Combat_State{ pOwner } {}
+	virtual ~CSonic_Combo_Accel_Kick04_State() = default;
 public:
-	HRESULT Initialize() override;
+	static CSonic_Combo_Accel_Kick04_State* Create(CGameObject* pOwner);
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
 	void HandleInput(_float fTimeDelta) override;
@@ -75,7 +96,11 @@ public:
 
 class CSonic_Combo_Accel_Kick05_State : public CSonic_Combat_State
 {
+private:
+	CSonic_Combo_Accel_Kick05_State(CGameObject* pOwner) : CSonic_Combat_State{ pOwner } {}
+	virtual ~CSonic_Combo_Accel_Kick05_State() = default;
 public:
+	static CSonic_Combo_Accel_Kick05_State* Create(CGameObject* pOwner);
 	HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
@@ -384,6 +409,9 @@ public:
 
 class CSonic_Combo_Kick01_State : public CSonic_Combat_State
 {
+private:
+	CSonic_Combo_Kick01_State(CGameObject* pOwner) : CSonic_Combat_State{ pOwner } {}
+	virtual ~CSonic_Combo_Kick01_State() = default;
 public:
 	static CSonic_Combo_Kick01_State* Create(CGameObject* pOwner);
 	HRESULT Initialize() override;
@@ -395,7 +423,11 @@ public:
 
 class CSonic_Combo_Kick02_State : public CSonic_Combat_State
 {
+private:
+	CSonic_Combo_Kick02_State(CGameObject* pOwner) : CSonic_Combat_State{ pOwner } {}
+	virtual ~CSonic_Combo_Kick02_State() = default;
 public:
+	static CSonic_Combo_Kick02_State* Create(CGameObject* pOwner);
 	HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
@@ -405,7 +437,11 @@ public:
 
 class CSonic_Combo_OneTwo_State : public CSonic_Combat_State
 {
+private:
+	CSonic_Combo_OneTwo_State(CGameObject* pOwner) : CSonic_Combat_State{ pOwner } {}
+	virtual ~CSonic_Combo_OneTwo_State() = default;
 public:
+	static CSonic_Combo_OneTwo_State* Create(CGameObject* pOwner);
 	HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
@@ -415,7 +451,11 @@ public:
 
 class CSonic_Combo_Punch01_State : public CSonic_Combat_State
 {
+private:
+	CSonic_Combo_Punch01_State(CGameObject* pOwner) : CSonic_Combat_State{ pOwner } {}
+	virtual ~CSonic_Combo_Punch01_State() = default;
 public:
+	static CSonic_Combo_Punch01_State* Create(CGameObject* pOwner);
 	HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;
@@ -425,7 +465,11 @@ public:
 
 class CSonic_Combo_Punch02_State : public CSonic_Combat_State
 {
+private:
+	CSonic_Combo_Punch02_State(CGameObject* pOwner) : CSonic_Combat_State{ pOwner } {}
+	virtual ~CSonic_Combo_Punch02_State() = default;
 public:
+	static CSonic_Combo_Punch02_State* Create(CGameObject* pOwner);
 	HRESULT Initialize() override;
 	void Enter() override;
 	void Execute(_float fTimeDelta) override;

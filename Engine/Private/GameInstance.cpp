@@ -681,6 +681,11 @@ _bool CGameInstance::Key_Pressing(_ubyte eKeyID)
 	return m_pInput_Device->Key_Pressing(eKeyID);
 }
 
+_bool CGameInstance::Any_KeyDown()
+{
+	return m_pInput_Device->Any_KeyDown();
+}
+
 _bool CGameInstance::Mouse_Down(DIM eMouseKeyID)
 {
 	return m_pInput_Device->Mouse_Down(eMouseKeyID);
