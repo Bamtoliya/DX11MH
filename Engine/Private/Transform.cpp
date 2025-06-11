@@ -3,6 +3,7 @@
 #include "Shader.h"
 #include "VIBuffer.h"
 #include "GameObject.h"
+#include "Navigation.h"
 
 #pragma region Constructor/Destructor
 CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -710,16 +711,11 @@ bool CTransform::Go_Straight(_float fTimeDelta, CNavigation* pNavigation, _float
 {
 	_vector		vPosition = Get_State(STATE::POSITION);
 	_vector		vLook = Get_State(STATE::LOOK);
-
-	vPosition += XMVector3Normalize(vLook) * m_tDesc.fSpeedPerSec * fTimeDelta;
-	Set_State(STATE::POSITION, vPosition);
-	/*if (nullptr == pNavigation)
 		
+	vPosition += XMVector3Normalize(vLook) * m_tDesc.fSpeedPerSec * fTimeDelta;
 
-	else if (true == pNavigation->isMove(vPosition + XMVector3Normalize(vLook) * fRadius))
+	if(nullptr == pNavigation || true == pNavigation->isMove(vPosition))
 		Set_State(STATE::POSITION, vPosition);
-	else
-		return false;*/
 
 	return true;
 }

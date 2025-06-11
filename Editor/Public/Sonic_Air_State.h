@@ -1,5 +1,6 @@
 #pragma once
 #include "Sonic_State.h"
+NS_BEGIN(Editor)
 class CSonic_Air_State : public CSonic_State
 {
 protected:
@@ -148,3 +149,4 @@ public:
 	void Exit() override;
 	virtual void Free();
 };
+NS_END

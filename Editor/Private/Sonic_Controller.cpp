@@ -111,6 +111,27 @@ void CSonic_Controller::Change_State(_uint iIndex)
 		}
 	}
 }
+void CSonic_Controller::Change_State(_uint iStateIndex, _uint iAnimIndex)
+{
+	if (iStateIndex >= m_States.size())
+		return;
+
+	if (m_pOwner)
+	{
+		m_States[m_iCurStateIndex]->Exit();
+		m_iCurStateIndex = iStateIndex;
+		m_States[m_iCurStateIndex]->Enter();
+		CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
+		if (pAnimator)
+		{
+			_bool bLoop = m_States[m_iCurStateIndex]->Get_IsLoop();
+			_float fPlaybackSpeed = m_tInfo.fMoveSpeed.first <= 1.5f ? 1.5f : m_tInfo.fMoveSpeed.first;
+			_float fBlendDuration = m_States[m_iCurStateIndex]->Get_BlendDuration();
+
+			pAnimator->Change_Animation(iAnimIndex, bLoop, fPlaybackSpeed, fBlendDuration);
+		}
+	}
+}
 #pragma endregion
 HRESULT CSonic_Controller::RenderImGui()
 {

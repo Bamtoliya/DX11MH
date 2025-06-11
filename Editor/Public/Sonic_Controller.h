@@ -71,6 +71,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta)  override;
 	virtual HRESULT Render() override;
 	virtual void Change_State(_uint iIndex) override;
+	virtual void Change_State(_uint iStateIndex, _uint iAnimIndex);
 #pragma endregion
 public:
 	virtual HRESULT RenderImGui() override;

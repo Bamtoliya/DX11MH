@@ -1,5 +1,7 @@
 #include "Sonic_Air_State.h"
 
+using namespace Editor;
+
 HRESULT CSonic_Air_State::Initialize()
 {
 	return E_NOTIMPL;

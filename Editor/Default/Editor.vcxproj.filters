@@ -118,9 +118,6 @@
     <Filter Include="02.GameObject\04.Player\Sonic\Controller\States">
       <UniqueIdentifier>{63f9269e-617b-40be-8b1c-f14967199dfe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Ground">
-      <UniqueIdentifier>{798046ee-b3d7-4cbd-97fb-6d479d40073b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Air">
       <UniqueIdentifier>{4dbb982a-dca7-45a6-9198-c0d885b87aa7}</UniqueIdentifier>
     </Filter>
@@ -144,6 +141,9 @@
     </Filter>
     <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Wall">
       <UniqueIdentifier>{fff0bcc3-4698-40bd-824a-0ef5513a7e08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Movement">
+      <UniqueIdentifier>{798046ee-b3d7-4cbd-97fb-6d479d40073b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -226,7 +226,7 @@
       <Filter>02.GameObject\04.Player\Sonic\Controller\States\Air</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Sonic_Movement_State.cpp">
-      <Filter>02.GameObject\04.Player\Sonic\Controller\States\Ground</Filter>
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States\Movement</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Sonic_Combat_State.cpp">
       <Filter>02.GameObject\04.Player\Sonic\Controller\States\Combat</Filter>
@@ -351,7 +351,7 @@
       <Filter>02.GameObject\04.Player\Sonic\Controller\States\Air</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Sonic_Movement_State.h">
-      <Filter>02.GameObject\04.Player\Sonic\Controller\States\Ground</Filter>
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States\Movement</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Sonic_Combat_State.h">
       <Filter>02.GameObject\04.Player\Sonic\Controller\States\Combat</Filter>
