@@ -24,14 +24,15 @@ public:
 		_bool	bSliding = { false };
 		pair<_float, _float> fBoostGauge = { 100.f, 100.f };
 		_float fSlopeLimitAngle = { 60.f };
-		_float fFriction = 0.95f;
+		_float fCurSlope = { 0.f };
+		_float fFriction = 0.99f;
 
 		//Combat
 		pair<_float, _float>	fAtkDamage = { 4.f, 6.f };
 		_float	fComboDelay = { 3.0f };
 		_float	fHitDelay = { 0.5f };
 		_bool	bCanHit = { true };
-		_uint	iCombo = { 0 };
+		pair<_uint, _uint> iCombos = { 0, 5 };	
 		_bool	bComboInputBuffered = false;
 		_float	fComboInputBufferTimer = 0.f;
 		const _float fComboInputBufferDuration = 0.3f;
@@ -71,7 +72,7 @@ public:
 	virtual void Late_Update(_float fTimeDelta)  override;
 	virtual HRESULT Render() override;
 	virtual void Change_State(_uint iIndex) override;
-	virtual void Change_State(_uint iStateIndex, _uint iAnimIndex);
+	virtual void Change_State(_uint iStateIndex, _uint iAnimIndex, _float fPlaybackSpeed = 1.f, _bool bIsLoop = true, _float fBlendDuration = 0.5f);
 #pragma endregion
 public:
 	virtual HRESULT RenderImGui() override;

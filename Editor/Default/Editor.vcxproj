@@ -19,12 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\private\Ashura.cpp" />
     <ClCompile Include="..\private\Asset_Browser.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\private\Camera_Follow.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Camera_TPS.cpp" />
     <ClCompile Include="..\private\Level_Animation.cpp" />
+    <ClCompile Include="..\private\Level_Test.cpp" />
     <ClCompile Include="..\private\Sonic.cpp" />
     <ClCompile Include="..\private\Hierarchy.cpp" />
     <ClCompile Include="..\private\Inspector.cpp" />
@@ -46,12 +48,14 @@
     <ClCompile Include="..\private\Sonic_Wall_State.cpp" />
     <ClCompile Include="..\private\Statue.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
+    <ClCompile Include="..\private\Terrain_Plane.cpp" />
     <ClCompile Include="..\private\ToolBar.cpp" />
     <ClCompile Include="..\private\Viewport_2D.cpp" />
     <ClCompile Include="..\private\Viewport_3D.cpp" />
     <ClCompile Include="Editor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\public\Ashura.h" />
     <ClInclude Include="..\public\Asset_Browser.h" />
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\public\Camera_Follow.h" />
@@ -62,6 +66,7 @@
     <ClInclude Include="..\Public\Editor_Macro.h" />
     <ClInclude Include="..\Public\GameObjects.h" />
     <ClInclude Include="..\public\Level_Animation.h" />
+    <ClInclude Include="..\public\Level_Test.h" />
     <ClInclude Include="..\public\Sonic.h" />
     <ClInclude Include="..\public\Hierarchy.h" />
     <ClInclude Include="..\public\Inspector.h" />
@@ -85,6 +90,7 @@
     <ClInclude Include="..\public\Sonic_Wall_State.h" />
     <ClInclude Include="..\public\Statue.h" />
     <ClInclude Include="..\Public\Terrain.h" />
+    <ClInclude Include="..\public\Terrain_Plane.h" />
     <ClInclude Include="..\public\ToolBar.h" />
     <ClInclude Include="..\Public\Tools.h" />
     <ClInclude Include="..\public\Viewport_2D.h" />

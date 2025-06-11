@@ -39,7 +39,7 @@ public:
 	_bool Play_Animation(_float fTimeDelta);
 	_bool Get_AnimationFinished() { return m_bIsFinished; }
 	_float Get_AnimationProgress(); 
-	void Change_Animation(_uint animationIndex, _bool bLoop = true, _float fPlaybackSpeed = 1.0f, _float fBlendDuration = 0.0f);
+	void Change_Animation(_uint animationIndex, _float fPlaybackSpeed = 1.0f, _bool bLoop = true, _float fBlendDuration = 0.0f);
 	const vector<_float4x4>& GetFinalBoneTransforms() const { return m_FinalBoneTransforms; }
 
 private:

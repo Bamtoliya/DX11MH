@@ -12,7 +12,7 @@ CSonic_Controller::CSonic_Controller(ID3D11Device* pDevice, ID3D11DeviceContext*
 CSonic_Controller::CSonic_Controller(const CSonic_Controller& Prototype)
 	: CController{ Prototype }
 {
-	m_iCurStateIndex = ENUM_CLASS(CSonic::STATE::IDLE_LOOP);
+	m_iCurStateIndex = 0;
 }
 
 HRESULT CSonic_Controller::Initialize_Prototype()
@@ -111,7 +111,7 @@ void CSonic_Controller::Change_State(_uint iIndex)
 		}
 	}
 }
-void CSonic_Controller::Change_State(_uint iStateIndex, _uint iAnimIndex)
+void CSonic_Controller::Change_State(_uint iStateIndex, _uint iAnimIndex, _float fPlaybackSpeed, _bool bIsLoop, _float fBlendDuration)
 {
 	if (iStateIndex >= m_States.size())
 		return;
@@ -121,14 +121,10 @@ void CSonic_Controller::Change_State(_uint iStateIndex, _uint iAnimIndex)
 		m_States[m_iCurStateIndex]->Exit();
 		m_iCurStateIndex = iStateIndex;
 		m_States[m_iCurStateIndex]->Enter();
-		CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
+ 		CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
 		if (pAnimator)
 		{
-			_bool bLoop = m_States[m_iCurStateIndex]->Get_IsLoop();
-			_float fPlaybackSpeed = m_tInfo.fMoveSpeed.first <= 1.5f ? 1.5f : m_tInfo.fMoveSpeed.first;
-			_float fBlendDuration = m_States[m_iCurStateIndex]->Get_BlendDuration();
-
-			pAnimator->Change_Animation(iAnimIndex, bLoop, fPlaybackSpeed, fBlendDuration);
+			pAnimator->Change_Animation(iAnimIndex, fPlaybackSpeed, bIsLoop, fBlendDuration);
 		}
 	}
 }
@@ -156,11 +152,14 @@ HRESULT CSonic_Controller::RenderImGui()
 			ImGui::Checkbox("Can Double Jump", &m_tInfo.bCanDoubleJump);
 			ImGui::Checkbox("Sliding", &m_tInfo.bSliding);
 
+			ImGui::SliderFloat("Friction", &m_tInfo.fFriction, 0.f, 1.f, "%.2f");
+
 			ImGui::Text("Boost Gauge: %.2f / %.2f", m_tInfo.fBoostGauge.first, m_tInfo.fBoostGauge.second);
 			ImGui::ProgressBar(m_tInfo.fBoostGauge.first / m_tInfo.fBoostGauge.second, ImVec2(0.0f, 0.0f));
 			ImGui::SameLine(0.0f, ImGui::GetStyle().ItemInnerSpacing.x);
 			ImGui::Text("Boost");
 
+			ImGui::Text("Current Slope Angle %.2f", m_tInfo.fCurSlope);
 			ImGui::InputFloat("Slope Limit Angle", &m_tInfo.fSlopeLimitAngle, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
 			ImGui::TreePop();
 		}
@@ -172,7 +171,7 @@ HRESULT CSonic_Controller::RenderImGui()
 			ImGui::InputFloat("Combo Delay", &m_tInfo.fComboDelay, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
 			ImGui::InputFloat("Hit Delay", &m_tInfo.fHitDelay, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_ReadOnly);
 			ImGui::Checkbox("Can Hit", &m_tInfo.bCanHit);
-			ImGui::Text("Combo Count: %u", m_tInfo.iCombo); // _uint는 %u로 표시
+			ImGui::Text("Combo Count: %u / % u", m_tInfo.iCombos.first, m_tInfo.iCombos.second); // _uint는 %u로 표시
 
 			ImGui::SeparatorText("Input Buffering");
 			ImGui::Checkbox("Combo Input Buffered", &m_tInfo.bComboInputBuffered);

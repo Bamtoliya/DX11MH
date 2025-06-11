@@ -5,149 +5,32 @@
 NS_BEGIN(Editor)
 class CSonic_Movement_State : public CSonic_State
 {
+private:
+	enum class EMovementState
+	{
+		IDLE,
+		WALK,
+		RUN,
+		DASH,
+		BOOST,
+		BRAKE
+	};
 protected:
 	CSonic_Movement_State(CGameObject* pOwner) : CSonic_State{ pOwner } {}
 	virtual ~CSonic_Movement_State() = default;
 public:
-	void Idle();
+	static CSonic_Movement_State* Create(CGameObject* pOwner);
 	void Execute(_float fTimeDelta) override;
 	void HandleInput(_float fTimeDelta) override;
-};
-
-
-#pragma region Grounds
-class CSonic_Idle_State : public CSonic_Movement_State
-{
 private:
-	CSonic_Idle_State(CGameObject* pOwner) : CSonic_Movement_State{ pOwner } {}
-	virtual ~CSonic_Idle_State() = default;
-public:
-	static CSonic_Idle_State* Create(CGameObject* pOwner);
-	virtual HRESULT Initialize() override;
-	void Enter() override;
-	void Execute(_float fTimeDelta) override;
-	void HandleInput(_float fTimeDelta) override;
-	void Exit() override;
-};
-
-class CSonic_Walk_State : public CSonic_Movement_State
-{
+	void Idle(_float fTimeDelta);
+	void Walk(_float fTimeDelta);
+	void Run(_float fTimeDelta);
+	void Boost(_float fTimeDelta);
+	void Brake(_float fTimeDelta);
 private:
-	CSonic_Walk_State(CGameObject* pOwner) : CSonic_Movement_State{ pOwner } {}
-	virtual ~CSonic_Walk_State() = default;
-public:
-	static CSonic_Walk_State* Create(CGameObject* pOwner);
-	virtual HRESULT Initialize() override;
-	void Enter() override;
-	void Execute(_float fTimeDelta) override;
-	void HandleInput(_float fTimeDelta) override;
-	void Exit() override;
-
+	EMovementState m_eMovementState = EMovementState::IDLE;
 };
-
-class CSonic_Run_State : public CSonic_Movement_State
-{
-private:
-	CSonic_Run_State(CGameObject* pOwner) : CSonic_Movement_State{ pOwner } {}
-	virtual ~CSonic_Run_State() = default;
-public:
-	static CSonic_Run_State* Create(CGameObject* pOwner);
-	virtual HRESULT Initialize() override;
-	void Enter() override;
-	void Execute(_float fTimeDelta) override;
-	void HandleInput(_float fTimeDelta) override;
-	void Exit() override;
-
-};
-
-class CSonic_Boost_State : public CSonic_Movement_State
-{
-private:
-	CSonic_Boost_State(CGameObject* pOwner) : CSonic_Movement_State{ pOwner } {}
-	virtual ~CSonic_Boost_State() = default;
-public:
-	static CSonic_Boost_State* Create(CGameObject* pOwner);
-	virtual HRESULT Initialize() override;
-	void Enter() override;
-	void Execute(_float fTimeDelta) override;
-	void HandleInput(_float fTimeDelta) override;
-	void Exit() override;
-
-};
-
-class CSonic_Brake_State : public CSonic_Movement_State
-{
-protected:
-	CSonic_Brake_State(CGameObject* pOwner) : CSonic_Movement_State{ pOwner } {}
-	virtual ~CSonic_Brake_State() = default;
-public:
-	static CSonic_Brake_State* Create(CGameObject* pOwner);
-	virtual HRESULT Initialize() override;
-	void Enter() override;
-	void Execute(_float fTimeDelta) override;
-	void HandleInput(_float fTimeDelta) override;
-	void Exit() override;
-};
-
-
-class CSonic_Brake_Cliff_State : public CSonic_Brake_State
-{
-private:
-	CSonic_Brake_Cliff_State(CGameObject* pOwner) : CSonic_Brake_State{ pOwner } {}
-	virtual ~CSonic_Brake_Cliff_State() = default;
-public:
-	static CSonic_Brake_Cliff_State* Create(CGameObject* pOwner);
-	virtual HRESULT Initialize() override;
-	void Enter() override;
-	void Execute(_float fTimeDelta) override;
-	void HandleInput(_float fTimeDelta) override;
-	void Exit() override;
-};
-
-
-class CSonic_Brake_Neutral_State : public CSonic_Brake_State
-{
-private:
-	CSonic_Brake_Neutral_State(CGameObject* pOwner) : CSonic_Brake_State{ pOwner } {}
-	virtual ~CSonic_Brake_Neutral_State() = default;
-public:
-	static CSonic_Brake_Neutral_State* Create(CGameObject* pOwner);
-	virtual HRESULT Initialize() override;
-	void Enter() override;
-	void Execute(_float fTimeDelta) override;
-	void HandleInput(_float fTimeDelta) override;
-	void Exit() override;
-};
-
-class CSonic_Brake_QuickTurn_State : public CSonic_Brake_State
-{
-private:
-	CSonic_Brake_QuickTurn_State(CGameObject* pOwner) : CSonic_Brake_State{ pOwner } {}
-	virtual ~CSonic_Brake_QuickTurn_State() = default;
-public:
-	static CSonic_Brake_QuickTurn_State* Create(CGameObject* pOwner);
-	virtual HRESULT Initialize() override;
-	void Enter() override;
-	void Execute(_float fTimeDelta) override;
-	void HandleInput(_float fTimeDelta) override;
-	void Exit() override;
-};
-
-class CSonic_Brake_Slope_State : public CSonic_Brake_State
-{
-private:
-	CSonic_Brake_Slope_State(CGameObject* pOwner) : CSonic_Brake_State{ pOwner } {}
-	virtual ~CSonic_Brake_Slope_State() = default;
-public:
-	static CSonic_Brake_Slope_State* Create(CGameObject* pOwner);
-	virtual HRESULT Initialize() override;
-	void Enter() override;
-	void Execute(_float fTimeDelta) override;
-	void HandleInput(_float fTimeDelta) override;
-	void Exit() override;
-};
-#pragma endregion
-
 #pragma region Air
 
 class CSonic_Jump_S_State : public CSonic_Movement_State

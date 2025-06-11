@@ -159,3 +159,9 @@ HRESULT CController::RenderImGui()
 	ImGui::PopID();
 	return S_OK;
 }
+
+void CController::Add_State(CState* pState)
+{
+	m_States.push_back(pState);
+	pState->Set_Index(m_States.size() - 1);
+}

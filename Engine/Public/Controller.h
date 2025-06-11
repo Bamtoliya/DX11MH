@@ -40,6 +40,7 @@ public:
 public:
 	virtual HRESULT RenderImGui() override;
 	virtual void Resize_StateList(_uint iNumStates) { m_States.resize(iNumStates); }
+	virtual void Add_State(CState* pState); 
 	virtual void Add_State(_uint iIndex, CState* pState) { if (iIndex >= m_States.size() || nullptr == pState) return; m_States[iIndex] = pState; }
 	virtual void Change_State(_uint iIndex) {}
 };

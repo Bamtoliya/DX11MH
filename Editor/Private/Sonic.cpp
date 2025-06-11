@@ -152,22 +152,7 @@ HRESULT CSonic::Ready_Components()
 
 HRESULT CSonic::Ready_States()
 {
-	m_pControllerCom->Resize_StateList(ENUM_CLASS(CSonic::STATE::END));
-	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::IDLE_LOOP), CSonic_Idle_State::Create(this)); 
-	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::WALK_LOOP), CSonic_Walk_State::Create(this));
-	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::RUN_LOOP), CSonic_Run_State::Create(this));
-	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::BOOST_LOOP), CSonic_Boost_State::Create(this));
-	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::BRAKE_NEUTRAL), CSonic_Brake_State::Create(this));
-	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::COMBO_KICK01), CSonic_Combo_Kick01_State::Create(this));
-	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::COMBO_KICK02), CSonic_Combo_Kick02_State::Create(this));
-	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::COMBO_ONETWO), CSonic_Combo_OneTwo_State::Create(this));
-	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::COMBO_PUNCH01), CSonic_Combo_Punch01_State::Create(this));
-	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::COMBO_PUNCH02), CSonic_Combo_Punch02_State::Create(this));
-	m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::JUMP_S), CSonic_Jump_S_State::Create(this));
-	//m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::JUMP_S), CSonic_Combo_Punch02_State::Create(this));
-	//m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::JUMP_S), CSonic_Combo_Punch02_State::Create(this));
-	//m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::JUMP_S), CSonic_Combo_Punch02_State::Create(this));
-	//m_pControllerCom->Add_State(ENUM_CLASS(CSonic::STATE::JUMP_S), CSonic_Combo_Punch02_State::Create(this));
+	m_pControllerCom->Add_State(CSonic_Movement_State::Create(this));
 	return S_OK;
 }
 

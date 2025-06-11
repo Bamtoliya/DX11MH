@@ -225,10 +225,11 @@ _bool CAnimator::Play_Animation(_float fTimeDelta)
 
 _float CAnimator::Get_AnimationProgress()
 {
+	if (!m_pCurAnimation) return 1.f;
 	return m_fCurTrackPosition / m_pCurAnimation->Get_Duration();
 }
 
-void CAnimator::Change_Animation(_uint animationIndex, _bool bLoop, _float fPlaybackSpeed, _float fBlendDuration)
+void CAnimator::Change_Animation(_uint animationIndex, _float fPlaybackSpeed, _bool bLoop, _float fBlendDuration)
 {
 	CModel* pModelCom = static_cast<CModel*>(m_pOwner->Get_Component(L"Com_Model"));
 	if (nullptr == pModelCom)

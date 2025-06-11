@@ -18,9 +18,11 @@ public:
 	virtual HRESULT RenderImGui() { ImGui::PushID(this); ImGui::Text(m_szName); ImGui::PopID(); return S_OK; }
 	_bool Get_IsLoop() const { return m_bLoop; }
 	_float Get_BlendDuration() const { return m_fBlendDuration; }
+	void Set_Index(_uint iIndex) { m_iStateIndex = iIndex; }
 protected:
 	CGameObject*	m_pOwner = { nullptr };
 	CGameInstance*	m_pGameInstance = { nullptr };
+	_uint			m_iStateIndex = { 0 };
 	_uint			m_iCurState = {};
 	_char			m_szName[MAX_PATH] = {};
 	_bool			m_bLoop = { true };

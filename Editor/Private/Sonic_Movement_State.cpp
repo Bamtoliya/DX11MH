@@ -7,14 +7,60 @@
 using namespace Editor;
 
 #pragma region Ground
-void CSonic_Movement_State::Idle()
+void CSonic_Movement_State::Idle(_float fTimeDelta)
 {
 	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
 	status.fMoveSpeed.first = 0.f;
 	XMStoreFloat3(&status.vMoveDirection, XMVectorZero());
-	static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"))->Change_State(CSonic::STATE::IDLE_LOOP);
+	pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::IDLE_LOOP));
 	return;
+}
+
+void CSonic_Movement_State::Walk(_float fTimeDelta)
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+	status.fMoveSpeed.first += status.fMoveAccelration * fTimeDelta;
+	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
+		status.fMoveSpeed.first = status.fMoveSpeed.second;
+	
+
+}
+
+void CSonic_Movement_State::Run(_float fTimeDelta)
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+	status.fMoveSpeed.first += status.fMoveAccelration * 2.f * fTimeDelta;
+	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
+		status.fMoveSpeed.first = status.fMoveSpeed.second;
+	if (status.fCurSlope >= status.fSlopeLimitAngle)
+	{
+		pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::WALLRUN_U_LOOP), status.fMoveSpeed.first);
+	}
+	else
+	{
+		pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::RUN_LOOP), status.fMoveSpeed.first);
+	}
+}
+
+void CSonic_Movement_State::Boost(_float fTimeDelta)
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+	status.fMoveSpeed.first += status.fMoveAccelration * 5.f * fTimeDelta;
+	if (status.fMoveSpeed.first >= status.fMaxBoostSpeed)
+		status.fMoveSpeed.first = status.fMaxBoostSpeed;
+}
+
+void CSonic_Movement_State::Brake(_float fTimeDelta)
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+	status.fMoveSpeed.first *= status.fFriction;
+	if (status.fMoveSpeed.first <= 0.f)
+		status.fMoveSpeed.first = 0.f;
 }
 
 void CSonic_Movement_State::Execute(_float fTimeDelta)
@@ -38,8 +84,8 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		_vector vGroundNormal = XMLoadFloat3((_float3*)&hitBuffer.block.normal);
 
 		// 경사각 체크 (이전 답변 내용)
-		const float fSlopeLimitAngle = 60.0f;
-		if (acosf(XMVectorGetX(XMVector3Dot(XMVectorSet(0, 1, 0, 0), vGroundNormal))) * 180.f / XM_PI > fSlopeLimitAngle)
+		status.fCurSlope = acosf(XMVectorGetX(XMVector3Dot(XMVectorSet(0, 1, 0, 0), vGroundNormal))) * 180.f / XM_PI;
+		if (status.fCurSlope > status.fSlopeLimitAngle)
 		{
 			cout << "On Slope\n";
 			//static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"))->Change_State(CSonic::STATE::JUMP_D);
@@ -118,6 +164,17 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 			}
 		}
 
+		switch (m_eMovementState)
+		{
+		case CSonic_Movement_State::EMovementState::IDLE:	Idle(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::WALK:	Walk(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::RUN:	Run(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::BOOST:	Boost(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::BRAKE:	Brake(fTimeDelta); break;
+		default:
+			break;
+		}
+
 		// === 3. 최종 이동 처리 ===
 		// 최종적으로 결정된 캐릭터의 Look 방향으로 이동합니다.
 		_vector vMovement = pTransform->Get_State(STATE::LOOK) * status.fMoveSpeed.first * fTimeDelta;
@@ -186,253 +243,73 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 	if (KEY_PRESSING(DIK_S)) { vMovementDirection -= camLookXZ; bIsMoving = true; }
 	if (KEY_PRESSING(DIK_A)) { vMovementDirection -= camRightXZ; bIsMoving = true; }
 	if (KEY_PRESSING(DIK_D)) { vMovementDirection += camRightXZ; bIsMoving = true; }
+	if (KEY_PRESSING(DIK_Q)) { vMovementDirection -= camRightXZ; }
+	if (KEY_PRESSING(DIK_E)) { vMovementDirection += camRightXZ; }
 
 	if (KEY_PRESSING(DIK_LSHIFT))
 	{
+		m_eMovementState = EMovementState::BOOST;
 		if (!bIsMoving)
 			XMStoreFloat3(&status.vMoveDirection, XMVector4Normalize(pTransform->Get_State(STATE::LOOK)));
 		else 
 			XMStoreFloat3(&status.vMoveDirection, XMVector3Normalize(vMovementDirection));
-		pController->Change_State(ENUM_CLASS(CSonic::STATE::BOOST_LOOP));
+		pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::BOOST_LOOP), status.fMoveSpeed.first);
 		return;
 	}
 
 	if (KEY_DOWN(DIK_SPACE))
 	{
+		//status.
 		//m_tStateParams.bCanJump = false;
-		pController->Change_State(ENUM_CLASS(CSonic::STATE::JUMP_U));
+		//pController->Change_State(ENUM_CLASS(CSonic::STATE::JUMP_U));
 	}
 
 	if (KEY_DOWN(DIK_I))
 	{
-		pController->Change_State(ENUM_CLASS(CSonic::STATE::COMBO_KICK01));
+		//pController->Change_State(ENUM_CLASS(CSonic::STATE::COMBO_KICK01));
 		return;
 	}
 		
 	if (bIsMoving)
 	{
 		XMStoreFloat3(&status.vMoveDirection, XMVector3Normalize(vMovementDirection));
-		if (status.fMoveSpeed.first >= 5.f)
+		if (status.fMoveSpeed.first >= 2.5f)
 		{
-			pController->Change_State(ENUM_CLASS(CSonic::STATE::RUN_LOOP));
+			m_eMovementState = EMovementState::RUN;
+			
 		}
 		else
 		{
-			pController->Change_State(ENUM_CLASS(CSonic::STATE::WALK_LOOP));
+			m_eMovementState = EMovementState::WALK;
+			pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::WALK_LOOP), 1.5f);
 		}
 	}
 	else
 	{
 		if (status.fMoveSpeed.first >= 2.f)
 		{
-			pController->Change_State(ENUM_CLASS(CSonic::STATE::BRAKE_NEUTRAL));
+			m_eMovementState = EMovementState::BRAKE;
+			pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::BRAKE_NEUTRAL), 1.0f, false);
 		}
 		else
 		{
-			if (pAnimator->Get_AnimationProgress() >= 0.75f)
+			if (pAnimator->Get_AnimationProgress() >= 0.75f || m_eMovementState == EMovementState::WALK)
 			{
-				Idle();
+				m_eMovementState = EMovementState::IDLE;
+				pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::IDLE_LOOP));
 			}
 		}
 	}
 	
+
+	
 }
 
-
-#pragma endregion
-
-#pragma region Idle
-CSonic_Idle_State* CSonic_Idle_State::Create(CGameObject* pOwner)
+CSonic_Movement_State* CSonic_Movement_State::Create(CGameObject* pOwner)
 {
-	CSonic_Idle_State* pInstance = new CSonic_Idle_State(pOwner);
+	CSonic_Movement_State* pInstance = new CSonic_Movement_State(pOwner);
 	pInstance->Initialize();
 	return pInstance;
-}
-
-HRESULT CSonic_Idle_State::Initialize()
-{
-	strcpy_s(m_szName, "Sonic_Idle_State");
-	return S_OK;
-}
-
-void CSonic_Idle_State::Enter()
-{
-}
-
-void CSonic_Idle_State::Execute(_float fTimeDelta)
-{
-	__super::Execute(fTimeDelta);
-}
-
-void CSonic_Idle_State::HandleInput(_float fTimeDelta)
-{
-	__super::HandleInput(fTimeDelta);
-}
-
-void CSonic_Idle_State::Exit()
-{
-}
-
-#pragma endregion
-
-#pragma region Walk
-CSonic_Walk_State* CSonic_Walk_State::Create(CGameObject* pOwner)
-{
-	CSonic_Walk_State* pInstance = new CSonic_Walk_State(pOwner);
-	pInstance->Initialize();
-	return pInstance;
-}
-
-HRESULT CSonic_Walk_State::Initialize()
-{
-	strcpy_s(m_szName, "WalkState");
-	return S_OK;
-}
-
-void CSonic_Walk_State::Enter()
-{
-}
-
-void CSonic_Walk_State::Execute(_float fTimeDelta)
-{
-	__super::Execute(fTimeDelta);
-	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
-	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
-	status.fMoveSpeed.first += status.fMoveAccelration * fTimeDelta;
-	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
-		status.fMoveSpeed.first = status.fMoveSpeed.second;
-}
-
-void CSonic_Walk_State::HandleInput(_float fTimeDelta)
-{
-	__super::HandleInput(fTimeDelta);
-}
-
-void CSonic_Walk_State::Exit()
-{
-}
-#pragma endregion
-
-#pragma region Run
-CSonic_Run_State* CSonic_Run_State::Create(CGameObject* pOwner)
-{
-	CSonic_Run_State* pInstance = new CSonic_Run_State(pOwner);
-	pInstance->Initialize();
-	return pInstance;
-}
-
-
-HRESULT CSonic_Run_State::Initialize()
-{
-	strcpy_s(m_szName, "Sonic_Run_State");
-	return S_OK;
-}
-
-void CSonic_Run_State::Enter()
-{
-}
-
-void CSonic_Run_State::Execute(_float fTimeDelta)
-{
-	__super::Execute(fTimeDelta);
-	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
-	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
-	status.fMoveSpeed.first += status.fMoveAccelration * 2.f * fTimeDelta;
-	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
-		status.fMoveSpeed.first = status.fMoveSpeed.second;
-}
-
-void CSonic_Run_State::HandleInput(_float fTimeDelta)
-{
-	__super::HandleInput(fTimeDelta);
-}
-
-void CSonic_Run_State::Exit()
-{
-}
-
-#pragma endregion
-
-#pragma region Boost
-CSonic_Boost_State* CSonic_Boost_State::Create(CGameObject* pOwner)
-{
-	CSonic_Boost_State* pInstance = new CSonic_Boost_State(pOwner);
-	pInstance->Initialize();
-	return pInstance;
-}
-
-HRESULT CSonic_Boost_State::Initialize()
-{
-	strcpy_s(m_szName, "Sonic_Boost_State");
-	return S_OK;
-}
-
-void CSonic_Boost_State::Enter()
-{
-
-}
-
-void CSonic_Boost_State::Execute(_float fTimeDelta)
-{
-	__super::Execute(fTimeDelta);
-	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
-	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
-	status.fMoveSpeed.first += status.fMoveAccelration * 5.f * fTimeDelta;
-	if (status.fMoveSpeed.first >= status.fMaxBoostSpeed)
-		status.fMoveSpeed.first = status.fMaxBoostSpeed;
-}
-
-void CSonic_Boost_State::HandleInput(_float fTimeDelta)
-{
-	__super::HandleInput(fTimeDelta);
-}
-
-void CSonic_Boost_State::Exit()
-{
-}
-
-
-#pragma endregion
-
-#pragma region Brake
-CSonic_Brake_State* CSonic_Brake_State::Create(CGameObject* pOwner)
-{
-	CSonic_Brake_State* pInstance = new CSonic_Brake_State(pOwner);
-	pInstance->Initialize();
-	return pInstance;
-}
-
-
-HRESULT CSonic_Brake_State::Initialize()
-{
-	strcpy_s(m_szName, "Sonic_Break_State");
-	m_bLoop = false;
-	m_fBlendDuration = 0.5f;
-	return S_OK;
-}
-
-void CSonic_Brake_State::Enter()
-{
-
-}
-
-void CSonic_Brake_State::Execute(_float fTimeDelta)
-{
-	__super::Execute(fTimeDelta);
-	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
-	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
-	status.fMoveSpeed.first *= status.fFriction;
-	if (status.fMoveSpeed.first <= 0.f)
-		status.fMoveSpeed.first = 0.f;
-}
-
-void CSonic_Brake_State::HandleInput(_float fTimeDelta)
-{
-	__super::HandleInput(fTimeDelta);
-}
-
-void CSonic_Brake_State::Exit()
-{
 }
 
 #pragma endregion

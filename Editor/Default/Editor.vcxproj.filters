@@ -145,6 +145,21 @@
     <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Movement">
       <UniqueIdentifier>{798046ee-b3d7-4cbd-97fb-6d479d40073b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\NewFilter1">
+      <UniqueIdentifier>{40731129-8493-4d84-ab68-7e42ca71ac92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\Test">
+      <UniqueIdentifier>{7e7d2f67-dfd6-428d-87b0-c569027ae1f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Terrain\Island">
+      <UniqueIdentifier>{703e1731-968b-403a-9122-a664a0243931}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\01.Terrain\Plane">
+      <UniqueIdentifier>{934a2c6d-baec-4be7-a092-c041674b867f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Ashura">
+      <UniqueIdentifier>{711ee26c-85a1-447e-a4b3-5cf328c7a983}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -192,9 +207,6 @@
     <ClCompile Include="..\Private\BackGround.cpp">
       <Filter>02.GameObject\00.BackGround</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Terrain.cpp">
-      <Filter>02.GameObject\01.Terrain</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Level_GamePlay.cpp">
       <Filter>01.Levels\GamePlay</Filter>
     </ClCompile>
@@ -239,6 +251,18 @@
     </ClCompile>
     <ClCompile Include="..\private\Sonic_Spin_State.cpp">
       <Filter>02.GameObject\04.Player\Sonic\Controller\States\Spin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Test.cpp">
+      <Filter>01.Levels\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Terrain_Plane.cpp">
+      <Filter>02.GameObject\01.Terrain\Plane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Terrain.cpp">
+      <Filter>02.GameObject\01.Terrain\Island</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Ashura.cpp">
+      <Filter>02.GameObject\03.Monster\Ashura</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -308,9 +332,6 @@
     <ClInclude Include="..\Public\BackGround.h">
       <Filter>02.GameObject\00.BackGround</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Terrain.h">
-      <Filter>02.GameObject\01.Terrain</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Level_GamePlay.h">
       <Filter>01.Levels\GamePlay</Filter>
     </ClInclude>
@@ -364,6 +385,18 @@
     </ClInclude>
     <ClInclude Include="..\public\Sonic_Spin_State.h">
       <Filter>02.GameObject\04.Player\Sonic\Controller\States\Spin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Test.h">
+      <Filter>01.Levels\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Terrain_Plane.h">
+      <Filter>02.GameObject\01.Terrain\Plane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Terrain.h">
+      <Filter>02.GameObject\01.Terrain\Island</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Ashura.h">
+      <Filter>02.GameObject\03.Monster\Ashura</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
