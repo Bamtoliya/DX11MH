@@ -142,9 +142,6 @@
     <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Base">
       <UniqueIdentifier>{f08101be-a3c1-4971-b06c-2dc90c5c7e71}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Spin\NewFilter1">
-      <UniqueIdentifier>{700619a0-8329-49bc-aa57-1b7de6303d57}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Wall">
       <UniqueIdentifier>{fff0bcc3-4698-40bd-824a-0ef5513a7e08}</UniqueIdentifier>
     </Filter>
@@ -237,8 +234,12 @@
     <ClCompile Include="..\private\Sonic_State.cpp">
       <Filter>02.GameObject\04.Player\Sonic\Controller\States\Base</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Sonic_Spin_State.cpp" />
-    <ClCompile Include="..\private\Sonic_Wall_State.cpp" />
+    <ClCompile Include="..\private\Sonic_Wall_State.cpp">
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States\Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Sonic_Spin_State.cpp">
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States\Spin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor.h">
@@ -358,8 +359,12 @@
     <ClInclude Include="..\public\Sonic_State.h">
       <Filter>02.GameObject\04.Player\Sonic\Controller\States\Base</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Sonic_Spin_State.h" />
-    <ClInclude Include="..\public\Sonic_Wall_State.h" />
+    <ClInclude Include="..\public\Sonic_Wall_State.h">
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States\Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Sonic_Spin_State.h">
+      <Filter>02.GameObject\04.Player\Sonic\Controller\States\Spin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Editor.ico">
