@@ -51,12 +51,17 @@
 #include "Collider.h"
 #pragma endregion
 
+#pragma region Navigation	
+#include "Navigation.h"
+#pragma endregion
+
 #pragma region Shader
 #include "Shader.h"
 #pragma endregion
 
 #pragma region VIBuffer
 #include "VIBuffer.h"
+#include "VIBuffer_Cell.h"
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Terrain.h"

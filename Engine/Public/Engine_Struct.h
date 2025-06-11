@@ -49,10 +49,6 @@ namespace Engine
 		unsigned long		_0, _1, _2;
 	}FACEINDICES32;
 
-	typedef struct tagVertexPosition {
-		XMFLOAT3		vPosition;
-	}VTXPOS;
-
 	typedef struct tagVertexTexture {
 		XMFLOAT3		vPosition;
 		XMFLOAT2		vTextureCoord;
@@ -135,7 +131,13 @@ namespace Engine
 	}LIGHT_DESC;
 
 	/* 화면에 그려야하는 최종적인 색 = Light.Diffuse * 재질.Diffuse */
+	typedef struct ENGINE_DLL tagVertexPosition
+	{
+		XMFLOAT3		vPosition;		
 
+		static const unsigned int					iNumElements = { 1 };
+		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
+	}VTXPOS;
 
 
 #pragma region VTX Structures
