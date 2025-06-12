@@ -13,7 +13,15 @@ private:
 		RUN,
 		DASH,
 		BOOST,
-		BRAKE
+		BRAKE,
+		AVOID,
+		SPRINGJUMP,
+		QUICKSTEP,
+		POLESPIN,
+		PULLEY,
+		RIDER,
+		WALL,
+		END
 	};
 protected:
 	CSonic_Movement_State(CGameObject* pOwner) : CSonic_State{ pOwner } {}
@@ -26,6 +34,7 @@ private:
 	void Idle(_float fTimeDelta);
 	void Walk(_float fTimeDelta);
 	void Run(_float fTimeDelta);
+	void Dash(_float fTimeDelta);
 	void Boost(_float fTimeDelta);
 	void Brake(_float fTimeDelta);
 private:

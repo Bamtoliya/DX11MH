@@ -10,6 +10,12 @@ NS_BEGIN(Editor)
 class CSonic_Controller : public CController
 {
 public:
+	enum States {
+		MOVE,
+		COMBAT,
+		AIR
+	};
+public:
 #pragma region Struct
 	typedef struct tagSonicStatus {
 		//Default Movement

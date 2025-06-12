@@ -13,7 +13,7 @@ void CSonic_Movement_State::Idle(_float fTimeDelta)
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
 	status.fMoveSpeed.first = 0.f;
 	XMStoreFloat3(&status.vMoveDirection, XMVectorZero());
-	pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::IDLE_LOOP));
+	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::IDLE_LOOP));
 	return;
 }
 
@@ -24,8 +24,7 @@ void CSonic_Movement_State::Walk(_float fTimeDelta)
 	status.fMoveSpeed.first += status.fMoveAccelration * fTimeDelta;
 	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
 		status.fMoveSpeed.first = status.fMoveSpeed.second;
-	
-
+	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::WALK_LOOP), 1.5f);
 }
 
 void CSonic_Movement_State::Run(_float fTimeDelta)
@@ -37,12 +36,28 @@ void CSonic_Movement_State::Run(_float fTimeDelta)
 		status.fMoveSpeed.first = status.fMoveSpeed.second;
 	if (status.fCurSlope >= status.fSlopeLimitAngle)
 	{
-		pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::WALLRUN_U_LOOP), status.fMoveSpeed.first);
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::WALLRUN_U_LOOP), status.fMoveSpeed.first);
 	}
 	else
 	{
-		pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::RUN_LOOP), status.fMoveSpeed.first);
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::RUN_LOOP), status.fMoveSpeed.first);
 	}
+}
+
+void CSonic_Movement_State::Dash(_float fTimeDelta)
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+	status.fMoveSpeed.first += status.fMoveAccelration * 3.f * fTimeDelta;
+
+	if (status.fMoveSpeed.first > status.fMoveSpeed.second)
+	{
+		status.fMoveSpeed.first -= status.fMoveAccelration * 5.f * fTimeDelta;
+		if (status.fMoveSpeed.first < status.fMoveSpeed.second)
+			status.fMoveSpeed.first = status.fMoveSpeed.second;
+	}
+
+	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::DASH_LOOP), status.fMoveSpeed.first);
 }
 
 void CSonic_Movement_State::Boost(_float fTimeDelta)
@@ -52,6 +67,7 @@ void CSonic_Movement_State::Boost(_float fTimeDelta)
 	status.fMoveSpeed.first += status.fMoveAccelration * 5.f * fTimeDelta;
 	if (status.fMoveSpeed.first >= status.fMaxBoostSpeed)
 		status.fMoveSpeed.first = status.fMaxBoostSpeed;
+	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::BOOST_LOOP), status.fMoveSpeed.first, true, 1.f);
 }
 
 void CSonic_Movement_State::Brake(_float fTimeDelta)
@@ -61,6 +77,14 @@ void CSonic_Movement_State::Brake(_float fTimeDelta)
 	status.fMoveSpeed.first *= status.fFriction;
 	if (status.fMoveSpeed.first <= 0.f)
 		status.fMoveSpeed.first = 0.f;
+	if (status.fCurSlope >= 30.f)
+	{
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::BRAKE_SLOPE), 1.0f, false);
+	}
+	else
+	{
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::BRAKE_NEUTRAL), 1.0f, false);
+	}
 }
 
 void CSonic_Movement_State::Execute(_float fTimeDelta)
@@ -169,6 +193,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		case CSonic_Movement_State::EMovementState::IDLE:	Idle(fTimeDelta); break;
 		case CSonic_Movement_State::EMovementState::WALK:	Walk(fTimeDelta); break;
 		case CSonic_Movement_State::EMovementState::RUN:	Run(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::DASH:	Dash(fTimeDelta); break;
 		case CSonic_Movement_State::EMovementState::BOOST:	Boost(fTimeDelta); break;
 		case CSonic_Movement_State::EMovementState::BRAKE:	Brake(fTimeDelta); break;
 		default:
@@ -237,6 +262,7 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 	// 또는 camRightXZ = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), camLookXZ); 로 계산 가능
 
 	_vector vMovementDirection = XMVectorZero();
+	vMovementDirection.m128_f32[1] = -0.98f;
 	_bool bIsMoving = false;
 
 	if (KEY_PRESSING(DIK_W)) { vMovementDirection += camLookXZ; bIsMoving = true; }
@@ -253,7 +279,6 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 			XMStoreFloat3(&status.vMoveDirection, XMVector4Normalize(pTransform->Get_State(STATE::LOOK)));
 		else 
 			XMStoreFloat3(&status.vMoveDirection, XMVector3Normalize(vMovementDirection));
-		pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::BOOST_LOOP), status.fMoveSpeed.first);
 		return;
 	}
 
@@ -273,15 +298,18 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 	if (bIsMoving)
 	{
 		XMStoreFloat3(&status.vMoveDirection, XMVector3Normalize(vMovementDirection));
-		if (status.fMoveSpeed.first >= 2.5f)
+		if (status.fMoveSpeed.first >= 1.5f && status.fMoveSpeed.first < 8.5f)
 		{
 			m_eMovementState = EMovementState::RUN;
 			
 		}
+		else if(status.fMoveSpeed.first >= 8.5f)
+		{
+			m_eMovementState = EMovementState::DASH;
+		}
 		else
 		{
 			m_eMovementState = EMovementState::WALK;
-			pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::WALK_LOOP), 1.5f);
 		}
 	}
 	else
@@ -289,14 +317,12 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 		if (status.fMoveSpeed.first >= 2.f)
 		{
 			m_eMovementState = EMovementState::BRAKE;
-			pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::BRAKE_NEUTRAL), 1.0f, false);
 		}
 		else
 		{
 			if (pAnimator->Get_AnimationProgress() >= 0.75f || m_eMovementState == EMovementState::WALK)
 			{
 				m_eMovementState = EMovementState::IDLE;
-				pController->Change_State(m_iStateIndex, ENUM_CLASS(CSonic::STATE::IDLE_LOOP));
 			}
 		}
 	}
