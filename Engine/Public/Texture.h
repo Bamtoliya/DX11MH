@@ -51,6 +51,7 @@ public:
 	//ID3D11ShaderResourceView* Get_SRV(_uint index) { return m_SRVs[index]; }
 	/* 쉐이더에 텍스쳐를 셋한다. */
 	HRESULT Bind_ShaderResource(class CShader* pShader, const _char* pConstantName, _uint iTextureIndex);
+	HRESULT Bind_ShaderResources(class CShader* pShader, const _char* pConstantName);
 	HRESULT Bind_ShaderResourceArray(class CShader* pShader, const _char* pConstantName);
 	HRESULT Bind_IndexMap(CShader* pShader, const _char* pConstantName);
 	virtual HRESULT RenderImGui() override;

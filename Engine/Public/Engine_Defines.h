@@ -19,6 +19,7 @@
 #include "PrimitiveBatch.h"
 #include "tk/Inc/Effects.h"
 #include "../../packages/directxtex_uwp.2025.3.25.2/include/DirectXTex.h"
+#include "ScreenGrab.h"
 using namespace DirectX;
 #pragma endregion
 

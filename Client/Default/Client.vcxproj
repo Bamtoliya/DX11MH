@@ -125,7 +125,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../EngineSDK/Lib/;$(SolutionDir)External Libraries\fmod\core\lib\x64;$(SolutionDir)External Libraries\fmod\studio\lib\x64;$(SolutionDir)External Libraries\fmod\fsbank\lib\x64;$(SolutionDir)External Libraries\wwise\x64\$(Configuration)\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Engine.lib;d3d11.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -150,7 +150,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../EngineSDK/Lib/;$(SolutionDir)External Libraries\fmod\core\lib\x64;$(SolutionDir)External Libraries\fmod\studio\lib\x64;$(SolutionDir)External Libraries\fmod\fsbank\lib\x64;$(SolutionDir)External Libraries\wwise\x64\$(Configuration)\lib\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../EngineSDK/Lib/</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>

@@ -167,6 +167,11 @@ HRESULT CTexture::Bind_ShaderResource(CShader* pShader, const _char* pConstantNa
 	return pShader->Bind_SRV(pConstantName, m_SRVs[iTextureIndex]);	
 }
 
+HRESULT CTexture::Bind_ShaderResources(CShader* pShader, const _char* pConstantName)
+{
+	return pShader->Bind_SRVs(pConstantName, &m_SRVs.front(), m_iNumTextures);	
+}
+
 HRESULT CTexture::Bind_ShaderResourceArray(CShader* pShader, const _char* pConstantName)
 {
 	return S_OK;
