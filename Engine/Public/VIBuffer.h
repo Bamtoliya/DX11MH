@@ -30,10 +30,11 @@ public:
 	const _uint Get_NumVertices() const { return m_iNumVertices; }
 	const _uint Get_NumIndices() const { return m_iNumIndices; }
 	const ID3D11Buffer* Get_VertexBuffer() const { return m_pVB; }
-	const ID3D11Buffer* Get_IndexBuffer() const { return m_pIB; }
+	ID3D11Buffer* Get_IndexBuffer() { return m_pIB; }
 	const _uint Get_NumVertexBuffers() const { return m_iNumVertexBuffers; }
 	const _uint Get_NumPrimitive() const { return m_iNumPrimitive; }
 	const _uint Get_NumIndicesPerPrimitive() const { return m_iNumIndicesPerPrimitive; }
+	const D3D11_BUFFER_DESC Get_IndexBufferDesc() const { return m_IndexBufferDesc; }
 
 protected:
 	HRESULT Create_VertexBuffer();
@@ -59,10 +60,12 @@ protected:
 
 protected:
 	D3D11_BUFFER_DESC		m_BufferDesc		= {};
+	D3D11_BUFFER_DESC		m_IndexBufferDesc = {};
 	D3D11_SUBRESOURCE_DATA	m_SubResourceData	= {};
 
 protected:
 	_float3*				m_pVertexPositions = { nullptr };
+	_uint*					m_iVertexIndicies = { nullptr };
 
 protected:
 	_float3					m_vLocalSize = { 1.0f, 1.0f, 1.0f };

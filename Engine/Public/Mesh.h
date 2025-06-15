@@ -6,30 +6,7 @@ NS_BEGIN(Engine)
 
 class ENGINE_DLL CMesh final : public CVIBuffer
 {
-#pragma region Structures
-public:
-	typedef struct tagMeshFromModel
-	{
-		_char* szName;
-		_uint iMaterialIndex;
-		_uint iPrimitiveTypes;
-		_uint iNumVertices;
-		_uint iNumIndices;
-		_uint iNumBones;
-		_uint iVertexStride;
-		_uint iIndexStride;
-		_uint* pIndices;
-		_float3* pVertices;
-		_float3* pNormals;
-		_float3* pTangents;
-		_float2* pTexcoords;
-		_float4x4* pOffsetMatrices;
-		_float4x4* pBoneMatrices;
-	} MODEL_MESH;
-#pragma endregion
-
 #pragma region Constructor & Destructor
-
 private:
 	CMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CMesh(const CMesh& Prototype);

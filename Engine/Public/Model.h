@@ -73,6 +73,7 @@ public:
 	_float4x4 Get_PreTransformMatrix() const { return m_PreTransformMatrix; }
 	const _float4x4* Get_BoneMatrix(const _char* pBoneName) const;
 	class CAnimation* Get_Animation(_uint iIndex) const { return m_Animations[iIndex]; }
+	vector<class CMesh*> Get_Meshes() { return m_Meshes; }
 public:
 	HRESULT Bind_Material(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex, aiTextureType eType, _uint iTextureIndex = 0);
 	HRESULT Bind_Bone_Matrices(class CShader* pShader, const _char* pConstantName, _uint iMeshIndex);

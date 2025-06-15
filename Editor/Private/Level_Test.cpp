@@ -5,13 +5,18 @@
 CLevel_Test::CLevel_Test(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel{ pDevice, pContext }
 {
-    m_iLevel = { ENUM_CLASS(LEVEL::MAP) };
+    m_iLevel = { ENUM_CLASS(LEVEL::TEST) };
 }
 
 HRESULT CLevel_Test::Initialize()
 {
-    if (FAILED(m_pGameInstance->Load_GameObjects(ENUM_CLASS(LEVEL::MAP), SAVEPATH L"Terrain_Test2.json")))
-        return E_FAIL;
+    /*if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Test_Field.json")))
+        return E_FAIL;*/
+
+    Ready_Layer_GameObjects(L"Layer_GameObjects");
+    Ready_Layer_Light(L"Layer_Light");
+    Ready_Layer_Terrain(L"Layer_Virtual_Space");
+    Ready_Layer_Camera(L"Layer_Camera");
 
     if (FAILED(Ready_Layer_ImGui()))
         return E_FAIL;
@@ -31,7 +36,11 @@ HRESULT CLevel_Test::Render()
 
 HRESULT CLevel_Test::Ready_Layer_GameObjects(const _wstring& strLayerTag)
 {
-    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Monster"),
+    if (FAILED(m_pGameInstance->Add_GameObject(m_iLevel, TEXT("Prototype_GameObject_Sonic"),
+        m_iLevel, strLayerTag)))
+        return E_FAIL;
+
+    if (FAILED(m_pGameInstance->Add_GameObject(m_iLevel, TEXT("Prototype_GameObject_Tutorial_Enemy"),
         m_iLevel, strLayerTag)))
         return E_FAIL;
     return S_OK;
@@ -39,7 +48,7 @@ HRESULT CLevel_Test::Ready_Layer_GameObjects(const _wstring& strLayerTag)
 
 HRESULT CLevel_Test::Ready_Layer_Terrain(const _wstring& strLayerTag)
 {
-    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Terrain"),
+    if (FAILED(m_pGameInstance->Add_GameObject(m_iLevel, TEXT("Prototype_GameObject_Virtual_Space"),
         m_iLevel, strLayerTag)))
         return E_FAIL;
     return S_OK;
@@ -47,7 +56,11 @@ HRESULT CLevel_Test::Ready_Layer_Terrain(const _wstring& strLayerTag)
 
 HRESULT CLevel_Test::Ready_Layer_Camera(const _wstring& strLayerTag)
 {
-    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Camera_Free"),
+    if (FAILED(m_pGameInstance->Add_GameObject(m_iLevel, TEXT("Prototype_GameObject_Camera_Free"),
+        m_iLevel, strLayerTag)))
+        return E_FAIL;
+
+    if (FAILED(m_pGameInstance->Add_GameObject(m_iLevel, TEXT("Prototype_GameObject_Camera_Follow"),
         m_iLevel, strLayerTag)))
         return E_FAIL;
 
@@ -56,7 +69,7 @@ HRESULT CLevel_Test::Ready_Layer_Camera(const _wstring& strLayerTag)
 
 HRESULT CLevel_Test::Ready_Layer_Sky(const _wstring& strLayerTag)
 {
-    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Skybox"),
+    if (FAILED(m_pGameInstance->Add_GameObject(m_iLevel, TEXT("Prototype_GameObject_Skybox"),
         m_iLevel, strLayerTag)))
         return E_FAIL;
     return S_OK;
@@ -64,7 +77,7 @@ HRESULT CLevel_Test::Ready_Layer_Sky(const _wstring& strLayerTag)
 
 HRESULT CLevel_Test::Ready_Layer_Light(const _wstring& strLayerTag)
 {
-    if (FAILED(m_pGameInstance->Add_GameObject(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_GameObject_Light_Direction"),
+    if (FAILED(m_pGameInstance->Add_GameObject(m_iLevel, TEXT("Prototype_GameObject_Light_Direction"),
         m_iLevel, strLayerTag)))
         return E_FAIL;
     return S_OK;
@@ -76,7 +89,6 @@ HRESULT CLevel_Test::Ready_Layer_ImGui()
     m_pGameInstance->ShowImGui(L"ToolBar");
     m_pGameInstance->ShowImGui(L"Inspector");
     m_pGameInstance->ShowImGui(L"Hierarchy");
-    m_pGameInstance->ShowImGui(L"Asset Browser");
     m_pGameInstance->ShowImGui(L"Viewport3D");
     return S_OK;
 }

@@ -16,13 +16,21 @@ public:
 
     typedef struct tagShapeDesc
     {
-        EShapeType  eShapeType = EShapeType::BOX; // 충돌체 모양 타입
-        _float3     vShapeSize = _float3(1.f, 1.f, 1.f); // Box: (halfExtents), Sphere: (radius,0,0), Capsule: (radius, halfHeight,0)
-        _float4     qRotation = _float4(0.f, 0.f, 0.f, 1.f); // 회전 정보
-        _float3     vLocalPosition = _float3(0.f, 0.f, 0.f);
-        _float      fCurRotationX = { 0.f };
-        _float      fCurRotationY = { 0.f };
-        _float      fCurRotationZ = { 0.f };
+        EShapeType      eShapeType = EShapeType::BOX; // 충돌체 모양 타입
+        _float3         vShapeSize = _float3(1.f, 1.f, 1.f); // Box: (halfExtents), Sphere: (radius,0,0), Capsule: (radius, halfHeight,0)
+        _float4         qRotation = _float4(0.f, 0.f, 0.f, 1.f); // 회전 정보
+        _float3         vLocalPosition = _float3(0.f, 0.f, 0.f);
+        _float          fCurRotationX = { 0.f };
+        _float          fCurRotationY = { 0.f };
+        _float          fCurRotationZ = { 0.f };
+        _bool           bIsQueryShape = false;
+        _bool           bIsDoubleSided = false;
+        // Simulation Filter Data
+        physx::PxU32 filterData0 = 1; // Default to (1,1,0,0) or your common default
+        physx::PxU32 filterData1 = 1;
+        physx::PxU32 filterData2 = 0;
+        physx::PxU32 filterData3 = 0;
+        class CMesh*    pMesh = { nullptr };
 	} SHAPE_DESC;
 
     // 리지드바디 초기화 정보 구조체

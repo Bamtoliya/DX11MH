@@ -1,0 +1,238 @@
+{
+  "Prototype_Component_Model_Sonic": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Sonic/SonicAllActions.model",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "ANIM"
+  },
+  "Prototype_Component_Model_Spring": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Spring.fbx",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "ANIM"
+  },
+  "Prototype_Component_Model_Tutorial_Enemy": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Tutorial Enemy.fbx",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "ANIM"
+  },
+  "Prototype_Component_Model_Tutorial_Wall": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Tutorial Wall.fbx",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "NONANIM"
+  },
+  "Prototype_Component_Model_Virtual_Space": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Virtual Space2.fbx",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "NONANIM"
+  },
+  "Prototype_Component_Model_Ring": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Ring.fbx",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "NONANIM"
+  },
+
+  "Prototype_Component_RigidBody": {
+    "Class": "CRigidBody"
+  },
+  "Prototype_Component_Texture_Sky": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "../../Assets/Textures/Skybox/XYZ.dds"
+  },
+  "Prototype_Component_Sonic_Controller": {
+    "Class": "CSonic_Controller"
+  },
+  "Prototype_Component_Texture_Terrain": {
+    "Class": "CTexture",
+    "NumTexture": 2,
+    "TextureFilePath": "../../Assets/Resources/Textures/Terrain/Tile%d.dds"
+  },
+  "Prototype_Component_VIBuffer_Terrain": {
+    "Class": "CVIBuffer_Terrain",
+    "HeightMapFilePath": "../../Assets/Resources/Textures/Terrain/Height.bmp"
+  },
+  "Prototype_Component_Texture_Terrain_Water": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "../../Assets/Terrain/Ocean/w1_ocean501_tk1_abd.dds"
+  },
+  "Prototype_Component_Texture_Terrain_SplatMap": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r03_splatmap.dds"
+  },
+  "Prototype_Component_Texture_Terrain_BaseDiffuse": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_base_abd.dds"
+  },
+  "Prototype_Component_Texture_Terrain_BaseParameter": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_base_prm.dds"
+  },
+  "Prototype_Component_Texture_Terrain_DetailDiffuse": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_detail_abd.dds"
+  },
+  "Prototype_Component_Texture_Terrain_DetailHeight": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_detail_hgt.dds"
+  },
+  "Prototype_Component_Texture_Terrain_DetailNormal": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "../../Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_detail_nrm.dds"
+  },
+  "Prototype_GameObject_Terrain": {
+    "Class": "CTerrain"
+  },
+  "Prototype_GameObject_Camera_Free": {
+    "Class": "CCamera_Free"
+  },
+  "Prototype_GameObject_Camera_Follow": {
+    "Class": "CCamera_Follow"
+  },
+  "Prototype_GameObject_Camera_TPS": {
+    "Class": "CCamera_TPS"
+  },
+  "Prototype_GameObject_Light_Direction": {
+    "Class": "CLight_Direction"
+  },
+  "Prototype_GameObject_Monster": {
+    "Class": "CMonster"
+  },
+  "Prototype_GameObject_Tutorial_Enemy": {
+    "Class": "CTutorial_Enemy"
+  },
+  "Prototype_GameObject_Tutorial_Wall": {
+    "Class": "CTutorial_Wall"
+  },
+  "Prototype_GameObject_Virtual_Space": {
+    "Class": "CVirtual_Space"
+  },
+  "Prototype_GameObject_Skybox": {
+    "Class": "CGameObject_Skybox"
+  },
+  "Prototype_GameObject_Spring": {
+    "Class": "CSpring"
+  },
+  "Prototype_GameObject_Ring": {
+    "Class": "CRing"
+  },
+  "Prototype_GameObject_Sonic": {
+    "Class": "CSonic"
+  },
+  "Prototype_Component_HeightField": {
+    "Class": "CHeightField"
+  }
+}

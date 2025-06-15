@@ -454,6 +454,7 @@ void CPhysics_System::onSleep(PxActor** actors, PxU32 count)
 
 void CPhysics_System::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 {
+        cout << "Physics_System OnContact Called\n";
 }
 
 void CPhysics_System::onTrigger(PxTriggerPair* pairs, PxU32 count)
@@ -462,6 +463,7 @@ void CPhysics_System::onTrigger(PxTriggerPair* pairs, PxU32 count)
 
 void CPhysics_System::onAdvance(const PxRigidBody* const* bodyBuffer, const PxTransform* poseBuffer, const PxU32 count)
 {
+    cout << "Physics_System OnAdvance Called\n";
 }
 
 #pragma endregion

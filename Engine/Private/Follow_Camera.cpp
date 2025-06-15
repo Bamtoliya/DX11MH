@@ -234,6 +234,7 @@ void CFollow_Camera::Follow(CTransform* pTransformCom, _vector vTargetPosition, 
 #pragma endregion
 HRESULT CFollow_Camera::RenderImGui()
 {
+	__super::RenderImGui();
 	ImGui::PushID(this);
 	if (ImGui::CollapsingHeader("Follow_Camera", ImGuiTreeNodeFlags_DefaultOpen))
 	{

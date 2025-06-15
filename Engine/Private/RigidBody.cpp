@@ -2,6 +2,7 @@
 #include "RigidBody.h"
 #include "Transform.h"
 #include "GameInstance.h"
+#include "Mesh.h"
 
 #pragma region Constructor/Destructor
 CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -28,7 +29,7 @@ HRESULT CRigidBody::Initialize_Prototype()
 }
 HRESULT CRigidBody::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(pArg)))
+  	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 	if (pArg == nullptr)
 	{
@@ -346,6 +347,7 @@ HRESULT CRigidBody::RenderImGui()
 				ImGui::PushID(static_cast<int>(i));
 
 				bool shapeModified = false;
+				bool filterDataModified = false;
 				SHAPE_DESC& shape = m_tRigidBodyDesc.vShapeDescs[i];
 
 				// 쉐이프 헤더 (삭제 버튼 포함)
@@ -409,7 +411,51 @@ HRESULT CRigidBody::RenderImGui()
 						shapeModified = true;
 					}
 
+					// Scene Query Shape Flag
+					if (ImGui::Checkbox("Is Query Shape", &shape.bIsQueryShape)) shapeModified = true; // Modifying this flag also requires actor/shape recreation
+
+					// Mesh specific options (if applicable)
+					//if (shape.eShapeType == EShapeType::CONVEX_MESH || shape.eShapeType == EShapeType::TRIANGLE_MESH)
+					//{
+					//	ImGui::InputInt("Mesh Index", (int*)&shapeDesc.uiMeshIndex); // Assuming uiMeshIndex is _uint
+					//	// Potentially add a combo or drag drop for pModelForMesh if not set globally for the RigidBody
+					//	if (ImGui::Checkbox("Force Convex (for Triangle Mesh)", &shape.bIsConvexForShape)) shapeModified = true;
+					//}
+
+					// Simulation Filter Data
+					if (ImGui::TreeNode("Filter Data"))
+					{
+						// Make temporary non-const variables for ImGui::InputInt
+						_int fd0 = static_cast<int>(shape.filterData0);
+						_int fd1 = static_cast<int>(shape.filterData1);
+						_int fd2 = static_cast<int>(shape.filterData2);
+						_int fd3 = static_cast<int>(shape.filterData3);
+
+						if (ImGui::InputInt("Word0", &fd0)) { shape.filterData0 = static_cast<physx::PxU32>(fd0); filterDataModified = true; }
+						if (ImGui::InputInt("Word1", &fd1)) { shape.filterData1 = static_cast<physx::PxU32>(fd1); filterDataModified = true; }
+						if (ImGui::InputInt("Word2", &fd2)) { shape.filterData2 = static_cast<physx::PxU32>(fd2); filterDataModified = true; }
+						if (ImGui::InputInt("Word3", &fd3)) { shape.filterData3 = static_cast<physx::PxU32>(fd3); filterDataModified = true; }
+
+						ImGui::TreePop();
+					}
 					ImGui::TreePop();
+				}
+
+
+				if (filterDataModified)
+				{
+					if (m_pActor && i < m_pShapes.size() && m_pShapes[i])
+					{
+						physx::PxShape* pShape = m_pShapes[i];
+						physx::PxFilterData newFilterData(shape.filterData0, shape.filterData1, shape.filterData2, shape.filterData3);
+						pShape->setSimulationFilterData(newFilterData);
+						pShape->setQueryFilterData(newFilterData); // Also update query filter data
+
+						// Important: Re-filter the actor in the scene to apply changes
+						if (m_pActor->getScene()) {
+							m_pActor->getScene()->resetFiltering(*m_pActor);
+						}
+					}
 				}
 
 				// 수정 사항이 있으면 액터 재생성
@@ -788,152 +834,127 @@ HRESULT CRigidBody::Create_Actor()
 			pGeometry = new physx::PxCapsuleGeometry(shapeDesc.vShapeSize.x, shapeDesc.vShapeSize.y); // radius, halfHeight
 			break;
 		case EShapeType::TRIANGLE_MESH:
+		{
+			CModel* pModel = m_tRigidBodyDesc.pModelForMesh;
+			
+			CMesh* pMesh = shapeDesc.pMesh;
+			const _float3* vertexDataPtr = pMesh->Get_VertexPositions();
+			vector<_uint> tempIndices;
+			const void* indicesPtr = nullptr;
+			const _uint numVertices = pMesh->Get_NumVertices();
+			const _uint numIndices = pMesh->Get_NumIndices();
+			
+
+			D3D11_BUFFER_DESC stagingIBDesc;
+			stagingIBDesc.ByteWidth = numIndices * sizeof(_uint);
+			stagingIBDesc.Usage = D3D11_USAGE_STAGING;
+			stagingIBDesc.BindFlags = 0;
+			stagingIBDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+			stagingIBDesc.StructureByteStride = sizeof(_uint);
+			stagingIBDesc.MiscFlags = 0;
+
+			ID3D11Buffer* pStagingIB = nullptr;
+			if (SUCCEEDED(m_pDevice->CreateBuffer(&stagingIBDesc, nullptr, &pStagingIB)))
+			{
+				m_pContext->CopyResource(pStagingIB, pMesh->Get_IndexBuffer()); // m_pIB를 가져오는 함수 필요
+
+				D3D11_MAPPED_SUBRESOURCE mappedResource;
+				if (SUCCEEDED(m_pContext->Map(pStagingIB, 0, D3D11_MAP_READ, 0, &mappedResource)))
+				{
+					tempIndices.resize(pMesh->Get_NumIndices());
+					memcpy(tempIndices.data(), mappedResource.pData, pMesh->Get_NumIndices() * sizeof(_uint)); // Get_IndexStride() 필요
+					m_pContext->Unmap(pStagingIB, 0);
+					indicesPtr = tempIndices.data();
+				}
+				m_pContext->Unmap(pStagingIB, 0);
+				Safe_Release(pStagingIB);
+			}
+
+			PxTriangleMeshDesc meshDesc;
+			meshDesc.points.count = numVertices;
+			meshDesc.points.stride = sizeof(_float3);
+			meshDesc.points.data = vertexDataPtr;
+
+			meshDesc.triangles.count = static_cast<PxU32>(numIndices / 3);
+			meshDesc.triangles.stride = 3 * sizeof(PxU32);
+			meshDesc.triangles.data = indicesPtr;
+
+			physx::PxDefaultMemoryOutputStream writeBuffer;
+			if (!PxCookTriangleMesh(pPhysics->getTolerancesScale(), meshDesc, writeBuffer)) {
+				MSG_BOX("CRigidBody::Create_Actor - Failed to cook triangle mesh using PxCookTriangleMesh.");
+				pMaterial->release();
+				continue;
+			}
+			physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+			triangleMesh = pPhysics->createTriangleMesh(readBuffer);
+			if (!triangleMesh) {
+				MSG_BOX("CRigidBody::Create_Actor - Failed to create PxTriangleMesh from cooked data.");
+				pMaterial->release();
+				continue;
+			}
+
+			if (shapeDesc.bIsDoubleSided)
+			{
+				pGeometry = new physx::PxTriangleMeshGeometry(triangleMesh, PxMeshScale(ToPxVec3(shapeDesc.vShapeSize)), physx::PxMeshGeometryFlag::eDOUBLE_SIDED);
+			}
+			else
+			{
+				pGeometry = new physx::PxTriangleMeshGeometry(triangleMesh, PxMeshScale(ToPxVec3(shapeDesc.vShapeSize)));
+			}
+			
+			
+			break;
+		}
 		case EShapeType::CONVEX_MESH:
 		{
-			//if (!m_tRigidBodyDesc.pModelForMesh) // RigidBody.h에서 pModelForMesh 주석 해제 및 값 설정 필요
-			//{
-			//	MSG_BOX("CRigidBody::Create_Actor - pModelForMesh is null for MESH shape type.");
-			//	m_pMaterial->release(); m_pMaterial = nullptr;
-			//	return E_FAIL;
-			//}
+			if (!m_tRigidBodyDesc.pModelForMesh) // RigidBody.h에서 pModelForMesh 주석 해제 및 값 설정 필요
+			{
+				MSG_BOX("CRigidBody::Create_Actor - pModelForMesh is null for MESH shape type.");
+				pMaterial->release(); 
+				m_Materials.pop_back();
+				return E_FAIL;
+			}
 
-			//PxVec3* verticesData = nullptr;
-			//PxU32 numVertices = 0;
-			//void* indicesData = nullptr;
-			//PxU32 numIndices = 0;
-			//PxMeshFlag::Enum indexFormat = PxMeshFlag::Enum(0);
+			CModel* pModel = m_tRigidBodyDesc.pModelForMesh;
 
-			//// CModel에서 정점 및 인덱스 데이터 가져오기 (가정)
-			//// 실제 모델/메시 구조에 맞게 이 부분을 수정해야 합니다.
-			//// 예시: 모델의 모든 메시를 병합하거나 첫 번째 메시만 사용
-			//std::vector<physx::PxVec3> pxVertices;
-			//std::vector<PxU32> pxIndices; // Triangle Mesh에만 필요
+			if (pModel->Get_NumMeshes() == 0)
+			{
+				pMaterial->release();
+				continue;
+			}
+			CMesh* pMesh = shapeDesc.pMesh;
+			const _float3* vertexDataPtr = pMesh->Get_VertexPositions();
+			const _uint numVertices = pMesh->Get_NumVertices();
 
-			//// --- 모델 데이터 로드 시작 (플레이스홀더) ---
-			//// 이 부분은 프로젝트의 CModel, CMesh 구조에 따라 실제 데이터를 로드해야 합니다.
-			//// 예를 들어, m_tRigidBodyDesc.pModelForMesh->Get_Meshes() 등으로 메시 목록을 가져오고,
-			//// 각 CMesh에서 Get_Vertices_Position(), Get_Indices() 등으로 데이터를 가져와 pxVertices, pxIndices에 채웁니다.
-			//// 여기서는 간단한 예시로 하나의 메시에서 데이터를 가져온다고 가정합니다.
-			//// CModel* pModel = m_tRigidBodyDesc.pModelForMesh;
-			//// if (pModel->Get_MeshCount() > 0) {
-			////    CMesh* pMesh = pModel->Get_Mesh(0); // 첫 번째 메시 사용 가정
-			////    const auto& modelVertices = pMesh->Get_Vertices(); // _float3 타입의 정점 배열 가정
-			////    for(const auto& vert : modelVertices) {
-			////        pxVertices.push_back(ToPxVec3(vert.vPosition)); // 정점 구조체에 vPosition이 있다고 가정
-			////    }
-			////    if (m_tRigidBodyDesc.eShapeType == EShapeType::TRIANGLE_MESH && !m_tRigidBodyDesc.bIsConvex) { // bIsConvex는 RigidBody.h에 추가 필요
-			////        const auto& modelIndices = pMesh->Get_Indices32(); // _uint 타입의 인덱스 배열 가정
-			////        pxIndices.insert(pxIndices.end(), modelIndices.begin(), modelIndices.end());
-			////    }
-			//// }
-			//// --- 임시 플레이스홀더 데이터 (실제로는 모델에서 가져와야 함) ---
-			//// 예: 큐브 정점 데이터 (Convex 및 Triangle Mesh 공통)
-			//pxVertices.push_back(physx::PxVec3(-0.5f, -0.5f, -0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-			//pxVertices.push_back(physx::PxVec3(0.5f, -0.5f, -0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-			//pxVertices.push_back(physx::PxVec3(-0.5f, 0.5f, -0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-			//pxVertices.push_back(physx::PxVec3(0.5f, 0.5f, -0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-			//pxVertices.push_back(physx::PxVec3(-0.5f, -0.5f, 0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-			//pxVertices.push_back(physx::PxVec3(0.5f, -0.5f, 0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-			//pxVertices.push_back(physx::PxVec3(-0.5f, 0.5f, 0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-			//pxVertices.push_back(physx::PxVec3(0.5f, 0.5f, 0.5f) * ToPxVec3(m_tRigidBodyDesc.vShapeSize));
-			//// --- 임시 플레이스홀더 데이터 끝 ---
+			PxConvexMeshDesc convexDesc;
+			convexDesc.points.count = numVertices;
+			convexDesc.points.stride = sizeof(_float3);
+			convexDesc.points.data = vertexDataPtr;
+			convexDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
 
+			PxDefaultMemoryOutputStream writeBuffer;
+			PxConvexMeshCookingResult::Enum cookResult;
 
-			//if (pxVertices.empty()) {
-			//	MSG_BOX("CRigidBody::Create_Actor - No vertices found for MESH shape type.");
-			//	m_pMaterial->release(); m_pMaterial = nullptr;
-			//	return E_FAIL;
-			//}
+			if (!PxCookConvexMesh(pPhysics->getTolerancesScale(), convexDesc, writeBuffer, &cookResult))
+			{
+				MSG_BOX("CRigidBody::Create_Actor - Failed to cook convex mesh.");
+				pMaterial->release();
+				continue;
+			}
 
-			//// 동적 액터는 항상 Convex Mesh를 사용해야 합니다.
-			//// 정적 액터는 Triangle Mesh 또는 Convex Mesh를 사용할 수 있습니다.
-			//// m_tRigidBodyDesc.bIsConvex 플래그를 사용하여 정적일 때 어떤 메시를 사용할지 결정할 수 있습니다.
-			//bool bForceConvex = (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC);
+			PxDefaultMemoryInputData input(writeBuffer.getData(), writeBuffer.getSize());
+			convexMesh = pPhysics->createConvexMesh(input);
 
-			//if (m_tRigidBodyDesc.eShapeType == EShapeType::TRIANGLE_MESH && !bForceConvex && !m_tRigidBodyDesc.bIsConvex)
-			//{
-			//	// --- 임시 플레이스홀더 인덱스 데이터 (실제로는 모델에서 가져와야 함) ---
-			//	// 큐브 인덱스 데이터 (Triangle List)
-			//	PxU32 inds[] = {
-			//		0,2,1, 1,2,3, 4,5,6, 5,7,6, 0,1,5, 0,5,4,
-			//		2,6,7, 2,7,3, 0,4,2, 2,4,6, 1,3,7, 1,7,5
-			//	};
-			//	pxIndices.assign(inds, inds + _countof(inds));
-			//	// --- 임시 플레이스홀더 인덱스 데이터 끝 ---
+			if (!convexMesh)
+			{
+				MSG_BOX("CRigidBody::Create_Actor - Failed to create PxConvexMesh from cooked data.");
+				pMaterial->release();
+				continue;
+			}
 
-			//	if (pxIndices.empty()) {
-			//		MSG_BOX("CRigidBody::Create_Actor - No indices found for TRIANGLE_MESH shape type.");
-			//		m_pMaterial->release(); m_pMaterial = nullptr;
-			//		return E_FAIL;
-			//	}
-
-			//	physx::PxTriangleMeshDesc meshDesc;
-			//	meshDesc.points.count = static_cast<PxU32>(pxVertices.size());
-			//	meshDesc.points.stride = sizeof(physx::PxVec3);
-			//	meshDesc.points.data = pxVertices.data();
-
-			//	meshDesc.triangles.count = static_cast<PxU32>(pxIndices.size() / 3);
-			//	meshDesc.triangles.stride = 3 * sizeof(PxU32);
-			//	meshDesc.triangles.data = pxIndices.data();
-			//	// 만약 16비트 인덱스를 사용한다면:
-			//	// meshDesc.flags = PxMeshFlag::e16_BIT_INDICES;
-			//	// meshDesc.triangles.stride = 3 * sizeof(PxU16);
-
-			//	physx::PxDefaultMemoryOutputStream writeBuffer;
-			//	physx::PxTriangleMeshCookingResult::Enum cookResult;
-			//	if (!pCooking->cookTriangleMesh(meshDesc, writeBuffer, &cookResult))
-			//	{
-			//		MSG_BOX("CRigidBody::Create_Actor - Failed to cook triangle mesh.");
-			//		m_pMaterial->release(); m_pMaterial = nullptr;
-			//		return E_FAIL;
-			//	}
-			//	physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
-			//	triangleMesh = pPhysics->createTriangleMesh(readBuffer);
-			//	if (!triangleMesh) {
-			//		MSG_BOX("CRigidBody::Create_Actor - Failed to create PxTriangleMesh from cooked data.");
-			//		m_pMaterial->release(); m_pMaterial = nullptr;
-			//		return E_FAIL;
-			//	}
-			//	// 스케일 적용은 PxTriangleMeshGeometry의 PxMeshScale에서 수행
-			//	pGeometry = new physx::PxTriangleMeshGeometry(triangleMesh /*, PxMeshScale(ToPxVec3(m_tRigidBodyDesc.vShapeSize))*/);
-			//	// vShapeSize를 정점 데이터에 미리 곱했으므로 여기서는 스케일 1.0으로 처리하거나,
-			//	// 정점 데이터는 원본으로 두고 여기서 PxMeshScale을 사용합니다.
-			//	// 현재 코드는 정점에 미리 곱하는 방식을 사용했습니다.
-			//}
-			//else // CONVEX_MESH 또는 Dynamic/Kinematic Triangle Mesh (Convex로 강제)
-			//{
-			//	physx::PxConvexMeshDesc convexDesc;
-			//	convexDesc.points.count = static_cast<PxU32>(pxVertices.size());
-			//	convexDesc.points.stride = sizeof(physx::PxVec3);
-			//	convexDesc.points.data = pxVertices.data();
-			//	convexDesc.flags = physx::PxConvexFlag::eCOMPUTE_CONVEX; // 볼록 헐 계산
-			//	// | physx::PxConvexFlag::eINFLATE_CONVEX; // 필요시 사용
-			//	// | physx::PxConvexFlag::eSHIFT_VERTICES; // 원점으로 이동시킬 경우
-
-			//	physx::PxDefaultMemoryOutputStream writeBuffer;
-			//	physx::PxConvexMeshCookingResult::Enum cookResult;
-			//	if (!pCooking->cookConvexMesh(convexDesc, writeBuffer, &cookResult))
-			//	{
-			//		MSG_BOX("CRigidBody::Create_Actor - Failed to cook convex mesh.");
-			//		m_pMaterial->release(); m_pMaterial = nullptr;
-			//		return E_FAIL;
-			//	}
-			//	physx::PxDefaultMemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
-			//	convexMesh = pPhysics->createConvexMesh(readBuffer);
-			//	if (!convexMesh) {
-			//		MSG_BOX("CRigidBody::Create_Actor - Failed to create PxConvexMesh from cooked data.");
-			//		m_pMaterial->release(); m_pMaterial = nullptr;
-			//		return E_FAIL;
-			//	}
-			//	// 스케일 적용은 PxConvexMeshGeometry의 PxMeshScale에서 수행
-			//	pGeometry = new physx::PxConvexMeshGeometry(convexMesh /*, PxMeshScale(ToPxVec3(m_tRigidBodyDesc.vShapeSize))*/);
-			//	// vShapeSize를 정점 데이터에 미리 곱했으므로 여기서는 스케일 1.0으로 처리하거나,
-			//	// 정점 데이터는 원본으로 두고 여기서 PxMeshScale을 사용합니다.
-			//	// 현재 코드는 정점에 미리 곱하는 방식을 사용했습니다.
-			//}
+			pGeometry = new PxConvexMeshGeometry(convexMesh);
 		}
 		break;
-		// TODO: MESH 타입 처리 (PxTriangleMeshGeometry 또는 PxConvexMeshGeometry)
 		default:
 			pMaterial->release();
 			m_Materials.pop_back();
@@ -956,8 +977,12 @@ HRESULT CRigidBody::Create_Actor()
 		physx::PxShape* pShape = pPhysics->createShape(*pGeometry, *pMaterial, true);
 		if (pShape)
 		{
-			pShape->setSimulationFilterData(physx::PxFilterData(1, 1, 0, 0));
-			pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, false);
+			physx::PxFilterData filterData(shapeDesc.filterData0, shapeDesc.filterData1, shapeDesc.filterData2, shapeDesc.filterData3);
+			pShape->setSimulationFilterData(filterData);
+			pShape->setQueryFilterData(filterData); // Often query filter data is the same, or can be configured separately
+
+			pShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, true);
+			pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, shapeDesc.bIsQueryShape); // Use bIsQueryShape from desc
 			pShape->setLocalPose(shapePose);
 			m_pActor->attachShape(*pShape);
 			m_pShapes.push_back(pShape);

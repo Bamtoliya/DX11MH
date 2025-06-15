@@ -53,6 +53,9 @@ void CLevel_Loading::Update(_float fTimeDelta)
 			case LEVEL::GAMEPLAY:
 				pLevel = CLevel_GamePlay::Create(m_pDevice, m_pContext);
 				break;
+			case LEVEL::TEST:
+				pLevel = CLevel_Test::Create(m_pDevice, m_pContext);
+				break;
 			}
 
 			if (nullptr == pLevel)

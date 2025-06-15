@@ -74,7 +74,6 @@ HRESULT CCamera::Late_Initialize()
 	}
 
 	pTransformCom->LookAt(XMLoadFloat4(&m_tDesc.vAt));
-
 	return S_OK;
 }
 #pragma endregion

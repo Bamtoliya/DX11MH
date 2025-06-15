@@ -35,7 +35,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(CreateImGui()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::ANIMATION)))
+	if (FAILED(Start_Level(LEVEL::TEST)))
 		return E_FAIL;
 
 	return S_OK;
@@ -59,8 +59,12 @@ HRESULT CMainApp::Render()
 
 HRESULT CMainApp::Register_Class_Types()
 {
-	if (FAILED(m_pGameInstance->Register_Creator_Function("CSonic", CSonic::Create))) return E_FAIL;
+#pragma region Components
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CSonic_Controller", CSonic_Controller::Create))) return E_FAIL;
+#pragma endregion
+
+#pragma region Gameobjects
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CSonic", CSonic::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CTerrain", CTerrain::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CStatue", CStatue::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CBackGround", CBackGround::Create))) return E_FAIL;
@@ -68,6 +72,20 @@ HRESULT CMainApp::Register_Class_Types()
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CCamera_Follow", CCamera_Follow::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CCamera_TPS", CCamera_TPS::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CMonster", CMonster::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CVirtual_Space", CVirtual_Space::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CTutorial_Enemy", CTutorial_Enemy::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CTutorial_Wall", CTutorial_Wall::Create))) return E_FAIL;
+#pragma endregion
+
+
+	
+		
+	
+	
+	
+	
+	
+	
 		
 	return S_OK;
 }

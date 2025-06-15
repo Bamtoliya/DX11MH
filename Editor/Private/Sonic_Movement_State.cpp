@@ -99,7 +99,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 
 	// === 1. 지면 탐지 및 정렬 (두 번째 코드 블록의 역할) ===
 	const float fRayDistance = 2.0f;
-	_vector vRayOrigin = pTransform->Get_State(STATE::POSITION) + pTransform->Get_State(STATE::UP) * 0.5f;
+	_vector vRayOrigin = pTransform->Get_State(STATE::POSITION) + pTransform->Get_State(STATE::UP) * 0.1f;
 	_vector vRayDirection = -pTransform->Get_State(STATE::UP);
 
 	PxRaycastBuffer hitBuffer;
@@ -208,6 +208,23 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		_float fCharacterOffset = 1.0f; // 캐릭터의 높이/반경. 캡슐의 반높이에 해당
 		_vector vStickyPosition = XMLoadFloat3((_float3*)&hitBuffer.block.position);
 		vStickyPosition.m128_f32[3] = 1.f;
+
+		_vector vCurrentPosition = pTransform->Get_State(STATE::POSITION);
+		_vector vDiff = XMVectorSubtract(vStickyPosition, vCurrentPosition);
+		float fVerticalDistance = XMVectorGetY(vDiff); // 수직 이동 거리
+
+		const float fMaxSnapUpDistance = 0.2f; // 위로 올라탈 수 있는 최대 거리 (예시)
+		const float fMaxSnapDownDistance = 1.0f; // 아래로 내려갈 수 있는 최대 거리 (예시)
+
+		if (fVerticalDistance > fMaxSnapUpDistance) // 너무 높이 올라타려고 하면
+		{
+			// 위치를 보정하지 않거나, 최대치만큼만 올림
+			vStickyPosition = vCurrentPosition + XMVectorSet(0.f, fMaxSnapUpDistance, 0.f, 0.f);
+		}
+		else if (fVerticalDistance < -fMaxSnapDownDistance) // 너무 깊이 내려가려고 하면
+		{
+			vStickyPosition = vCurrentPosition - XMVectorSet(0.f, fMaxSnapDownDistance, 0.f, 0.f);
+		}
 		// 먼저, 현재 캐릭터의 위치를 '붙어있어야 할 위치'로 강제 보정합니다.
 		// 이렇게 하면 이전 프레임에서 발생했을 수 있는 미세한 오차(공중에 뜨거나 파고드는 현상)가 즉시 수정됩니다.
 		pTransform->Set_State(STATE::POSITION, vStickyPosition);
@@ -220,8 +237,12 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 	}
 	else
 	{
-		// 지면이 없으면 공중 상태로 전환
-		//static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"))->Change_State(CSonic::STATE::JUMP);
+		//static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"))->Change_State(CSonic::STATE::JUMP_E);
+
+		// 기본적인 공중 이동 및 중력 적용 (예시, 실제로는 점프/낙하 상태에서 처리)
+		_vector vAirMovement = pTransform->Get_State(STATE::LOOK) * status.fMoveSpeed.first * 0.1 * fTimeDelta;
+		_vector vGravity = XMVectorSet(0.f, -9.8f * fTimeDelta * fTimeDelta, 0.f, 0.f); // 간단한 중력
+		pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + vAirMovement + vGravity);
 	}
 }
 

@@ -46,12 +46,16 @@
     <ClCompile Include="..\private\Sonic_Spin_State.cpp" />
     <ClCompile Include="..\private\Sonic_State.cpp" />
     <ClCompile Include="..\private\Sonic_Wall_State.cpp" />
+    <ClCompile Include="..\private\Spring.cpp" />
     <ClCompile Include="..\private\Statue.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
     <ClCompile Include="..\private\Terrain_Plane.cpp" />
     <ClCompile Include="..\private\ToolBar.cpp" />
+    <ClCompile Include="..\private\Tutorial_Enemy.cpp" />
+    <ClCompile Include="..\private\Tutorial_Wall.cpp" />
     <ClCompile Include="..\private\Viewport_2D.cpp" />
     <ClCompile Include="..\private\Viewport_3D.cpp" />
+    <ClCompile Include="..\private\Virtual_Space.cpp" />
     <ClCompile Include="Editor.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -88,13 +92,17 @@
     <ClInclude Include="..\public\Sonic_State.h" />
     <ClInclude Include="..\Public\Sonic_States.h" />
     <ClInclude Include="..\public\Sonic_Wall_State.h" />
+    <ClInclude Include="..\public\Spring.h" />
     <ClInclude Include="..\public\Statue.h" />
     <ClInclude Include="..\Public\Terrain.h" />
     <ClInclude Include="..\public\Terrain_Plane.h" />
     <ClInclude Include="..\public\ToolBar.h" />
     <ClInclude Include="..\Public\Tools.h" />
+    <ClInclude Include="..\public\Tutorial_Enemy.h" />
+    <ClInclude Include="..\public\Tutorial_Wall.h" />
     <ClInclude Include="..\public\Viewport_2D.h" />
     <ClInclude Include="..\public\Viewport_3D.h" />
+    <ClInclude Include="..\public\Virtual_Space.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />

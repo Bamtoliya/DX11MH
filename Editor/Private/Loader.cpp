@@ -76,10 +76,15 @@ HRESULT CLoader::Loading()
 		break;
 	case LEVEL::EFFECT:
 		hr = Loading_For_Logo();
+		break;
 	case LEVEL::ANIMATION:
 		hr = Loading_For_Animation();
+		break;
 	case LEVEL::GAMEPLAY:
 		hr = Loading_For_Gameplay();
+		break;
+	case LEVEL::TEST:
+		hr = Loading_For_Test();
 		break;
 	}
 
@@ -187,6 +192,19 @@ HRESULT CLoader::Loading_For_Animation()
 
 	m_isFinished = true;
 
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_For_Test()
+{
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::TEST), SAVEPATH L"Prototypes_Test.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+
+	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
+
+	m_isFinished = true;
 	return S_OK;
 }
 

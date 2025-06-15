@@ -160,6 +160,18 @@
     <Filter Include="02.GameObject\03.Monster\Ashura">
       <UniqueIdentifier>{711ee26c-85a1-447e-a4b3-5cf328c7a983}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\06.Virtual Space">
+      <UniqueIdentifier>{a1486d3f-c2f6-4efb-b1ba-979c4261c290}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Tutorial_Enemy">
+      <UniqueIdentifier>{8859ebb0-45c6-4684-a8ff-2d00a1ecde58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Wall">
+      <UniqueIdentifier>{3b895eda-ac67-462b-b7d3-581840945e5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Spring">
+      <UniqueIdentifier>{284ed725-f78b-413d-8c94-e54338378cc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -264,6 +276,14 @@
     <ClCompile Include="..\private\Ashura.cpp">
       <Filter>02.GameObject\03.Monster\Ashura</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Virtual_Space.cpp">
+      <Filter>02.GameObject\06.Virtual Space</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Tutorial_Enemy.cpp">
+      <Filter>02.GameObject\03.Monster\Tutorial_Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Tutorial_Wall.cpp" />
+    <ClCompile Include="..\private\Spring.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor.h">
@@ -398,6 +418,14 @@
     <ClInclude Include="..\public\Ashura.h">
       <Filter>02.GameObject\03.Monster\Ashura</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Virtual_Space.h">
+      <Filter>02.GameObject\06.Virtual Space</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Tutorial_Enemy.h">
+      <Filter>02.GameObject\03.Monster\Tutorial_Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Tutorial_Wall.h" />
+    <ClInclude Include="..\public\Spring.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Editor.ico">

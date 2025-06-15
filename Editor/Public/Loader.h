@@ -122,6 +122,7 @@ public:
     HRESULT Loading_For_Effect();
     HRESULT Loading_For_Gameplay();
     HRESULT Loading_For_Animation();
+    HRESULT Loading_For_Test();
 #pragma endregion
 
 

@@ -124,8 +124,8 @@ HRESULT CToolBar::Render()
                 }
                 ImGui::Separator();
                 // 레벨 선택 콤보 박스 추가
-                const char* level_names[] = { "Static", "UI", "Map", "Effect", "Animation", "GamePlay", "All"}; // LEVEL enum에 맞게 이름 정의
-                LEVEL level_values[] = { LEVEL::STATIC, LEVEL::UI, LEVEL::MAP, LEVEL::EFFECT, LEVEL::ANIMATION, LEVEL::GAMEPLAY, LEVEL::END }; // 실제 LEVEL enum 값
+                const char* level_names[] = { "Static", "UI", "Map", "Effect", "Animation", "GamePlay", "Test", "All"}; // LEVEL enum에 맞게 이름 정의
+                LEVEL level_values[] = { LEVEL::STATIC, LEVEL::UI, LEVEL::MAP, LEVEL::EFFECT, LEVEL::ANIMATION, LEVEL::GAMEPLAY, LEVEL::TEST, LEVEL::END }; // 실제 LEVEL enum 값
                 static int current_level_idx = 0; // 기본 선택 인덱스 (STATIC)
 
                 // m_eLevelToSavePrototypes와 일치하는 인덱스 찾기
@@ -243,6 +243,13 @@ HRESULT CToolBar::Render()
                 }
 
                 if (ImGui::MenuItem("Gameplay")) {
+                    printf("Clicked Help->About\n");
+                    // open_about_popup = true; // 예시
+                }
+
+                if (ImGui::MenuItem("Test")) {
+                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::TEST))))
+                        return E_FAIL;
                     printf("Clicked Help->About\n");
                     // open_about_popup = true; // 예시
                 }
