@@ -153,6 +153,7 @@ HRESULT CSonic::Ready_Components()
 HRESULT CSonic::Ready_States()
 {
 	m_pControllerCom->Add_State(CSonic_Movement_State::Create(this));
+	m_pControllerCom->Add_State(CSonic_Combat_State::Create(this));
 	return S_OK;
 }
 

@@ -312,7 +312,7 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 
 	if (KEY_DOWN(DIK_I))
 	{
-		//pController->Change_State(ENUM_CLASS(CSonic::STATE::COMBO_KICK01));
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::COMBAT), ENUM_CLASS(CSonic::STATE::COMBO_KICK01) + status.iCombos.first++, 1.5f, false);
 		return;
 	}
 		

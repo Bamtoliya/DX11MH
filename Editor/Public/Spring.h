@@ -5,6 +5,7 @@
 NS_BEGIN(Engine)
 class CShader;
 class CModel;
+class CRigidBody;
 NS_END
 
 NS_BEGIN(Editor)
@@ -32,8 +33,9 @@ public:
 
 #pragma region Variables
 private:
-	CShader* m_pShaderCom = { nullptr };
-	CModel* m_pModelCom = { nullptr };
+	CShader*	m_pShaderCom = { nullptr };
+	CModel*		m_pModelCom = { nullptr };
+	CRigidBody* m_pRigidBodyCom = { nullptr };
 #pragma endregion
 
 #pragma region Save&Load

@@ -13,6 +13,8 @@
 #include "Virtual_Space.h"
 #include "Tutorial_Enemy.h"
 #include "Tutorial_Wall.h"
+#include "Spring.h"
+#include "Ashura.h"
 #pragma endregion
 
 

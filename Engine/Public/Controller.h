@@ -24,9 +24,12 @@ public:
 #pragma endregion
 
 #pragma region Variables
+protected:
 	vector<CState*> m_States = {};
 	_uint m_iCurStateIndex = {};
 	_uint m_iPreStateIndex = {};
+protected:
+	PxController* m_pPxController = { nullptr };
 #pragma endregion
 
 

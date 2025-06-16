@@ -11,35 +11,37 @@ using namespace Editor;
 HRESULT CSonic_Combat_State::Initialize()
 {
     m_bLoop = false;
+	m_iCurState = ENUM_CLASS(CSonic_Controller::States::COMBAT);
     return S_OK;
 }
 
-void CSonic_Combat_State::Idle()
+CSonic_Combat_State* CSonic_Combat_State::Create(CGameObject* pOwner)
 {
-    CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
-    if (!pController) return;
-    CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
-    if (!status.bComboInputBuffered)
-    {
-        CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
-        if (pAnimator->Get_AnimationProgress() >= 0.6f)
-        {
-            pController->ClearComboInputBuffer(); // IDLE로 갈 때 버퍼 클리어
-            status.fMoveSpeed.first = 0.f;
-            XMStoreFloat3(&status.vMoveDirection, XMVectorZero());
-            pController->Change_State(CSonic::STATE::IDLE_LOOP);
-        }
-    }
-    else if (status.bComboInputBuffered && !ANY_KEY)
-    {
-        // 선입력은 있지만 현재 아무키도 안눌려있으면, 선입력 타이머에 의해 해제될 때까지 대기
-        // 또는 즉시 IDLE로 갈 수도 있음 (게임 디자인에 따라 결정)
-    }
+    CSonic_Combat_State* pInstance = new CSonic_Combat_State(pOwner);
+    pInstance->Initialize();
+    return pInstance;
 }
 
 void CSonic_Combat_State::Execute(_float fTimeDelta)
 {
+    CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+    CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
+    _float progress = pAnimator->Get_AnimationProgress();
+    if (status.bComboInputBuffered && progress >= 0.6f)
+    {
+        pController->Change_State(m_iCurState, ENUM_CLASS(CSonic::STATE::COMBO_KICK01) + status.iCombos.first++, 1.5f, m_bLoop);
+        if(status.iCombos.first >= status.iCombos.second)
+        {
+            status.iCombos.first = 0; // 콤보가 끝나면 초기화
+		}
+        return;
+    }
 
+    if (!status.bComboInputBuffered && progress >= 0.6f)
+    {
+        pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::IDLE01_LOOP), 1.5f, m_bLoop); // 콤보 입력이 없으면 이동 상태로 전환
+    }
 }
 
 void CSonic_Combat_State::HandleInput(_float fTimeDelta)
@@ -49,7 +51,6 @@ void CSonic_Combat_State::HandleInput(_float fTimeDelta)
         CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
         pController->BufferComboInput();
     }
-    Idle();
 }
 
 CSonic_Combo_Kick01_State* CSonic_Combo_Kick01_State::Create(CGameObject* pOwner)
@@ -84,7 +85,6 @@ void CSonic_Combo_Kick01_State::Execute(_float fTimeDelta)
         pController->Change_State(CSonic::STATE::COMBO_KICK02);
         return;
     }
-    __super::Idle();
 }
 
 void CSonic_Combo_Kick01_State::HandleInput(_float fTimeDelta)
@@ -130,7 +130,6 @@ void CSonic_Combo_Kick02_State::Execute(_float fTimeDelta)
         pController->Change_State(CSonic::STATE::COMBO_ONETWO);
         return;
     }
-    __super::Idle();
 }
 
 void CSonic_Combo_Kick02_State::HandleInput(_float fTimeDelta)

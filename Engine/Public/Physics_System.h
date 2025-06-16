@@ -57,7 +57,8 @@ private:
 	PxFoundation* m_pFoundation = nullptr;
 	PxPhysics* m_pPhysics = nullptr;
 	PxDefaultCpuDispatcher* m_pDispatcher = nullptr;
-	PxCudaContextManager* m_pCudaContextManager = nullptr;
+	PxCudaContextManager*	m_pCudaContextManager = nullptr;
+	PxControllerManager*	m_pControllerManager = nullptr;
 	PxPvd* m_pPvd = nullptr;
 
 public:

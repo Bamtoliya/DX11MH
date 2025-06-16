@@ -105,8 +105,13 @@ HRESULT CSpring::Ready_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_Spring"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_Spring"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+		return E_FAIL;
+
+	/* For.Com_Model */
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom))))
 		return E_FAIL;
 
 
@@ -116,6 +121,7 @@ HRESULT CSpring::Ready_Components()
 void CSpring::Free()
 {
 	__super::Free();
+	Safe_Release(m_pRigidBodyCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 }

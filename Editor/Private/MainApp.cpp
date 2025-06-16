@@ -75,18 +75,10 @@ HRESULT CMainApp::Register_Class_Types()
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CVirtual_Space", CVirtual_Space::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CTutorial_Enemy", CTutorial_Enemy::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CTutorial_Wall", CTutorial_Wall::Create))) return E_FAIL;
-#pragma endregion
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CSpring", CSpring::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CAshura", CAshura::Create))) return E_FAIL;
+#pragma endregion	
 
-
-	
-		
-	
-	
-	
-	
-	
-	
-		
 	return S_OK;
 }
 

@@ -184,6 +184,13 @@ PxScene* CPhysics_System::Create_Scene()
 
     m_pScene = m_pPhysics->createScene(sceneDesc);
 
+	//m_pControllerManager = PxCreateControllerManager(*m_pScene);
+	/*if (!m_pControllerManager)
+	{
+		MSG_BOX("Warning: Failed to create PxControllerManager. Controller functionality will be unavailable.");
+		return nullptr;
+	}*/
+
     if (m_pScene)
     {
         PxPvdSceneClient* pvdClient = m_pScene->getScenePvdClient();
@@ -454,7 +461,7 @@ void CPhysics_System::onSleep(PxActor** actors, PxU32 count)
 
 void CPhysics_System::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 {
-        cout << "Physics_System OnContact Called\n";
+    cout << "Physics_System OnContact Called\n";
 }
 
 void CPhysics_System::onTrigger(PxTriggerPair* pairs, PxU32 count)

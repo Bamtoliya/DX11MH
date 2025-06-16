@@ -24,6 +24,8 @@ HRESULT CSonic_Controller::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
+	//m_pPxController = 
+
 	return S_OK;
 }
 HRESULT CSonic_Controller::Late_Initialize()

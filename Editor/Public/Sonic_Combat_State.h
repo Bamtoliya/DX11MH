@@ -8,7 +8,7 @@ protected:
 	CSonic_Combat_State(CGameObject* pOwner) : CSonic_State{ pOwner } { m_bLoop = false; }
 	virtual ~CSonic_Combat_State() = default;
 public:
-	void Idle();
+	static CSonic_Combat_State* Create(CGameObject* pOwner);
 	HRESULT Initialize() override;
 	void Execute(_float fTimeDelta) override;
 	void HandleInput(_float fTimeDelta) override;

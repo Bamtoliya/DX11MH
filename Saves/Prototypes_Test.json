@@ -22,6 +22,29 @@
     ],
     "Type": "ANIM"
   },
+  "Prototype_Component_Model_Ashura": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Miniboss/ashura01/mbo_ashura01.fbx",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "ANIM"
+  },
   "Prototype_Component_Model_Spring": {
     "Class": "CModel",
     "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Spring.fbx",
@@ -210,6 +233,9 @@
   },
   "Prototype_GameObject_Monster": {
     "Class": "CMonster"
+  },
+  "Prototype_GameObject_Ashura": {
+    "Class": "CAshura"
   },
   "Prototype_GameObject_Tutorial_Enemy": {
     "Class": "CTutorial_Enemy"
