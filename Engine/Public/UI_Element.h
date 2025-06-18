@@ -37,26 +37,11 @@ public:
 	virtual HRESULT Post_Render() override;
 #pragma endregion
 
-public:
-	CUI_Element*	GetParent() { return m_pParent ? m_pParent : nullptr; }
-	void			Add_UI(_wstring strKey, CUI_Element* pUIElement) { m_Children.emplace(strKey, pUIElement); }
-	void			Remove_UI(_wstring strKey) { m_Children.erase(strKey); }
-public:
-	void			Show() { m_bShow = true; }
-	void			Hide() { m_bShow = false; }
 #pragma region Variables
-protected:
-	CUI_Element* m_pParent = { nullptr };
-protected:
-	map<const _wstring, CUI_Element*> m_Children;
 protected:
 	UI_DESC	m_tDesc		= {};
 protected:
-	bool m_bShow		= { false };
-	bool m_bFocus		= { false };
-	bool m_bIsActive	= { false };
-	bool m_bLocal		= { false };
-	bool m_bWorld		= { false };
+	_bool m_bFocus		= { false };
 protected:
 #pragma endregion
 };

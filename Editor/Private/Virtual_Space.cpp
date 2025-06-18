@@ -119,14 +119,18 @@ HRESULT CVirtual_Space::Ready_Components()
 
 	CRigidBody::RIGIDBODY_DESC rigidBodyDesc = {};
 	rigidBodyDesc.pModelForMesh = m_pModelCom;
-	rigidBodyDesc.bIsConvex = true;
-	for (auto pMesh : m_pModelCom->Get_Meshes())
+	rigidBodyDesc.bIsConvex = false;
+	CRigidBody::SHAPE_DESC shapeDesc;
+	shapeDesc.eShapeType = CRigidBody::EShapeType::TRIANGLE_MESH;
+	shapeDesc.pMesh = m_pModelCom->Get_Meshes()[0];
+	rigidBodyDesc.vShapeDescs.push_back(shapeDesc);
+	/*for (auto pMesh : m_pModelCom->Get_Meshes())
 	{
 		CRigidBody::SHAPE_DESC shapeDesc;
 		shapeDesc.eShapeType = CRigidBody::EShapeType::TRIANGLE_MESH;
 		shapeDesc.pMesh = pMesh;
 		rigidBodyDesc.vShapeDescs.push_back(shapeDesc);
-	}
+	}*/
 
 	/* For.Com_HeightField */
 	/*if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_HeightField"),

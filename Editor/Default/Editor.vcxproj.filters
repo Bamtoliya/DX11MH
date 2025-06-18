@@ -169,7 +169,10 @@
     <Filter Include="02.GameObject\Wall">
       <UniqueIdentifier>{3b895eda-ac67-462b-b7d3-581840945e5f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Spring">
+    <Filter Include="02.GameObject\StageObjects">
+      <UniqueIdentifier>{48246095-f386-41ad-a717-7e656482829b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\StageObjects\Spring">
       <UniqueIdentifier>{284ed725-f78b-413d-8c94-e54338378cc0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -283,7 +286,9 @@
       <Filter>02.GameObject\03.Monster\Tutorial_Enemy</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Tutorial_Wall.cpp" />
-    <ClCompile Include="..\private\Spring.cpp" />
+    <ClCompile Include="..\private\Spring.cpp">
+      <Filter>02.GameObject\StageObjects\Spring</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor.h">
@@ -425,7 +430,9 @@
       <Filter>02.GameObject\03.Monster\Tutorial_Enemy</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Tutorial_Wall.h" />
-    <ClInclude Include="..\public\Spring.h" />
+    <ClInclude Include="..\public\Spring.h">
+      <Filter>02.GameObject\StageObjects\Spring</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Editor.ico">

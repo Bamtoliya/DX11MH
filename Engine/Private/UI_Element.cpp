@@ -37,20 +37,17 @@ void CUI_Element::Free()
 #pragma region Update
 void CUI_Element::Priority_Update(_float fTimeDelta)
 {
-	for (auto& i : m_Children)
-		i.second->Priority_Update(fTimeDelta);
+	__super::Priority_Update(fTimeDelta);
 }
 
 void CUI_Element::Update(_float fTimeDelta)
 {
-	for (auto& i : m_Children)
-		i.second->Update(fTimeDelta);
+	__super::Update(fTimeDelta);
 }
 
 void CUI_Element::Late_Update(_float fTimeDelta)
 {
-	for (auto& i : m_Children)
-		i.second->Late_Update(fTimeDelta);
+	__super::Late_Update(fTimeDelta);
 }
 #pragma endregion
 #pragma region Render
@@ -62,8 +59,7 @@ HRESULT CUI_Element::Pre_Render()
 HRESULT CUI_Element::Render()
 {
 	if (FAILED(Pre_Render())) return E_FAIL;
-	for (auto& i : m_Children)
-		if (FAILED(i.second->Render())) return E_FAIL;
+	__super::Render();
 	if (FAILED(Post_Render())) return E_FAIL;
 	return S_OK;
 }
