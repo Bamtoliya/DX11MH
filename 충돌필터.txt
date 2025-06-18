@@ -1,0 +1,6 @@
+충돌필터
+word 0 = static, kinematic, dynamic
+word 1 = 0 = terrain, 1 = gameobject, 2 = monster, etc custom categories
+word 2 using when word 1 != 0 
+word 2 = wall type, can climbed gameobject, none, pushable, 
+word 3 = 
