@@ -85,10 +85,14 @@ HRESULT CRigidBody::Serialize(json& outJson)
 
 	json rbData;
 	rbData["BodyType"] = static_cast<int>(m_tRigidBodyDesc.eBodyType);
+	// vActorSize는 이제 vShapeDescs로 관리되므로 직접 직렬화하지 않을 수 있음.
+	// 필요하다면, 또는 레거시 호환성을 위해 유지할 수 있으나, 현재 구조에서는 vShapeDescs가 우선.
+	// rbData["ActorSize"] = { m_tRigidBodyDesc.vActorSize.x, m_tRigidBodyDesc.vActorSize.y, m_tRigidBodyDesc.vActorSize.z };
 	rbData["LocalPosition"] = { m_tRigidBodyDesc.vLocalPosition.x, m_tRigidBodyDesc.vLocalPosition.y, m_tRigidBodyDesc.vLocalPosition.z };
+	rbData["LocalRotationQuat"] = { m_tRigidBodyDesc.qRotation.x, m_tRigidBodyDesc.qRotation.y, m_tRigidBodyDesc.qRotation.z, m_tRigidBodyDesc.qRotation.w };
 	rbData["LocalEulerRotation"] = { m_tRigidBodyDesc.fCurRotationX, m_tRigidBodyDesc.fCurRotationY, m_tRigidBodyDesc.fCurRotationZ };
 
-	// 기본 속성
+	// Material Properties
 	rbData["Mass"] = m_tRigidBodyDesc.fMass;
 	rbData["Gravity"] = m_tRigidBodyDesc.bGravity;
 	rbData["StaticFriction"] = m_tRigidBodyDesc.fStaticFriction;
@@ -98,22 +102,36 @@ HRESULT CRigidBody::Serialize(json& outJson)
 	rbData["LockRotY"] = m_tRigidBodyDesc.bLockRotY;
 	rbData["LockRotZ"] = m_tRigidBodyDesc.bLockRotZ;
 	rbData["KinematicTarget"] = m_tRigidBodyDesc.bKinematicTarget;
+	rbData["IsConvex"] = m_tRigidBodyDesc.bIsConvex; // bIsConvex 추가
 
-	// 쉐이프 정보 직렬화 추가
+	// Shapes 직렬화
 	json shapesArray = json::array();
-	for (const auto& shape : m_tRigidBodyDesc.vShapeDescs)
+	for (const auto& shapeDesc : m_tRigidBodyDesc.vShapeDescs)
 	{
 		json shapeData;
-		shapeData["ShapeType"] = static_cast<int>(shape.eShapeType);
-		shapeData["ShapeSize"] = { shape.vShapeSize.x, shape.vShapeSize.y, shape.vShapeSize.z };
-		shapeData["LocalPosition"] = { shape.vLocalPosition.x, shape.vLocalPosition.y, shape.vLocalPosition.z };
-		shapeData["Rotation"] = { shape.qRotation.x, shape.qRotation.y, shape.qRotation.z, shape.qRotation.w };
-		shapeData["RotationX"] = shape.fCurRotationX;
-		shapeData["RotationY"] = shape.fCurRotationY;
-		shapeData["RotationZ"] = shape.fCurRotationZ;
+		shapeData["ShapeType"] = static_cast<int>(shapeDesc.eShapeType);
+		shapeData["ShapeSize"] = { shapeDesc.vShapeSize.x, shapeDesc.vShapeSize.y, shapeDesc.vShapeSize.z };
+		shapeData["LocalPosition"] = { shapeDesc.vLocalPosition.x, shapeDesc.vLocalPosition.y, shapeDesc.vLocalPosition.z };
+		shapeData["RotationQuat"] = { shapeDesc.qRotation.x, shapeDesc.qRotation.y, shapeDesc.qRotation.z, shapeDesc.qRotation.w };
+		shapeData["EulerRotationX"] = shapeDesc.fCurRotationX;
+		shapeData["EulerRotationY"] = shapeDesc.fCurRotationY;
+		shapeData["EulerRotationZ"] = shapeDesc.fCurRotationZ;
+		shapeData["IsQueryShape"] = shapeDesc.bIsQueryShape;
+		shapeData["IsDoubleSided"] = shapeDesc.bIsDoubleSided;
+		shapeData["FilterData0"] = shapeDesc.filterData0;
+		shapeData["FilterData1"] = shapeDesc.filterData1;
+		shapeData["FilterData2"] = shapeDesc.filterData2;
+		shapeData["FilterData3"] = shapeDesc.filterData3;
+		// shapeDesc.pMesh는 런타임 포인터이므로 직접 직렬화하지 않고,
+		// 필요하다면 메시의 이름이나 경로를 저장하고 로드 시점에 다시 연결해야 합니다.
+		// 여기서는 생략합니다.
 		shapesArray.push_back(shapeData);
 	}
 	rbData["Shapes"] = shapesArray;
+
+	// pModelForMesh는 런타임 포인터이므로 직접 직렬화하지 않고,
+	// 필요하다면 모델의 이름이나 경로를 저장하고 로드 시점에 다시 연결해야 합니다.
+	// 여기서는 생략합니다.
 
 	outJson["CRigidBody"] = rbData;
 	return S_OK;
@@ -124,110 +142,147 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 		return E_FAIL;
 
 	simdjson::ondemand::object rbObject;
-	if (jsonData["CRigidBody"].get_object().get(rbObject) == simdjson::SUCCESS)
+	if (jsonData["CRigidBody"].get_object().get(rbObject) != simdjson::SUCCESS)
 	{
-		m_tRigidBodyDesc.eBodyType = static_cast<EBodyType>(int(rbObject["BodyType"].get_int64().value_unsafe()));
+		MSG_BOX("CRigidBody::Deserialize - CRigidBody data not found in JSON. Using defaults or previously set values.");
+		return S_FALSE; // 또는 E_FAIL, 정책에 따라
+	}
 
-		// LocalPosition 역직렬화
-		simdjson::ondemand::array localPosArray;
-		if (rbObject["LocalPosition"].get_array().get(localPosArray) == simdjson::SUCCESS && localPosArray.count_elements() == 3) {
-			auto iter = localPosArray.begin();
-			m_tRigidBodyDesc.vLocalPosition.x = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			m_tRigidBodyDesc.vLocalPosition.y = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			m_tRigidBodyDesc.vLocalPosition.z = static_cast<_float>((*iter).get_double().value_unsafe());
-		}
+	m_tRigidBodyDesc.eBodyType = static_cast<EBodyType>(int(rbObject["BodyType"].get_int64().value_unsafe()));
 
-		// LocalEulerRotation 역직렬화
-		simdjson::ondemand::array localEulerArray;
-		if (rbObject["LocalEulerRotation"].get_array().get(localEulerArray) == simdjson::SUCCESS && localEulerArray.count_elements() == 3) {
-			auto iter = localEulerArray.begin();
-			m_tRigidBodyDesc.fCurRotationX = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			m_tRigidBodyDesc.fCurRotationY = static_cast<_float>((*iter).get_double().value_unsafe());
-			++iter;
-			m_tRigidBodyDesc.fCurRotationZ = static_cast<_float>((*iter).get_double().value_unsafe());
-		}
-		// qRotation은 fCurRotationX/Y/Z 로드 후 Create_Actor에서 계산됨
+	// vActorSize는 Deserialize하지 않거나, 레거시 데이터 처리 로직 추가
+	// simdjson::ondemand::array actorSizeArray;
+	// if (rbObject["ActorSize"].get_array().get(actorSizeArray) == simdjson::SUCCESS && actorSizeArray.count_elements() == 3) { ... }
 
-		// 기본 속성 역직렬화
-		m_tRigidBodyDesc.fMass = static_cast<_float>(rbObject["Mass"].get_double().value_unsafe());
-		m_tRigidBodyDesc.bGravity = rbObject["Gravity"].get_bool().value_unsafe();
-		m_tRigidBodyDesc.fStaticFriction = static_cast<_float>(rbObject["StaticFriction"].get_double().value_unsafe());
-		m_tRigidBodyDesc.fDynamicFriction = static_cast<_float>(rbObject["DynamicFriction"].get_double().value_unsafe());
-		m_tRigidBodyDesc.fRestitution = static_cast<_float>(rbObject["Restitution"].get_double().value_unsafe());
-		m_tRigidBodyDesc.bLockRotX = rbObject["LockRotX"].get_bool().value_unsafe();
-		m_tRigidBodyDesc.bLockRotY = rbObject["LockRotY"].get_bool().value_unsafe();
-		m_tRigidBodyDesc.bLockRotZ = rbObject["LockRotZ"].get_bool().value_unsafe();
-		m_tRigidBodyDesc.bKinematicTarget = rbObject["KinematicTarget"].get_bool().value_unsafe();
+	simdjson::ondemand::array localPosArray;
+	if (rbObject["LocalPosition"].get_array().get(localPosArray) == simdjson::SUCCESS && localPosArray.count_elements() == 3) {
+		auto iter = localPosArray.begin();
+		m_tRigidBodyDesc.vLocalPosition.x = static_cast<_float>((*iter).get_double().value_unsafe());
+		++iter;
+		m_tRigidBodyDesc.vLocalPosition.y = static_cast<_float>((*iter).get_double().value_unsafe());
+		++iter;
+		m_tRigidBodyDesc.vLocalPosition.z = static_cast<_float>((*iter).get_double().value_unsafe());
+	}
 
-		// 쉐이프 정보 역직렬화
-		m_tRigidBodyDesc.vShapeDescs.clear(); // 기존 쉐이프 정보 초기화
-		simdjson::ondemand::array shapesJsonArray;
-		if (rbObject["Shapes"].get_array().get(shapesJsonArray) == simdjson::SUCCESS)
+	simdjson::ondemand::array localRotQuatArray;
+	if (rbObject["LocalRotationQuat"].get_array().get(localRotQuatArray) == simdjson::SUCCESS && localRotQuatArray.count_elements() == 4) {
+		auto iter = localRotQuatArray.begin();
+		m_tRigidBodyDesc.qRotation.x = static_cast<_float>((*iter).get_double().value_unsafe());
+		++iter;
+		m_tRigidBodyDesc.qRotation.y = static_cast<_float>((*iter).get_double().value_unsafe());
+		++iter;
+		m_tRigidBodyDesc.qRotation.z = static_cast<_float>((*iter).get_double().value_unsafe());
+		++iter;
+		m_tRigidBodyDesc.qRotation.w = static_cast<_float>((*iter).get_double().value_unsafe());
+	}
+
+	simdjson::ondemand::array localEulerArray;
+	if (rbObject["LocalEulerRotation"].get_array().get(localEulerArray) == simdjson::SUCCESS && localEulerArray.count_elements() == 3) {
+		auto iter = localEulerArray.begin();
+		m_tRigidBodyDesc.fCurRotationX = static_cast<_float>((*iter).get_double().value_unsafe());
+		++iter;
+		m_tRigidBodyDesc.fCurRotationY = static_cast<_float>((*iter).get_double().value_unsafe());
+		++iter;
+		m_tRigidBodyDesc.fCurRotationZ = static_cast<_float>((*iter).get_double().value_unsafe());
+	}
+
+	// Material Properties
+	m_tRigidBodyDesc.fMass = static_cast<_float>(rbObject["Mass"].get_double().value_unsafe());
+	m_tRigidBodyDesc.bGravity = rbObject["Gravity"].get_bool().value_unsafe();
+	m_tRigidBodyDesc.fStaticFriction = static_cast<_float>(rbObject["StaticFriction"].get_double().value_unsafe());
+	m_tRigidBodyDesc.fDynamicFriction = static_cast<_float>(rbObject["DynamicFriction"].get_double().value_unsafe());
+	m_tRigidBodyDesc.fRestitution = static_cast<_float>(rbObject["Restitution"].get_double().value_unsafe());
+	m_tRigidBodyDesc.bLockRotX = rbObject["LockRotX"].get_bool().value_unsafe();
+	m_tRigidBodyDesc.bLockRotY = rbObject["LockRotY"].get_bool().value_unsafe();
+	m_tRigidBodyDesc.bLockRotZ = rbObject["LockRotZ"].get_bool().value_unsafe();
+	m_tRigidBodyDesc.bKinematicTarget = rbObject["KinematicTarget"].get_bool().value_unsafe();
+	if (rbObject["IsConvex"].get_bool().error() == simdjson::SUCCESS) // Check if the field exists
+	{
+		m_tRigidBodyDesc.bIsConvex = rbObject["IsConvex"].get_bool().value_unsafe();
+	}
+
+
+	// Shapes 역직렬화
+	m_tRigidBodyDesc.vShapeDescs.clear();
+	simdjson::ondemand::array shapesJsonArray;
+	if (rbObject["Shapes"].get_array().get(shapesJsonArray) == simdjson::SUCCESS)
+	{
+		for (auto shapeValue : shapesJsonArray)
 		{
-			for (auto shapeValue : shapesJsonArray)
+			simdjson::ondemand::object shapeObject;
+			if (shapeValue.get_object().get(shapeObject) == simdjson::SUCCESS)
 			{
-				simdjson::ondemand::object shapeObject;
-				if (shapeValue.get_object().get(shapeObject) == simdjson::SUCCESS)
+				SHAPE_DESC shapeDesc;
+				shapeDesc.eShapeType = static_cast<EShapeType>(int(shapeObject["ShapeType"].get_int64().value_unsafe()));
+
+				simdjson::ondemand::array shapeSizeArray;
+				if (shapeObject["ShapeSize"].get_array().get(shapeSizeArray) == simdjson::SUCCESS && shapeSizeArray.count_elements() == 3)
 				{
-					SHAPE_DESC shapeDesc;
-					shapeDesc.eShapeType = static_cast<EShapeType>(int(shapeObject["ShapeType"].get_int64().value_unsafe()));
-
-					simdjson::ondemand::array shapeSizeArray;
-					if (shapeObject["ShapeSize"].get_array().get(shapeSizeArray) == simdjson::SUCCESS && shapeSizeArray.count_elements() == 3)
-					{
-						auto iter = shapeSizeArray.begin();
-						shapeDesc.vShapeSize.x = static_cast<_float>((*iter).get_double().value_unsafe());
-						++iter;
-						shapeDesc.vShapeSize.y = static_cast<_float>((*iter).get_double().value_unsafe());
-						++iter;
-						shapeDesc.vShapeSize.z = static_cast<_float>((*iter).get_double().value_unsafe());
-					}
-
-					simdjson::ondemand::array shapeLocalPosArray;
-					if (shapeObject["LocalPosition"].get_array().get(shapeLocalPosArray) == simdjson::SUCCESS && shapeLocalPosArray.count_elements() == 3)
-					{
-						auto iter = shapeLocalPosArray.begin();
-						shapeDesc.vLocalPosition.x = static_cast<_float>((*iter).get_double().value_unsafe());
-						++iter;
-						shapeDesc.vLocalPosition.y = static_cast<_float>((*iter).get_double().value_unsafe());
-						++iter;
-						shapeDesc.vLocalPosition.z = static_cast<_float>((*iter).get_double().value_unsafe());
-					}
-
-					simdjson::ondemand::array shapeRotationArray;
-					if (shapeObject["Rotation"].get_array().get(shapeRotationArray) == simdjson::SUCCESS && shapeRotationArray.count_elements() == 4)
-					{
-						auto iter = shapeRotationArray.begin();
-						shapeDesc.qRotation.x = static_cast<_float>((*iter).get_double().value_unsafe());
-						++iter;
-						shapeDesc.qRotation.y = static_cast<_float>((*iter).get_double().value_unsafe());
-						++iter;
-						shapeDesc.qRotation.z = static_cast<_float>((*iter).get_double().value_unsafe());
-						++iter;
-						shapeDesc.qRotation.w = static_cast<_float>((*iter).get_double().value_unsafe());
-					}
-					// 오일러 각도도 로드 (qRotation이 우선시되지만, 필요시 사용 가능)
-					shapeDesc.fCurRotationX = static_cast<_float>(shapeObject["RotationX"].get_double().value_unsafe());
-					shapeDesc.fCurRotationY = static_cast<_float>(shapeObject["RotationY"].get_double().value_unsafe());
-					shapeDesc.fCurRotationZ = static_cast<_float>(shapeObject["RotationZ"].get_double().value_unsafe());
-
-
-					m_tRigidBodyDesc.vShapeDescs.push_back(shapeDesc);
+					auto iter = shapeSizeArray.begin();
+					shapeDesc.vShapeSize.x = static_cast<_float>((*iter).get_double().value_unsafe());
+					++iter;
+					shapeDesc.vShapeSize.y = static_cast<_float>((*iter).get_double().value_unsafe());
+					++iter;
+					shapeDesc.vShapeSize.z = static_cast<_float>((*iter).get_double().value_unsafe());
 				}
+
+				simdjson::ondemand::array shapeLocalPosArray;
+				if (shapeObject["LocalPosition"].get_array().get(shapeLocalPosArray) == simdjson::SUCCESS && shapeLocalPosArray.count_elements() == 3)
+				{
+					auto iter = shapeLocalPosArray.begin();
+					shapeDesc.vLocalPosition.x = static_cast<_float>((*iter).get_double().value_unsafe());
+					++iter;
+					shapeDesc.vLocalPosition.y = static_cast<_float>((*iter).get_double().value_unsafe());
+					++iter;
+					shapeDesc.vLocalPosition.z = static_cast<_float>((*iter).get_double().value_unsafe());
+				}
+
+				simdjson::ondemand::array shapeRotQuatArray;
+				if (shapeObject["RotationQuat"].get_array().get(shapeRotQuatArray) == simdjson::SUCCESS && shapeRotQuatArray.count_elements() == 4)
+				{
+					auto iter = shapeRotQuatArray.begin();
+					shapeDesc.qRotation.x = static_cast<_float>((*iter).get_double().value_unsafe());
+					++iter;
+					shapeDesc.qRotation.y = static_cast<_float>((*iter).get_double().value_unsafe());
+					++iter;
+					shapeDesc.qRotation.z = static_cast<_float>((*iter).get_double().value_unsafe());
+					++iter;
+					shapeDesc.qRotation.w = static_cast<_float>((*iter).get_double().value_unsafe());
+				}
+
+				if (shapeObject["EulerRotationX"].get_double().error() == simdjson::SUCCESS)
+					shapeDesc.fCurRotationX = static_cast<_float>(shapeObject["EulerRotationX"].get_double().value_unsafe());
+				if (shapeObject["EulerRotationY"].get_double().error() == simdjson::SUCCESS)
+					shapeDesc.fCurRotationY = static_cast<_float>(shapeObject["EulerRotationY"].get_double().value_unsafe());
+				if (shapeObject["EulerRotationZ"].get_double().error() == simdjson::SUCCESS)
+					shapeDesc.fCurRotationZ = static_cast<_float>(shapeObject["EulerRotationZ"].get_double().value_unsafe());
+
+				if (shapeObject["IsQueryShape"].get_bool().error() == simdjson::SUCCESS)
+					shapeDesc.bIsQueryShape = shapeObject["IsQueryShape"].get_bool().value_unsafe();
+				if (shapeObject["IsDoubleSided"].get_bool().error() == simdjson::SUCCESS)
+					shapeDesc.bIsDoubleSided = shapeObject["IsDoubleSided"].get_bool().value_unsafe();
+
+				if (shapeObject["FilterData0"].get_uint64().error() == simdjson::SUCCESS)
+					shapeDesc.filterData0 = static_cast<physx::PxU32>(shapeObject["FilterData0"].get_uint64().value_unsafe());
+				if (shapeObject["FilterData1"].get_uint64().error() == simdjson::SUCCESS)
+					shapeDesc.filterData1 = static_cast<physx::PxU32>(shapeObject["FilterData1"].get_uint64().value_unsafe());
+				if (shapeObject["FilterData2"].get_uint64().error() == simdjson::SUCCESS)
+					shapeDesc.filterData2 = static_cast<physx::PxU32>(shapeObject["FilterData2"].get_uint64().value_unsafe());
+				if (shapeObject["FilterData3"].get_uint64().error() == simdjson::SUCCESS)
+					shapeDesc.filterData3 = static_cast<physx::PxU32>(shapeObject["FilterData3"].get_uint64().value_unsafe());
+
+				// shapeDesc.pMesh 역직렬화 로직 (예: 메시 이름/경로 기반으로 리소스 매니저에서 찾아 할당)
+				// 이 부분은 프로젝트의 리소스 관리 방식에 따라 구현해야 합니다.
+				// 예: if (shapeObject["MeshName"].get_string().error() == simdjson::SUCCESS) {
+				//          string meshName = string(shapeObject["MeshName"].get_string().value_unsafe());
+				//          shapeDesc.pMesh = CGameInstance::Get_Instance()->Get_Mesh(meshName); // 가상의 함수
+				//      }
+
+
+				m_tRigidBodyDesc.vShapeDescs.push_back(shapeDesc);
 			}
 		}
 	}
-	else
-	{
-		// CRigidBody 데이터가 없을 경우 경고 또는 기본값 사용
-		MSG_BOX("CRigidBody::Deserialize - CRigidBody data not found in JSON. Using defaults or previously set values.");
-	}
-
-	Release_Actor();
-	Create_Actor();
 
 	return S_OK;
 }
@@ -775,6 +830,8 @@ HRESULT CRigidBody::Create_Actor()
 		if (m_pActor)
 		{
 			static_cast<physx::PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+			static_cast<physx::PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eFORCE_KINE_KINE_NOTIFICATIONS, true);
+			//static_cast<physx::PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eFORCE_STATIC_KINE_NOTIFICATIONS, true);
 		}
 		break;
 	default:
@@ -999,7 +1056,7 @@ HRESULT CRigidBody::Create_Actor()
 	}
 
 	// 5. Actor를 Scene에 추가
-	m_pActor->userData = this; // 액터의 userData에 CRigidBody 인스턴스 포인터 저장 (콜백 등에서 사용 가능)
+	m_pActor->userData = m_pOwner; // 액터의 userData에 CRigidBody 인스턴스 포인터 저장 (콜백 등에서 사용 가능)
 	pScene->addActor(*m_pActor);
 
  	return S_OK;

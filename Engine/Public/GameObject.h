@@ -100,9 +100,9 @@ public:
 	//HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CGameObject* pOwner, void* pArg = nullptr);
 
 public:
-	void OnCollisionEnter() {}
-	void OnCollisionOverlapping() {}
-	void OnCollisionExit() {}
+	void OnCollisionEnter(PxActor* pOther, const PxContactPair& cp) {}
+	void OnCollisionOverlapping(PxActor* pOther) {}
+	void OnCollisionExit(PxActor* pOther) {}
 
 #pragma endregion
 
