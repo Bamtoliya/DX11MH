@@ -143,9 +143,42 @@ physx::PxFilterFlags CustomFilterShader(
     physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
     physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
 {
+    if (PxFilterObjectIsKinematic(attributes0) && PxFilterObjectIsKinematic(attributes1))
+    {
+        // 키네마틱-키네마틱 쌍에 대한 처리
+        pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
+        return PxFilterFlag::eDEFAULT;
+    }
+    pairFlags = PxPairFlag::eCONTACT_DEFAULT; // 물리적 반응 기본값
+    pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+    pairFlags |= PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
+    pairFlags |= PxPairFlag::eNOTIFY_TOUCH_LOST;
+    // 필요하다면 추가적인 플래그 (예: eNOTIFY_CONTACT_POINTS) 설정 가능
+    pairFlags |= PxPairFlag::eNOTIFY_CONTACT_POINTS;
     // 충돌 콜백을 받기 위한 플래그 설정
-    pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND | PxPairFlag::eNOTIFY_TOUCH_PERSISTS | PxPairFlag::eNOTIFY_TOUCH_LOST;
+
+     // filterData.word0에서 강체 타입 추출
+    PxU32 type0 = filterData0.word0;
+    PxU32 type1 = filterData1.word0;
+
+    // 정적(Static) 강체와 운동학적(Kinematic) 강체 간의 충돌인지 확인
+    bool isStaticKinematicPair =
+        ((type0 == 0 && type1 == 1) ||
+            (type0 == 1 && type1 == 0));
+
+    if (isStaticKinematicPair)
+    {
+        // 물리적 충돌 반응은 억제하고, 콜백만 받도록 설정
+        // pairFlags는 이미 위에서 eNOTIFY_... 플래그들이 설정되어 있음
+        //return physx::PxFilterFlag::eSUPPRESS;
+        return physx::PxFilterFlag::eDEFAULT;
+    }
+
+    // 그 외의 경우는 기본 필터링 규칙을 따름 (예: Static-Dynamic, Dynamic-Dynamic 등)
     return physx::PxFilterFlag::eDEFAULT;
+
+    /*pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND | PxPairFlag::eNOTIFY_TOUCH_PERSISTS | PxPairFlag::eNOTIFY_TOUCH_LOST;
+    return physx::PxFilterFlag::eDEFAULT;*/
 }
 
 PxScene* CPhysics_System::Create_Scene()
@@ -184,12 +217,12 @@ PxScene* CPhysics_System::Create_Scene()
 
     m_pScene = m_pPhysics->createScene(sceneDesc);
 
-	//m_pControllerManager = PxCreateControllerManager(*m_pScene);
-	/*if (!m_pControllerManager)
+	m_pControllerManager = PxCreateControllerManager(*m_pScene);
+	if (!m_pControllerManager)
 	{
 		MSG_BOX("Warning: Failed to create PxControllerManager. Controller functionality will be unavailable.");
 		return nullptr;
-	}*/
+	}
 
     if (m_pScene)
     {
@@ -462,6 +495,43 @@ void CPhysics_System::onSleep(PxActor** actors, PxU32 count)
 void CPhysics_System::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 {
     cout << "Physics_System OnContact Called\n";
+    // pairHeader.actors[0]과 [1]이 충돌한 두 액터입니다.
+    PxActor* actor0 = pairHeader.actors[0];
+    PxActor* actor1 = pairHeader.actors[1];
+
+    auto* user0 = reinterpret_cast<CGameObject*>(actor0->userData);
+    auto* user1 = reinterpret_cast<CGameObject*>(actor1->userData);
+
+    // 각 충돌 쌍에 대해 반복
+    for (PxU32 i = 0; i < nbPairs; ++i)
+    {
+        const PxContactPair& cp = pairs[i];
+
+        // 예시: 충돌 시작 이벤트만 처리
+        if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+        {
+            if (user0)
+                user0->OnCollisionEnter(actor1, cp); // 상대 액터와 ContactPair 정보 전달
+            if (user1)
+                user1->OnCollisionEnter(actor0, cp);
+        }
+
+        if (cp.events & PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
+        {
+            if (user0)
+                user0->OnCollisionOverlapping(actor1); // 상대 액터와 ContactPair 정보 전달
+            if (user1)
+                user1->OnCollisionOverlapping(actor0);
+        }
+
+        if (cp.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
+        {
+            if (user0)
+                user0->OnCollisionExit(actor1); // 상대 액터와 ContactPair 정보 전달
+            if (user1)
+                user1->OnCollisionExit(actor0);
+        }
+    }
 }
 
 void CPhysics_System::onTrigger(PxTriggerPair* pairs, PxU32 count)
