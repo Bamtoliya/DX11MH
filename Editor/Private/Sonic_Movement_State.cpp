@@ -232,7 +232,13 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		// 이제, 완벽하게 지면에 붙은 현재 위치에서 이번 프레임의 이동량을 더해줍니다.
 		_matrix newTransform = pTransform->Get_WorldMatrix(); // Set_State로 위치가 보정된 최신 월드 행렬을 가져옵니다.
 		newTransform.r[3] += vMovement; // 이동량 적용
-
+		PxSweepBuffer hit;
+		_float3 v3Move;
+		XMStoreFloat3(&v3Move, vMovement);
+		_float3 temp1;
+		_float3 temp2;
+		pRigidBody->SweepMove(v3Move, temp1, temp2);
+		//_bool isHit = pScene
 		pTransform->Set_State(STATE::POSITION, newTransform.r[3]);
 	}
 	else

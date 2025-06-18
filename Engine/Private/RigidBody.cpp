@@ -686,7 +686,7 @@ _float3 CRigidBody::Get_Angular_Velocity() const
 }
 
 void CRigidBody::Set_Kinematic_Target(const _float4x4& matTargetWorld)
-{
+{		
 	if (m_pActor && m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC)
 	{
 		physx::PxRigidDynamic* pKinematicActor = static_cast<physx::PxRigidDynamic*>(m_pActor);
@@ -696,6 +696,41 @@ void CRigidBody::Set_Kinematic_Target(const _float4x4& matTargetWorld)
 			m_bIsTransformDirty = true;
 		}
 	}
+}
+
+_bool CRigidBody::SweepMove(const _float3& vMove, _float3& outHitNormal, _float3& outHitDist)
+{
+	PxSweepBuffer hit;
+	_float moveDistance = XMVector3Length(XMLoadFloat3(&vMove)).m128_f32[0];
+	_float3 moveDir; 
+	XMStoreFloat3(&moveDir, XMVector3Normalize(XMLoadFloat3(&vMove)));
+	if (moveDistance < 1e-6f) // 0에 가까우면 sweep 호출하지 않음
+		return false;
+
+	PxTransform worldShapePose = m_pActor->getGlobalPose() * m_pShapes[0]->getLocalPose();
+	_bool isHit = m_pGameInstance->Get_PhysicsScene()->sweep(m_pShapes[0]->getGeometry(), worldShapePose, ToPxVec3(moveDir), moveDistance, hit);
+	if (isHit)
+	{
+		PxU32 touches = hit.getNbTouches();
+		// 충돌한 shape/actor/userData 확인
+		const PxSweepHit& sweepHit = hit.block;
+		PxShape* pHitShape = sweepHit.shape;
+		PxActor* pHitActor = sweepHit.actor;
+
+		// userData로 게임 오브젝트 정보 얻기 (설정되어 있다면)
+		if (pHitActor && pHitActor->userData) {
+			CGameObject* pHitObject = reinterpret_cast<CGameObject*>(pHitActor->userData);
+			if (sweepHit.normal.y < 0.5f)
+			{
+				std::cout << "Sweep hit object: " << WideToUtf8(pHitObject->Get_Name().c_str()) << "\n";
+			}
+		}
+		else {
+			std::cout << "Sweep hit actor: " << pHitActor << std::endl;
+		}
+		int a = 10;
+	}
+	return isHit;
 }
 
 void CRigidBody::Set_Body_Type(EBodyType eType)
@@ -831,7 +866,7 @@ HRESULT CRigidBody::Create_Actor()
 		{
 			static_cast<physx::PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
 			static_cast<physx::PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eFORCE_KINE_KINE_NOTIFICATIONS, true);
-			//static_cast<physx::PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eFORCE_STATIC_KINE_NOTIFICATIONS, true);
+			static_cast<physx::PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eFORCE_STATIC_KINE_NOTIFICATIONS, true);
 		}
 		break;
 	default:

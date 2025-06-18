@@ -285,9 +285,11 @@
     <ClCompile Include="..\private\Tutorial_Enemy.cpp">
       <Filter>02.GameObject\03.Monster\Tutorial_Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Tutorial_Wall.cpp" />
     <ClCompile Include="..\private\Spring.cpp">
       <Filter>02.GameObject\StageObjects\Spring</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Tutorial_Wall.cpp">
+      <Filter>02.GameObject\Wall</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -429,9 +431,11 @@
     <ClInclude Include="..\public\Tutorial_Enemy.h">
       <Filter>02.GameObject\03.Monster\Tutorial_Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Tutorial_Wall.h" />
     <ClInclude Include="..\public\Spring.h">
       <Filter>02.GameObject\StageObjects\Spring</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Tutorial_Wall.h">
+      <Filter>02.GameObject\Wall</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

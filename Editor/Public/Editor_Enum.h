@@ -60,6 +60,26 @@ namespace Editor
 			return "Unknown";
 		}
 	}
+
+	enum class FILTERTYPE {
+		PLAYER = 1 << 0,
+		TERRAIN = 1 << 1,
+		OBJECT = 1 << 2,
+		ENEMY = 1 << 3,
+	};
+
+	enum class FILTERCATEGORY
+	{
+		GROUND = 1 << 0,
+		WALL = 1 << 1,
+		WATER = 1 << 2,
+	};
+
+	enum class FILTEROBJECT
+	{
+		INTERACTABLE = 1 << 0,
+		STATIC = 1 << 1,
+	};
 }
 
 

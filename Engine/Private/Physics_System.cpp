@@ -143,42 +143,14 @@ physx::PxFilterFlags CustomFilterShader(
     physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
     physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
 {
-    if (PxFilterObjectIsKinematic(attributes0) && PxFilterObjectIsKinematic(attributes1))
-    {
-        // 키네마틱-키네마틱 쌍에 대한 처리
-        pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND;
-        return PxFilterFlag::eDEFAULT;
-    }
     pairFlags = PxPairFlag::eCONTACT_DEFAULT; // 물리적 반응 기본값
     pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
     pairFlags |= PxPairFlag::eNOTIFY_TOUCH_PERSISTS;
     pairFlags |= PxPairFlag::eNOTIFY_TOUCH_LOST;
     // 필요하다면 추가적인 플래그 (예: eNOTIFY_CONTACT_POINTS) 설정 가능
     pairFlags |= PxPairFlag::eNOTIFY_CONTACT_POINTS;
-    // 충돌 콜백을 받기 위한 플래그 설정
 
-     // filterData.word0에서 강체 타입 추출
-    PxU32 type0 = filterData0.word0;
-    PxU32 type1 = filterData1.word0;
-
-    // 정적(Static) 강체와 운동학적(Kinematic) 강체 간의 충돌인지 확인
-    bool isStaticKinematicPair =
-        ((type0 == 0 && type1 == 1) ||
-            (type0 == 1 && type1 == 0));
-
-    if (isStaticKinematicPair)
-    {
-        // 물리적 충돌 반응은 억제하고, 콜백만 받도록 설정
-        // pairFlags는 이미 위에서 eNOTIFY_... 플래그들이 설정되어 있음
-        //return physx::PxFilterFlag::eSUPPRESS;
-        return physx::PxFilterFlag::eDEFAULT;
-    }
-
-    // 그 외의 경우는 기본 필터링 규칙을 따름 (예: Static-Dynamic, Dynamic-Dynamic 등)
     return physx::PxFilterFlag::eDEFAULT;
-
-    /*pairFlags = PxPairFlag::eCONTACT_DEFAULT | PxPairFlag::eNOTIFY_TOUCH_FOUND | PxPairFlag::eNOTIFY_TOUCH_PERSISTS | PxPairFlag::eNOTIFY_TOUCH_LOST;
-    return physx::PxFilterFlag::eDEFAULT;*/
 }
 
 PxScene* CPhysics_System::Create_Scene()
@@ -189,9 +161,9 @@ PxScene* CPhysics_System::Create_Scene()
     PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
     sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f);
     sceneDesc.cpuDispatcher = m_pDispatcher;
-    sceneDesc.filterShader = PxDefaultSimulationFilterShader;
     sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
     sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
+    //sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
     sceneDesc.simulationEventCallback = this;
     sceneDesc.filterShader = CustomFilterShader;
 
@@ -253,7 +225,6 @@ PxScene* CPhysics_System::Create_Scene()
         m_pScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_AABBS, 0.5f);
         m_pScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_EDGES, 0.0f);
     }
-
     //m_pScene->getRenderBuffer();
 
     return m_pScene;
@@ -494,7 +465,7 @@ void CPhysics_System::onSleep(PxActor** actors, PxU32 count)
 
 void CPhysics_System::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 {
-    cout << "Physics_System OnContact Called\n";
+    //cout << "Physics_System OnContact Called\n";
     // pairHeader.actors[0]과 [1]이 충돌한 두 액터입니다.
     PxActor* actor0 = pairHeader.actors[0];
     PxActor* actor1 = pairHeader.actors[1];

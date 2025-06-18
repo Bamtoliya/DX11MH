@@ -99,10 +99,14 @@ public:
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr);
 	//HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CGameObject* pOwner, void* pArg = nullptr);
 
+#pragma region Collides
 public:
-	void OnCollisionEnter(PxActor* pOther, const PxContactPair& cp) {}
-	void OnCollisionOverlapping(PxActor* pOther) {}
-	void OnCollisionExit(PxActor* pOther) {}
+	virtual void OnCollisionEnter(PxActor* pOther, const PxContactPair& cp) {}
+	virtual void OnCollisionOverlapping(PxActor* pOther) {}
+	virtual void OnCollisionExit(PxActor* pOther) {}
+#pragma endregion
+
+
 
 #pragma endregion
 

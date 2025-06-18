@@ -634,6 +634,14 @@ public:
 	virtual HRESULT Render();
 #pragma endregion
 
+#pragma region Collision
+public:
+	virtual void OnCollisionEnter(PxActor* pOther, const PxContactPair& cp) override;
+	virtual void OnCollisionOverlapping(PxActor* pOther) override;
+	virtual void OnCollisionExit(PxActor* pOther) override;
+#pragma endregion
+
+
 #pragma region Components
 private:
 	CShader* m_pShaderCom = { nullptr };

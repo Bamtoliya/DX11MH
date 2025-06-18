@@ -20,8 +20,8 @@ public:
 #pragma endregion
 
 public:
-	HRESULT Bind_Buffers();
-	HRESULT Render();
+	virtual HRESULT Bind_Buffers();
+	virtual HRESULT Render();
 	virtual HRESULT RenderImGui() override;
 	_float3 Get_LocalSize() { return m_vLocalSize; }
 	void Set_LocalSize(const _float3& vSize) { memcpy(&m_vLocalSize, &vSize, sizeof(_float3)); }

@@ -105,6 +105,8 @@ public:
     _float3 Get_Angular_Velocity() const;
     void Set_Kinematic_Target(const _float4x4& matTargetWorld); // 키네마틱 액터 목표 위치/회전 설정
 
+    _bool   SweepMove(const _float3& vMove, _float3& outHitNormal, _float3& outHitDist);
+
     // 속성 설정
     void Set_Body_Type(EBodyType eType); // 런타임 타입 변경 (주의해서 사용)
     void Set_Mass(_float fMass);
