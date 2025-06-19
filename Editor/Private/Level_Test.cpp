@@ -10,13 +10,13 @@ CLevel_Test::CLevel_Test(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_Test::Initialize()
 {
-    /*if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Test_Field.json")))
-        return E_FAIL;*/
+    if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Test_Field.json")))
+        return E_FAIL;
 
-    Ready_Layer_GameObjects(L"Layer_GameObjects");
+    /*Ready_Layer_GameObjects(L"Layer_GameObjects");
     Ready_Layer_Light(L"Layer_Light");
     Ready_Layer_Terrain(L"Layer_Virtual_Space");
-    Ready_Layer_Camera(L"Layer_Camera");
+    Ready_Layer_Camera(L"Layer_Camera");*/
 
     if (FAILED(Ready_Layer_ImGui()))
         return E_FAIL;

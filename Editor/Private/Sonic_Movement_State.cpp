@@ -229,17 +229,71 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		// 이렇게 하면 이전 프레임에서 발생했을 수 있는 미세한 오차(공중에 뜨거나 파고드는 현상)가 즉시 수정됩니다.
 		pTransform->Set_State(STATE::POSITION, vStickyPosition);
 
+		//_float3 depenetrationVector;
+		//if (pRigidBody->ComputeDepenetration(depenetrationVector))
+		//{
+		//	// 겹쳐있다면, 밖으로 밀어내는 벡터를 적용
+		//	const float depenBias = 0.0001f;
+		//	_vector depenDir = XMVector3Normalize(XMLoadFloat3(&depenetrationVector));
+		//	_vector depenMag = XMVector3Length(XMLoadFloat3(&depenetrationVector));
+
+		//	// 겹친 거리 + 약간의 여유만큼 밀어냅니다.
+		//	pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + depenDir * (XMVectorGetX(depenMag) + depenBias));
+		//	//pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + XMLoadFloat3(&depenetrationVector));
+		//}
+
+
 		// 이제, 완벽하게 지면에 붙은 현재 위치에서 이번 프레임의 이동량을 더해줍니다.
 		_matrix newTransform = pTransform->Get_WorldMatrix(); // Set_State로 위치가 보정된 최신 월드 행렬을 가져옵니다.
 		newTransform.r[3] += vMovement; // 이동량 적용
-		PxSweepBuffer hit;
-		_float3 v3Move;
-		XMStoreFloat3(&v3Move, vMovement);
-		_float3 temp1;
-		_float3 temp2;
-		pRigidBody->SweepMove(v3Move, temp1, temp2);
-		//_bool isHit = pScene
-		pTransform->Set_State(STATE::POSITION, newTransform.r[3]);
+
+		// --- 반복적 충돌 해결 로직 시작 ---
+		const int maxIterations = 6; // 최대 반복 횟수 (무한 루프 방지)
+		_vector remainingMovement = vMovement;
+
+		for (int i = 0; i < maxIterations; ++i)
+		{
+			_float remainingLength = XMVectorGetX(XMVector3Length(remainingMovement));
+			if (remainingLength < 1e-6f)
+				break; // 이동할 거리가 없으면 종료
+
+			_float3 v3Move;
+			XMStoreFloat3(&v3Move, remainingMovement);
+			_float3 hitNormal_float3;
+			_float hitDist;
+
+			if (pRigidBody->SweepMove(v3Move, hitNormal_float3, hitDist))
+			{
+				_vector vHitNormal = XMLoadFloat3(&hitNormal_float3);
+				_vector vMoveDir = XMVector3Normalize(remainingMovement);
+
+				// 1. 충돌 지점까지만 먼저 이동
+				const float skinWidth = 0.0001f;
+				_vector vMoveToImpact = vMoveDir * max(0.f, hitDist - skinWidth);
+				pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + vMoveToImpact);
+
+				// 2. 남은 이동 거리를 계산
+				float remainingAfterImpactDist = remainingLength - hitDist;
+
+				if (remainingAfterImpactDist > skinWidth)
+				{
+					// 3. 남은 이동 벡터를 충돌면에 투영하여 다음 반복에 사용할 '슬라이드 벡터'를 만듦
+					_vector vLeftoverMove = vMoveDir * remainingAfterImpactDist;
+					float dotProduct = XMVectorGetX(XMVector3Dot(vLeftoverMove, vHitNormal));
+					remainingMovement = vLeftoverMove - vHitNormal * dotProduct;
+				}
+				else
+				{
+					remainingMovement = XMVectorZero(); // 남은 이동 없음
+				}
+			}
+			else
+			{
+				// 충돌 없음: 남은 거리를 모두 이동하고 루프 종료
+				pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + remainingMovement);
+				break;
+			}
+		}
 	}
 	else
 	{

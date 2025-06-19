@@ -32,6 +32,7 @@ public:
 		_float fSlopeLimitAngle = { 60.f };
 		_float fCurSlope = { 0.f };
 		_float fFriction = 0.99f;
+		_float fJumpForce = { 10.f };
 
 		//Combat
 		pair<_float, _float>	fAtkDamage = { 4.f, 6.f };

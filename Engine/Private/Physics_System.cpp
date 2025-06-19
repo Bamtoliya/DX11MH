@@ -368,24 +368,24 @@ void CPhysics_System::Collect_DebugRenderData()
                 const float halfHeight = capsuleGeom.halfHeight;
                 const float radius = capsuleGeom.radius;
 
-                // 캡슐의 원통 부분 (XY 평면에 직사각형으로 표현)
+                // 캡슐의 원통 부분
                 for (int i = 0; i < numSegments; i++)
                 {
                     float angle1 = i * stepAngle;
                     float angle2 = (i + 1) * stepAngle;
 
-                    // 아래쪽 원
-                    PxVec3 p1(radius * PxCos(angle1), radius * PxSin(angle1), -halfHeight);
-                    PxVec3 p2(radius * PxCos(angle2), radius * PxSin(angle2), -halfHeight);
+                    // -X 쪽 원 (YZ 평면)
+                    PxVec3 p1(-halfHeight, radius * PxCos(angle1), radius * PxSin(angle1));
+                    PxVec3 p2(-halfHeight, radius * PxCos(angle2), radius * PxSin(angle2));
                     AddDebugLine(shapePose.transform(p1), shapePose.transform(p2), debugColor);
 
-                    // 위쪽 원
-                    PxVec3 p3(radius * PxCos(angle1), radius * PxSin(angle1), halfHeight);
-                    PxVec3 p4(radius * PxCos(angle2), radius * PxSin(angle2), halfHeight);
+                    // +X 쪽 원 (YZ 평면)
+                    PxVec3 p3(halfHeight, radius * PxCos(angle1), radius * PxSin(angle1));
+                    PxVec3 p4(halfHeight, radius * PxCos(angle2), radius * PxSin(angle2));
                     AddDebugLine(shapePose.transform(p3), shapePose.transform(p4), debugColor);
 
-                    // 수직 연결선
-                    if (i % 4 == 0) // 4개마다 하나씩만 그림 (너무 많지 않게)
+                    // 수직 연결선 (X축 방향)
+                    if (i % 4 == 0) // 4개마다 하나씩만 그림
                     {
                         AddDebugLine(shapePose.transform(p1), shapePose.transform(p3), debugColor);
                     }
@@ -397,25 +397,25 @@ void CPhysics_System::Collect_DebugRenderData()
                     float angle1 = i * stepAngle;
                     float angle2 = (i + 1) * stepAngle;
 
-                    // 아래쪽 반구 (XZ 평면)
-                    PxVec3 p1(radius * PxCos(angle1), 0.0f, -halfHeight - radius * PxSin(angle1));
-                    PxVec3 p2(radius * PxCos(angle2), 0.0f, -halfHeight - radius * PxSin(angle2));
-                    AddDebugLine(shapePose.transform(p1), shapePose.transform(p2), debugColor);
+                    // -X 쪽 반구 (XY 평면)
+                    PxVec3 p1_xy(-halfHeight - radius * PxSin(angle1), radius * PxCos(angle1), 0.0f);
+                    PxVec3 p2_xy(-halfHeight - radius * PxSin(angle2), radius * PxCos(angle2), 0.0f);
+                    AddDebugLine(shapePose.transform(p1_xy), shapePose.transform(p2_xy), debugColor);
 
-                    // 위쪽 반구 (XZ 평면)
-                    PxVec3 p3(radius * PxCos(angle1), 0.0f, halfHeight + radius * PxSin(angle1));
-                    PxVec3 p4(radius * PxCos(angle2), 0.0f, halfHeight + radius * PxSin(angle2));
-                    AddDebugLine(shapePose.transform(p3), shapePose.transform(p4), debugColor);
+                    // +X 쪽 반구 (XY 평면)
+                    PxVec3 p3_xy(halfHeight + radius * PxSin(angle1), radius * PxCos(angle1), 0.0f);
+                    PxVec3 p4_xy(halfHeight + radius * PxSin(angle2), radius * PxCos(angle2), 0.0f);
+                    AddDebugLine(shapePose.transform(p3_xy), shapePose.transform(p4_xy), debugColor);
 
-                    // 아래쪽 반구 (YZ 평면)
-                    PxVec3 p5(0.0f, radius * PxCos(angle1), -halfHeight - radius * PxSin(angle1));
-                    PxVec3 p6(0.0f, radius * PxCos(angle2), -halfHeight - radius * PxSin(angle2));
-                    AddDebugLine(shapePose.transform(p5), shapePose.transform(p6), debugColor);
+                    // -X 쪽 반구 (XZ 평면)
+                    PxVec3 p1_xz(-halfHeight - radius * PxSin(angle1), 0.0f, radius * PxCos(angle1));
+                    PxVec3 p2_xz(-halfHeight - radius * PxSin(angle2), 0.0f, radius * PxCos(angle2));
+                    AddDebugLine(shapePose.transform(p1_xz), shapePose.transform(p2_xz), debugColor);
 
-                    // 위쪽 반구 (YZ 평면)
-                    PxVec3 p7(0.0f, radius * PxCos(angle1), halfHeight + radius * PxSin(angle1));
-                    PxVec3 p8(0.0f, radius * PxCos(angle2), halfHeight + radius * PxSin(angle2));
-                    AddDebugLine(shapePose.transform(p7), shapePose.transform(p8), debugColor);
+                    // +X 쪽 반구 (XZ 평면)
+                    PxVec3 p3_xz(halfHeight + radius * PxSin(angle1), 0.0f, radius * PxCos(angle1));
+                    PxVec3 p4_xz(halfHeight + radius * PxSin(angle2), 0.0f, radius * PxCos(angle2));
+                    AddDebugLine(shapePose.transform(p3_xz), shapePose.transform(p4_xz), debugColor);
                 }
                 break;
             }

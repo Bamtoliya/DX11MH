@@ -31,6 +31,7 @@ public:
         physx::PxU32 filterData2 = 0;
         physx::PxU32 filterData3 = 0;
         class CMesh*    pMesh = { nullptr };
+		_uint 	        iMeshIndex = 0;
 	} SHAPE_DESC;
 
     // 리지드바디 초기화 정보 구조체
@@ -105,7 +106,8 @@ public:
     _float3 Get_Angular_Velocity() const;
     void Set_Kinematic_Target(const _float4x4& matTargetWorld); // 키네마틱 액터 목표 위치/회전 설정
 
-    _bool   SweepMove(const _float3& vMove, _float3& outHitNormal, _float3& outHitDist);
+    _bool   SweepMove(const _float3& vMove, _float3& outHitNormal, _float& outHitDist);
+    _bool   ComputeDepenetration(_float3& outDepenVector);
 
     // 속성 설정
     void Set_Body_Type(EBodyType eType); // 런타임 타입 변경 (주의해서 사용)

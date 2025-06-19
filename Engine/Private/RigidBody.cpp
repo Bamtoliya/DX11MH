@@ -122,6 +122,7 @@ HRESULT CRigidBody::Serialize(json& outJson)
 		shapeData["FilterData1"] = shapeDesc.filterData1;
 		shapeData["FilterData2"] = shapeDesc.filterData2;
 		shapeData["FilterData3"] = shapeDesc.filterData3;
+		shapeData["MeshIndex"] = shapeDesc.pMesh ? shapeDesc.iMeshIndex : -1; // 메시 이름 저장 (nullptr 체크 필요)
 		// shapeDesc.pMesh는 런타임 포인터이므로 직접 직렬화하지 않고,
 		// 필요하다면 메시의 이름이나 경로를 저장하고 로드 시점에 다시 연결해야 합니다.
 		// 여기서는 생략합니다.
@@ -273,12 +274,14 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 
 				// shapeDesc.pMesh 역직렬화 로직 (예: 메시 이름/경로 기반으로 리소스 매니저에서 찾아 할당)
 				// 이 부분은 프로젝트의 리소스 관리 방식에 따라 구현해야 합니다.
-				// 예: if (shapeObject["MeshName"].get_string().error() == simdjson::SUCCESS) {
-				//          string meshName = string(shapeObject["MeshName"].get_string().value_unsafe());
-				//          shapeDesc.pMesh = CGameInstance::Get_Instance()->Get_Mesh(meshName); // 가상의 함수
-				//      }
-
-
+				if (shapeObject["MeshIndex"].get_uint64().error() == simdjson::SUCCESS) {
+					_int meshIndex = static_cast<_int>(shapeObject["MeshIndex"].get_int64().value_unsafe());
+					if (meshIndex != -1)
+					{
+						shapeDesc.pMesh = static_cast<CModel*>(m_pOwner->Get_Component(L"Com_Model"))->Get_Meshes()[meshIndex];
+						shapeDesc.iMeshIndex = (_uint)meshIndex;
+					}
+				}
 				m_tRigidBodyDesc.vShapeDescs.push_back(shapeDesc);
 			}
 		}
@@ -698,7 +701,7 @@ void CRigidBody::Set_Kinematic_Target(const _float4x4& matTargetWorld)
 	}
 }
 
-_bool CRigidBody::SweepMove(const _float3& vMove, _float3& outHitNormal, _float3& outHitDist)
+_bool CRigidBody::SweepMove(const _float3& vMove, _float3& outHitNormal, _float& outHitDist)
 {
 	PxSweepBuffer hit;
 	_float moveDistance = XMVector3Length(XMLoadFloat3(&vMove)).m128_f32[0];
@@ -707,30 +710,77 @@ _bool CRigidBody::SweepMove(const _float3& vMove, _float3& outHitNormal, _float3
 	if (moveDistance < 1e-6f) // 0에 가까우면 sweep 호출하지 않음
 		return false;
 
+	const PxHitFlags hitFlags = PxHitFlag::ePOSITION | PxHitFlag::eNORMAL | PxHitFlag::ePRECISE_SWEEP;
 	PxTransform worldShapePose = m_pActor->getGlobalPose() * m_pShapes[0]->getLocalPose();
-	_bool isHit = m_pGameInstance->Get_PhysicsScene()->sweep(m_pShapes[0]->getGeometry(), worldShapePose, ToPxVec3(moveDir), moveDistance, hit);
+	_bool isHit = m_pGameInstance->Get_PhysicsScene()->sweep(m_pShapes[0]->getGeometry(), worldShapePose, ToPxVec3(moveDir), moveDistance, hit, hitFlags);
 	if (isHit)
 	{
-		PxU32 touches = hit.getNbTouches();
-		// 충돌한 shape/actor/userData 확인
 		const PxSweepHit& sweepHit = hit.block;
-		PxShape* pHitShape = sweepHit.shape;
-		PxActor* pHitActor = sweepHit.actor;
-
-		// userData로 게임 오브젝트 정보 얻기 (설정되어 있다면)
-		if (pHitActor && pHitActor->userData) {
-			CGameObject* pHitObject = reinterpret_cast<CGameObject*>(pHitActor->userData);
-			if (sweepHit.normal.y < 0.5f)
-			{
-				std::cout << "Sweep hit object: " << WideToUtf8(pHitObject->Get_Name().c_str()) << "\n";
-			}
-		}
-		else {
-			std::cout << "Sweep hit actor: " << pHitActor << std::endl;
-		}
-		int a = 10;
+		outHitNormal = ToFloat3(sweepHit.normal);
+		outHitDist = sweepHit.distance; // 충돌 거리를 반환합니다.
+	}
+	else
+	{
+		outHitDist = moveDistance; // 충돌이 없으면 최대 이동 거리를 반환합니다.
 	}
 	return isHit;
+}
+
+_bool CRigidBody::ComputeDepenetration(_float3& outDepenVector)
+{
+	if (!m_pActor || m_pShapes.empty())
+		return false;
+
+	const PxGeometry& geometry = m_pShapes[0]->getGeometry();
+	const PxTransform pose = m_pActor->getGlobalPose() * m_pShapes[0]->getLocalPose();
+
+	const PxU32 maxOverlaps = 16;
+	PxOverlapHit overlapHits[maxOverlaps];
+	PxOverlapBuffer hitBuffer(overlapHits, maxOverlaps);
+
+	PxQueryFilterData filterData;
+	filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC; // 스태틱과 다이나믹 오브젝트 모두와 겹침을 확인
+
+	if (m_pGameInstance->Get_PhysicsScene()->overlap(geometry, pose, hitBuffer, filterData))
+	{
+		PxVec3 totalDepenetration(0.f);
+		bool resolved = false;
+
+		for (PxU32 i = 0; i < hitBuffer.getNbTouches(); ++i)
+		{
+			const PxOverlapHit& overlapHit = hitBuffer.getTouch(i);
+
+			// 자기 자신과의 겹침은 무시
+			if (overlapHit.actor == m_pActor)
+				continue;
+
+			PxVec3 direction;
+			PxF32 depth;
+
+			const PxGeometry& otherGeom = overlapHit.shape->getGeometry();
+			const PxTransform otherPose = overlapHit.actor->getGlobalPose() * overlapHit.shape->getLocalPose();
+
+
+			// 겹침 방향과 깊이를 계산
+			if (physx::PxGeometryQuery::computePenetration(
+				direction, depth,
+				geometry, pose,
+				otherGeom, otherPose))
+			{
+				// 모든 겹침에 대한 해소 벡터를 누적
+				totalDepenetration += direction * depth;
+				resolved = true;
+			}
+		}
+
+		if (resolved)
+		{
+			outDepenVector = ToFloat3(totalDepenetration);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void CRigidBody::Set_Body_Type(EBodyType eType)
@@ -906,9 +956,9 @@ HRESULT CRigidBody::Create_Actor()
 			continue;
 
 		XMVECTOR shapeLocalRotQuatVec = XMQuaternionRotationRollPitchYaw(
-			shapeDesc.fCurRotationY, // Pitch
-			shapeDesc.fCurRotationZ, // Yaw
-			shapeDesc.fCurRotationX  // Roll
+			shapeDesc.fCurRotationX, // Pitch
+			shapeDesc.fCurRotationY, // Yaw
+			shapeDesc.fCurRotationZ  // Roll
 		);
 
 		// 쉐이프 지오메트리 생성

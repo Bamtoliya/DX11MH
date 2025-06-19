@@ -53,6 +53,7 @@ public:
 		return m_iMaterialIndex;
 	}
 	vector<_float4x4> Get_OffsetMatrices() { return m_OffsetMatrices; }
+	const _char* Get_MeshName() const { return m_szName; }
 public:
 	HRESULT Bind_Bone_Matrices(class CShader* pShader, const _char* pConstantName, const vector<class CBone*>& Bones);
 
