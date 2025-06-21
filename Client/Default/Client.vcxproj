@@ -225,6 +225,7 @@
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxMesh.hlsl" />
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxNorTex.hlsl" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl" />
     <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxPosTex.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxRectInstance.hlsl" />
   </ItemGroup>

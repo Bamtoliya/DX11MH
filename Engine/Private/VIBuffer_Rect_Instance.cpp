@@ -9,28 +9,27 @@ CVIBuffer_Rect_Instance::CVIBuffer_Rect_Instance(ID3D11Device* pDevice, ID3D11De
 
 CVIBuffer_Rect_Instance::CVIBuffer_Rect_Instance(const CVIBuffer_Rect_Instance& Prototype)
 	: CVIBuffer_Instance{ Prototype }
-	, m_pVBParticle{ Prototype.m_pVBParticle }
-	, m_VBParticleDesc{ Prototype.m_VBParticleDesc }
-	, m_VBParticleSubresourceData{ Prototype.m_VBParticleSubresourceData }	
-	, m_iVertexParticleStride{ Prototype.m_iVertexParticleStride }
-	, m_pVertexParticles{ Prototype.m_pVertexParticles }	
+	, m_pVertexInstances { Prototype.m_pVertexInstances }
+	, m_pSpeeds{ Prototype.m_pSpeeds }	
+	, m_isLoop { Prototype.m_isLoop }
 {
-	Safe_AddRef(m_pVBParticle);
+	
 }
 
 HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pArg)
 {
 	const RECT_INSTANCE_DESC* pDesc = static_cast<const RECT_INSTANCE_DESC*>(pArg);
 
+	m_isLoop = pDesc->isLoop;
 	m_iNumIndexPerInstance = 6;
-	m_iVertexParticleStride = sizeof(VTXPARTICLE);
-	m_iVertexInstanceStride = sizeof(VTXMATRIX);
+	m_iVertexInstanceStride = sizeof(VTXRECT_PARTICLE_INSTANCE);
 	m_iNumInstance = pDesc->iNumInstance;
 
-	m_iNumVertexBuffers = 3;
+	m_iNumVertexBuffers = 2;
 	m_iNumVertices = 4;
 	m_iVertexStride = sizeof(VTXPOSTEX);
-	m_iNumIndices = m_iNumIndexPerInstance * m_iNumInstance;
+	m_iNumIndices = m_iNumIndexPerInstance;
+
 	m_iIndexStride = sizeof(_ushort);
 	m_eIndexFormat = DXGI_FORMAT_R16_UINT;
 	m_ePrimitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -92,16 +91,14 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pArg)
 
 	_uint		iNumIndices = {};
 
-	for (size_t i = 0; i < m_iNumInstance; i++)
-	{
-		pIndices[iNumIndices++] = 0;
-		pIndices[iNumIndices++] = 1;
-		pIndices[iNumIndices++] = 2;
+	pIndices[iNumIndices++] = 0;
+	pIndices[iNumIndices++] = 1;
+	pIndices[iNumIndices++] = 2;
 
-		pIndices[iNumIndices++] = 0;
-		pIndices[iNumIndices++] = 2;
-		pIndices[iNumIndices++] = 3;
-	}
+	pIndices[iNumIndices++] = 0;
+	pIndices[iNumIndices++] = 2;
+	pIndices[iNumIndices++] = 3;
+	
 
 	D3D11_SUBRESOURCE_DATA		IBInitialData{};
 	IBInitialData.pSysMem = pIndices;
@@ -120,10 +117,12 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pArg)
 	m_VBInstanceDesc.StructureByteStride = m_iVertexInstanceStride;
 	m_VBInstanceDesc.MiscFlags = 0;
 
-	m_pVertexInstances = new VTXMATRIX[m_iNumInstance];
+	m_pVertexInstances = new VTXRECT_PARTICLE_INSTANCE[m_iNumInstance];
+	m_pSpeeds = new _float[m_iNumInstance];
 
 	for (size_t i = 0; i < m_iNumInstance; i++)
 	{
+		m_pSpeeds[i] = m_pGameInstance->Compute_Random(pDesc->vSpeed.x, pDesc->vSpeed.y);
 		_float	fSize = m_pGameInstance->Compute_Random(pDesc->vSize.x, pDesc->vSize.y);
 
 		m_pVertexInstances[i].vRight = _float4(fSize, 0.f, 0.f, 0.f);
@@ -137,6 +136,11 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pArg)
 			m_pGameInstance->Compute_Random(pDesc->vCenter.z - pDesc->vRange.z * 0.5f, pDesc->vCenter.z + pDesc->vRange.z * 0.5f),
 			1.f
 		);
+
+		m_pVertexInstances[i].vLifeTime = _float2(
+			m_pGameInstance->Compute_Random(pDesc->vLifeTime.x, pDesc->vLifeTime.y),
+			0.f
+		);	
 	}
 	
 	m_VBInstanceSubresourceData.pSysMem = m_pVertexInstances;
@@ -146,26 +150,6 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pArg)
 #pragma endregion 
 
 
-#pragma region PARTICLEINSTANCEBUFFER
-	m_VBParticleDesc.ByteWidth = m_iNumInstance * m_iVertexParticleStride;
-	m_VBParticleDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	m_VBParticleDesc.Usage = D3D11_USAGE_DYNAMIC;
-	m_VBParticleDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	m_VBParticleDesc.StructureByteStride = m_iVertexParticleStride;
-	m_VBParticleDesc.MiscFlags = 0;
-
-	m_pVertexParticles = new VTXPARTICLE[m_iNumInstance];
-
-	for (size_t i = 0; i < m_iNumInstance; i++)
-	{
-		_float		fLifeTime = m_pGameInstance->Compute_Random(pDesc->vLifeTime.x, pDesc->vLifeTime.y);
-
-		m_pVertexParticles[i].vLifeTime = _float2(fLifeTime, 0.f);
-	}
-
-	m_VBParticleSubresourceData.pSysMem = m_pVertexParticles;
-
-#pragma endregion 
 
 
 	return S_OK;
@@ -173,60 +157,37 @@ HRESULT CVIBuffer_Rect_Instance::Initialize_Prototype(const INSTANCE_DESC* pArg)
 
 HRESULT CVIBuffer_Rect_Instance::Initialize(void* pArg)
 {
-	if (FAILED(__super::Initialize(pArg)))
+	if (FAILED(m_pDevice->CreateBuffer(&m_VBInstanceDesc, &m_VBInstanceSubresourceData, &m_pVBInstance)))
 		return E_FAIL;
 
-	if (FAILED(m_pDevice->CreateBuffer(&m_VBParticleDesc, &m_VBParticleSubresourceData, &m_pVBParticle)))
-		return E_FAIL;	
-
 	return S_OK;
 }
 
-HRESULT CVIBuffer_Rect_Instance::Bind_Buffers()
-{
-	ID3D11Buffer* pVertexBuffers[] = {
-		   m_pVB,
-		   m_pVBInstance,
-		   m_pVBParticle,
-	};
-
-	_uint		iVertexStrides[] = {
-		m_iVertexStride,
-		m_iVertexInstanceStride, 
-		m_iVertexParticleStride
-
-	};
-
-	_uint		iOffsets[] = {
-		0,
-		0, 
-		0
-	};
-
-	m_pContext->IASetVertexBuffers(0, m_iNumVertexBuffers, pVertexBuffers, iVertexStrides, iOffsets);
-	m_pContext->IASetIndexBuffer(m_pIB, m_eIndexFormat, 0);
-	m_pContext->IASetPrimitiveTopology(m_ePrimitiveTopology);
-
-	return S_OK;
-}
 
 
 void CVIBuffer_Rect_Instance::Drop(_float fTimeDelta)
 {
-	D3D11_MAPPED_SUBRESOURCE		SubResource{};
+	D3D11_MAPPED_SUBRESOURCE	SubResource{};
 
-	m_pContext->Map(m_pVBParticle, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
+	m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &SubResource);
 
-	VTXPARTICLE*	pVertices = static_cast<VTXPARTICLE*>(SubResource.pData);
+	VTXRECT_PARTICLE_INSTANCE* pVertices = static_cast<VTXRECT_PARTICLE_INSTANCE*>(SubResource.pData);
 
 	for (size_t i = 0; i < m_iNumInstance; i++)
 	{
 		pVertices[i].vLifeTime.y += fTimeDelta;
+
+		pVertices[i].vTranslation.y -= m_pSpeeds[i] * fTimeDelta;
+
+		if (true == m_isLoop && 
+			pVertices[i].vLifeTime.y >= pVertices[i].vLifeTime.x)
+		{
+			pVertices[i].vLifeTime.y = 0.f;
+			pVertices[i].vTranslation.y = m_pVertexInstances[i].vTranslation.y;
+		}
 	}
 
-	m_pContext->Unmap(m_pVBParticle, 0);
-
-	__super::Drop(fTimeDelta);
+	m_pContext->Unmap(m_pVBInstance, 0);
 }
 
 CVIBuffer_Rect_Instance* CVIBuffer_Rect_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const INSTANCE_DESC* pArg)
@@ -259,6 +220,9 @@ void CVIBuffer_Rect_Instance::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pVBParticle);
-
+	if(false == m_isCloned)
+	{
+		Safe_Delete_Array(m_pVertexInstances);
+		Safe_Delete_Array(m_pSpeeds);
+	}
 }
