@@ -701,7 +701,7 @@ void CRigidBody::Set_Kinematic_Target(const _float4x4& matTargetWorld)
 	}
 }
 
-_bool CRigidBody::SweepMove(const _float3& vMove, _float3& outHitNormal, _float& outHitDist)
+_bool CRigidBody::SweepMove(const _float3& vMove, _float3& outHitNormal, _float& outHitDist, _float fInflation)
 {
 	PxSweepBuffer hit;
 	_float moveDistance = XMVector3Length(XMLoadFloat3(&vMove)).m128_f32[0];
@@ -710,9 +710,9 @@ _bool CRigidBody::SweepMove(const _float3& vMove, _float3& outHitNormal, _float&
 	if (moveDistance < 1e-6f) // 0에 가까우면 sweep 호출하지 않음
 		return false;
 
-	const PxHitFlags hitFlags = PxHitFlag::ePOSITION | PxHitFlag::eNORMAL | PxHitFlag::ePRECISE_SWEEP;
+	const PxHitFlags hitFlags = PxHitFlag::ePOSITION | PxHitFlag::eNORMAL; //| PxHitFlag::ePRECISE_SWEEP;
 	PxTransform worldShapePose = m_pActor->getGlobalPose() * m_pShapes[0]->getLocalPose();
-	_bool isHit = m_pGameInstance->Get_PhysicsScene()->sweep(m_pShapes[0]->getGeometry(), worldShapePose, ToPxVec3(moveDir), moveDistance, hit, hitFlags);
+	_bool isHit = m_pGameInstance->Get_PhysicsScene()->sweep(m_pShapes[0]->getGeometry(), worldShapePose, ToPxVec3(moveDir), moveDistance, hit, hitFlags, PxQueryFilterData(), nullptr, nullptr, fInflation);
 	if (isHit)
 	{
 		const PxSweepHit& sweepHit = hit.block;
@@ -1119,6 +1119,8 @@ HRESULT CRigidBody::Create_Actor()
 		physx::PxShape* pShape = pPhysics->createShape(*pGeometry, *pMaterial, true);
 		if (pShape)
 		{
+			pShape->setContactOffset(0.02f);
+			pShape->setRestOffset(0.0f);
 			physx::PxFilterData filterData(shapeDesc.filterData0, shapeDesc.filterData1, shapeDesc.filterData2, shapeDesc.filterData3);
 			pShape->setSimulationFilterData(filterData);
 			pShape->setQueryFilterData(filterData); // Often query filter data is the same, or can be configured separately

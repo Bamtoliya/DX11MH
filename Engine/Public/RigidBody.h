@@ -106,7 +106,7 @@ public:
     _float3 Get_Angular_Velocity() const;
     void Set_Kinematic_Target(const _float4x4& matTargetWorld); // 키네마틱 액터 목표 위치/회전 설정
 
-    _bool   SweepMove(const _float3& vMove, _float3& outHitNormal, _float& outHitDist);
+    _bool   SweepMove(const _float3& vMove, _float3& outHitNormal, _float& outHitDist, _float fInflation);
     _bool   ComputeDepenetration(_float3& outDepenVector);
 
     // 속성 설정
