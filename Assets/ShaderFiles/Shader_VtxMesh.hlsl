@@ -49,7 +49,7 @@ PS_OUT PS_MAIN(PS_NOR_IN In)
     
     /*if (Out.vColor.a < 0.3f)
         discard;*/
-    
+    Out.vFinal = Out.vColor;
     return Out;
 }
 

@@ -36,7 +36,7 @@ _uint APIENTRY LoadingMain(void* pArg)
 HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 {
 	m_eNextLevelID = eNextLevelID;
-
+	m_pGameInstance->Clear_CameraManager();
 	// 지연된 컨텍스트 생성
 	if (FAILED(m_pDevice->CreateDeferredContext(0, &m_pDeferredContext)))
 	{

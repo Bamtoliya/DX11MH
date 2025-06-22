@@ -10,6 +10,7 @@ CLevel_Test::CLevel_Test(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_Test::Initialize()
 {
+
     if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Test_Field.json")))
         return E_FAIL;
 

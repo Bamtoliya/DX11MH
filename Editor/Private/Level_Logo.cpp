@@ -12,7 +12,6 @@ CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 HRESULT CLevel_Logo::Initialize()
 {
 
-
 	return S_OK;
 }
 

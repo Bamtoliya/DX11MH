@@ -1,13 +1,23 @@
 {
-    "Prototype_Component_Texture_BackGround": {
-        "Class": "CTexture",
-        "NumTexture": 2,
-        "TextureFilePath": "../../Assets/Resources/Textures/Default%d.jpg"
-    },
-    "Prototype_GameObject_BackGround": {
-        "Class": "CBackGround"
-    },
-    "Prototype_GameObject_Camera_Free": {
-        "Class": "CCamera_Free"
-    }
+  "Prototype_Component_Texture_BackGround": {
+    "Class": "CTexture",
+    "NumTexture": 2,
+    "TextureFilePath": "../../Assets/Resources/Textures/Default%d.jpg"
+  },
+  "Prototype_Component_Texture_Title_Background": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodetitle/uiRANGE_img_title202205.dds"
+  },
+  "Prototype_Component_Texture_Title": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodeopening_ko/uiRANGE_word_title3.dds"
+  },
+  "Prototype_GameObject_BackGround": {
+    "Class": "CBackGround"
+  },
+  "Prototype_GameObject_Camera_Free": {
+    "Class": "CCamera_Free"
+  }
 }

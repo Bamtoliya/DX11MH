@@ -33,7 +33,8 @@ private:
 	_uint										m_iNumLevels = {};
 	map<const _wstring, class CBase*>*			m_pPrototypes = { nullptr };
 	typedef map<const _wstring, class CBase*>	PROTOTYPES;
-
+public:
+	class CBase* Find_Prototype(PROTOTYPE eType, _uint iLevelIndex, const _wstring& strPrototypeTag);
 private:
 	class CBase* Find_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag);
 

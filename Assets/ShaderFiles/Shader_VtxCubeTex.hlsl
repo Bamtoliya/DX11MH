@@ -31,7 +31,7 @@ PS_OUT PS_MAIN(PS_CUBE_IN In)
     
     Out.vColor = g_TextureCube.Sample(DefaultSampler, In.vTexcoord);
     Out.vPick = g_TextureCube.Sample(DefaultSampler, In.vTexcoord);
-    
+    Out.vFinal = Out.vColor;
     return Out;    
 }
 

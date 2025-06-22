@@ -170,7 +170,6 @@ void CGameInstance::Clear(_uint iLevelIndex)
 	/* 특정 레벨의 자원을 삭제한다. */
 	
 	/* 특정 레벨의 객체을 삭제한다. */
-	//m_pCamera_Manager->Clear();
 	m_pPicking_System->Clear();
 	m_pObject_Manager->Clear(iLevelIndex);
 	m_pSound_Manager->Stop_All_Event();
@@ -297,6 +296,22 @@ CBase* CGameInstance::Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototype
 	return m_pPrototype_Manager->Clone_Prototype(ePrototypeType, iPrototypeLevelIndex, strPrototypeTag, pGameObject, jsonData);
 }
 
+void CGameInstance::Get_TexturePrototypeList(_uint iLevelIndex, vector<wstring>& outList)
+{
+	if (nullptr == m_pPrototype_Manager)
+		return;
+
+	//m_pPrototype_Manager->Get_PrototypeList(PROTOTYPE::TYPE_COMPONENT, static_cast<_uint>(iLevelIndex), L"Prototype_Component_Texture", outList);
+}
+
+CComponent* CGameInstance::Find_Prototype(PROTOTYPE eType, _uint iLevelIndex, const wstring& strPrototypeTag)
+{
+	if (nullptr == m_pPrototype_Manager)
+		return nullptr;
+
+	return static_cast<CComponent*>(m_pPrototype_Manager->Find_Prototype(eType, iLevelIndex, strPrototypeTag));
+}
+
 
 
 HRESULT CGameInstance::Save_Prototypes(json& data)
@@ -399,6 +414,11 @@ void CGameInstance::Change_Camera(_uint iIndex)
 {
 	if (m_pCamera_Manager)
 		m_pCamera_Manager->Change_Camera(iIndex);
+}
+void CGameInstance::Clear_CameraManager()
+{
+	if(m_pCamera_Manager)
+		m_pCamera_Manager->Clear();
 }
 #pragma endregion
 

@@ -16,7 +16,18 @@ CGameObject_Camera::CGameObject_Camera(const CGameObject_Camera& Prototype)
 
 void CGameObject_Camera::Free()
 {
+	// 기존 Free() 로직 전에 카메라 컴포넌트 확인 및 제거
+	if (m_Components.find(g_strCameraTag) != m_Components.end())
+	{
+		CCamera* pCamera = dynamic_cast<CCamera*>(m_Components[g_strCameraTag]);
+		if (pCamera != nullptr)
+		{
+			if (m_pGameInstance != nullptr)
+				m_pGameInstance->Remove_Camera(pCamera);
+		}
+	}
 	__super::Free();
+
 	Safe_Release(m_pCameraCom);
 }
 

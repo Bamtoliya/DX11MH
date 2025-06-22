@@ -75,6 +75,9 @@ public:
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CGameObject* pGameObject = nullptr, void* pArg = nullptr);
 	CBase* Clone_Prototype(PROTOTYPE ePrototypeType, _uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, class CGameObject* pGameObject, simdjson::ondemand::object& jsonData);
 
+	void Get_TexturePrototypeList(_uint iLevelIndex, vector<wstring>& outList);
+	CComponent* Find_Prototype(PROTOTYPE eType, _uint iLevelIndex, const wstring& strPrototypeTag);
+
 
 	HRESULT Save_Prototypes(json& data);
 	HRESULT Save_Prototypes(_uint iLevelIndex, json& outJson);
@@ -105,7 +108,7 @@ public:
 	void Set_Camera(_uint iIndex);
 	void Change_Camera(class CCamera* pCamera);
 	void Change_Camera(_uint iIndex);
-
+	void Clear_CameraManager();
 #pragma endregion
 
 

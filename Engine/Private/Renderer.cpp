@@ -123,7 +123,7 @@ HRESULT CRenderer::Draw()
 	//// 1. Switch to Off-Screen Target (TargetManager handles backup)
 	if (FAILED(m_pGameInstance->Begin_MRT(L"RT_Skybox_Group", pMainDSV))) // Group name example
 		return E_FAIL;
-	_float4 tempColor = { 0.0f, 0.0f, 0.0f, 0.0f };
+	_float4 tempColor = { 0.0f, 0.0f, 1.0f, 1.0f };
 	m_pGameInstance->Clear_RenderTarget(L"RT_Skybox", &tempColor);
 	m_pGameInstance->Clear_RenderTarget(L"RT_FinalScene", &tempColor);
 	m_pContext->ClearDepthStencilView(pMainDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
@@ -140,8 +140,6 @@ HRESULT CRenderer::Draw()
 	
 	m_pGameInstance->Clear_RenderTarget(L"RT_ObjectsOnly", &tempColor);
 	m_pGameInstance->Clear_RenderTarget(L"RT_Picking", &tempColor);
-	/*if (FAILED(Render_Priority()))
-		return E_FAIL;*/
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
 	if (FAILED(Render_Blend()))
@@ -154,19 +152,19 @@ HRESULT CRenderer::Draw()
 			return E_FAIL;
 	}
 	
-	ID3D11ShaderResourceView* pFinalSceneSRV = m_pGameInstance->Get_SRV(L"RT_FinalScene");
-	if (pFinalSceneSRV)
-	{
-		// 중요: GenerateMips는 SRV에 대해 호출하는 것이 아니라, DeviceContext에 대해 SRV를 인자로 전달합니다.
-		m_pContext->GenerateMips(pFinalSceneSRV);
-	}
+	//ID3D11ShaderResourceView* pFinalSceneSRV = m_pGameInstance->Get_SRV(L"RT_FinalScene");
+	//if (pFinalSceneSRV)
+	//{
+	//	// 중요: GenerateMips는 SRV에 대해 호출하는 것이 아니라, DeviceContext에 대해 SRV를 인자로 전달합니다.
+	//	m_pContext->GenerateMips(pFinalSceneSRV);
+	//}
 
 	
 	// Picking 타겟도 필요하다면 동일하게 처리
 	if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_FinalScene")))
 		return E_FAIL;
-	if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_ObjectsOnly")))
-		return E_FAIL;
+	/*if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_ObjectsOnly")))
+		return E_FAIL;*/
 
 	if (FAILED(m_pGameInstance->End_MRT(nullptr, nullptr, {})))
 		return E_FAIL;

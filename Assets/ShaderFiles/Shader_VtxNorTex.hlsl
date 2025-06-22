@@ -40,7 +40,7 @@ PS_OUT PS_MAIN(PS_NOR_IN In)
     float g = (float) ((objectId >> 8) & 0xFF) / 255.0f;
     float b = (float) (objectId & 0xFF) / 255.0f;
     Out.vPick = float4(r, g, b, 1.0f);
-    
+    Out.vFinal = Out.vColor;
     return Out; 
 }
 

@@ -157,6 +157,15 @@ HRESULT CPrototype_Manager::Save_Prototypes(_uint iLevelIndex, json& outJson)
 	return S_OK;
 }
 
+CBase* CPrototype_Manager::Find_Prototype(PROTOTYPE eType, _uint iLevelIndex, const _wstring& strPrototypeTag)
+{
+	auto	iter = m_pPrototypes[iLevelIndex].find(strPrototypeTag);
+	if (iter == m_pPrototypes[iLevelIndex].end())
+		return nullptr;
+
+	return iter->second;
+}
+
 CBase* CPrototype_Manager::Find_Prototype(_uint iLevelIndex, const _wstring& strPrototypeTag)
 {
 	auto	iter = m_pPrototypes[iLevelIndex].find(strPrototypeTag);
