@@ -52,7 +52,7 @@ unsigned int ClassName::Destroy_Instance()				\
 #define BANKPATH ""
 
 #define SOLUTIONPATH "../../"
-#define ASSETPATH "G:/Computers/Desktop/Assets/"
+#define ASSETPATH "G:/My Drive/Assets/"
 #define SAVEPATH SOLUTIONPATH "Saves/"
 
 #define KEY_DOWN(eKey) m_pGameInstance->Key_Down(eKey)

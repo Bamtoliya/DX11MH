@@ -104,7 +104,7 @@ HRESULT CPhysics_System::Initialize()
 
     // CPU Dispatcher 생성 (멀티스레딩 지원)
     unsigned int numThreads = std::thread::hardware_concurrency();
-    m_pDispatcher = PxDefaultCpuDispatcherCreate(numThreads > 0 ? numThreads : 2); // 스레드 2개 사용
+    m_pDispatcher = PxDefaultCpuDispatcherCreate(4); // 스레드 2개 사용
     if (!m_pDispatcher)
         return E_FAIL;
 
@@ -163,9 +163,12 @@ PxScene* CPhysics_System::Create_Scene()
     sceneDesc.cpuDispatcher = m_pDispatcher;
     sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
     sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
-    //sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
+    sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
     sceneDesc.simulationEventCallback = this;
     sceneDesc.filterShader = CustomFilterShader;
+
+    sceneDesc.limits.maxNbStaticShapes = 1024 * 10; // 기본값 증가
+    sceneDesc.limits.maxNbDynamicShapes = 1024 * 10; // 기본값 증가
 
     // GPU 물리 시뮬레이션을 위한 설정
     if (m_pCudaContextManager && m_pCudaContextManager->contextIsValid()) // CUDA 컨텍스트 매니저가 유효한지 확인

@@ -15,6 +15,7 @@
 #include "Tutorial_Wall.h"
 #include "Spring.h"
 #include "Ashura.h"
+#include "Ashura_Controller.h"
 #pragma endregion
 
 

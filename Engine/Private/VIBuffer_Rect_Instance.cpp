@@ -220,7 +220,7 @@ void CVIBuffer_Rect_Instance::Free()
 {
 	__super::Free();
 
-	if(false == m_isCloned)
+	if(false == m_bIsCloned)
 	{
 		Safe_Delete_Array(m_pVertexInstances);
 		Safe_Delete_Array(m_pSpeeds);

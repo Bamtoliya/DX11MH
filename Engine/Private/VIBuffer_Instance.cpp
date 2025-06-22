@@ -75,9 +75,6 @@ void CVIBuffer_Instance::Free()
 {
 	__super::Free();
 
-	if (false == m_bIsCloned)
-		Safe_Delete_Array(m_pVertexInstances);
-
 	Safe_Release(m_pVBInstance);
 
 }

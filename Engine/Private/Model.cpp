@@ -38,7 +38,8 @@ CModel::CModel(const CModel& Prototype)
 	for (auto& pMesh : m_Meshes)
 		Safe_AddRef(pMesh);
 
-	for (auto& pAnim : m_Animations)
+	for (auto& pAnim : Prototype.m_Animations)
+		//m_Animations.push_back(pAnim->Clone());
 		Safe_AddRef(pAnim);
 		
 }

@@ -192,6 +192,13 @@ HRESULT CToolBar::Render()
             }
 
             if (ImGui::BeginMenu("Window")) {
+                if (ImGui::MenuItem("Windows", NULL /* 단축키 없음 */ /*, &show_asset_browser */)) {
+                    m_pGameInstance->ToggleShowImGui(L"Asset Browser");
+                    m_pGameInstance->ToggleShowImGui(L"Inspector");
+                    m_pGameInstance->ToggleShowImGui(L"Hierarchy");
+                    m_pGameInstance->ToggleShowImGui(L"Viewport2D");
+                    m_pGameInstance->ToggleShowImGui(L"Viewport3D");
+                }
                 // 창 메뉴 아이템들 (각 창의 표시 여부를 토글)
                 // ImGui::MenuItem의 세 번째 인자로 bool 포인터를 전달하면 체크박스처럼 동작합니다.
                 if (ImGui::MenuItem("Asset Browser", NULL /* 단축키 없음 */ /*, &show_asset_browser */)) {
@@ -342,12 +349,17 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     ////키프레임
     //////트랜스폼
     fs::path pTargetPath = pFilePath;
-    fs::path pBasePath = fs::current_path().parent_path().parent_path();
-    pTargetPath = fs::relative(pTargetPath, pBasePath);
-    fs::path pFinalPath = "../../";
-    fs::path pFinalEnumPath = "../../";
-    pFinalPath.append(pTargetPath.replace_extension(".model").generic_wstring());
-    pFinalEnumPath.append(pTargetPath.replace_extension(".txt").generic_wstring());
+    //fs::path pBasePath = fs::current_path().parent_path().parent_path();
+    //pTargetPath = fs::relative(pTargetPath, pBasePath);
+    //fs::path pFinalPath = "../../";
+    //fs::path pFinalEnumPath = "../../";
+
+    fs::path pFinalPath = pTargetPath;
+    fs::path pFinalEnumPath = pTargetPath;
+    pFinalPath.replace_extension(".model");
+    pFinalEnumPath.replace_extension(".txt");
+    //pFinalPath.append(pTargetPath.replace_extension(".model").generic_wstring());
+    //pFinalEnumPath.append(pTargetPath.replace_extension(".txt").generic_wstring());
 
     _uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
     if (!m_bConvertAnim)

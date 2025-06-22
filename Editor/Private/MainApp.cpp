@@ -35,7 +35,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(CreateImGui()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::TEST)))
+	if (FAILED(Start_Level(LEVEL::UI)))
 		return E_FAIL;
 
 	return S_OK;
@@ -61,6 +61,7 @@ HRESULT CMainApp::Register_Class_Types()
 {
 #pragma region Components
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CSonic_Controller", CSonic_Controller::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CAshura_Controller", CAshura_Controller::Create))) return E_FAIL;
 #pragma endregion
 
 #pragma region Gameobjects

@@ -1072,7 +1072,7 @@ HRESULT CRigidBody::Create_Actor()
 			convexDesc.points.count = numVertices;
 			convexDesc.points.stride = sizeof(_float3);
 			convexDesc.points.data = vertexDataPtr;
-			convexDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
+			convexDesc.flags = PxConvexFlag::eCOMPUTE_CONVEX | PxConvexFlag::eSHIFT_VERTICES;
 
 			PxDefaultMemoryOutputStream writeBuffer;
 			PxConvexMeshCookingResult::Enum cookResult;

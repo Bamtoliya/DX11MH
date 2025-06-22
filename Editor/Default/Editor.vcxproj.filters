@@ -109,9 +109,6 @@
     <Filter Include="Imgui\Animation">
       <UniqueIdentifier>{7b85596f-46c2-405b-88cc-b536ac7c5615}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\03.Monster\Giant">
-      <UniqueIdentifier>{c7fef04f-0723-40b1-9160-7b9db8047c74}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\04.Player\Sonic\Controller">
       <UniqueIdentifier>{0ca2b876-a367-4b4e-be5a-ce466dad4c8e}</UniqueIdentifier>
     </Filter>
@@ -157,9 +154,6 @@
     <Filter Include="02.GameObject\01.Terrain\Plane">
       <UniqueIdentifier>{934a2c6d-baec-4be7-a092-c041674b867f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\03.Monster\Ashura">
-      <UniqueIdentifier>{711ee26c-85a1-447e-a4b3-5cf328c7a983}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\06.Virtual Space">
       <UniqueIdentifier>{a1486d3f-c2f6-4efb-b1ba-979c4261c290}</UniqueIdentifier>
     </Filter>
@@ -174,6 +168,51 @@
     </Filter>
     <Filter Include="02.GameObject\StageObjects\Spring">
       <UniqueIdentifier>{284ed725-f78b-413d-8c94-e54338378cc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility">
+      <UniqueIdentifier>{077dafea-1b2d-4fbf-b730-b6be343fb738}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Miniboss">
+      <UniqueIdentifier>{494e8405-5229-4213-afe1-1135b5f6a4ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Enemy">
+      <UniqueIdentifier>{737ef2a4-b2f7-43b6-abe7-61e1a4643534}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Miniboss\Ashura">
+      <UniqueIdentifier>{711ee26c-85a1-447e-a4b3-5cf328c7a983}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Miniboss\Ashura\Controller">
+      <UniqueIdentifier>{ed39d782-793e-4e78-bd76-a3f560188edd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Miniboss\Ashura\Controller\States">
+      <UniqueIdentifier>{977fea2c-2d63-4990-b49e-b46de57e2325}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Miniboss\Ashura\Controller\States\Movement">
+      <UniqueIdentifier>{7a365acf-e4ab-4eed-bd46-63ba40c46200}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Boss">
+      <UniqueIdentifier>{e37b5562-c334-4697-af10-6f57a3d31dee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Miniboss\Blade">
+      <UniqueIdentifier>{7601a30e-9c43-44c4-b085-ddf5e7f25144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Boss\Giant">
+      <UniqueIdentifier>{c7fef04f-0723-40b1-9160-7b9db8047c74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Enemy\Man">
+      <UniqueIdentifier>{35804f7b-0053-444c-b199-977aae69c556}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Enemy\Wolf">
+      <UniqueIdentifier>{b3190c26-c8cb-42a4-a9db-36979a7ff8d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Enemy\Defender">
+      <UniqueIdentifier>{c4cc741b-cd63-498b-ada1-a780eab46cfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Enemy\Controller">
+      <UniqueIdentifier>{6ad3785c-8384-4fa9-b349-97082b2b3e38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Enemy\Controller\States">
+      <UniqueIdentifier>{6c3e5487-6ec7-49f0-84f3-c92b0e02a9b8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -277,7 +316,7 @@
       <Filter>02.GameObject\01.Terrain\Island</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Ashura.cpp">
-      <Filter>02.GameObject\03.Monster\Ashura</Filter>
+      <Filter>02.GameObject\03.Monster\Miniboss\Ashura</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Virtual_Space.cpp">
       <Filter>02.GameObject\06.Virtual Space</Filter>
@@ -290,6 +329,21 @@
     </ClCompile>
     <ClCompile Include="..\private\Tutorial_Wall.cpp">
       <Filter>02.GameObject\Wall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Ashura_Controller.cpp">
+      <Filter>02.GameObject\03.Monster\Miniboss\Ashura\Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Ashura_Movement_State.cpp">
+      <Filter>02.GameObject\03.Monster\Miniboss\Ashura\Controller\States\Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Man.cpp">
+      <Filter>02.GameObject\03.Monster\Enemy\Man</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Defender.cpp">
+      <Filter>02.GameObject\03.Monster\Enemy\Defender</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Wolf.cpp">
+      <Filter>02.GameObject\03.Monster\Enemy\Wolf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -423,7 +477,7 @@
       <Filter>02.GameObject\01.Terrain\Island</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Ashura.h">
-      <Filter>02.GameObject\03.Monster\Ashura</Filter>
+      <Filter>02.GameObject\03.Monster\Miniboss\Ashura</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Virtual_Space.h">
       <Filter>02.GameObject\06.Virtual Space</Filter>
@@ -436,6 +490,24 @@
     </ClInclude>
     <ClInclude Include="..\public\Tutorial_Wall.h">
       <Filter>02.GameObject\Wall</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Ashura_Controller.h">
+      <Filter>02.GameObject\03.Monster\Miniboss\Ashura\Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Ashura_States.h">
+      <Filter>02.GameObject\03.Monster\Miniboss\Ashura\Controller\States</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Ashura_Movement_State.h">
+      <Filter>02.GameObject\03.Monster\Miniboss\Ashura\Controller\States\Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Man.h">
+      <Filter>02.GameObject\03.Monster\Enemy\Man</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Defender.h">
+      <Filter>02.GameObject\03.Monster\Enemy\Defender</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Wolf.h">
+      <Filter>02.GameObject\03.Monster\Enemy\Wolf</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -453,40 +525,40 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="..\..\ShaderFiles\Engine_Shader_Defines.hlsli">
+    <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Struct.hlsli">
       <Filter>ShaderFiles</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxPosTex.hlsl">
-      <Filter>ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Test.hlsl">
-      <Filter>ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxNorTex.hlsl">
-      <Filter>ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxMesh.hlsl">
-      <Filter>ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxCubeTex.hlsl">
-      <Filter>ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_VtxAnimMesh.hlsl">
-      <Filter>ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Struct.hlsli">
-      <Filter>ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_Terrain.hlsl">
-      <Filter>ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\Assets\ShaderFiles\Shader_DebugLine.hlsl">
-      <Filter>ShaderFiles</Filter>
-    </FxCompile>
+    <Natvis Include="NatvisFile.natvis" />
   </ItemGroup>
   <ItemGroup>
-    <Natvis Include="NatvisFile.natvis" />
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_DebugLine.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_Struct.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_Terrain.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_Test.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxAnimMesh.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxCubeTex.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxMesh.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxNorTex.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxPosTex.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

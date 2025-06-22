@@ -1,5 +1,6 @@
 #include "Ashura.h"
 #include "GameInstance.h"
+#include "Ashura_States.h"
 
 #pragma region Constructor/Destructor
 CAshura::CAshura(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -80,6 +81,9 @@ HRESULT CAshura::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	if (FAILED(Ready_States()))
+		return E_FAIL;
+
 	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
@@ -97,6 +101,9 @@ HRESULT CAshura::Initialize(simdjson::ondemand::object& jsonData)
 	if (FAILED(Deserialize(jsonData)))
 		return E_FAIL;
 
+	if (FAILED(Ready_States()))
+		return E_FAIL;
+
 	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
@@ -106,7 +113,7 @@ HRESULT CAshura::Initialize(simdjson::ondemand::object& jsonData)
 HRESULT CAshura::Ready_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxMesh"),
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
@@ -115,19 +122,58 @@ HRESULT CAshura::Ready_Components()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
-	/* For.Com_RigidBody */
-	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom))))
+	/* For.Com_Model */
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_Ashura_Collider"),
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelColliderCom))))
 		return E_FAIL;
 
+	/* For.Com_Animator */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Animator"),
+		TEXT("Com_Animator"), reinterpret_cast<CComponent**>(&m_pAnimatorCom))))
+		return E_FAIL;
+
+	/* For.Com_Controller */
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Ashura_Controller"),
+		TEXT("Com_Controller"), reinterpret_cast<CComponent**>(&m_pControllerCom))))
+		return E_FAIL;
+
+	
+	CRigidBody::RIGIDBODY_DESC rigidBodyDesc = {};
+	rigidBodyDesc.pModelForMesh = m_pModelColliderCom;
+	rigidBodyDesc.bIsConvex = false;
+	for (auto pMesh : m_pModelColliderCom->Get_Meshes())
+	{
+		CRigidBody::SHAPE_DESC shapeDesc;
+		shapeDesc.eShapeType = CRigidBody::EShapeType::TRIANGLE_MESH;
+		shapeDesc.pMesh = pMesh;
+		shapeDesc.bIsDoubleSided = false;
+		shapeDesc.bIsQueryShape = false;
+		rigidBodyDesc.vShapeDescs.push_back(shapeDesc);
+	}
+
+	/* For.Com_RigidBody */
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom), &rigidBodyDesc)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CAshura::Ready_States()
+{
+	m_pControllerCom->Add_State(CAshura_Movement_State::Create(this));
+	//m_pControllerCom->Add_State(CSonic_Combat_State::Create(this));
 	return S_OK;
 }
 
 void CAshura::Free()
 {
 	__super::Free();
+	Safe_Release(m_pControllerCom);
+	Safe_Release(m_pAnimatorCom);
 	Safe_Release(m_pRigidBodyCom);
 	Safe_Release(m_pModelCom);
+	Safe_Release(m_pModelColliderCom);
 	Safe_Release(m_pShaderCom);
 }
 
@@ -168,16 +214,23 @@ HRESULT CAshura::Prototype_Deserialize(simdjson::ondemand::object& jsonData)
 #pragma region Loops
 void CAshura::Priority_Update(_float fTimeDelta)
 {
-
+	if (m_pRigidBodyCom)
+		m_pRigidBodyCom->Priority_Update(fTimeDelta);
 }
 
 void CAshura::Update(_float fTimeDelta)
 {
-
+	if (m_pControllerCom)
+		m_pControllerCom->Update(fTimeDelta);
+	if (m_pAnimatorCom)
+		m_pAnimatorCom->Update(fTimeDelta);
 }
 
 void CAshura::Late_Update(_float fTimeDelta)
 {
+	if (m_pRigidBodyCom)
+		m_pRigidBodyCom->Late_Update(fTimeDelta);
+
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
 }
 
@@ -222,7 +275,7 @@ HRESULT CAshura::Render()
 		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 
-		//m_pModelCom->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);
+		m_pModelCom->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;

@@ -40,7 +40,6 @@ protected:
 	D3D11_BUFFER_DESC		m_VBInstanceDesc = {};
 	D3D11_SUBRESOURCE_DATA	m_VBInstanceSubresourceData = {};
 	
-
 	_uint					m_iNumIndexPerInstance = {};
 	_uint					m_iNumInstance = {};
 	_uint					m_iVertexInstanceStride = {};

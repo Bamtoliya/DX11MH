@@ -7,6 +7,7 @@ CUI_Element::CUI_Element(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CUI_Element::CUI_Element(const CUI_Element& Prototype)
 	: CGameObject{ Prototype }
+	, m_tDesc { Prototype.m_tDesc }
 {
 }
 

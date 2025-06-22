@@ -3,6 +3,7 @@
 
 #include "Sonic.h"
 #include "Sonic_Controller.h"
+#include "Ashura_Movement_State.h"
 
 using namespace Editor;
 

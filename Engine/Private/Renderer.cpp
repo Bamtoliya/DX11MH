@@ -73,7 +73,7 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	}
 
-	vector<wstring> FinalTargets = { L"RT_ObjectsOnly", L"RT_Picking" };
+	vector<wstring> FinalTargets = { L"RT_ObjectsOnly", L"RT_Picking", L"RT_FinalScene" };
 	if (FAILED(m_pGameInstance->Add_MRT(L"RT_FinalScene_Group", FinalTargets)))
 	{
 		MSG_BOX("Failed to create RT_FinalScene group");
@@ -164,6 +164,8 @@ HRESULT CRenderer::Draw()
 	
 	// Picking 타겟도 필요하다면 동일하게 처리
 	if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_FinalScene")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_ObjectsOnly")))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->End_MRT(nullptr, nullptr, {})))

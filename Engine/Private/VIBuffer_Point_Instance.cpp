@@ -100,7 +100,7 @@ HRESULT CVIBuffer_Point_Instance::Initialize_Prototype(const INSTANCE_DESC* pArg
 	m_VBInstanceDesc.StructureByteStride = m_iVertexInstanceStride;
 	m_VBInstanceDesc.MiscFlags = 0;
 
-	m_pVertexInstances = new VTXRECT_PARTICLE_INSTANCE[m_iNumInstance];
+	m_pVertexInstances = new VTXPOINT_PARTICLE_INSTANCE[m_iNumInstance];
 	m_pSpeeds = new _float[m_iNumInstance];
 
 	for (size_t i = 0; i < m_iNumInstance; i++)
@@ -201,7 +201,7 @@ void CVIBuffer_Point_Instance::Free()
 {
 	__super::Free();
 
-	if(false == m_isCloned)
+	if(false == m_bIsCloned)
 	{
 		Safe_Delete_Array(m_pVertexInstances);
 		Safe_Delete_Array(m_pSpeeds);
