@@ -14,6 +14,51 @@
     "NumTexture": 1,
     "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodeopening_ko/uiRANGE_word_title3.dds"
   },
+  "Prototype_Component_Texture_LockOnCursor1": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodestage/uiRANGE_img_lockoncursor.dds"
+  },
+  "Prototype_Component_Texture_LockOnCursor2": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodestage/uiRANGE_img_lockoncursor2.dds"
+  },
+  "Prototype_Component_Texture_IamgeEmerald": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodestage/uiRANGE_img_emerald.dds"
+  },
+  "Prototype_Component_Texture_BorderFrameEffect": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodestage/uiRANGE_img_bd_frame_eff.dds"
+  },
+  "Prototype_Component_Texture_BossLife": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodestage/uiRANGE_img_bosslife.dds"
+  },
+  "Prototype_Component_Texture_BossName": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodestage/uiRANGE_img_bossname.dds"
+  },
+  "Prototype_Component_Texture_Cockpit_Indicator1": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_ci_cmn1.dds"
+  },
+  "Prototype_Component_Texture_Cockpit_Indicator4": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_cockpitindicator4.dds"
+  },
+  "Prototype_Component_Texture_Cockpit_Indicator5": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_cockpitindicator5.dds"
+  },
   "Prototype_GameObject_BackGround": {
     "Class": "CBackGround"
   },
