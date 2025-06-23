@@ -56,6 +56,8 @@ private:
 
 private:
 	vector<_float3> m_ControlPoints;
+	vector<VTXSPLINEMODEL> m_SplinePoints;
+	_float			m_fTotalLength = { 0.f };
 	SPLINE_DESC     m_tSplineDesc;
 	_bool           m_bIsDirty = { true }; // 제어점이 변경되면 true로 설정
 };

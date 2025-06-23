@@ -158,6 +158,18 @@ namespace Engine
 		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	} VTXDEBUGDRAW;
 
+	typedef struct ENGINE_DLL tagVertexSplineModel
+	{
+		XMFLOAT3	vPosition;
+		XMFLOAT3	vTangent;
+		XMFLOAT3	vNormal;
+		XMFLOAT3	vBinormal;
+		float		fTotalLength;
+
+		static const unsigned int					iNumElements = { 5 };
+		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
+	} VTXSPLINEMODEL;
+
 	typedef struct ENGINE_DLL tagVertexPositionTexcoord
 	{
 		XMFLOAT3		vPosition;

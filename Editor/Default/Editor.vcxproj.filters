@@ -214,6 +214,9 @@
     <Filter Include="02.GameObject\03.Monster\Enemy\Controller\States">
       <UniqueIdentifier>{6c3e5487-6ec7-49f0-84f3-c92b0e02a9b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Spline">
+      <UniqueIdentifier>{9f18bad8-45eb-4f55-b4aa-f1efd82d0035}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -345,6 +348,7 @@
     <ClCompile Include="..\private\Wolf.cpp">
       <Filter>02.GameObject\03.Monster\Enemy\Wolf</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Rail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor.h">
@@ -509,6 +513,7 @@
     <ClInclude Include="..\public\Wolf.h">
       <Filter>02.GameObject\03.Monster\Enemy\Wolf</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Rail.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Editor.ico">
