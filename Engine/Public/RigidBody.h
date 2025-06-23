@@ -122,6 +122,9 @@ private:
     void Synchronize_Transform_To_Physics(); // CTransform -> PxActor
     void Synchronize_Physics_To_Transform(); // PxActor -> CTransform
 
+public:
+    HRESULT Create_Colliders_Along_Spline(class CSpline_Component* pSplineComponent, _float fRadius = 0.5f);
+
 private:
     PxRigidActor*           m_pActor = nullptr;           // PhysX 액터 (Static 또는 Dynamic)
     vector<PxShape*>        m_pShapes = {};           // PhysX 충돌 형태

@@ -485,6 +485,15 @@
     <ClInclude Include="..\public\Button.h">
       <Filter>01.Utility\98.UI\Button</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Spline_Component.h">
+      <Filter>01.Utility\04.Components\Spline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Spline.h">
+      <Filter>01.Utility\04.Components\VIBuffer\Spline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameObject_Spline.h">
+      <Filter>01.Utility\03.GameObject\Base\Spline</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -902,6 +911,15 @@
     <ClCompile Include="..\private\Button.cpp">
       <Filter>01.Utility\98.UI\Button</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Spline_Component.cpp">
+      <Filter>01.Utility\04.Components\Spline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Spline.cpp">
+      <Filter>01.Utility\04.Components\VIBuffer\Spline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameObject_Spline.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Spline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -1200,6 +1218,18 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\RigidBody\HeightField">
       <UniqueIdentifier>{77276ddb-5bee-4b7d-b712-d6d183f996b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\Spline">
+      <UniqueIdentifier>{d15b35eb-33c5-4cf0-9071-52c39f5a6c38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\VIBuffer\Spline">
+      <UniqueIdentifier>{e76c89a9-9a02-44f9-98e7-a2e3e3112308}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Spline">
+      <UniqueIdentifier>{c4b64106-56e1-43ee-9e20-7f849a87fa31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Spline\Model">
+      <UniqueIdentifier>{4c5138b2-a41d-4755-91f9-da0ac862a1c1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

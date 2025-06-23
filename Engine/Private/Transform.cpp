@@ -588,8 +588,8 @@ HRESULT CTransform::Bind_ShaderResource(CShader* pShader, const _char* pConstant
 		_float4x4 finalMatrixToBind;
 		XMStoreFloat4x4(&finalMatrixToBind, scaledLocalMatrix); // 우선 객체의 월드 행렬 사용
 		// 만약 pVIBuffer 스케일을 여기에 곱한다면:
-		// _matrix finalMatrixWithBufferScale = vibufferScaleMatrix * transformWorldMatrix;
-		// XMStoreFloat4x4(&finalMatrixToBind, finalMatrixWithBufferScale);
+		_matrix finalMatrixWithBufferScale = vibufferScaleMatrix * transformWorldMatrix;
+		XMStoreFloat4x4(&finalMatrixToBind, finalMatrixWithBufferScale);
 		return pShader->Bind_Matrix(pConstantName, &finalMatrixToBind);
 	}
 

@@ -72,14 +72,17 @@ HRESULT CJson_Loader::Initialize() {
     RegisterBaseCreator<CController>("CController");
     RegisterBaseCreator<CAnimator>("CAnimator");
     RegisterBaseCreator<CTextureArray>("CTextureArray");
+    RegisterBaseCreator<CSpline_Component>("CSpline_Component");
     //RegisterBaseCreator<CCollider>("CColider");
     RegisterBaseCreator<CRigidBody>("CRigidBody");
     RegisterBaseCreator<CHeightField>("CHeightField");
+
 
 #pragma region VIBuffer
     RegisterBaseCreator<CVIBuffer_Rect>("CVIBuffer_Rect");
     RegisterBaseCreator<CVIBuffer_Cube>("CVIBuffer_Cube");
     RegisterBaseCreator<CVIBuffer_Terrain>("CVIBuffer_Terrain");
+    RegisterBaseCreator<CVIBuffer_Spline>("CVIBuffer_Spline");
 #pragma endregion
     
 #pragma endregion
@@ -88,6 +91,7 @@ HRESULT CJson_Loader::Initialize() {
     RegisterBaseCreator<CLight_Point>("CLight_Point");
     RegisterBaseCreator<CLight_Direction>("CLight_Direction");
     RegisterBaseCreator<CGameObject_Skybox>("CGameObject_Skybox");
+    RegisterBaseCreator<CGameObject_Spline>("CGameObject_Spline");
 #pragma endregion
 
     return S_OK;

@@ -19,6 +19,11 @@
     "Layout": "VTXANIMMESH",
     "ShaderPath": "../../Assets/ShaderFiles/Shader_VtxAnimMesh.hlsl"
   },
+  "Prototype_Component_Shader_Cell": {
+    "Class": "CShader",
+    "Layout": "VTXPOS",
+    "ShaderPath": "../../Assets/ShaderFiles/Shader_Cell.hlsl"
+  },
   "Prototype_Component_Shader_VtxMesh": {
     "Class": "CShader",
     "Layout": "VTXMESH",
@@ -54,6 +59,9 @@
   },
   "Prototype_Component_VIBuffer_Cube": {
     "Class": "CVIBuffer_Cube"
+  },
+  "Prototype_Component_VIBuffer_Spline": {
+    "Class": "CVIBuffer_Spline"
   },
   "Prototype_Component_Shader_Terrain": {
     "Class": "CShader",

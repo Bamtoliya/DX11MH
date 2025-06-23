@@ -31,6 +31,11 @@
 //#include ""
 #pragma endregion
 
+#pragma region Spline
+#include "Spline_Component.h"
+#pragma endregion
+
+
 #pragma region RigidBody
 #include "RigidBody.h"
 #include "HeightField.h"
@@ -65,6 +70,7 @@
 #include "VIBuffer_Cube.h"
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Terrain.h"
+#include "VIBuffer_Spline.h"
 //#include "VIBuffer_Capsule.h"
 //#include "VIBuffer_Sphere.h"
 #pragma endregion

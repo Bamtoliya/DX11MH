@@ -183,7 +183,9 @@
     ],
     "Type": "NONANIM"
   },
-
+  "Prototype_Component_Spline": {
+    "Class": "CSpline_Component"
+  },
   "Prototype_Component_RigidBody": {
     "Class": "CRigidBody"
   },
@@ -283,6 +285,9 @@
   },
   "Prototype_GameObject_Sonic": {
     "Class": "CSonic"
+  },
+  "Prototype_GameObject_Spline": {
+    "Class": "CGameObject_Spline"
   },
   "Prototype_Component_HeightField": {
     "Class": "CHeightField"

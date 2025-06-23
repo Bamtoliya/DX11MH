@@ -537,6 +537,32 @@ HRESULT CRigidBody::RenderImGui()
 			ImGui::Text("Linear Velocity: (%.2f, %.2f, %.2f)", linearVel.x, linearVel.y, linearVel.z);
 			ImGui::Text("Angular Velocity: (%.2f, %.2f, %.2f)", angularVel.x, angularVel.y, angularVel.z);
 		}
+
+		if (ImGui::TreeNode("Spline Collider Generation"))
+		{
+			static _float splineColliderRadius = 0.5f;
+			ImGui::DragFloat("Collider Radius", &splineColliderRadius, 0.01f, 0.01f, 10.0f);
+
+			if (m_pOwner)
+			{
+				// 소유자 오브젝트에서 스플라인 컴포넌트 찾기
+				CSpline_Component* pSpline = static_cast<CSpline_Component*>(m_pOwner->Get_Component(TEXT("Com_Spline")));
+
+				if (pSpline)
+				{
+					if (ImGui::Button("Generate Colliders From Spline"))
+					{
+						Create_Colliders_Along_Spline(pSpline, splineColliderRadius);
+					}
+				}
+				else
+				{
+					ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "No Spline Component Found");
+				}
+			}
+
+			ImGui::TreePop();
+		}
 	}
 	ImGui::PopID();
 	return S_OK;
@@ -1255,6 +1281,90 @@ void CRigidBody::Synchronize_Physics_To_Transform()
 
 	// CTransform의 오일러 각도도 동기화 (선택 사항, Set_WorldMatrix 내부에서 처리될 수 있음)
 	// pTransform->SynchronizeRotationRepresentations(); // CTransform에 이런 함수가 있다면 호출
+}
+
+HRESULT CRigidBody::Create_Colliders_Along_Spline(CSpline_Component* pSplineComponent, _float fRadius)
+{
+	if (!pSplineComponent)
+		return E_FAIL;
+
+	// 스플라인 포인트 가져오기
+	vector<_float3> splinePoints = pSplineComponent->GetSplinePoints();
+
+	// 포인트가 너무 적으면 콜라이더를 생성할 수 없음
+	if (splinePoints.size() < 2)
+		return E_FAIL;
+
+	// 기존 쉐이프 클리어
+	m_tRigidBodyDesc.vShapeDescs.clear();
+
+	// 스플라인 포인트 사이에 캡슐 콜라이더 생성
+	for (size_t i = 0; i < splinePoints.size() - 1; ++i)
+	{
+		const _float3& p1 = splinePoints[i];
+		const _float3& p2 = splinePoints[i + 1];
+
+		// 두 점 사이의 거리와 방향 계산
+		_float3 direction;
+		XMStoreFloat3(&direction, XMVectorSubtract(XMLoadFloat3(&p2), XMLoadFloat3(&p1)));
+
+		_float length = XMVectorGetX(XMVector3Length(XMLoadFloat3(&direction)));
+
+		// 너무 짧은 세그먼트는 무시
+		if (length < 0.01f)
+			continue;
+
+		// 캡슐의 중앙 위치 계산
+		_float3 center;
+		XMStoreFloat3(&center, XMVectorScale(XMVectorAdd(XMLoadFloat3(&p1), XMLoadFloat3(&p2)), 0.5f));
+
+		// 캡슐의 방향을 위한 회전 계산
+		_float3 upVector = _float3(0.0f, 1.0f, 0.0f);
+		_vector directionVec = XMVector3Normalize(XMLoadFloat3(&direction));
+		_vector upVec = XMLoadFloat3(&upVector);
+
+		// directionVec과 upVec 사이의 회전을 계산
+		_vector rotationQuat = XMQuaternionRotationMatrix(
+			XMMatrixLookToRH(XMVectorZero(), directionVec, upVec)
+		);
+
+		// 캡슐 콜라이더 생성
+		SHAPE_DESC capsuleDesc;
+		capsuleDesc.eShapeType = EShapeType::CAPSULE;
+		capsuleDesc.vShapeSize = _float3(fRadius, length * 0.5f, 0.0f); // x: 반지름, y: 높이의 절반
+		capsuleDesc.vLocalPosition = center;
+		XMStoreFloat4(&capsuleDesc.qRotation, rotationQuat);
+
+		// 오일러 각도 계산 (나중에 ImGui에서 편집할 수 있도록)
+		_vector rotationVec;
+		XMStoreFloat4(&capsuleDesc.qRotation, rotationQuat);
+		XMMATRIX rotMatrix = XMMatrixRotationQuaternion(rotationQuat);
+
+		// 행렬에서 오일러 각도 추출
+		_float pitch, yaw, roll;
+		roll = atan2f(XMVectorGetX(rotMatrix.r[1]), XMVectorGetY(rotMatrix.r[1]));
+		pitch = asinf(-XMVectorGetZ(rotMatrix.r[1]));
+		yaw = atan2f(XMVectorGetZ(rotMatrix.r[0]), XMVectorGetZ(rotMatrix.r[2]));
+
+		capsuleDesc.fCurRotationX = pitch;
+		capsuleDesc.fCurRotationY = yaw;
+		capsuleDesc.fCurRotationZ = roll;
+
+		// 이 형태는 일반적인 충돌 검사용
+		capsuleDesc.bIsQueryShape = true;
+
+		// 콜라이더 추가
+		m_tRigidBodyDesc.vShapeDescs.push_back(capsuleDesc);
+	}
+
+	// 리지드바디가 이미 초기화되었다면 액터 재생성
+	if (m_bLateInitialized)
+	{
+		Release_Actor();
+		return Create_Actor();
+	}
+
+	return S_OK;
 }
 
 #pragma endregion
