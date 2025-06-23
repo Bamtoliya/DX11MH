@@ -54,6 +54,12 @@ private:
 	// Catmull-Rom 보간 함수
 	_float3 CatmullRom(const _float3& P0, const _float3& P1, const _float3& P2, const _float3& P3, _float t);
 
+public:
+	// 계산된 프레임과 총 길이를 반환하는 함수
+	const vector<VTXSPLINEMODEL>& GetSplineFrames() const { return m_SplinePoints; }
+	_float GetTotalLength() const { return m_fTotalLength; }
+	void UpdateSplineFrames(); // 프레임 계산을 위한 함수
+
 private:
 	vector<_float3> m_ControlPoints;
 	vector<VTXSPLINEMODEL> m_SplinePoints;

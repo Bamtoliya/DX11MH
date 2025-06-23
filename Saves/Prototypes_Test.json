@@ -183,6 +183,29 @@
     ],
     "Type": "NONANIM"
   },
+  "Prototype_Component_Model_GrindRail": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Objects/GrindRail/Rail.fbx",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "NONANIM"
+  },
   "Prototype_Component_Spline": {
     "Class": "CSpline_Component"
   },
