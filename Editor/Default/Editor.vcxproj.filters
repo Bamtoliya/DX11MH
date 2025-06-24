@@ -572,5 +572,8 @@
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxPosTex.hlsl">
       <Filter>ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_SplineModel.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

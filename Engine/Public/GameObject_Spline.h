@@ -42,6 +42,8 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 public:
 	virtual HRESULT Render() override;
+private:
+	HRESULT UpdateSplineBuffer();
 #pragma endregion
 
 public:
@@ -56,5 +58,8 @@ protected:
 	CModel*				m_pModelCom = { nullptr };
 	CVIBuffer_Spline*	m_pVIBufferCom = { nullptr };
 	CSpline_Component*	m_pSplineCom = { nullptr };
+
+	ID3D11Buffer*				m_pSplineDataBuffer = { nullptr };
+	ID3D11ShaderResourceView*	m_pSplineDataSRV = { nullptr };
 };
 NS_END

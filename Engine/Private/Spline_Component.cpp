@@ -281,50 +281,49 @@ _float3 CSpline_Component::CatmullRom(const _float3& P0, const _float3& P1, cons
 
 void CSpline_Component::UpdateSplineFrames()
 {
-	m_SplinePoints.clear();
+	m_SplineFrames.clear();
 	m_fTotalLength = 0.f;
 
 	if (m_ControlPoints.size() < 4)
 		return;
 
-	vector<_float3> vPoints = GetSplinePoints();
-	if (vPoints.size() < 2)
+	vector<_float3> vFrames = GetSplinePoints();
+	if (vFrames.size() < 2)
 		return;
 
-	m_SplinePoints.resize(vPoints.size());
+	m_SplineFrames.resize(vFrames.size());
 
 	// 1. Tangent 계산
-	for (size_t i = 0; i < vPoints.size() - 1; ++i)
+	for (size_t i = 0; i < vFrames.size() - 1; ++i)
 	{
-		m_SplinePoints[i].vPosition = vPoints[i];
-		XMStoreFloat3(&m_SplinePoints[i].vTangent, XMVector3Normalize(XMLoadFloat3(&vPoints[i + 1]) - XMLoadFloat3(&vPoints[i])));
+		m_SplineFrames[i].vPosition = vFrames[i];
+		XMStoreFloat3(&m_SplineFrames[i].vTangent, XMVector3Normalize(XMLoadFloat3(&vFrames[i + 1]) - XMLoadFloat3(&vFrames[i])));
 	}
 	// 마지막 점의 Tangent는 그 전의 Tangent를 그대로 사용
-	m_SplinePoints.back().vPosition = vPoints.back();
-	m_SplinePoints.back().vTangent = m_SplinePoints[vPoints.size() - 2].vTangent;
+	m_SplineFrames.back().vPosition = vFrames.back();
+	m_SplineFrames.back().vTangent = m_SplineFrames[vFrames.size() - 2].vTangent;
 
 	// 2. Normal, Binormal 계산 (간단한 버전: "Up" 벡터 사용)
 	_vector vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	_vector vLastNormal = vUp;
 
-	for (size_t i = 0; i < vPoints.size(); ++i)
+	for (size_t i = 0; i < vFrames.size(); ++i)
 	{
-		_vector T = XMLoadFloat3(&m_SplinePoints[i].vTangent);
+		_vector T = XMLoadFloat3(&m_SplineFrames[i].vTangent);
 		_vector B = XMVector3Normalize(XMVector3Cross(T, vLastNormal)); // Binormal
 		_vector N = XMVector3Normalize(XMVector3Cross(B, T));         // Normal
 
-		XMStoreFloat3(&m_SplinePoints[i].vBinormal, B);
-		XMStoreFloat3(&m_SplinePoints[i].vNormal, N);
+		XMStoreFloat3(&m_SplineFrames[i].vBinormal, B);
+		XMStoreFloat3(&m_SplineFrames[i].vNormal, N);
 		vLastNormal = N; // 다음 계산을 위해 현재 Normal을 저장
 	}
 
 	// 3. 누적 길이 계산
-	m_SplinePoints[0].fTotalLength = 0.f;
-	for (size_t i = 1; i < vPoints.size(); ++i)
+	m_SplineFrames[0].fTotalLength = 0.f;
+	for (size_t i = 1; i < vFrames.size(); ++i)
 	{
-		_float fDistance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&vPoints[i]) - XMLoadFloat3(&vPoints[i - 1])));
-		m_SplinePoints[i].fTotalLength = m_SplinePoints[i - 1].fTotalLength + fDistance;
+		_float fDistance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&vFrames[i]) - XMLoadFloat3(&vFrames[i - 1])));
+		m_SplineFrames[i].fTotalLength = m_SplineFrames[i - 1].fTotalLength + fDistance;
 	}
-	m_fTotalLength = m_SplinePoints.back().fTotalLength;
+	m_fTotalLength = m_SplineFrames.back().fTotalLength;
 }
-

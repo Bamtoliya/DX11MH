@@ -108,9 +108,10 @@ HRESULT CGameObject_Spline::Initialize(simdjson::ondemand::object& jsonData)
 HRESULT CGameObject_Spline::Ready_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_Cell"),
+	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_VtxSplineModel"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
+
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_VIBuffer_Spline"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
@@ -130,10 +131,10 @@ HRESULT CGameObject_Spline::Ready_Components()
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom), &rigidBodyDesc)))
 		return E_FAIL;
 
-	///* For.Com_Model */
-	//if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_Test"),
-	//	TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-	//	return E_FAIL;
+	/* For.Com_Model */
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_GrindRail"),
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+		return E_FAIL;
 
 
 	return S_OK;
@@ -193,15 +194,16 @@ void CGameObject_Spline::Update(_float fTimeDelta)
 {
 	if (m_pSplineCom && m_pVIBufferCom && m_pSplineCom->IsDirty())
 	{
-		vector<_float3> vPoints = m_pSplineCom->GetSplinePoints();
-		m_pVIBufferCom->Update_Spline(vPoints);
+		//vector<_float3> vPoints = m_pSplineCom->GetSplinePoints();
+		//m_pVIBufferCom->Update_Spline(vPoints);
 
+		m_pSplineCom->UpdateSplineFrames();
+		UpdateSplineBuffer();
 		// 스플라인이 변경되면 콜라이더도 업데이트
 		if (m_pRigidBodyCom)
 		{
-			m_pRigidBodyCom->Create_Colliders_Along_Spline(m_pSplineCom, 0.5f); // 기본 반지름 0.5f
+			m_pRigidBodyCom->Create_Colliders_Along_Spline(m_pSplineCom, 0.25f); // 기본 반지름 0.25f
 		}
-
 		m_pSplineCom->SetDirty(false);
 	}
 }
@@ -220,11 +222,26 @@ HRESULT CGameObject_Spline::Bind_ShaderResources()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &m_oID, sizeof(_uint))))
+		return E_FAIL;
+
+	// 여기에 우리가 추가한 데이터들을 바인딩합니다.
+	if (m_pSplineDataSRV)
+	{
+		m_pShaderCom->Bind_SRV("g_SplineData", m_pSplineDataSRV);
+	}
+
+	_float fModelLength = 0.196f; //m_pSplineCom->GetTotalLength();
+	if (fModelLength <= 0.0f) fModelLength = 1.0f; // 0 이하인 경우 기본값 사용
+
+	m_pShaderCom->Bind_RawValue("g_fModelLength", &fModelLength, sizeof(_float));
+	_uint iNumFrames = (_uint)m_pSplineCom->GetSplineFrames().size();
+	m_pShaderCom->Bind_RawValue("g_iNumSplineFrames", &iNumFrames, sizeof(_uint));
 
 	// 라인 색상 설정 (예: 빨간색)
-	_float4 vColor = _float4(1.f, 0.f, 0.f, 1.f);
+	/*_float4 vColor = _float4(1.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	return S_OK;
 	/*if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
@@ -259,32 +276,63 @@ HRESULT CGameObject_Spline::Render()
 		return S_OK;
 	//Bind_ShaderResources();
 
-	//_uint		iNumMesh = m_pModelCom->Get_NumMeshes();
-
-	//for (_uint i = 0; i < iNumMesh; i++)
-	//{
-	//	if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
-	//		return E_FAIL;
-
-	//	//m_pModelCom->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);
-
-	//	if (FAILED(m_pShaderCom->Begin(0)))
-	//		return E_FAIL;
-
-	//	if (FAILED(m_pModelCom->Render(i)))
-	//		return E_FAIL;
-	//}
-
-	if (m_pVIBufferCom == nullptr || m_pVIBufferCom->Get_NumVertices() == 0)
-		return S_OK;
-
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Begin(0)))
+	_uint		iNumMesh = m_pModelCom->Get_NumMeshes();
+	for (_uint i = 0; i < iNumMesh; i++)
+	{
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
+			return E_FAIL;
+		//m_pModelCom->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);
+		if (FAILED(m_pShaderCom->Begin(0)))
+			return E_FAIL;
+		if (FAILED(m_pModelCom->Render(i)))
+			return E_FAIL;
+	}
+
+	/*if (m_pVIBufferCom == nullptr || m_pVIBufferCom->Get_NumVertices() == 0)
+		return S_OK;*/
+
+	//if (FAILED(Bind_ShaderResources()))
+	//	return E_FAIL;
+	//
+	//if (FAILED(m_pShaderCom->Begin(0)))
+	//	return E_FAIL;
+	//	
+	//if (FAILED(m_pVIBufferCom->Render()))
+	//	return E_FAIL;
+
+	return S_OK;
+}
+HRESULT CGameObject_Spline::UpdateSplineBuffer()
+{
+	// 기존 버퍼 해제
+	Safe_Release(m_pSplineDataSRV);
+	Safe_Release(m_pSplineDataBuffer);
+
+	const auto& frames = m_pSplineCom->GetSplineFrames();
+	if (frames.empty())
+		return S_OK;
+
+	// 버퍼 생성
+	D3D11_BUFFER_DESC bufferDesc;
+	ZeroMemory(&bufferDesc, sizeof(D3D11_BUFFER_DESC));
+	bufferDesc.ByteWidth = sizeof(CSpline_Component::SPLINE_FRAME) * (_uint)frames.size();
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	bufferDesc.StructureByteStride = sizeof(CSpline_Component::SPLINE_FRAME);
+
+	D3D11_SUBRESOURCE_DATA subData;
+	ZeroMemory(&subData, sizeof(D3D11_SUBRESOURCE_DATA));
+	subData.pSysMem = frames.data();
+
+	if (FAILED(m_pDevice->CreateBuffer(&bufferDesc, &subData, &m_pSplineDataBuffer)))
 		return E_FAIL;
-		
-	if (FAILED(m_pVIBufferCom->Render()))
+
+	// SRV 생성
+	if (FAILED(m_pDevice->CreateShaderResourceView(m_pSplineDataBuffer, nullptr, &m_pSplineDataSRV)))
 		return E_FAIL;
 
 	return S_OK;

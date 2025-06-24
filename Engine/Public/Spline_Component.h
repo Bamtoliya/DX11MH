@@ -5,6 +5,14 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CSpline_Component : public CComponent
 {
 public:
+	typedef struct tagSplineFrame
+	{
+		_float3 vPosition;
+		_float3 vTangent;
+		_float3 vNormal;
+		_float3 vBinormal;
+		_float  fTotalLength;
+	}SPLINE_FRAME;
 	typedef struct tagSplineDesc
 	{
 		// 한 제어점 구간을 몇 개의 정점으로 나눌지 결정합니다. 높을수록 곡선이 부드러워집니다.
@@ -56,16 +64,15 @@ private:
 
 public:
 	// 계산된 프레임과 총 길이를 반환하는 함수
-	const vector<VTXSPLINEMODEL>& GetSplineFrames() const { return m_SplinePoints; }
+	const vector<SPLINE_FRAME>& GetSplineFrames() const { return m_SplineFrames; }
 	_float GetTotalLength() const { return m_fTotalLength; }
 	void UpdateSplineFrames(); // 프레임 계산을 위한 함수
-
 private:
 	vector<_float3> m_ControlPoints;
-	vector<VTXSPLINEMODEL> m_SplinePoints;
+	vector<SPLINE_FRAME> m_SplineFrames;
 	_float			m_fTotalLength = { 0.f };
 	SPLINE_DESC     m_tSplineDesc;
-	_bool           m_bIsDirty = { true }; // 제어점이 변경되면 true로 설정
+	_bool           m_bIsDirty = { true };
 };
 
 NS_END
