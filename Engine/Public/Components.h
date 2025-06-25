@@ -23,14 +23,6 @@
 #include "Transform.h"
 #pragma endregion
 
-#pragma region Particle
-#include "Particle_System.h"
-#pragma endregion
-
-#pragma region MyRegion
-//#include ""
-#pragma endregion
-
 #pragma region Spline
 #include "Spline_Component.h"
 #pragma endregion
@@ -71,8 +63,10 @@
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Terrain.h"
 #include "VIBuffer_Spline.h"
-//#include "VIBuffer_Capsule.h"
-//#include "VIBuffer_Sphere.h"
+#include "VIBuffer_Instance.h"
+#include "VIBuffer_Rect_Instance.h"
+#include "VIBuffer_Point_Instance.h"
+#include "VIBuffer_Mesh_Instance.h"	
 #pragma endregion
 
 #pragma region Model

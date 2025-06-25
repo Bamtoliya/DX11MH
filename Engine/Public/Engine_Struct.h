@@ -2,17 +2,19 @@
 
 namespace Engine
 {
-	typedef struct tagEngineDesc 
+#pragma region EngineDesc
+	typedef struct tagEngineDesc
 	{
 		HINSTANCE		hInstance;
 		HWND			hWnd;
 		bool			isWindowed;
 		unsigned int	iWinSizeX;
 		unsigned int	iWinSizeY;
-		unsigned int	iNumLevels;		
+		unsigned int	iNumLevels;
 	}ENGINE_DESC;
+#pragma endregion
 
-#pragma region VIBuffer
+#pragma region PhysxDebug
 
 	typedef struct tagPhysXDebugLine
 	{
@@ -28,52 +30,7 @@ namespace Engine
 		XMFLOAT3 vP2;
 		XMFLOAT4 vColor;
 	} DEBUG_TRIANGLE;
-
-	typedef struct tagLineIndices16
-	{
-		unsigned short		_0, _1;
-	}LINEINDICES16;
-
-	typedef struct tagLineIndices32
-	{
-		unsigned long		_0, _1;
-	}LINEINDICES32;
-
-	typedef struct tagFaceIndices16
-	{
-		unsigned short		_0, _1, _2;
-	}FACEINDICES16;
-
-	typedef struct tagFaceIndices32
-	{
-		unsigned long		_0, _1, _2;
-	}FACEINDICES32;
-
-	typedef struct tagVertexTexture {
-		XMFLOAT3		vPosition;
-		XMFLOAT2		vTextureCoord;
-	}VTXTEX;
 #pragma endregion
-
-
-
-
-	typedef struct tagParticleAttribute
-	{
-		XMFLOAT3		vPosition;
-		XMFLOAT3		vVelocity;
-		XMFLOAT3		vAcceleration;
-		float			fSize;
-		float			fLifetime;
-		float			fAge;
-		XMFLOAT4		vCurrentColor;
-		XMFLOAT4		vInitialColor;
-		XMFLOAT4		vColorFade;
-		bool			bIsAlive;
-		unsigned int	iIndex;
-		XMFLOAT3		vDir;
-		float fFrameProgress = 0.0f;
-	} ATTRIBUTE;
 
 #pragma region Animation
 	typedef struct tagKeyFrame
@@ -114,8 +71,7 @@ namespace Engine
 	} BLEND_PARAM;
 #pragma endregion
 
-	
-
+#pragma region Light
 	typedef struct tagLightDesc
 	{
 		enum TYPE { TYPE_DIRECTIONAL, TYPE_POINT, TYPE_END };
@@ -129,7 +85,9 @@ namespace Engine
 		XMFLOAT4			vAmbient;
 		XMFLOAT4			vSpecular;
 	}LIGHT_DESC;
+#pragma endregion
 
+#pragma region VTX Structures
 	/* 화면에 그려야하는 최종적인 색 = Light.Diffuse * 재질.Diffuse */
 	typedef struct ENGINE_DLL tagVertexPosition
 	{
@@ -144,9 +102,6 @@ namespace Engine
 		XMFLOAT3		vPosition;
 		XMFLOAT2		vPSize;		
 	}VTXPOINT;
-
-
-#pragma region VTX Structures
 
 	typedef struct ENGINE_DLL tagVertexDebugDraw
 	{
@@ -258,5 +213,5 @@ namespace Engine
 		static const unsigned int					iNumElements = { 6 };
 		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	}VTXPOS_PARTICLE_INSTANCE;
-
+#pragma endregion
 }

@@ -6,6 +6,7 @@ class CModel;
 class CRigidBody;
 class CVIBuffer_Spline;
 class CSpline_Component;
+class CVIBuffer_Mesh_Instance;
 class ENGINE_DLL CGameObject_Spline : public CGameObject
 {
 #pragma region Constructor/Destructor
@@ -42,24 +43,19 @@ public:
 	virtual void Late_Update(_float fTimeDelta) override;
 public:
 	virtual HRESULT Render() override;
-private:
-	HRESULT UpdateSplineBuffer();
 #pragma endregion
 
+#pragma region Collision
 public:
 	virtual void OnCollisionEnter(PxActor* pOther, const PxContactPair& cp) override;
 	virtual void OnCollisionOverlapping(PxActor* pOther)  override;
 	virtual void OnCollisionExit(PxActor* pOther)  override;
+#pragma endregion
 
 protected:
 	CShader*			m_pShaderCom = { nullptr };
-	//CShader*			m_pShaderCom = { nullptr };
 	CRigidBody*			m_pRigidBodyCom = { nullptr };
-	CModel*				m_pModelCom = { nullptr };
 	CVIBuffer_Spline*	m_pVIBufferCom = { nullptr };
 	CSpline_Component*	m_pSplineCom = { nullptr };
-
-	ID3D11Buffer*				m_pSplineDataBuffer = { nullptr };
-	ID3D11ShaderResourceView*	m_pSplineDataSRV = { nullptr };
 };
 NS_END

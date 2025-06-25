@@ -4,8 +4,8 @@ sampler DefaultSampler = sampler_state
     filter = min_mag_mip_linear;
     AddressU = wrap;
     AddressV = wrap;
-
 };
+
 
 sampler PointSampler = sampler_state
 {

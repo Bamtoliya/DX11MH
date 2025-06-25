@@ -1,0 +1,12 @@
+{
+  "Prototype_Component_VIBuffer_Rect": {
+    "Class": "CVIBuffer_Rect"
+  },
+  "Prototype_Component_VIBuffer_Cube": {
+    "Class": "CVIBuffer_Cube"
+  },
+  "Prototype_Component_VIBuffer_Spline": {
+    "Class": "CVIBuffer_Spline"
+  },
+
+}

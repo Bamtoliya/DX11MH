@@ -215,18 +215,6 @@
     <ClInclude Include="..\Public\Material.h">
       <Filter>01.Utility\08.Material</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Particle_Manager.h">
-      <Filter>01.Utility\04.Components\Particle\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Particle_System.h">
-      <Filter>01.Utility\04.Components\Particle</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Bounding_Box.h">
-      <Filter>01.Utility\04.Components\Particle\Bounding</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Bounding_Sphere.h">
-      <Filter>01.Utility\04.Components\Particle\Bounding</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\External Libraries\simdjson.h">
       <Filter>External Libraries\json\simdjson</Filter>
     </ClInclude>
@@ -494,6 +482,15 @@
     <ClInclude Include="..\public\GameObject_Spline.h">
       <Filter>01.Utility\03.GameObject\Base\Spline</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Mesh_Instance.h">
+      <Filter>01.Utility\04.Components\VIBuffer\Instance\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameObject_SplineMesh.h">
+      <Filter>01.Utility\03.GameObject\Base\Spline\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameObject_Mesh_Instance.h">
+      <Filter>01.Utility\03.GameObject\Base\InstanceTest</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -658,12 +655,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Texture.cpp">
       <Filter>01.Utility\04.Components\Texture</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Particle_System.cpp">
-      <Filter>01.Utility\04.Components\Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Particle_Manager.cpp">
-      <Filter>01.Utility\04.Components\Particle\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GameObject_Camera.cpp">
       <Filter>01.Utility\03.GameObject\Camera</Filter>
@@ -920,6 +911,15 @@
     <ClCompile Include="..\private\GameObject_Spline.cpp">
       <Filter>01.Utility\03.GameObject\Base\Spline</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Mesh_Instance.cpp">
+      <Filter>01.Utility\04.Components\VIBuffer\Instance\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameObject_SplineMesh.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Spline\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameObject_Mesh_Instance.cpp">
+      <Filter>01.Utility\03.GameObject\Base\InstanceTest</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -1062,15 +1062,6 @@
     </Filter>
     <Filter Include="External Libraries\json\simdjson">
       <UniqueIdentifier>{ec543cab-41f1-433b-bc47-b4da175eca4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\04.Components\Particle">
-      <UniqueIdentifier>{8087e3ee-0e8c-44ec-b548-4359a1e56d4c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\04.Components\Particle\Manager">
-      <UniqueIdentifier>{f744a8c4-45a0-4862-b480-af3360b03fd5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\04.Components\Particle\Bounding">
-      <UniqueIdentifier>{c30c4214-357b-4065-85b1-ed7461448808}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.GameObject\Camera\Free_Camera">
       <UniqueIdentifier>{5d46fd64-1d31-4d5e-bd7b-c081906743cd}</UniqueIdentifier>
@@ -1230,6 +1221,15 @@
     </Filter>
     <Filter Include="01.Utility\03.GameObject\Base\Spline\Model">
       <UniqueIdentifier>{4c5138b2-a41d-4755-91f9-da0ac862a1c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\VIBuffer\Instance\Mesh">
+      <UniqueIdentifier>{1a053284-76ff-4430-90fe-1d7b35d4f7ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Spline\Line">
+      <UniqueIdentifier>{4b2b6ffc-86dc-41a0-84d7-59b84299b248}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\InstanceTest">
+      <UniqueIdentifier>{69fdbad6-4837-4cf1-bba2-5c805936cb16}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

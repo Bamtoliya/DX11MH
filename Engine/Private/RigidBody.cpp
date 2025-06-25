@@ -1336,7 +1336,6 @@ HRESULT CRigidBody::Create_Colliders_Along_Spline(CSpline_Component* pSplineComp
 		XMStoreFloat4(&capsuleDesc.qRotation, rotationQuat);
 
 		// 오일러 각도 계산 (나중에 ImGui에서 편집할 수 있도록)
-		_vector rotationVec;
 		XMStoreFloat4(&capsuleDesc.qRotation, rotationQuat);
 		XMMATRIX rotMatrix = XMMatrixRotationQuaternion(rotationQuat);
 

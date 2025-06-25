@@ -22,17 +22,26 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Editor", "Editor\Default\Ed
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Saves", "Saves", "{7F87CCC8-780F-430F-BD6B-F00BA3926528}"
 	ProjectSection(SolutionItems) = preProject
-		Assets\Saves\Follow_Test.json = Assets\Saves\Follow_Test.json
-		Assets\Saves\GameObjects_Map.json = Assets\Saves\GameObjects_Map.json
-		Assets\Saves\MapLevel.json = Assets\Saves\MapLevel.json
-		Assets\Saves\Map_Test.json = Assets\Saves\Map_Test.json
-		Assets\Saves\Prototypes_Map.json = Assets\Saves\Prototypes_Map.json
-		Assets\Saves\Prototypes_Static.json = Assets\Saves\Prototypes_Static.json
-		Assets\Saves\Prototypes_UI.json = Assets\Saves\Prototypes_UI.json
-		Assets\Saves\Temp1.json = Assets\Saves\Temp1.json
-		Assets\Saves\Test1.json = Assets\Saves\Test1.json
-		Assets\Saves\Test2.json = Assets\Saves\Test2.json
-		Assets\Saves\UILevel.json = Assets\Saves\UILevel.json
+		Saves\All_Test.json = Saves\All_Test.json
+		Saves\Animation_Test - 복사본.json = Saves\Animation_Test - 복사본.json
+		Saves\Animation_Test.json = Saves\Animation_Test.json
+		Saves\Follow_Test.json = Saves\Follow_Test.json
+		Saves\GameObjects_Map.json = Saves\GameObjects_Map.json
+		Saves\MapLevel.json = Saves\MapLevel.json
+		Saves\Map_Test.json = Saves\Map_Test.json
+		Saves\Prototypes_Animation.json = Saves\Prototypes_Animation.json
+		Saves\Prototypes_Map.json = Saves\Prototypes_Map.json
+		Saves\Prototypes_Static.json = Saves\Prototypes_Static.json
+		Saves\Prototypes_Test.json = Saves\Prototypes_Test.json
+		Saves\Prototypes_UI.json = Saves\Prototypes_UI.json
+		Saves\Temp1.json = Saves\Temp1.json
+		Saves\Terrain_Test.json = Saves\Terrain_Test.json
+		Saves\Terrain_Test2.json = Saves\Terrain_Test2.json
+		Saves\Test1.json = Saves\Test1.json
+		Saves\Test2.json = Saves\Test2.json
+		Saves\Test_Field.json = Saves\Test_Field.json
+		Saves\UILevel.json = Saves\UILevel.json
+		Saves\UI_Test.json = Saves\UI_Test.json
 	EndProjectSection
 EndProject
 Global

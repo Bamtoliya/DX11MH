@@ -29,7 +29,7 @@ public:
 	const _float3* Get_VertexPositions() const { return m_pVertexPositions; }
 	const _uint Get_NumVertices() const { return m_iNumVertices; }
 	const _uint Get_NumIndices() const { return m_iNumIndices; }
-	const ID3D11Buffer* Get_VertexBuffer() const { return m_pVB; }
+	ID3D11Buffer* Get_VertexBuffer() { return m_pVB; }
 	ID3D11Buffer* Get_IndexBuffer() { return m_pIB; }
 	const _uint Get_NumVertexBuffers() const { return m_iNumVertexBuffers; }
 	const _uint Get_NumPrimitive() const { return m_iNumPrimitive; }

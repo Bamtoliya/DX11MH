@@ -149,8 +149,15 @@
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxAnimMesh.hlsl" />
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxCubeTex.hlsl" />
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxMesh.hlsl" />
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxMeshInstance.hlsl" />
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxNorTex.hlsl" />
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxPosInstance.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxPosTex.hlsl" />
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxRectInstance.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

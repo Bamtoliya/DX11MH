@@ -2,7 +2,6 @@
 
 matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-
 texture2D g_DiffuseTexture;
 
 float4 g_vLightDir;
@@ -86,19 +85,16 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
-
-
-
 technique11 DefaultTechnique
-{
-   
+{   
     pass Default
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         
-        VertexShader = compile vs_5_0 VS_MAIN();        
+        VertexShader = compile vs_5_0 VS_MAIN();      
+        GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();      
     }
    

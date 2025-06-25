@@ -92,6 +92,7 @@ HRESULT CJson_Loader::Initialize() {
     RegisterBaseCreator<CLight_Direction>("CLight_Direction");
     RegisterBaseCreator<CGameObject_Skybox>("CGameObject_Skybox");
     RegisterBaseCreator<CGameObject_Spline>("CGameObject_Spline");
+    RegisterBaseCreator<CGameObject_Mesh_Instance>("CGameObject_Mesh_Instance");
 #pragma endregion
 
     return S_OK;

@@ -575,5 +575,14 @@
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_SplineModel.hlsl">
       <Filter>ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxRectInstance.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxPosInstance.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxMeshInstance.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

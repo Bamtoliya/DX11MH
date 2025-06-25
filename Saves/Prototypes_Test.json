@@ -212,6 +212,9 @@
   "Prototype_Component_RigidBody": {
     "Class": "CRigidBody"
   },
+  "Prototype_Component_VIBuffer_Mesh_Instance": {
+    "Class": "CVIBuffer_Mesh_Instance"
+  },
   "Prototype_Component_Texture_Sky": {
     "Class": "CTexture",
     "NumTexture": 1,
@@ -311,6 +314,9 @@
   },
   "Prototype_GameObject_Spline": {
     "Class": "CGameObject_Spline"
+  },
+  "Prototype_GameObject_Mesh_Instance": {
+    "Class": "CGameObject_Mesh_Instance"
   },
   "Prototype_Component_HeightField": {
     "Class": "CHeightField"

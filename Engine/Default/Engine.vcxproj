@@ -216,12 +216,10 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\Public\Base_Objects.h" />
     <ClInclude Include="..\public\BlendNode.h" />
-    <ClInclude Include="..\Public\Bounding_Box.h" />
     <ClInclude Include="..\public\Bone.h" />
     <ClInclude Include="..\public\Bounding.h" />
     <ClInclude Include="..\public\Bounding_AABB.h" />
     <ClInclude Include="..\Public\Bounding_OBB.h" />
-    <ClInclude Include="..\Public\Bounding_Sphere.h" />
     <ClInclude Include="..\public\Button.h" />
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\Public\Camera_Manager.h" />
@@ -248,10 +246,12 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\GameObject.h" />
     <ClInclude Include="..\public\GameObject_Capsule.h" />
     <ClInclude Include="..\public\GameObject_Cube.h" />
+    <ClInclude Include="..\public\GameObject_Mesh_Instance.h" />
     <ClInclude Include="..\public\GameObject_ModelTest.h" />
     <ClInclude Include="..\public\GameObject_Plane.h" />
     <ClInclude Include="..\public\GameObject_Sphere.h" />
     <ClInclude Include="..\public\GameObject_Spline.h" />
+    <ClInclude Include="..\public\GameObject_SplineMesh.h" />
     <ClInclude Include="..\Public\Graphic_Device.h" />
     <ClInclude Include="..\public\GameInput_Device.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -277,12 +277,6 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\MyImGui.h" />
     <ClInclude Include="..\public\MyImGui_Manager.h" />
     <ClInclude Include="..\public\Panel.h" />
-    <ClInclude Include="..\Public\Particle_Manager.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="..\Public\Particle_System.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="..\public\Physics_System.h" />
     <ClInclude Include="..\public\Picking_System.h" />
     <ClInclude Include="..\public\Light_Point.h" />
@@ -336,6 +330,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\VIBuffer_Cell.h" />
     <ClInclude Include="..\Public\VIBuffer_Cube.h" />
     <ClInclude Include="..\public\VIBuffer_Instance.h" />
+    <ClInclude Include="..\public\VIBuffer_Mesh_Instance.h" />
     <ClInclude Include="..\Public\VIBuffer_Point_Instance.h" />
     <ClInclude Include="..\Public\VIBuffer_Rect_Instance.h" />
     <ClInclude Include="..\public\VIBuffer_Island.h">
@@ -407,10 +402,12 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\GameObject.cpp" />
     <ClCompile Include="..\private\GameObject_Capsule.cpp" />
     <ClCompile Include="..\private\GameObject_Cube.cpp" />
+    <ClCompile Include="..\private\GameObject_Mesh_Instance.cpp" />
     <ClCompile Include="..\private\GameObject_ModelTest.cpp" />
     <ClCompile Include="..\private\GameObject_Plane.cpp" />
     <ClCompile Include="..\private\GameObject_Sphere.cpp" />
     <ClCompile Include="..\private\GameObject_Spline.cpp" />
+    <ClCompile Include="..\private\GameObject_SplineMesh.cpp" />
     <ClCompile Include="..\Private\Graphic_Device.cpp" />
     <ClCompile Include="..\private\GameInput_Device.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -436,12 +433,6 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\MyImGui.cpp" />
     <ClCompile Include="..\private\MyImGui_Manager.cpp" />
     <ClCompile Include="..\private\Panel.cpp" />
-    <ClCompile Include="..\Private\Particle_Manager.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="..\Private\Particle_System.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="..\private\Physics_System.cpp" />
     <ClCompile Include="..\private\Picking_System.cpp" />
     <ClCompile Include="..\private\Ray.cpp" />
@@ -493,6 +484,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\VIBuffer_Cell.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Cube.cpp" />
     <ClCompile Include="..\private\VIBuffer_Instance.cpp" />
+    <ClCompile Include="..\private\VIBuffer_Mesh_Instance.cpp" />
     <ClCompile Include="..\Private\VIBuffer_Point_Instance.cpp" />
     <ClCompile Include="..\private\VIBuffer_Island.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
