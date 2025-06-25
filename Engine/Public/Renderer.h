@@ -23,6 +23,8 @@ private:
 private:
 
 
+	class CGameInstance*		m_pGameInstance = { nullptr };
+
 private:
 	list<class CGameObject*>	m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_END)];
 	ID3D11Buffer* m_pVB_DebugLine = nullptr;      // 디버그 라인용 동적 정점 버퍼
