@@ -22,52 +22,6 @@
     ],
     "Type": "ANIM"
   },
-  "Prototype_Component_Model_Ashura": {
-    "Class": "CModel",
-    "ModelFilePath": "G:/My Drive/Assets/Models/Miniboss/ashura01/ashura03.model",
-    "PreTransformedMatrix": [
-      -1.0,
-      0.0,
-      -0.0,
-      0.0,
-      0.0,
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      -1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ],
-    "Type": "ANIM"
-  },
-  "Prototype_Component_Model_Ashura_Collider": {
-    "Class": "CModel",
-    "ModelFilePath": "G:/My Drive/Assets/Models/Miniboss/ashura01/ashuraCol.fbx",
-    "PreTransformedMatrix": [
-      -1.0,
-      0.0,
-      -0.0,
-      0.0,
-      0.0,
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      -1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ],
-    "Type": "NONANIM"
-  },
   "Prototype_Component_Model_Spring": {
     "Class": "CModel",
     "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Spring.fbx",

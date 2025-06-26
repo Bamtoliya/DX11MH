@@ -100,6 +100,11 @@ HRESULT CGameObject_Mesh_Instance::Initialize(simdjson::ondemand::object& jsonDa
 
 HRESULT CGameObject_Mesh_Instance::Ready_Components()
 {
+	///* For.Com_Shader */
+	//if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_VtxMesh"),
+	//	TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
+	//	return E_FAIL;
+
 	/* For.Com_Shader */
 	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
@@ -120,13 +125,13 @@ HRESULT CGameObject_Mesh_Instance::Ready_Components()
 		return E_FAIL;
 
 	// 인스턴스들의 Transform 생성 (예시: 100개)
-	for (int i = 0; i < 100; ++i)
+	/*for (int i = 0; i < 100; ++i)
 	{
 		CTransform* pTransform = CTransform::Create(m_pDevice, m_pContext);
 		_float3 vPos = _float3((i % 20) * 2.f, 0.f, (i / 20) * 2.f);
 		pTransform->Set_State(STATE::POSITION, XMLoadFloat3(&vPos));
 		m_pInstanceTransform.push_back(pTransform);
-	}
+	}*/
 
 	return S_OK;
 }
@@ -153,7 +158,7 @@ HRESULT CGameObject_Mesh_Instance::Serialize(json& outJson)
 	if (FAILED(__super::Serialize(data)))
 		return E_FAIL;
 	outJson["CGameObject_Mesh_Instance"] = data;
-	outJson["CGameObject_Mesh_Instance"]["PrototypeTag"] = "Prototype_GameObject_GameObject_Mesh_Instance";
+	outJson["CGameObject_Mesh_Instance"]["PrototypeTag"] = "Prototype_GameObject_Mesh_Instance";
 	return S_OK;
 }
 
@@ -245,12 +250,19 @@ HRESULT CGameObject_Mesh_Instance::Render()
 			return E_FAIL;
 
 		//m_pModelCom->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);
+		
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Render(i)))
+		if (FAILED(m_pVIBufferInstanceCom->Bind_Buffers()))
 			return E_FAIL;
+
+		if (FAILED(m_pVIBufferInstanceCom->Render()))
+			return E_FAIL;
+
+		/*if (FAILED(m_pModelCom->Render(i)))
+			return E_FAIL;*/
 	}
 
 	return S_OK;

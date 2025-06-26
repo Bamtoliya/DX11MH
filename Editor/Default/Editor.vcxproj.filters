@@ -220,6 +220,18 @@
     <Filter Include="02.GameObject\Spline\Rail">
       <UniqueIdentifier>{36324c33-b662-4444-ab15-0ec3e15dfb93}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Effect">
+      <UniqueIdentifier>{b89acdaa-12ef-4a8b-bf05-e38fd869523a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\Particle">
+      <UniqueIdentifier>{19f70265-eed5-459e-b9c1-183efe794c6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\Particle\Explosion">
+      <UniqueIdentifier>{96192a37-88bb-48a0-8305-691b59a2bf77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\Particle\Snow">
+      <UniqueIdentifier>{5f05dba6-00f9-4326-aa82-57c5accc8cbf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">

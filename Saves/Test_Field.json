@@ -210,9 +210,9 @@
                         ],
                         "RotationPerSec": 0.0,
                         "Scale": [
-                            0.9999779462814331,
+                            0.9999778270721436,
                             1.0,
-                            0.9999779462814331
+                            0.9999778270721436
                         ],
                         "SpeedPerSec": 0.0
                     },
@@ -330,6 +330,55 @@
                     "PrototypeTag": "Prototype_GameObject_Tutorial_Enemy",
                     "Visible": true
                 }
+            },
+            {
+                "CGameObject_Mesh_Instance": {
+                    "Active": true,
+                    "CShader": {
+                        "Layout": "VTXMESHINSTANCE",
+                        "Tiling": true,
+                        "TilingOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "TilingScale": [
+                            1.0,
+                            1.0
+                        ]
+                    },
+                    "CTransform": {
+                        "EulerRotation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "IsRelativePosition": false,
+                        "IsRelativeRotation": false,
+                        "IsRelativeScale": false,
+                        "Orientation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "RotationPerSec": 0.0,
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpeedPerSec": 0.0
+                    },
+                    "LayerTag": "Layer_GameObjects",
+                    "Name": "Test",
+                    "PrototypeTag": "Prototype_GameObject_Mesh_Instance",
+                    "Visible": true
+                }
             }
         ]
     },
@@ -421,7 +470,10 @@
                     },
                     "LayerTag": "Layer_Light",
                     "Name": "Point_Direction",
+                    "NumTextures": 1,
                     "PrototypeTag": "Prototype_GameObject_Light_Direction",
+                    "TextureFilePath": "../../Assets/Textures/Light.png",
+                    "UseTextureRegion": false,
                     "Visible": true
                 }
             }

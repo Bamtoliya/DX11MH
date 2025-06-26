@@ -110,18 +110,21 @@ HRESULT CGameObject_SplineMesh::Ready_Components()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
+	/* For.Com_Spline */
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Spline"),
+		TEXT("Com_Spline"), reinterpret_cast<CComponent**>(&m_pSplineCom))))
+		return E_FAIL;
+
 	CVIBuffer_Mesh_Instance::MESH_INSTANCE_DESC meshInstanceDesc;
 	meshInstanceDesc.pMesh = m_pModelCom->Get_Meshes()[0];
+	meshInstanceDesc.iNumInstance = (_uint)m_pSplineCom->GetSplineFrames().size();
 
 	/* For.Com_VIBuffer */
 	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_VIBuffer_Mesh_Instance"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferInstanceCom), &meshInstanceDesc)))
 		return E_FAIL;
 
-	/* For.Com_Spline */
-	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Spline"),
-		TEXT("Com_Spline"), reinterpret_cast<CComponent**>(&m_pSplineCom))))
-		return E_FAIL;
+	
 
 
 	return S_OK;
@@ -232,8 +235,14 @@ HRESULT CGameObject_SplineMesh::Render()
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Render(i)))
+		if (FAILED(m_pVIBufferInstanceCom->Bind_Buffers()))
 			return E_FAIL;
+
+		if (FAILED(m_pVIBufferInstanceCom->Render()))
+			return E_FAIL;
+
+		/*if (FAILED(m_pModelCom->Render(i)))
+			return E_FAIL;*/
 	}
 
 	return S_OK;

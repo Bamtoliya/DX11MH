@@ -31,8 +31,15 @@ public:
 	virtual HRESULT Bind_Buffers() override;
 	virtual HRESULT Render() override;
 
+	virtual HRESULT RenderImGui() override;
+
 	virtual void Drop(_float fTimeDelta);
 	virtual void Spread(_float fTimeDelta);
+	
+	virtual HRESULT Resize(_uint iNumInstance) { m_iNumInstance = iNumInstance; return S_OK; }
+	virtual HRESULT ApplyChanges() { return S_OK; }
+	virtual void EditInstance(_uint iIndex) {}
+	virtual HRESULT ResetInstances() { return S_OK; }
 
 protected:
 	ID3D11Buffer*			m_pVBInstance = { nullptr };

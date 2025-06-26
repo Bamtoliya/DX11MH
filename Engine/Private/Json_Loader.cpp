@@ -83,6 +83,7 @@ HRESULT CJson_Loader::Initialize() {
     RegisterBaseCreator<CVIBuffer_Cube>("CVIBuffer_Cube");
     RegisterBaseCreator<CVIBuffer_Terrain>("CVIBuffer_Terrain");
     RegisterBaseCreator<CVIBuffer_Spline>("CVIBuffer_Spline");
+    RegisterBaseCreator<CVIBuffer_Mesh_Instance>("CVIBuffer_Mesh_Instance");
 #pragma endregion
     
 #pragma endregion

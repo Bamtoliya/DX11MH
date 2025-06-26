@@ -5,7 +5,7 @@
 NS_BEGIN(Engine)
 class CShader;
 class CModel;
-class CVIBuffer_Instance;
+class CVIBuffer_Mesh_Instance;
 class ENGINE_DLL CGameObject_Mesh_Instance final : public CGameObject
 {
 #pragma region Constructor/Destructor
@@ -31,7 +31,7 @@ public:
 private:
 	CShader* m_pShaderCom = { nullptr };
 	CModel* m_pModelCom = { nullptr };
-	CVIBuffer_Instance* m_pVIBufferInstanceCom = { nullptr };
+	CVIBuffer_Mesh_Instance* m_pVIBufferInstanceCom = { nullptr };
 	//vector<CVIBuffer_Instance*> m_InstanceBuffers = {};
 	vector<CTransform*> m_pInstanceTransform = {};
 #pragma endregion

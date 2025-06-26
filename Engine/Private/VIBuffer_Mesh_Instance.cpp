@@ -54,14 +54,26 @@ HRESULT CVIBuffer_Mesh_Instance::Initialize(void* pArg)
 	m_VBInstanceDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	m_VBInstanceDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	m_VBInstanceDesc.MiscFlags = 0;
-	m_VBInstanceDesc.StructureByteStride = 0;
-
-	if (FAILED(m_pDevice->CreateBuffer(&m_VBInstanceDesc, nullptr, &m_pVBInstance)))
-		return E_FAIL;
+	m_VBInstanceDesc.StructureByteStride = m_iVertexInstanceStride;
 
 	// 5. 시스템 메모리 할당 (기존 Prototype 로직)
 	m_pVertexInstances = new VTXMESH_INSTANCE[m_iNumInstance];
 	ZeroMemory(m_pVertexInstances, sizeof(VTXMESH_INSTANCE) * m_iNumInstance);
+
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		m_pVertexInstances[i].vRight = {1.0f, 0.f, 0.f, 0.f};
+		m_pVertexInstances[i].vUp = { 0.f, 1.f, 0.f, 0.f };
+		m_pVertexInstances[i].vLook = { 0.f, 0.f, 1.f, 0.f };
+		m_pVertexInstances[i].vTranslation = { (i % 20) * 2.f, 0.f, (i / 20) * 2.f, 1.0f };
+		//_float3 vPos = _float3((i % 20) * 2.f, 0.f, (i / 20) * 2.f);
+		//pTransform->Set_State(STATE::POSITION, XMLoadFloat3(&vPos));	
+	}
+
+	m_VBInstanceSubresourceData.pSysMem = m_pVertexInstances;
+
+	if (FAILED(m_pDevice->CreateBuffer(&m_VBInstanceDesc, &m_VBInstanceSubresourceData, &m_pVBInstance)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -85,6 +97,141 @@ void CVIBuffer_Mesh_Instance::Update(const vector<_float4x4>& worldMatrices)
 
 	memcpy(SubResource.pData, m_pVertexInstances, sizeof(VTXMESH_INSTANCE) * worldMatrices.size());
 	m_pContext->Unmap(m_pVBInstance, 0);
+}
+
+HRESULT CVIBuffer_Mesh_Instance::Resize(_uint iNumInstance)
+{
+	if (iNumInstance == 0)
+		return E_FAIL;
+
+	// 기존 데이터 임시 저장 (필요한 경우)
+	VTXMESH_INSTANCE* pOldInstances = nullptr;
+	_uint iOldInstanceCount = 0;
+
+	if (m_pVertexInstances != nullptr) {
+		iOldInstanceCount = min(m_iNumInstance, iNumInstance);
+		pOldInstances = new VTXMESH_INSTANCE[iOldInstanceCount];
+		memcpy(pOldInstances, m_pVertexInstances, sizeof(VTXMESH_INSTANCE) * iOldInstanceCount);
+
+		// 기존 메모리 해제
+		Safe_Delete_Array(m_pVertexInstances);
+	}
+
+	// 새 인스턴스 버퍼 메모리 할당
+	m_iNumInstance = iNumInstance;
+	m_pVertexInstances = new VTXMESH_INSTANCE[m_iNumInstance];
+	ZeroMemory(m_pVertexInstances, sizeof(VTXMESH_INSTANCE) * m_iNumInstance);
+
+	// 기존 데이터 복원 (필요한 경우)
+	if (pOldInstances != nullptr) {
+		memcpy(m_pVertexInstances, pOldInstances, sizeof(VTXMESH_INSTANCE) * iOldInstanceCount);
+		Safe_Delete_Array(pOldInstances);
+	}
+
+	// 새 인스턴스 초기화 (새로 추가된 인스턴스만)
+	for (_uint i = iOldInstanceCount; i < m_iNumInstance; ++i) {
+		m_pVertexInstances[i].vRight = { 1.0f, 0.f, 0.f, 0.f };
+		m_pVertexInstances[i].vUp = { 0.f, 1.f, 0.f, 0.f };
+		m_pVertexInstances[i].vLook = { 0.f, 0.f, 1.f, 0.f };
+		m_pVertexInstances[i].vTranslation = { (i % 20) * 2.f, 0.f, (i / 20) * 2.f, 1.0f };
+	}
+
+	// 편집 데이터도 리사이즈
+	m_EditData.resize(m_iNumInstance);
+	for (_uint i = iOldInstanceCount; i < m_iNumInstance; ++i) {
+		m_EditData[i].vPosition = _float3((i % 20) * 2.f, 0.f, (i / 20) * 2.f);
+		m_EditData[i].vRotation = _float3(0.f, 0.f, 0.f);
+		m_EditData[i].vScale = _float3(1.f, 1.f, 1.f);
+	}
+
+	// 기존 GPU 버퍼 해제
+	Safe_Release(m_pVBInstance);
+
+	// 버퍼 설명 업데이트
+	m_VBInstanceDesc.ByteWidth = m_iNumInstance * m_iVertexInstanceStride;
+
+	// 새 버퍼 생성iNumInstance
+	m_VBInstanceSubresourceData.pSysMem = m_pVertexInstances;
+	return m_pDevice->CreateBuffer(&m_VBInstanceDesc, &m_VBInstanceSubresourceData, &m_pVBInstance);
+}
+
+HRESULT CVIBuffer_Mesh_Instance::ApplyChanges()
+{
+	if (m_EditData.empty() || m_EditData.size() != m_iNumInstance)
+		return E_FAIL;
+
+	// 각 인스턴스마다 SRT 행렬 계산하여 적용
+	for (_uint i = 0; i < m_iNumInstance; ++i) {
+		// 스케일, 회전, 이동 행렬 계산
+		XMMATRIX scaleMat = XMMatrixScaling(
+			m_EditData[i].vScale.x,
+			m_EditData[i].vScale.y,
+			m_EditData[i].vScale.z
+		);
+
+		XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(
+			XMConvertToRadians(m_EditData[i].vRotation.x),
+			XMConvertToRadians(m_EditData[i].vRotation.y),
+			XMConvertToRadians(m_EditData[i].vRotation.z)
+		);
+
+		XMMATRIX transMat = XMMatrixTranslation(
+			m_EditData[i].vPosition.x,
+			m_EditData[i].vPosition.y,
+			m_EditData[i].vPosition.z
+		);
+
+		// 최종 행렬 계산 (S * R * T)
+		XMMATRIX worldMat = scaleMat * rotMat * transMat;
+
+		// 행렬을 인스턴스 데이터에 저장
+		XMStoreFloat4(&m_pVertexInstances[i].vRight, worldMat.r[0]);
+		XMStoreFloat4(&m_pVertexInstances[i].vUp, worldMat.r[1]);
+		XMStoreFloat4(&m_pVertexInstances[i].vLook, worldMat.r[2]);
+		XMStoreFloat4(&m_pVertexInstances[i].vTranslation, worldMat.r[3]);
+	}
+
+	// GPU 버퍼 업데이트
+	D3D11_MAPPED_SUBRESOURCE SubResource;
+	HRESULT hr = m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+	if (FAILED(hr))
+		return hr;
+
+	memcpy(SubResource.pData, m_pVertexInstances, sizeof(VTXMESH_INSTANCE) * m_iNumInstance);
+	m_pContext->Unmap(m_pVBInstance, 0);
+
+	return S_OK;
+}
+
+void CVIBuffer_Mesh_Instance::EditInstance(_uint iIndex)
+{
+	if (iIndex >= m_iNumInstance || m_EditData.size() <= iIndex) {
+		m_EditData.resize(m_iNumInstance);
+	}
+
+	// 위치 편집
+	ImGui::DragFloat3("Position", &m_EditData[iIndex].vPosition.x, 0.1f);
+
+	// 회전 편집 (오일러 각)
+	ImGui::DragFloat3("Rotation", &m_EditData[iIndex].vRotation.x, 0.1f);
+
+	// 크기 편집
+	ImGui::DragFloat3("Scale", &m_EditData[iIndex].vScale.x, 0.1f, 0.1f, 10.0f);
+}
+
+HRESULT CVIBuffer_Mesh_Instance::ResetInstances()
+{
+	m_EditData.resize(m_iNumInstance);
+
+	// 기본 그리드 패턴으로 위치 재설정
+	for (_uint i = 0; i < m_iNumInstance; ++i) {
+		m_EditData[i].vPosition = _float3((i % 20) * 2.f, 0.f, (i / 20) * 2.f);
+		m_EditData[i].vRotation = _float3(0.f, 0.f, 0.f);
+		m_EditData[i].vScale = _float3(1.f, 1.f, 1.f);
+	}
+
+	// 변경 사항 적용
+	return ApplyChanges();
 }
 
 CVIBuffer_Mesh_Instance* CVIBuffer_Mesh_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -97,11 +97,4 @@ namespace Engine
 
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
-
-
-	
-
-	
-
-
 }

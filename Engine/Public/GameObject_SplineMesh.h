@@ -30,10 +30,10 @@ public:
 
 #pragma region Variables
 private:
-	CShader* m_pShaderCom = { nullptr };
-	CModel* m_pModelCom = { nullptr };
+	CShader*			m_pShaderCom = { nullptr };
+	CModel*				m_pModelCom = { nullptr };
+	CSpline_Component*	m_pSplineCom = { nullptr };
 	CVIBuffer_Instance* m_pVIBufferInstanceCom = { nullptr };
-	CSpline_Component* m_pSplineCom = { nullptr };
 #pragma endregion
 
 #pragma region Save&Load

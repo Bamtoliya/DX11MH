@@ -57,7 +57,7 @@
   "Prototype_Component_Shader_VtxMeshInstance": {
     "Class": "CShader",
     "Layout": "VTXMESHINSTANCE",
-    "ShaderPath": "G:/My Drive/Assets/ShaderFiles/Shader_MeshInstance.hlsl"
+    "ShaderPath": "G:/My Drive/Assets/ShaderFiles/Shader_VtxMeshInstance.hlsl"
   },
   "Prototype_Component_Texture_BackGround": {
     "Class": "CTexture",
