@@ -31,6 +31,15 @@ public:
 
     HRESULT Resize(_uint iWinResizeX, _uint iWinResizeY);
 
+    HRESULT Bind_ShaderResource(class CShader* pShader, const _char* pContant);
+
+#ifdef _DEBUG
+public:
+	HRESULT Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY);
+	HRESULT Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
+
+#endif
+
     //// 특정 이름으로 디버그 객체 이름 설정 (선택 사항)
     //void Set_DebugName(const std::string& name);
 
@@ -40,16 +49,8 @@ private:
     CGameInstance*          m_pGameInstance = nullptr;
 
 private:
-    ID3D11Texture2D*            m_pTexture = nullptr;
-    ID3D11RenderTargetView*     m_pRTV = nullptr;
-    ID3D11ShaderResourceView*   m_pSRV = nullptr;
-    D3D11_VIEWPORT              m_Viewport = {};
-private:
-    _wstring                m_strName = {};
-    _float4                 m_vClearColor = {};
-    _uint                   m_iWidth = 0;
-    _uint                   m_iHeight = 0;
-    DXGI_FORMAT             m_eFormat = DXGI_FORMAT_UNKNOWN;
+	_float4							m_vClearColor = {};
+
 
 public:
     // 생성 함수

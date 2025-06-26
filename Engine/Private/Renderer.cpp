@@ -142,8 +142,15 @@ HRESULT CRenderer::Draw()
 	m_pGameInstance->Clear_RenderTarget(L"RT_Picking", &tempColor);
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
+
+	if (FAILED(Render_Lights()))
+		return E_FAIL;
+
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
+
+
+	
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 	if (m_pGameInstance->Get_IsDebugDraw())
@@ -318,6 +325,46 @@ HRESULT CRenderer::Render_UI()
 
 	return S_OK;
 }
+
+HRESULT CRenderer::Render_Lights()
+{
+	/* Shade */
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Lights"))))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_Normal"), m_pShader, "g_NormalTexture")))
+		return E_FAIL;	
+
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	m_pGameInstance->Render_Lights(m_pShader, m_pVIBuffer);
+
+	if (FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+#ifdef _DEBUG
+
+HRESULT CRenderer::Render_Debug()
+{
+	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
+	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
+
+	m_pGameInstance->Render_MRT_Debug(TEXT("MRT_GameObjects"), m_pShader, m_pVIBuffer);
+	m_pGameInstance->Render_MRT_Debug(TEXT("MRT_Lights"), m_pShader, m_pVIBuffer);
+	
+
+	return S_OK;
+}
+
+#endif
 
 CRenderer* CRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

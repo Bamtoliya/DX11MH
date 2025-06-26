@@ -1,7 +1,4 @@
-﻿#pragma once
-#include "RenderTarget.h" // 경로 확인 필요
-#include "Engine_Function.h" // Safe_Release 등
-#include "GameInstance.h"
+﻿#include "RenderTarget.h"
 
 CRenderTarget::CRenderTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : m_pDevice{ pDevice }
@@ -217,6 +214,52 @@ HRESULT CRenderTarget::Resize(_uint iWinResizeX, _uint iWinResizeY)
 
     return S_OK;
 }
+
+HRESULT CRenderTarget::Bind_ShaderResource(CShader* pShader, const _char* pContantName)
+{
+	return pShader->Bind_SRV(pContantName, m_pSRV);
+}
+
+#ifdef _DEBUG
+
+HRESULT CRenderTarget::Ready_Debug(_float fX, _float fY, _float fSizeX, _float fSizeY)
+{
+	_uint				iNumViewports = { 1 };
+	D3D11_VIEWPORT		ViewportDesc{};
+
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
+
+	m_WorldMatrix._11 = fSizeX;
+	m_WorldMatrix._22 = fSizeY;
+	m_WorldMatrix._41 = fX - ViewportDesc.Width * 0.5f;
+	m_WorldMatrix._42 = -fY + ViewportDesc.Height * 0.5f;
+
+	return S_OK;
+}
+
+HRESULT CRenderTarget::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
+{
+	if(FAILED(pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+
+	if (FAILED(pShader->Bind_SRV("g_RenderTargetTexture", m_pSRV)))
+		return E_FAIL;			
+
+	if (FAILED(pShader->Begin(0)))
+		return E_FAIL;
+
+	if(FAILED(pVIBuffer->Bind_Buffers()))
+		return E_FAIL;
+
+	if(FAILED(pVIBuffer->Render()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+#endif
 
 //// 디버깅용 이름 설정 함수 (선택 사항)
 //#if !defined(NO_D3D11_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )

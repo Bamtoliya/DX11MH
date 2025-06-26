@@ -176,6 +176,45 @@ HRESULT CTarget_Manager::Clear_MRT(const _wstring& strMRTTag)
     return S_OK;
 }
 
+HRESULT CTarget_Manager::Bind_ShaderResource(const _wstring& strTargetTag, CShader* pShader, const _char* pContantName)
+{
+	CRenderTarget* pRenderTarget = Find_RenderTarget(strTargetTag);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	list<CRenderTarget*>*		pMRTList = Find_MRT(strMRTTag);
+
+	if (nullptr == pMRTList)
+	{
+		list<CRenderTarget*>	MRTList;
+		MRTList.push_back(pRenderTarget);
+
+		m_MRTs.emplace(strMRTTag, MRTList);
+	}
+	else
+		pMRTList->push_back(pRenderTarget);
+
+	Safe_AddRef(pRenderTarget);
+
+    return S_OK;
+}
+
+HRESULT CTarget_Manager::Render_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer)
+{
+	list<CRenderTarget*>* pMRTList = Find_MRT(strMRTTag);
+	if (nullptr == pMRTList)
+		return E_FAIL;
+
+	for (auto& pRenderTarget : *pMRTList)
+	{
+		pRenderTarget->Render(pShader, pVIBuffer);
+	}
+
+	return S_OK;
+}
+
+#endif
+
 
 ID3D11ShaderResourceView* CTarget_Manager::Get_SRV(const _wstring& strTargetTag) const
 {
@@ -347,3 +386,40 @@ void CTarget_Manager::Free()
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
 }
+
+
+HRESULT CTarget_Manager::Bind_ShaderResource(const _wstring& strTargetTag, CShader* pShader, const _char* pContantName)
+{
+	CRenderTarget* pRenderTarget = Find_RenderTarget(strTargetTag);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	return pRenderTarget->Bind_ShaderResource(pShader, pContantName);	
+}
+
+#ifdef _DEBUG
+
+HRESULT CTarget_Manager::Ready_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
+{
+	CRenderTarget* pRenderTarget = Find_RenderTarget(strTargetTag);
+	if (nullptr == pRenderTarget)
+		return E_FAIL;
+
+	return pRenderTarget->Ready_Debug(fX, fY, fSizeX, fSizeY);	
+}
+
+HRESULT CTarget_Manager::Render_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer)
+{
+	list<CRenderTarget*>* pMRTList = Find_MRT(strMRTTag);
+	if (nullptr == pMRTList)
+		return E_FAIL;
+
+	for (auto& pRenderTarget : *pMRTList)
+	{
+		pRenderTarget->Render(pShader, pVIBuffer);
+	}
+
+	return S_OK;
+}
+
+#endif

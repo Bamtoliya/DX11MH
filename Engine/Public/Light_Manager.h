@@ -27,6 +27,7 @@ public:
 public:
 	HRESULT Add_Light(const LIGHT_DESC& LightDesc);
 	HRESULT Add_Light(CLight* pLight);
+	HRESULT Render_Lights(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
 
 
 	

@@ -39,7 +39,8 @@ public:
 	void Update();
 public:
 	HRESULT RenderImGui();
-	
+	HRESULT Render(class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
+
 private:
 	LIGHT_DESC	m_tInfo = {};
 

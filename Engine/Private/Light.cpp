@@ -1,5 +1,6 @@
 ﻿#include "Light.h"
-#include "GameObject.h"
+#include "GameInstance.h"
+
 
 #pragma region Constructor/ Destructor
 CLight::CLight(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -11,6 +12,23 @@ CLight::CLight(const CLight& Prototype)
 	: CComponent{ Prototype }
 	, m_tInfo{ Prototype.m_tInfo }
 {
+	m_LightDesc = LightDesc;
+
+    return S_OK;
+}
+
+HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
+{
+	/* 빛정보를 쉐이더에 던진다. */
+	if(FAILED(pShader->Bind_RawValue("g_vLightDir", &m_LightDesc.vDirection, sizeof(_float4))))
+		return E_FAIL;
+
+	pShader->Begin(1);
+
+	pVIBuffer->Bind_Buffers();
+	pVIBuffer->Render();
+
+	return S_OK;
 }
 
 CLight* CLight::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
