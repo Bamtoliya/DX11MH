@@ -1,4 +1,5 @@
 #pragma once
+#include "Editor_Defines.h"
 #include "GameObject.h"
 
 NS_BEGIN(Engine)
@@ -7,6 +8,7 @@ class CVIBuffer_Instance;
 class CShader;
 class CRigidBody;
 NS_END
+
 NS_BEGIN(Editor)
 class CGameObject_W6D01 : public CGameObject
 {
@@ -33,6 +35,7 @@ public:
 private:
 	CShader*				m_pShaderCom = { nullptr };
 	CModel*					m_pModelCom = { nullptr };
+	CModel*					m_pModelColliderCom = { nullptr };
 	CVIBuffer_Instance*		m_pVIBufferCom = { nullptr };
 	CRigidBody*				m_pRigidBodyCom = { nullptr };
 #pragma endregion
@@ -56,5 +59,4 @@ public:
 	virtual HRESULT Render();
 #pragma endregion
 };
-
 NS_END
