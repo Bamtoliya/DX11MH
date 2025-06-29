@@ -22,20 +22,6 @@
     ],
     "Type": "ANIM"
   },
-  "Prototype_Component_RigidBody": {
-    "Class": "CRigidBody"
-  },
-  "Prototype_Component_Sonic_Controller": {
-    "Class": "CSonic_Controller"
-  },
-  "Prototype_Component_HeightField": {
-    "Class": "CHeightField"
-  },
-  "Prototype_Component_Texture_Sky": {
-    "Class": "CTexture",
-    "NumTexture": 1,
-    "TextureFilePath": "../../Assets/Textures/Skybox/XYZ.dds"
-  },
   "Prototype_Component_Model_W6D01": {
     "Class": "CModel",
     "ModelFilePath": "G/My Drive/Assets/Models/Stage/W6d01/W6d01.fbx",
@@ -82,6 +68,24 @@
     ],
     "Type": "NONANIM"
   },
+  "Prototype_Component_Model_Motora": {
+
+  },
+  "Prototype_Component_RigidBody": {
+    "Class": "CRigidBody"
+  },
+  "Prototype_Component_Sonic_Controller": {
+    "Class": "CSonic_Controller"
+  },
+  "Prototype_Component_HeightField": {
+    "Class": "CHeightField"
+  },
+  "Prototype_Component_Texture_Sky": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "../../Assets/Textures/Skybox/XYZ.dds"
+  },
+
   "Prototype_GameObject_W6D01": {
     "Class": "CGameObject_W6D01"
   },
