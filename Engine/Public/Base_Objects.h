@@ -7,6 +7,7 @@
 #include "GameObject_Skybox.h"
 #include "GameObject_Spline.h"
 #include "GameObject_Mesh_Instance.h"
+#include "GameObject_SplineMesh.h"
 
 #include "Light_Point.h"
 #include "Light_Direction.h"

@@ -195,7 +195,7 @@ void CGameObject_Mesh_Instance::Update(_float fTimeDelta)
 
 void CGameObject_Mesh_Instance::Late_Update(_float fTimeDelta)
 {
-	vector<_float4x4> worldMatrices;
+	/*vector<_float4x4> worldMatrices;
 	worldMatrices.reserve(m_pInstanceTransform.size());
 
 	for (auto& pTransform : m_pInstanceTransform)
@@ -203,7 +203,7 @@ void CGameObject_Mesh_Instance::Late_Update(_float fTimeDelta)
 		worldMatrices.push_back(pTransform->Get_World4x4());
 	}
 
-	m_pVIBufferInstanceCom->Update(worldMatrices);
+	m_pVIBufferInstanceCom->Update(worldMatrices);*/
 
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
 }

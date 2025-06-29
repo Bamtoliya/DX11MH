@@ -19,11 +19,11 @@ HRESULT CRenderer::Initialize()
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 #pragma region Prepare RenderTargets
 	if (FAILED(m_pGameInstance->Add_RenderTarget(
-		L"RT_FinalScene",                // 렌더 타겟 고유 태그
-		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
-		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		L"RT_FinalScene",               // 렌더 타겟 고유 태그
+		(_uint)ViewportDesc.Width,      // 초기 너비 (예: 윈도우 너비)
+		(_uint)ViewportDesc.Height,     // 초기 높이 (예: 윈도우 높이)
 		DXGI_FORMAT_R8G8B8A8_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
-		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
+		_float4(0.f, 0.f, 0.f, 0.f)     // 클리어 색상 (투명 검정 등)
 	)))
 	{
 		MSG_BOX("Failed to create RT_FinalScene Render Target");
@@ -143,35 +143,22 @@ HRESULT CRenderer::Draw()
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
 
-	if (FAILED(Render_Lights()))
-		return E_FAIL;
+	//if (FAILED(Render_Lights()))
+	//	return E_FAIL;
 
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
-
-	
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 	if (m_pGameInstance->Get_IsDebugDraw())
 	{
-		if (FAILED(Render_Debug()))
+		if (FAILED(Render_Debug_Collider()))
 			return E_FAIL;
 	}
 	
-	//ID3D11ShaderResourceView* pFinalSceneSRV = m_pGameInstance->Get_SRV(L"RT_FinalScene");
-	//if (pFinalSceneSRV)
-	//{
-	//	// 중요: GenerateMips는 SRV에 대해 호출하는 것이 아니라, DeviceContext에 대해 SRV를 인자로 전달합니다.
-	//	m_pContext->GenerateMips(pFinalSceneSRV);
-	//}
-
-	
-	// Picking 타겟도 필요하다면 동일하게 처리
 	if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_FinalScene")))
 		return E_FAIL;
-	/*if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_ObjectsOnly")))
-		return E_FAIL;*/
 
 	if (FAILED(m_pGameInstance->End_MRT(nullptr, nullptr, {})))
 		return E_FAIL;
@@ -208,7 +195,7 @@ HRESULT CRenderer::Render_NonBlend()
 
 	return S_OK;
 }
-HRESULT CRenderer::Render_Debug()
+HRESULT CRenderer::Render_Debug_Collider()
 {	
 	const auto& debugLines = m_pGameInstance->Get_DebugLines();
 	if (debugLines.empty())
@@ -329,7 +316,9 @@ HRESULT CRenderer::Render_UI()
 HRESULT CRenderer::Render_Lights()
 {
 	/* Shade */
-	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Lights"))))
+	ID3D11DepthStencilView* pMainDSV = m_pGameInstance->Get_DSV(); // Get main DSV
+
+	if (FAILED(m_pGameInstance->Begin_MRT(TEXT("MRT_Lights"), pMainDSV)))
 		return E_FAIL;
 
 	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_Normal"), m_pShader, "g_NormalTexture")))
@@ -344,7 +333,7 @@ HRESULT CRenderer::Render_Lights()
 
 	m_pGameInstance->Render_Lights(m_pShader, m_pVIBuffer);
 
-	if (FAILED(m_pGameInstance->End_MRT()))
+	if (FAILED(m_pGameInstance->End_MRT(nullptr, nullptr, {})))
 		return E_FAIL;
 
 	return S_OK;

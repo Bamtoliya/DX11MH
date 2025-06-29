@@ -232,6 +232,18 @@
     <Filter Include="02.GameObject\Effect\Particle\Snow">
       <UniqueIdentifier>{5f05dba6-00f9-4326-aa82-57c5accc8cbf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stages">
+      <UniqueIdentifier>{d2e1ea31-a20d-4042-98ca-5f464045f051}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stages\01">
+      <UniqueIdentifier>{56e59f6a-9a2f-4800-a364-c08e12f455ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stages\02">
+      <UniqueIdentifier>{c660a300-afd2-451b-b790-7f0c3944c4ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stages\Open">
+      <UniqueIdentifier>{22e97e87-530b-4974-bf54-1e3356d2e958}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -365,6 +377,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Rail.cpp">
       <Filter>02.GameObject\Spline\Rail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Blader.cpp">
+      <Filter>02.GameObject\03.Monster\Miniboss\Blade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameObject_W6D02.cpp">
+      <Filter>02.GameObject\Stages\02</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameObject_W6D01.cpp">
+      <Filter>02.GameObject\Stages\01</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -532,6 +553,15 @@
     </ClInclude>
     <ClInclude Include="..\public\Rail.h">
       <Filter>02.GameObject\Spline\Rail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Blader.h">
+      <Filter>02.GameObject\03.Monster\Miniboss\Blade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameObject_W6D02.h">
+      <Filter>02.GameObject\Stages\02</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameObject_W6D01.h">
+      <Filter>02.GameObject\Stages\01</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

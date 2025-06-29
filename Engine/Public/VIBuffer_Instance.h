@@ -40,6 +40,7 @@ public:
 	virtual HRESULT ApplyChanges() { return S_OK; }
 	virtual void EditInstance(_uint iIndex) {}
 	virtual HRESULT ResetInstances() { return S_OK; }
+	_uint Get_NumInstance() { return m_iNumInstance; }
 
 protected:
 	ID3D11Buffer*			m_pVBInstance = { nullptr };

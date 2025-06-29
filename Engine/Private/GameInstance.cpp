@@ -371,6 +371,25 @@ HRESULT CGameInstance::Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTa
 {
 	return m_pTarget_Manager->Copy_ToBackBuffer(strSourceRenderTargetTag);
 }
+
+HRESULT CGameInstance::Bind_RT_ShaderResource(const _wstring& strTargetTag, CShader* pShader, const _char* pContantName)
+{
+	return m_pTarget_Manager->Bind_ShaderResource(strTargetTag, pShader, pContantName);
+}
+
+#ifdef _DEBUG
+
+HRESULT CGameInstance::Ready_RT_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
+{
+	return m_pTarget_Manager->Ready_Debug(strTargetTag, fX, fY, fSizeX, fSizeY);
+}
+
+HRESULT CGameInstance::Render_MRT_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer)
+{
+	return m_pTarget_Manager->Render_Debug_Collider(strMRTTag, pShader, pVIBuffer);
+}
+
+#endif
 #pragma endregion
 
 #pragma region CAMERA_MANAGER
@@ -757,53 +776,6 @@ void CGameInstance::Draw_Font(const _wstring& strFontTag, const _tchar* pText, c
 	m_pFont_Manager->Draw(strFontTag, pText, vPosition, vColor, fRotation, vOrigin, fScale);
 }
 #pragma endregion
-
-#pragma region TARGET_MANAGER
-HRESULT CGameInstance::Add_RenderTarget(const _wstring& strTargetTag, _uint iWidth, _uint iHeight, DXGI_FORMAT ePixelFormat, const _float4& vClearColor)
-{
-	return m_pTarget_Manager->Add_RenderTarget(strTargetTag, iWidth, iHeight, ePixelFormat, vClearColor);
-}
-
-HRESULT CGameInstance::Add_MRT(const _wstring& strMRTTag, const _wstring& strTargetTag)
-{
-	return m_pTarget_Manager->Add_MRT(strMRTTag, strTargetTag);
-}
-
-HRESULT CGameInstance::Begin_MRT(const _wstring& strMRTTag)
-{
-	return m_pTarget_Manager->Begin_MRT(strMRTTag);
-}
-
-HRESULT CGameInstance::End_MRT()
-{
-	return m_pTarget_Manager->End_MRT();
-}
-
-
-HRESULT CGameInstance::Bind_RT_ShaderResource(const _wstring& strTargetTag, CShader* pShader, const _char* pContantName)
-{
-	return m_pTarget_Manager->Bind_ShaderResource(strTargetTag, pShader, pContantName);
-}
-
-#ifdef _DEBUG
-
-HRESULT CGameInstance::Ready_RT_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY)
-{
-	return m_pTarget_Manager->Ready_Debug(strTargetTag, fX, fY, fSizeX, fSizeY);
-}
-
-HRESULT CGameInstance::Render_MRT_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer)
-{
-	return m_pTarget_Manager->Render_Debug(strMRTTag, pShader, pVIBuffer);
-}
-
-#endif
-
-#pragma endregion
-
-
-
-
 
 //#pragma region PICKING
 //void CGameInstance::Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse)

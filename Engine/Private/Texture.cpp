@@ -89,7 +89,7 @@
 		    return E_FAIL;
 
 	    m_SRVs.push_back(pSRV);
-	    m_originalToActualIndexMap[i] = iActualIndex++;
+	    m_originalToActualIndexMap[(_uint)i] = iActualIndex++;
     }
 
     m_iNumTextures = iActualIndex;

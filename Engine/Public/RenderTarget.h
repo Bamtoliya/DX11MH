@@ -49,8 +49,18 @@ private:
     CGameInstance*          m_pGameInstance = nullptr;
 
 private:
-	_float4							m_vClearColor = {};
+    ID3D11Texture2D*            m_pTexture = nullptr;
+    ID3D11RenderTargetView*     m_pRTV = nullptr;
+    ID3D11ShaderResourceView*   m_pSRV = nullptr;
+    D3D11_VIEWPORT              m_Viewport = {};
 
+private:
+    _wstring                m_strName = {};
+    _float4                 m_vClearColor = {};
+    _float4x4				m_WorldMatrix = {};
+    _uint                   m_iWidth = 0;
+    _uint                   m_iHeight = 0;
+    DXGI_FORMAT             m_eFormat = DXGI_FORMAT_UNKNOWN;
 
 public:
     // 생성 함수

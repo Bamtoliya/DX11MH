@@ -37,7 +37,7 @@ private:
 	HRESULT Render_NonBlend();
 	HRESULT Render_Blend();
 	HRESULT Render_UI();
-	HRESULT Render_Debug();
+	HRESULT Render_Debug_Collider();
 	//HRESULT Render_Diffuse();
 	//HRESULT Render_Normal();
 	//HRESULT Render_Metalic();
@@ -51,8 +51,6 @@ private:
 private:
 	HRESULT Render_Debug();
 #endif
-
-	HRESULT Render_Lights();
 
 public:
 	static CRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -1,6 +1,8 @@
 ﻿#include "Target_Manager.h" // 경로 확인
 #include "RenderTarget.h" // CRenderTarget 클래스 사용 시
+#include "GameInstance.h"
 
+#pragma region Constructor&Destructor
 CTarget_Manager::CTarget_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : m_pDevice(pDevice)
     , m_pContext(pContext)
@@ -15,6 +17,40 @@ HRESULT CTarget_Manager::Initialize()
     return S_OK;
 }
 
+CTarget_Manager* CTarget_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+    CTarget_Manager* pInstance = new CTarget_Manager(pDevice, pContext);
+    if (FAILED(pInstance->Initialize()))
+    {
+        MSG_BOX("Failed to Created : CTarget_Manager");
+        Safe_Release(pInstance);
+    }
+    return pInstance;
+}
+
+void CTarget_Manager::Free()
+{
+    // MRT 그룹 정보 정리 (포인터만 가지고 있으므로 별도 해제 불필요)
+    m_MRTs.clear();
+    m_MRTTags.clear();
+    m_MRTViewports.clear();
+
+    // 렌더 타겟 객체들 해제
+    for (auto& pair : m_RenderTargets) {
+        Safe_Release(pair.second);
+    }
+    m_RenderTargets.clear();
+
+    // 백업 포인터들 안전하게 릴리즈 (혹시 End_MRT가 호출되지 않은 경우 대비)
+    for (_uint i = 0; i < D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i) {
+        Safe_Release(m_pBackupRTVs[i]);
+    }
+    Safe_Release(m_pBackupDSV);
+    Safe_Release(m_pDevice);
+    Safe_Release(m_pContext);
+}
+#pragma endregion
+
 HRESULT CTarget_Manager::Add_RenderTarget(const _wstring& strTargetTag, _uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor)
 {
     if (Find_RenderTarget(strTargetTag) != nullptr) {
@@ -26,7 +62,6 @@ HRESULT CTarget_Manager::Add_RenderTarget(const _wstring& strTargetTag, _uint iW
     if (nullptr == pRenderTarget)
         return E_FAIL;
 
-    //pRenderTarget->Set_DebugName(WideToUtf8(strTargetTag.c_str())); // 디버그 이름 설정
     m_RenderTargets.emplace(strTargetTag, pRenderTarget);
 
     return S_OK;
@@ -44,7 +79,7 @@ HRESULT CTarget_Manager::Add_MRT(const _wstring& strMRTTag, const std::vector<_w
         return E_FAIL; // 이미 존재하는 MRT 그룹 태그
     }
 
-    vector<ID3D11RenderTargetView*> rtvs;
+    list<CRenderTarget*> rtvs;
     vector<_wstring> rtvtags;
     D3D11_VIEWPORT firstViewport = {}; // 첫 번째 타겟의 뷰포트를 그룹 뷰포트로 사용
 
@@ -55,7 +90,7 @@ HRESULT CTarget_Manager::Add_MRT(const _wstring& strMRTTag, const std::vector<_w
             MSG_BOX("Render target not found for MRT group.");
             return E_FAIL; // 그룹에 포함될 렌더 타겟이 존재하지 않음
         }
-        rtvs.push_back(pRT->Get_RTV());
+        rtvs.push_back(pRT);
 
         // 모든 렌더 타겟의 크기가 동일한지 확인 (선택적이지만 권장됨)
         const D3D11_VIEWPORT& currentVP = pRT->Get_Viewport();
@@ -106,7 +141,14 @@ HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencil
 
     // 2. MRT 바인딩
     const auto& rtvs = mrtIter->second;
-    m_pContext->OMSetRenderTargets(static_cast<_uint>(rtvs.size()), rtvs.data(), pDSV);
+    ID3D11RenderTargetView* pRenderTargets[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT] = {};
+    _uint iNumTargets = 0;
+    for (auto& pRenderTarget : rtvs)
+    {
+        pRenderTarget->Clear();
+        pRenderTargets[iNumTargets++] = pRenderTarget->Get_RTV();
+    }
+    m_pContext->OMSetRenderTargets(iNumTargets, pRenderTargets, pDSV);
 
     // 3. 뷰포트 설정
     m_pContext->RSSetViewports(1, &(vpIter->second));
@@ -152,23 +194,17 @@ HRESULT CTarget_Manager::Clear_MRT(const _wstring& strMRTTag)
         return E_FAIL;
     }
 
-    // MRT 그룹 내 모든 RTV 클리어 (각 RTV가 속한 CRenderTarget의 Clear 호출)
-    // 주의: MRT 그룹 정보에는 RTV 포인터만 있으므로, CRenderTarget 객체를 다시 찾아야 할 수 있음
-    //       또는 Add_MRT 시 CRenderTarget 포인터 목록을 저장하는 방식으로 변경 필요
-    // 여기서는 m_RenderTargets 맵을 다시 검색하는 방식으로 가정
     for (const auto& rtvPtr : mrtIter->second) {
         bool found = false;
         for (const auto& pair : m_RenderTargets) {
-            if (pair.second->Get_RTV() == rtvPtr) {
-                if (FAILED(pair.second->Clear())) { // 기본 클리어 색상 사용
-                    // 에러 처리
-                }
-                found = true;
-                break;
+            if (FAILED(pair.second->Clear())) { // 기본 클리어 색상 사용
+                // 에러 처리
             }
+            found = true;
+            break;
         }
         if (!found) {
-            // RTV에 해당하는 CRenderTarget 객체를 찾지 못한 경우 에러 처리
+
             MSG_BOX("Could not find RenderTarget object for an RTV in MRT group during clear.");
         }
     }
@@ -176,32 +212,9 @@ HRESULT CTarget_Manager::Clear_MRT(const _wstring& strMRTTag)
     return S_OK;
 }
 
-HRESULT CTarget_Manager::Bind_ShaderResource(const _wstring& strTargetTag, CShader* pShader, const _char* pContantName)
+HRESULT CTarget_Manager::Render_Debug_Collider(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 {
-	CRenderTarget* pRenderTarget = Find_RenderTarget(strTargetTag);
-	if (nullptr == pRenderTarget)
-		return E_FAIL;
-
-	list<CRenderTarget*>*		pMRTList = Find_MRT(strMRTTag);
-
-	if (nullptr == pMRTList)
-	{
-		list<CRenderTarget*>	MRTList;
-		MRTList.push_back(pRenderTarget);
-
-		m_MRTs.emplace(strMRTTag, MRTList);
-	}
-	else
-		pMRTList->push_back(pRenderTarget);
-
-	Safe_AddRef(pRenderTarget);
-
-    return S_OK;
-}
-
-HRESULT CTarget_Manager::Render_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer)
-{
-	list<CRenderTarget*>* pMRTList = Find_MRT(strMRTTag);
+    list<CRenderTarget*>* pMRTList = Find_MRT(strMRTTag);
 	if (nullptr == pMRTList)
 		return E_FAIL;
 
@@ -212,9 +225,6 @@ HRESULT CTarget_Manager::Render_Debug(const _wstring& strMRTTag, CShader* pShade
 
 	return S_OK;
 }
-
-#endif
-
 
 ID3D11ShaderResourceView* CTarget_Manager::Get_SRV(const _wstring& strTargetTag) const
 {
@@ -313,7 +323,7 @@ HRESULT CTarget_Manager::Resize(_uint iWinResizeX, _uint iWinResizeY)
     for (auto& pair : m_MRTTags)
     {
         m_MRTs[pair.first].clear();
-        vector<ID3D11RenderTargetView*> rtvs;
+        list<CRenderTarget*> rtvs;
         D3D11_VIEWPORT firstViewport = {}; // 첫 번째 타겟의 뷰포트를 그룹 뷰포트로 사용
         for (size_t i = 0; i < pair.second.size(); ++i) {
             CRenderTarget* pRT = Find_RenderTarget(pair.second[i]);
@@ -321,7 +331,7 @@ HRESULT CTarget_Manager::Resize(_uint iWinResizeX, _uint iWinResizeY)
                 MSG_BOX("Render target not found for MRT group.");
                 return E_FAIL; // 그룹에 포함될 렌더 타겟이 존재하지 않음
             }
-            rtvs.push_back(pRT->Get_RTV());
+            rtvs.push_back(pRT);
 
             // 모든 렌더 타겟의 크기가 동일한지 확인 (선택적이지만 권장됨)
             const D3D11_VIEWPORT& currentVP = pRT->Get_Viewport();
@@ -354,38 +364,17 @@ CRenderTarget* CTarget_Manager::Find_RenderTarget(const _wstring& strTargetTag) 
     return iter->second;
 }
 
-CTarget_Manager* CTarget_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+list<class CRenderTarget*>* CTarget_Manager::Find_MRT(const _wstring& strMRTTag)
 {
-    CTarget_Manager* pInstance = new CTarget_Manager(pDevice, pContext);
-    if (FAILED(pInstance->Initialize()))
-    {
-        MSG_BOX("Failed to Created : CTarget_Manager");
-        Safe_Release(pInstance);
-    }
-    return pInstance;
+    auto	iter = m_MRTs.find(strMRTTag);
+    if (iter == m_MRTs.end())
+        return nullptr;
+
+    return &iter->second;
 }
 
-void CTarget_Manager::Free()
-{
-    // MRT 그룹 정보 정리 (포인터만 가지고 있으므로 별도 해제 불필요)
-    m_MRTs.clear();
-    m_MRTTags.clear();
-    m_MRTViewports.clear();
 
-    // 렌더 타겟 객체들 해제
-    for (auto& pair : m_RenderTargets) {
-        Safe_Release(pair.second);
-    }
-    m_RenderTargets.clear();
 
-    // 백업 포인터들 안전하게 릴리즈 (혹시 End_MRT가 호출되지 않은 경우 대비)
-    for (_uint i = 0; i < D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i) {
-        Safe_Release(m_pBackupRTVs[i]);
-    }
-    Safe_Release(m_pBackupDSV);
-    Safe_Release(m_pDevice);
-    Safe_Release(m_pContext);
-}
 
 
 HRESULT CTarget_Manager::Bind_ShaderResource(const _wstring& strTargetTag, CShader* pShader, const _char* pContantName)

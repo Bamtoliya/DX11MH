@@ -17,37 +17,37 @@
   "Prototype_Component_Shader_VtxAnimMesh": {
     "Class": "CShader",
     "Layout": "VTXANIMMESH",
-    "ShaderPath": "../../Assets/ShaderFiles/Shader_VtxAnimMesh.hlsl"
+    "ShaderPath": "G:/My Drive/Assets/ShaderFiles/Shader_VtxAnimMesh.hlsl"
   },
   "Prototype_Component_Shader_Cell": {
     "Class": "CShader",
     "Layout": "VTXPOS",
-    "ShaderPath": "../../Assets/ShaderFiles/Shader_Cell.hlsl"
+    "ShaderPath": "G:/My Drive/Assets/ShaderFiles/Shader_Cell.hlsl"
   },
   "Prototype_Component_Shader_VtxMesh": {
     "Class": "CShader",
     "Layout": "VTXMESH",
-    "ShaderPath": "../../Assets/ShaderFiles/Shader_VtxMesh.hlsl"
+    "ShaderPath": "G:/My Drive/Assets/ShaderFiles/Shader_VtxMesh.hlsl"
   },
   "Prototype_Component_Shader_VtxNorTex": {
     "Class": "CShader",
     "Layout": "VTXNORTEX",
-    "ShaderPath": "../../Assets/ShaderFiles/Shader_VtxNorTex.hlsl"
+    "ShaderPath": "G:/My Drive/Assets/ShaderFiles/Shader_VtxNorTex.hlsl"
   },
   "Prototype_Component_Shader_VtxPosTex": {
     "Class": "CShader",
     "Layout": "VTXPOSTEX",
-    "ShaderPath": "../../Assets/ShaderFiles/Shader_VtxPosTex.hlsl"
+    "ShaderPath": "G:/My Drive/Assets/ShaderFiles/Shader_VtxPosTex.hlsl"
   },
   "Prototype_Component_Shader_VtxCubeTex": {
     "Class": "CShader",
     "Layout": "VTXCUBETEX",
-    "ShaderPath": "../../Assets/ShaderFiles/Shader_VtxCubeTex.hlsl"
+    "ShaderPath": "G:/My Drive/Assets/ShaderFiles/Shader_VtxCubeTex.hlsl"
   },
   "Prototype_Component_Shader_VtxDebugDraw": {
     "Class": "CShader",
     "Layout": "VTXDEBUGDRAW",
-    "ShaderPath": "../../Assets/ShaderFiles/Shader_DebugLine.hlsl"
+    "ShaderPath": "G:/My Drive/Assets/ShaderFiles/Shader_DebugLine.hlsl"
   },
   "Prototype_Component_Shader_VtxSplineModel": {
     "Class": "CShader",
@@ -62,7 +62,7 @@
   "Prototype_Component_Texture_BackGround": {
     "Class": "CTexture",
     "NumTexture": 2,
-    "TextureFilePath": "../../Assets/Resources/Textures/Default%d.jpg"
+    "TextureFilePath": "G:/My Drive/Assets/Resources/Textures/Default%d.jpg"
   },
   "Prototype_Component_VIBuffer_Rect": {
     "Class": "CVIBuffer_Rect"
@@ -76,6 +76,6 @@
   "Prototype_Component_Shader_Terrain": {
     "Class": "CShader",
     "Layout": "VTXNORTEX",
-    "ShaderPath": "../../Assets/ShaderFiles/Shader_Terrain.hlsl"
+    "ShaderPath": "G:/My Drive/Assets/ShaderFiles/Shader_Terrain.hlsl"
   }
 }

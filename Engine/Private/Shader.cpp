@@ -278,7 +278,7 @@ HRESULT CShader::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 	if (layoutTag == "VTXCUBETEX") { layoutDetails = { VTXCUBETEX::Elements, VTXCUBETEX::iNumElements }; }
 	if (layoutTag == "VTXDEBUGDRAW") { layoutDetails = { VTXDEBUGDRAW::Elements, VTXDEBUGDRAW::iNumElements }; }
 	if (layoutTag == "VTXPOS") { layoutDetails = { VTXPOS::Elements, VTXPOS::iNumElements }; }
-	if (layoutTag == "VTXSPLINEMODEL") { layoutDetails = { VTXSPLINEMODEL::Elements, VTXSPLINEMODEL::iNumElements }; }
+	if (layoutTag == "VTXSPLINEMODEL") { layoutDetails = { VTXSPLINEMODEL_INSTANCE::Elements, VTXSPLINEMODEL_INSTANCE::iNumElements }; }
 	if (layoutTag == "VTXMESHINSTANCE") { layoutDetails = { VTXMESH_INSTANCE::Elements, VTXMESH_INSTANCE::iNumElements }; }
 
 	if (FAILED(Initialize_Prototype(wsShaderPath.c_str(), layoutDetails.first, layoutDetails.second, layoutTag.c_str()))) {

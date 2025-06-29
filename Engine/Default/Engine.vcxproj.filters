@@ -1338,9 +1338,6 @@
     <FxCompile Include="..\..\ShaderFiles\Shader_Cell.hlsl">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl">
-      <Filter>01.Utility\98.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\..\ShaderFiles\Shader_Deferred.hlsl">
       <Filter>01.Utility\98.ShaderFiles</Filter>
     </FxCompile>

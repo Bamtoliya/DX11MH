@@ -9,6 +9,15 @@ class CVIBuffer_Instance;
 class CSpline_Component;
 class ENGINE_DLL CGameObject_SplineMesh final : public CGameObject
 {
+public:
+	struct SplineSegment
+	{
+		_float4 vStartPos;
+		_float4 vStartTangent;
+		_float4 vEndPos;
+		_float4 vEndTangent;
+		// 필요하다면 Up Vector 등 추가 정보를 넣을 수 있습니다.
+	};
 #pragma region Constructor/Destructor
 private:
 	CGameObject_SplineMesh(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -33,7 +42,8 @@ private:
 	CShader*			m_pShaderCom = { nullptr };
 	CModel*				m_pModelCom = { nullptr };
 	CSpline_Component*	m_pSplineCom = { nullptr };
-	CVIBuffer_Instance* m_pVIBufferInstanceCom = { nullptr };
+	CVIBuffer_Mesh_Instance* m_pVIBufferInstanceCom = { nullptr };
+	_float				m_fMeshLength = {};
 #pragma endregion
 
 #pragma region Save&Load
@@ -54,6 +64,13 @@ private:
 public:
 	virtual HRESULT Render();
 #pragma endregion
+
+#pragma region Helper
+private:
+	HRESULT Update_InstanceTransforms();
+	HRESULT Update_SplinBuffer();
+#pragma endregion
+
 
 #pragma region Collision
 public:

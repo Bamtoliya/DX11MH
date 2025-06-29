@@ -73,6 +73,10 @@ private:
 	_float			m_fTotalLength = { 0.f };
 	SPLINE_DESC     m_tSplineDesc;
 	_bool           m_bIsDirty = { true };
+
+private:
+	ID3D11Buffer* m_pBuffer = { nullptr };
+	ID3D11ShaderResourceView* m_pBufferSRV = { nullptr };
 };
 
 NS_END

@@ -272,6 +272,9 @@
   "Prototype_GameObject_Mesh_Instance": {
     "Class": "CGameObject_Mesh_Instance"
   },
+  "Prototype_GameObject_SplineMesh": {
+    "Class": "CGameObject_SplineMesh"
+  },
   "Prototype_Component_HeightField": {
     "Class": "CHeightField"
   }

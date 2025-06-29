@@ -24,10 +24,13 @@
     <ClCompile Include="..\private\Ashura_Movement_State.cpp" />
     <ClCompile Include="..\private\Asset_Browser.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
+    <ClCompile Include="..\private\Blader.cpp" />
     <ClCompile Include="..\private\Camera_Follow.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Camera_TPS.cpp" />
     <ClCompile Include="..\private\Defender.cpp" />
+    <ClCompile Include="..\private\GameObject_W6D01.cpp" />
+    <ClCompile Include="..\private\GameObject_W6D02.cpp" />
     <ClCompile Include="..\private\Level_Animation.cpp" />
     <ClCompile Include="..\private\Level_Test.cpp" />
     <ClCompile Include="..\private\Man.cpp" />
@@ -71,6 +74,7 @@
     <ClInclude Include="..\Public\Ashura_States.h" />
     <ClInclude Include="..\public\Asset_Browser.h" />
     <ClInclude Include="..\Public\BackGround.h" />
+    <ClInclude Include="..\public\Blader.h" />
     <ClInclude Include="..\public\Camera_Follow.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
     <ClInclude Include="..\public\Camera_TPS.h" />
@@ -79,6 +83,8 @@
     <ClInclude Include="..\Public\Editor_Enum.h" />
     <ClInclude Include="..\Public\Editor_Macro.h" />
     <ClInclude Include="..\Public\GameObjects.h" />
+    <ClInclude Include="..\public\GameObject_W6D01.h" />
+    <ClInclude Include="..\public\GameObject_W6D02.h" />
     <ClInclude Include="..\public\Level_Animation.h" />
     <ClInclude Include="..\public\Level_Test.h" />
     <ClInclude Include="..\public\Man.h" />
