@@ -244,6 +244,12 @@
     <Filter Include="02.GameObject\Stages\Open">
       <UniqueIdentifier>{22e97e87-530b-4974-bf54-1e3356d2e958}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Levels\Stage01">
+      <UniqueIdentifier>{9dd6cd1f-f279-41ee-ae32-97cd7ad2d380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\Stage02">
+      <UniqueIdentifier>{02427d54-e395-4b24-ad24-55b945419ffb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -386,6 +392,12 @@
     </ClCompile>
     <ClCompile Include="..\private\GameObject_W6D01.cpp">
       <Filter>02.GameObject\Stages\01</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Stage01.cpp">
+      <Filter>01.Levels\Stage01</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Stage02.cpp">
+      <Filter>01.Levels\Stage02</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -562,6 +574,12 @@
     </ClInclude>
     <ClInclude Include="..\public\GameObject_W6D01.h">
       <Filter>02.GameObject\Stages\01</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Stage01.h">
+      <Filter>01.Levels\Stage01</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Stage02.h">
+      <Filter>01.Levels\Stage02</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
