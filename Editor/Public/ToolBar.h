@@ -34,6 +34,7 @@ private:
 	HRESULT Load_GameObjects(_uint iLevelIndex, const _tchar* pFilePath);
 
 private:
+	_bool m_bColliderMesh = { false };
 	_bool m_bConvertAnim = { false };
 	_bool m_bMergeLoad = { false };
 	LEVEL m_eLevelIndex = { LEVEL::STATIC };

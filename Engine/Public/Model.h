@@ -13,11 +13,11 @@ protected:
 	virtual ~CModel() = default;
 public:
 	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix = XMMatrixIdentity());
+	static CModel* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix = XMMatrixIdentity(), _bool bColliderMesh = false);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 public:
-	virtual HRESULT Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix);
+	virtual HRESULT Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix, _bool bColliderMesh = false);
 	virtual HRESULT Initialize(void* pArg);
 public:
 	HRESULT Ready_Bones(const aiNode* pAINode, _int iParentBoneIndex);
@@ -40,6 +40,9 @@ private:
 
 	MODEL						m_eType = {};
 	_float4x4					m_PreTransformMatrix = {};
+
+	_bool						m_bColliderMesh = { false };
+
 	_uint						m_iNumMeshes = {};
 	vector<class CMesh*>		m_Meshes;
 

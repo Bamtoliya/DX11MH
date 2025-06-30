@@ -105,21 +105,21 @@ HRESULT CGameObject_W6D01::Ready_Components()
 		return E_FAIL;
 
 	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_W06D01"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_W6D01"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
-	/* For.Com_Model_Collider */
-	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_W06D01_Collider"),
-		TEXT("Com_Model_Collider"), reinterpret_cast<CComponent**>(&m_pModelColliderCom))))
-		return E_FAIL;
+	///* For.Com_Model_Collider */
+	//if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_W6D01_Collider"),
+	//	TEXT("Com_Model_Collider"), reinterpret_cast<CComponent**>(&m_pModelColliderCom))))
+	//	return E_FAIL;
 
 	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_VIBuffer_Mesh_Instance"),
+	/*if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_VIBuffer_Mesh_Instance"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
-		return E_FAIL;
+		return E_FAIL;*/
 
-	m_pModelColliderCom;
+	/*
 	CRigidBody::RIGIDBODY_DESC rigidDesc;
 	rigidDesc.eBodyType = CRigidBody::EBodyType::STATIC;
 	rigidDesc.bIsConvex = false;
@@ -131,12 +131,12 @@ HRESULT CGameObject_W6D01::Ready_Components()
 		shapeDesc.bIsQueryShape = true;
 		shapeDesc.iMeshIndex = i++;
 		shapeDesc.eShapeType = CRigidBody::EShapeType::TRIANGLE_MESH;
-	}
+	}*/
 
 	/* For.Com_RigidBody */
-	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom))))
-		return E_FAIL;
+	/*if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom), &rigidDesc)))
+		return E_FAIL;*/
 
 
 	return S_OK;
@@ -162,7 +162,7 @@ HRESULT CGameObject_W6D01::Serialize(json& outJson)
 	if (FAILED(__super::Serialize(data)))
 		return E_FAIL;
 	outJson["CGameObject_W6D01"] = data;
-	outJson["CGameObject_W6D01"]["PrototypeTag"] = "Prototype_GameObject_GameObject_W6D01";
+	outJson["CGameObject_W6D01"]["PrototypeTag"] = "Prototype_GameObject_W6D01";
 	return S_OK;
 }
 

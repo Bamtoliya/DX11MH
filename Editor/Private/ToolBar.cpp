@@ -124,8 +124,8 @@ HRESULT CToolBar::Render()
                 }
                 ImGui::Separator();
                 // 레벨 선택 콤보 박스 추가
-                const char* level_names[] = { "Static", "UI", "Map", "Effect", "Animation", "GamePlay", "Test", "All"}; // LEVEL enum에 맞게 이름 정의
-                LEVEL level_values[] = { LEVEL::STATIC, LEVEL::UI, LEVEL::MAP, LEVEL::EFFECT, LEVEL::ANIMATION, LEVEL::GAMEPLAY, LEVEL::TEST, LEVEL::END }; // 실제 LEVEL enum 값
+                const char* level_names[] = { "Static", "UI", "Map", "Effect", "Animation", "GamePlay", "Test", "Stage01", "Stage02", "All"}; // LEVEL enum에 맞게 이름 정의
+                LEVEL level_values[] = { LEVEL::STATIC, LEVEL::UI, LEVEL::MAP, LEVEL::EFFECT, LEVEL::ANIMATION, LEVEL::GAMEPLAY, LEVEL::TEST, LEVEL::STAGE01, LEVEL::STAGE02, LEVEL::END }; // 실제 LEVEL enum 값
                 static int current_level_idx = 0; // 기본 선택 인덱스 (STATIC)
 
                 // m_eLevelToSavePrototypes와 일치하는 인덱스 찾기
@@ -164,6 +164,10 @@ HRESULT CToolBar::Render()
                 ImGui::Text("NonAnimation");
                 ImGui::SameLine();
                 ImGui::Toggle("Animation", &m_bConvertAnim);
+                if (!m_bConvertAnim)
+                {
+                    ImGui::Toggle("ColliderMesh", &m_bColliderMesh);
+                }
                 if (ImGui::MenuItem("Convert Model", "Ctrl+Alt+C")) {
                     ifd::FileDialog::Instance().Open("ModelOpenDialog", "Open a Model", "model file (*.fbx){.fbx},.*", true, ASSETPATH);
                     printf("Clicked File->Convert Model\n");
@@ -256,6 +260,18 @@ HRESULT CToolBar::Render()
 
                 if (ImGui::MenuItem("Test")) {
                     if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::TEST))))
+                        return E_FAIL;
+                    printf("Clicked Help->About\n");
+                    // open_about_popup = true; // 예시
+                }
+                if (ImGui::MenuItem("Stage01")) {
+                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::STAGE01))))
+                        return E_FAIL;
+                    printf("Clicked Help->About\n");
+                    // open_about_popup = true; // 예시
+                }
+                if (ImGui::MenuItem("Stage02")) {
+                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::STAGE02))))
                         return E_FAIL;
                     printf("Clicked Help->About\n");
                     // open_about_popup = true; // 예시
@@ -383,6 +399,7 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
 #pragma endregion
 
 #pragma region WriteMeshes
+        outputFile.write(reinterpret_cast<const char*>(&m_bColliderMesh), sizeof(_bool));
         for (_uint i = 0; i < iNumMeshes; ++i)
         {
             aiMesh* pAiMesh = pAiScene->mMeshes[i];
@@ -395,15 +412,15 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
             outputFile.write(reinterpret_cast<const char*>(&iNumBones), sizeof(_uint));
             _uint iNumIndcies = pAiMesh->mNumFaces * pAiMesh->mFaces->mNumIndices;
             outputFile.write(reinterpret_cast<const char*>(&iNumIndcies), sizeof(_uint));
-
-            //outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mFaces->mIndices[0]), sizeof(_uint) * iNumIndcies);
-
             for (_uint j = 0; j < pAiMesh->mNumVertices; ++j)
             {
                 outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mVertices[j]), sizeof(_float3));
                 outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mNormals[j]), sizeof(_float3));
-                outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTangents[j]), sizeof(_float3));
-                outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTextureCoords[0][j]), sizeof(_float2));
+                if (!m_bColliderMesh)
+                {
+                    outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTangents[j]), sizeof(_float3));
+                    outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTextureCoords[0][j]), sizeof(_float2));
+                }
             }
 
             if (m_bConvertAnim)

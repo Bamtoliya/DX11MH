@@ -1,7 +1,7 @@
 {
   "Prototype_Component_Model_Sonic": {
     "Class": "CModel",
-    "ModelFilePath": "../../Assets/Models/Sonic/SonicAllActions.model",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Sonic/SonicAllActions.model",
     "PreTransformedMatrix": [
       -1.0,
       0.0,
@@ -20,11 +20,12 @@
       0.0,
       1.0
     ],
-    "Type": "ANIM"
+    "Type": "ANIM",
+    "ColliderMesh": "FALSE"
   },
   "Prototype_Component_Model_W6D01": {
     "Class": "CModel",
-    "ModelFilePath": "G/My Drive/Assets/Models/Stage/W6d01/W6d01.fbx",
+    "ModelFilePath": "G:/My Drive/Assets/Stage/W6d01/W6d01.model",
     "PreTransformedMatrix": [
       -1.0,
       0.0,
@@ -43,11 +44,13 @@
       0.0,
       1.0
     ],
-    "Type": "NONANIM"
+    "Type": "NONANIM",
+    "ColliderMesh": "FALSE"
   },
+
   "Prototype_Component_Model_W6D01_Collider": {
     "Class": "CModel",
-    "ModelFilePath": "G/My Drive/Assets/Models/Stage/W6d01/W6d01Col.fbx",
+    "ModelFilePath": "G:/My Drive/Assets/Stage/W6d01/W6d01Col.model",
     "PreTransformedMatrix": [
       -1.0,
       0.0,
@@ -66,10 +69,8 @@
       0.0,
       1.0
     ],
-    "Type": "NONANIM"
-  },
-  "Prototype_Component_Model_Motora": {
-
+    "Type": "NONANIM",
+    "ColliderMesh" :  "TRUE"
   },
   "Prototype_Component_RigidBody": {
     "Class": "CRigidBody"

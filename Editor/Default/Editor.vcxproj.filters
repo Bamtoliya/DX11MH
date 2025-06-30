@@ -208,12 +208,6 @@
     <Filter Include="02.GameObject\03.Monster\Enemy\Defender">
       <UniqueIdentifier>{c4cc741b-cd63-498b-ada1-a780eab46cfb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\03.Monster\Enemy\Controller">
-      <UniqueIdentifier>{6ad3785c-8384-4fa9-b349-97082b2b3e38}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\03.Monster\Enemy\Controller\States">
-      <UniqueIdentifier>{6c3e5487-6ec7-49f0-84f3-c92b0e02a9b8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Spline">
       <UniqueIdentifier>{9f18bad8-45eb-4f55-b4aa-f1efd82d0035}</UniqueIdentifier>
     </Filter>
@@ -249,6 +243,15 @@
     </Filter>
     <Filter Include="01.Levels\Stage02">
       <UniqueIdentifier>{02427d54-e395-4b24-ad24-55b945419ffb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Enemy\Mortora">
+      <UniqueIdentifier>{8592d044-b779-4adc-8d9e-6020087e6ab9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Enemy\Enemy_Controller">
+      <UniqueIdentifier>{6ad3785c-8384-4fa9-b349-97082b2b3e38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\03.Monster\Enemy\Enemy_Controller\States">
+      <UniqueIdentifier>{6c3e5487-6ec7-49f0-84f3-c92b0e02a9b8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -398,6 +401,15 @@
     </ClCompile>
     <ClCompile Include="..\private\Level_Stage02.cpp">
       <Filter>01.Levels\Stage02</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameObject_Open.cpp">
+      <Filter>02.GameObject\Stages\Open</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Motora.cpp">
+      <Filter>02.GameObject\03.Monster\Enemy\Mortora</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Enemy_Controller.cpp">
+      <Filter>02.GameObject\03.Monster\Enemy\Enemy_Controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -581,6 +593,15 @@
     <ClInclude Include="..\public\Level_Stage02.h">
       <Filter>01.Levels\Stage02</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\GameObject_Open.h">
+      <Filter>02.GameObject\Stages\Open</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Motora.h">
+      <Filter>02.GameObject\03.Monster\Enemy\Mortora</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Enemy_Controller.h">
+      <Filter>02.GameObject\03.Monster\Enemy\Enemy_Controller</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Editor.ico">
@@ -600,9 +621,6 @@
     <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Struct.hlsli">
       <Filter>ShaderFiles</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Natvis Include="NatvisFile.natvis" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_DebugLine.hlsl">

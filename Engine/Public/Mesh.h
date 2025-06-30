@@ -12,14 +12,14 @@ private:
 	CMesh(const CMesh& Prototype);
 	virtual ~CMesh() = default;
 public:
-	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix);
-	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const aiMesh* pAIMesh, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix);
+	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix, _bool bColliderMesh = false);
+	static CMesh* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const aiMesh* pAIMesh, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix, _bool bColliderMesh = false);
 	virtual CComponent* Clone(void* pArg) override;
 	virtual void Free() override;
 
 public:
-	virtual HRESULT Initialize_Prototype(MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix);
-	virtual HRESULT Initialize_Prototype(MODEL eType, const aiMesh* pAIMesh, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix);
+	virtual HRESULT Initialize_Prototype(MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix, _bool bColliderMesh = false);
+	virtual HRESULT Initialize_Prototype(MODEL eType, const aiMesh* pAIMesh, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix, _bool bColliderMesh = false);
 	virtual HRESULT Initialize(void* pArg);
 
 private:
@@ -32,6 +32,8 @@ private:
 
 #pragma region Variables
 private:
+	_bool			m_bColliderMesh = { false };
+
 	_char			m_szName[MAX_PATH] = {};
 	_uint			m_iMaterialIndex = {};
 

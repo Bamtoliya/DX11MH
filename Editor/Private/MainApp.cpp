@@ -35,7 +35,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(CreateImGui()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::TEST)))
+	if (FAILED(Start_Level(LEVEL::UI)))
 		return E_FAIL;
 
 	return S_OK;
@@ -78,6 +78,10 @@ HRESULT CMainApp::Register_Class_Types()
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CTutorial_Wall", CTutorial_Wall::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CSpring", CSpring::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CAshura", CAshura::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CGameObject_W6D01", CGameObject_W6D01::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CGameObject_W6D02", CGameObject_W6D02::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CGameObject_Open", CGameObject_Open::Create))) return E_FAIL;
+	
 #pragma endregion	
 
 	return S_OK;

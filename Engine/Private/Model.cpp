@@ -26,6 +26,7 @@ CModel::CModel(const CModel& Prototype)
 	, m_Bones { Prototype.m_Bones }
 	, m_iNumAnimations{ Prototype.m_iNumAnimations }
 	, m_Animations { Prototype.m_Animations }
+	, m_bColliderMesh { Prototype.m_bColliderMesh }
 {
 	strcpy_s(m_szModelFilePath, Prototype.m_szModelFilePath);
 	for (auto& pBone : m_Bones)
@@ -50,11 +51,11 @@ CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
+CModel* CModel::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix, _bool bColliderMesh)
 {
 	CModel* pInstance = new CModel(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PreTransformMatrix)))
+	if (FAILED(pInstance->Initialize_Prototype(eType, pModelFilePath, PreTransformMatrix, bColliderMesh)))
 	{
 		MSG_BOX("Failed to Created : CModel");
 		Safe_Release(pInstance);
@@ -76,8 +77,9 @@ CComponent* CModel::Clone(void* pArg)
 	return pInstance;
 }
 
-HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix)
+HRESULT CModel::Initialize_Prototype(MODEL eType, const _char* pModelFilePath, _fmatrix PreTransformMatrix, _bool bColliderMesh)
 {
+	m_bColliderMesh = bColliderMesh;
 	strncpy_s(m_szModelFilePath, pModelFilePath, MAX_PATH);
 	fs::path filePath(pModelFilePath);
 	m_eType = eType;
@@ -161,10 +163,9 @@ HRESULT CModel::Ready_Bones(const aiNode* pAINode, _int iParentBoneIndex)
 HRESULT CModel::Ready_Meshes()
 {
 	m_iNumMeshes = m_pAIScene->mNumMeshes;
-
 	for (size_t i = 0; i < m_iNumMeshes; i++)
 	{
-		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, m_pAIScene->mMeshes[i], m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix));
+		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, m_pAIScene->mMeshes[i], m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix), m_bColliderMesh);
 		if (nullptr == pMesh)
 			return E_FAIL;
 
@@ -225,9 +226,10 @@ HRESULT CModel::Ready_Bin_Bones(ifstream& ifs, _int iParentBoneIndex)
 
 HRESULT CModel::Ready_Bin_Meshes(ifstream& ifs)
 {
+	ifs.read(reinterpret_cast<char*>(&m_bColliderMesh), sizeof(_bool));
 	for (_uint i = 0; i < m_iNumMeshes; ++i)
 	{
-		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, ifs, m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix));
+		CMesh* pMesh = CMesh::Create(m_pDevice, m_pContext, m_eType, ifs, m_Bones, XMLoadFloat4x4(&m_PreTransformMatrix), m_bColliderMesh);
 		if (nullptr == pMesh)
 			return E_FAIL;
 
@@ -303,6 +305,7 @@ HRESULT CModel::Prototype_Serialize(json& outJson)
 {
 	outJson["Class"] = "CModel";
 	outJson["ModelFilePath"] = string(m_szModelFilePath);
+	outJson["ColliderMesh"] = m_bColliderMesh ? "TRUE" : "FALSE";
 	switch (m_eType)
 	{
 		case MODEL::ANIM: outJson["Type"] = "ANIM"; break;
@@ -328,6 +331,12 @@ HRESULT CModel::Prototype_Deserialize(simdjson::ondemand::object& jsonData)
 		return E_FAIL;
 	}
 	strcpy_s(m_szModelFilePath, string(filePath_sv).c_str()); // .c_str() 추가
+
+	string_view colliderMesh_sv;
+	if (jsonData["ColliderMesh"].get_string().get(colliderMesh_sv) == simdjson::SUCCESS) {
+		string colliderStr = string(colliderMesh_sv);
+		m_bColliderMesh = (colliderStr == "TRUE");
+	}
 
 	// Type 읽기
 	string_view type_sv;
@@ -386,7 +395,7 @@ HRESULT CModel::Prototype_Deserialize(simdjson::ondemand::object& jsonData)
 	// JSON에서 읽어온 정보로 모델 초기화
 	// Initialize_Prototype을 호출하여 모델 데이터를 로드합니다.
 	// Initialize_Prototype은 이미 m_szModelFilePath, m_eType, m_PreTransformMatrix를 사용합니다.
-	if (FAILED(Initialize_Prototype(m_eType, m_szModelFilePath, XMLoadFloat4x4(&m_PreTransformMatrix))))
+	if (FAILED(Initialize_Prototype(m_eType, m_szModelFilePath, XMLoadFloat4x4(&m_PreTransformMatrix), m_bColliderMesh)))
 	{
 		MSG_BOX("Failed to Initialize_Prototype in Prototype_Deserialize");
 		return E_FAIL;

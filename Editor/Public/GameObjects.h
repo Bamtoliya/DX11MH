@@ -18,6 +18,13 @@
 #include "Ashura_Controller.h"
 #pragma endregion
 
+#pragma region Stage
+#include "GameObject_W6D01.h"
+#include "GameObject_W6D02.h"
+#include "GameObject_Open.h"
+#pragma endregion
+
+
 
 #include "Sonic.h"
 #include "Sonic_Controller.h"

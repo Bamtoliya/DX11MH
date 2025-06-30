@@ -123,6 +123,8 @@ public:
     HRESULT Loading_For_Gameplay();
     HRESULT Loading_For_Animation();
     HRESULT Loading_For_Test();
+    HRESULT Loading_For_Stage01();
+    HRESULT Loading_For_Stage02();
 #pragma endregion
 
 

@@ -56,6 +56,14 @@ void CLevel_Loading::Update(_float fTimeDelta)
 			case LEVEL::TEST:
 				pLevel = CLevel_Test::Create(m_pDevice, m_pContext);
 				break;
+
+			case LEVEL::STAGE01:
+				pLevel = CLevel_Stage01::Create(m_pDevice, m_pContext);
+				break;
+
+			case LEVEL::STAGE02:
+				pLevel = CLevel_Stage02::Create(m_pDevice, m_pContext);
+				break;
 			}
 
 			if (nullptr == pLevel)

@@ -14,11 +14,11 @@ CMesh::CMesh(const CMesh& Prototype)
 {
 }
 
-CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix)
+CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix, _bool bColliderMesh)
 {
 	CMesh* pInstance = new CMesh(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(eType, ifs, Bones, PreTransformMatrix)))
+	if (FAILED(pInstance->Initialize_Prototype(eType, ifs, Bones, PreTransformMatrix, bColliderMesh)))
 	{
 		MSG_BOX("Failed to Created in Binary : CMesh");
 		Safe_Release(pInstance);
@@ -27,11 +27,11 @@ CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL
 	return pInstance;
 }
 
-CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const aiMesh* pAIMesh, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix)
+CMesh* CMesh::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, MODEL eType, const aiMesh* pAIMesh, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix, _bool bColliderMesh)
 {
 	CMesh* pInstance = new CMesh(pDevice, pContext);
 
-	if (FAILED(pInstance->Initialize_Prototype(eType, pAIMesh, Bones, PreTransformMatrix)))
+	if (FAILED(pInstance->Initialize_Prototype(eType, pAIMesh, Bones, PreTransformMatrix, bColliderMesh)))
 	{
 		MSG_BOX("Failed to Created : CMesh");
 		Safe_Release(pInstance);
@@ -60,9 +60,9 @@ void CMesh::Free()
 
 }
 
-HRESULT CMesh::Initialize_Prototype(MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix)
+HRESULT CMesh::Initialize_Prototype(MODEL eType, ifstream& ifs, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix, _bool bColliderMesh)
 {
-
+	m_bColliderMesh = bColliderMesh;
 	_uint iNameLength = {};
 	ifs.read(reinterpret_cast<char*>(&iNameLength), sizeof(_uint));
 	ZeroMemory(&m_szName, MAX_PATH);
@@ -120,8 +120,9 @@ HRESULT CMesh::Initialize_Prototype(MODEL eType, ifstream& ifs, const vector<cla
 	return S_OK;
 }
 
-HRESULT CMesh::Initialize_Prototype(MODEL eType, const aiMesh* pAIMesh, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix)
+HRESULT CMesh::Initialize_Prototype(MODEL eType, const aiMesh* pAIMesh, const vector<class CBone*>& Bones, _fmatrix PreTransformMatrix, _bool bColliderMesh)
 {
+	m_bColliderMesh = bColliderMesh;
 	strcpy_s(m_szName, pAIMesh->mName.data);
 	m_iMaterialIndex = pAIMesh->mMaterialIndex;
 	m_iNumVertexBuffers = 1;
@@ -166,9 +167,6 @@ HRESULT CMesh::Initialize_Prototype(MODEL eType, const aiMesh* pAIMesh, const ve
 
 	Safe_Delete_Array(pIndices);
 
-
-
-
 	return S_OK;
 }
 
@@ -204,8 +202,17 @@ HRESULT CMesh::Ready_NonAnim_Mesh(const aiMesh* pAIMesh, _fmatrix PreTransformMa
 		memcpy(&pVertices[i].vNormal, &pAIMesh->mNormals[i], sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vNormal, XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vNormal), PreTransformMatrix));
 
-		memcpy(&pVertices[i].vTangent, &pAIMesh->mTangents[i], sizeof(_float3));
-		memcpy(&pVertices[i].vTexcoord, &pAIMesh->mTextureCoords[0][i], sizeof(_float2));
+		if (!m_bColliderMesh)
+		{
+			memcpy(&pVertices[i].vTangent, &pAIMesh->mTangents[i], sizeof(_float3));
+			memcpy(&pVertices[i].vTexcoord, &pAIMesh->mTextureCoords[0][i], sizeof(_float2));
+		}
+		else
+		{
+			// 콜라이더 메시일 경우 tangent와 texcoord 데이터를 0으로 초기화
+			ZeroMemory(&pVertices[i].vTangent, sizeof(_float3));
+			ZeroMemory(&pVertices[i].vTexcoord, sizeof(_float2));
+		}
 	}
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
@@ -380,8 +387,17 @@ HRESULT CMesh::Ready_NonAnim_Mesh(ifstream& ifs, _fmatrix PreTransformMatrix)
 		XMStoreFloat3(&pVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), PreTransformMatrix));
 		ifs.read(reinterpret_cast<char*>(&pVertices[i].vNormal), sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vNormal, XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vNormal), PreTransformMatrix));
-		ifs.read(reinterpret_cast<char*>(&pVertices[i].vTangent), sizeof(_float3));
-		ifs.read(reinterpret_cast<char*>(&pVertices[i].vTexcoord), sizeof(_float2));
+		if (!m_bColliderMesh)
+		{
+			ifs.read(reinterpret_cast<char*>(&pVertices[i].vTangent), sizeof(_float3));
+			ifs.read(reinterpret_cast<char*>(&pVertices[i].vTexcoord), sizeof(_float2));
+		}
+		else
+		{
+			// 콜라이더 메시일 경우 tangent와 texcoord 데이터를 0으로 초기화
+			ZeroMemory(&pVertices[i].vTangent, sizeof(_float3));
+			ZeroMemory(&pVertices[i].vTexcoord, sizeof(_float2));
+		}
 	}
 
 	for (_uint i = 0; i < m_iNumVertices; ++i)
