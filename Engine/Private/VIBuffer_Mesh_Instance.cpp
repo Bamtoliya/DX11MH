@@ -181,48 +181,100 @@ HRESULT CVIBuffer_Mesh_Instance::Deserialize(simdjson::ondemand::object& jsonDat
 				if (idx >= m_iNumInstance)
 					continue;
 
-				// Right 벡터 로드
-				auto rightArray = instanceObj["Right"].get_array();
-				auto rightIter = rightArray.begin();
-				m_pVertexInstances[idx].vRight.x = static_cast<_float>((*rightIter).get_double());
-				m_pVertexInstances[idx].vRight.y = static_cast<_float>((*(++rightIter)).get_double());
-				m_pVertexInstances[idx].vRight.z = static_cast<_float>((*(++rightIter)).get_double());
-				m_pVertexInstances[idx].vRight.w = static_cast<_float>((*(++rightIter)).get_double());
+				// Position 배열 로드
+				auto positionArray = instanceObj["Position"].get_array();
+				auto posIter = positionArray.begin();
+				_float3 position;
+				position.x = static_cast<_float>((*posIter).get_double());
+				position.y = static_cast<_float>((*(++posIter)).get_double());
+				position.z = static_cast<_float>((*(++posIter)).get_double());
 
-				// Up 벡터 로드
-				auto upArray = instanceObj["Up"].get_array();
-				auto upIter = upArray.begin();
-				m_pVertexInstances[idx].vUp.x = static_cast<_float>((*upIter).get_double());
-				m_pVertexInstances[idx].vUp.y = static_cast<_float>((*(++upIter)).get_double());
-				m_pVertexInstances[idx].vUp.z = static_cast<_float>((*(++upIter)).get_double());
-				m_pVertexInstances[idx].vUp.w = static_cast<_float>((*(++upIter)).get_double());
+				// EulerRotation 배열 로드 (도 단위 -> 라디안으로 변환)
+				auto rotationArray = instanceObj["EulerRotation"].get_array();
+				auto rotIter = rotationArray.begin();
+				_float3 rotation;
+				// JSON의 도 값을 라디안으로 변환
+				rotation.x = XMConvertToRadians(static_cast<_float>((*rotIter).get_double()));
+				rotation.y = XMConvertToRadians(static_cast<_float>((*(++rotIter)).get_double()));
+				rotation.z = XMConvertToRadians(static_cast<_float>((*(++rotIter)).get_double()));
 
-				// Look 벡터 로드
-				auto lookArray = instanceObj["Look"].get_array();
-				auto lookIter = lookArray.begin();
-				m_pVertexInstances[idx].vLook.x = static_cast<_float>((*lookIter).get_double());
-				m_pVertexInstances[idx].vLook.y = static_cast<_float>((*(++lookIter)).get_double());
-				m_pVertexInstances[idx].vLook.z = static_cast<_float>((*(++lookIter)).get_double());
-				m_pVertexInstances[idx].vLook.w = static_cast<_float>((*(++lookIter)).get_double());
+				// Scale 배열 로드
+				auto scaleArray = instanceObj["Scale"].get_array();
+				auto scaleIter = scaleArray.begin();
+				_float3 scale;
+				scale.x = static_cast<_float>((*scaleIter).get_double());
+				scale.y = static_cast<_float>((*(++scaleIter)).get_double());
+				scale.z = static_cast<_float>((*(++scaleIter)).get_double());
 
-				// Translation 벡터 로드
-				auto transArray = instanceObj["Translation"].get_array();
-				auto transIter = transArray.begin();
-				m_pVertexInstances[idx].vTranslation.x = static_cast<_float>((*transIter).get_double());
-				m_pVertexInstances[idx].vTranslation.y = static_cast<_float>((*(++transIter)).get_double());
-				m_pVertexInstances[idx].vTranslation.z = static_cast<_float>((*(++transIter)).get_double());
-				m_pVertexInstances[idx].vTranslation.w = static_cast<_float>((*(++transIter)).get_double());
+				// SRT 데이터로부터 행렬 생성 (이제 라디안 값으로 전달됨)
+				CreateMatrixFromSRT(m_pVertexInstances[idx], position, rotation, scale);
+
+				// EditData 업데이트 (호환성을 위해) - 라디안 값으로 저장
+				m_EditData[idx].vPosition = position;
+				m_EditData[idx].vRotation = rotation;
+				m_EditData[idx].vScale = scale;
 
 				++i;
 			}
 
+			// 변경된 데이터를 버퍼에 적용
+			return ApplyChanges();
+
+			//// 각 인스턴스 데이터 로드
+			//_uint i = 0;
+			//for (auto instance : instances) {
+			//	if (i >= m_iNumInstance)
+			//		break;
+
+			//	auto instanceObj = instance.get_object();
+
+			//	// 인덱스 확인 (선택사항)
+			//	_uint idx = static_cast<_uint>(instanceObj["Index"].get_uint64());
+			//	if (idx >= m_iNumInstance)
+			//		continue;
+
+			//	// Right 벡터 로드
+			//	auto rightArray = instanceObj["Right"].get_array();
+			//	auto rightIter = rightArray.begin();
+			//	m_pVertexInstances[idx].vRight.x = static_cast<_float>((*rightIter).get_double());
+			//	m_pVertexInstances[idx].vRight.y = static_cast<_float>((*(++rightIter)).get_double());
+			//	m_pVertexInstances[idx].vRight.z = static_cast<_float>((*(++rightIter)).get_double());
+			//	m_pVertexInstances[idx].vRight.w = static_cast<_float>((*(++rightIter)).get_double());
+
+			//	// Up 벡터 로드
+			//	auto upArray = instanceObj["Up"].get_array();
+			//	auto upIter = upArray.begin();
+			//	m_pVertexInstances[idx].vUp.x = static_cast<_float>((*upIter).get_double());
+			//	m_pVertexInstances[idx].vUp.y = static_cast<_float>((*(++upIter)).get_double());
+			//	m_pVertexInstances[idx].vUp.z = static_cast<_float>((*(++upIter)).get_double());
+			//	m_pVertexInstances[idx].vUp.w = static_cast<_float>((*(++upIter)).get_double());
+
+			//	// Look 벡터 로드
+			//	auto lookArray = instanceObj["Look"].get_array();
+			//	auto lookIter = lookArray.begin();
+			//	m_pVertexInstances[idx].vLook.x = static_cast<_float>((*lookIter).get_double());
+			//	m_pVertexInstances[idx].vLook.y = static_cast<_float>((*(++lookIter)).get_double());
+			//	m_pVertexInstances[idx].vLook.z = static_cast<_float>((*(++lookIter)).get_double());
+			//	m_pVertexInstances[idx].vLook.w = static_cast<_float>((*(++lookIter)).get_double());
+
+			//	// Translation 벡터 로드
+			//	auto transArray = instanceObj["Translation"].get_array();
+			//	auto transIter = transArray.begin();
+			//	m_pVertexInstances[idx].vTranslation.x = static_cast<_float>((*transIter).get_double());
+			//	m_pVertexInstances[idx].vTranslation.y = static_cast<_float>((*(++transIter)).get_double());
+			//	m_pVertexInstances[idx].vTranslation.z = static_cast<_float>((*(++transIter)).get_double());
+			//	m_pVertexInstances[idx].vTranslation.w = static_cast<_float>((*(++transIter)).get_double());
+
+			//	++i;
+			//}
+
 			// EditData 업데이트 (호환성을 위해)
-			for (_uint i = 0; i < m_iNumInstance; ++i) {
+			/*for (_uint i = 0; i < m_iNumInstance; ++i) {
 				ExtractSRTFromMatrix(m_pVertexInstances[i],
 					m_EditData[i].vPosition,
 					m_EditData[i].vRotation,
 					m_EditData[i].vScale);
-			}
+			}*/
 
 			// 변경된 데이터를 버퍼에 적용
 			return ApplyChanges();
@@ -410,9 +462,25 @@ void CVIBuffer_Mesh_Instance::EditInstance(_uint iIndex)
 		bModified = true;
 	}
 
-	// 회전 편집 (오일러 각)
-	if (ImGui::DragFloat3("Rotation", &rotation.x, 0.1f))
+	// 회전 편집 (오일러 각도)
+	_float3 eulerAnglesDegrees = {
+		XMConvertToDegrees(m_EditData[iIndex].fCurRotationX),
+		XMConvertToDegrees(m_EditData[iIndex].fCurRotationY),
+		XMConvertToDegrees(m_EditData[iIndex].fCurRotationZ)
+	};
+
+	if (ImGui::DragFloat3(u8"Rotation (Euler °)", &eulerAnglesDegrees.x, 1.0f, -360.0f, 360.0f))
 	{
+		m_EditData[iIndex].fCurRotationX = XMConvertToRadians(eulerAnglesDegrees.x);
+		m_EditData[iIndex].fCurRotationY = XMConvertToRadians(eulerAnglesDegrees.y);
+		m_EditData[iIndex].fCurRotationZ = XMConvertToRadians(eulerAnglesDegrees.z);
+
+		// 오일러 각에서 쿼터니언으로 변환
+		_vector currentRotationQuatVec = XMQuaternionRotationRollPitchYawFromVector(
+			XMLoadFloat3(&_float3(m_EditData[iIndex].fCurRotationX, m_EditData[iIndex].fCurRotationY, m_EditData[iIndex].fCurRotationZ))
+		);
+		XMStoreFloat4(&m_EditData[iIndex].qOrientation, XMQuaternionNormalize(currentRotationQuatVec));
+		rotation = { eulerAnglesDegrees };	
 		bModified = true;
 	}
 
@@ -435,6 +503,67 @@ void CVIBuffer_Mesh_Instance::EditInstance(_uint iIndex)
 		m_EditData[iIndex].vPosition = position;
 		m_EditData[iIndex].vRotation = rotation;
 		m_EditData[iIndex].vScale = scale;
+	}
+
+	// ReadOnly WorldMatrix 표시 (CTransform::RenderImGui와 유사)
+	if (ImGui::TreeNode("Instance World Transform (Read-Only)"))
+	{
+		// 현재 인스턴스의 월드 행렬 구성
+		_float4x4 instanceWorldMatrix;
+		memcpy(&instanceWorldMatrix.m[0], &m_pVertexInstances[iIndex].vRight, sizeof(_float4));
+		memcpy(&instanceWorldMatrix.m[1], &m_pVertexInstances[iIndex].vUp, sizeof(_float4));
+		memcpy(&instanceWorldMatrix.m[2], &m_pVertexInstances[iIndex].vLook, sizeof(_float4));
+		memcpy(&instanceWorldMatrix.m[3], &m_pVertexInstances[iIndex].vTranslation, sizeof(_float4));
+
+		// 행렬 분해하여 최종 SQT 값 계산
+		_vector finalS, finalR, finalT;
+		if (XMMatrixDecompose(&finalS, &finalR, &finalT, XMLoadFloat4x4(&instanceWorldMatrix)))
+		{
+			_float3 finalScale, finalTranslation;
+			_float4 finalOrientation;
+			XMStoreFloat3(&finalScale, finalS);
+			XMStoreFloat3(&finalTranslation, finalT);
+			XMStoreFloat4(&finalOrientation, finalR);
+
+			// 쿼터니언에서 오일러 각으로 변환 (CTransform과 동일한 방식)
+			DirectX::SimpleMath::Quaternion smFinalQuat(finalR);
+			DirectX::SimpleMath::Vector3 finalEulerRad = smFinalQuat.ToEuler();
+			_float3 finalEulerDeg = {
+				XMConvertToDegrees(finalEulerRad.x),
+				XMConvertToDegrees(finalEulerRad.y),
+				XMConvertToDegrees(finalEulerRad.z)
+			};
+
+			// ReadOnly 입력 필드로 표시
+			ImGui::InputFloat3("World Pos", &finalTranslation.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::InputFloat3("World Euler Deg", &finalEulerDeg.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::InputFloat4("World Quat", &finalOrientation.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
+			ImGui::InputFloat3("World Scale", &finalScale.x, "%.3f", ImGuiInputTextFlags_ReadOnly);
+
+			// 추가: 행렬 원시 데이터 표시 (디버깅용)
+			if (ImGui::TreeNode("Raw Matrix Data"))
+			{
+				ImGui::Text("Right:  [%.3f, %.3f, %.3f, %.3f]",
+					instanceWorldMatrix.m[0][0], instanceWorldMatrix.m[0][1],
+					instanceWorldMatrix.m[0][2], instanceWorldMatrix.m[0][3]);
+				ImGui::Text("Up:     [%.3f, %.3f, %.3f, %.3f]",
+					instanceWorldMatrix.m[1][0], instanceWorldMatrix.m[1][1],
+					instanceWorldMatrix.m[1][2], instanceWorldMatrix.m[1][3]);
+				ImGui::Text("Look:   [%.3f, %.3f, %.3f, %.3f]",
+					instanceWorldMatrix.m[2][0], instanceWorldMatrix.m[2][1],
+					instanceWorldMatrix.m[2][2], instanceWorldMatrix.m[2][3]);
+				ImGui::Text("Trans:  [%.3f, %.3f, %.3f, %.3f]",
+					instanceWorldMatrix.m[3][0], instanceWorldMatrix.m[3][1],
+					instanceWorldMatrix.m[3][2], instanceWorldMatrix.m[3][3]);
+				ImGui::TreePop();
+			}
+		}
+		else
+		{
+			ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "XMMatrixDecompose failed for instance matrix.");
+		}
+
+		ImGui::TreePop();
 	}
 }
 

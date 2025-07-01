@@ -11,6 +11,10 @@ public:
 		_float3 vPosition;
 		_float3 vRotation;
 		_float3 vScale;
+		_float4 qOrientation = { 0.f, 0.f, 0.f, 1.f }; // 쿼터니언 추가
+		_float fCurRotationX = 0.f; // 오일러 각 (라디안)
+		_float fCurRotationY = 0.f;
+		_float fCurRotationZ = 0.f;
 	};
 	typedef struct tagMeshInstance : public CVIBuffer_Instance::INSTANCE_DESC
 	{
