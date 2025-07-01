@@ -53,6 +53,14 @@ HRESULT CToolBar::Render()
         }
         ifd::FileDialog::Instance().Close();
     }
+    if (ifd::FileDialog::Instance().IsDone("ModelFolderDialog")) {
+        if (ifd::FileDialog::Instance().HasResult()) {
+            std::string res = ifd::FileDialog::Instance().GetResult().u8string();
+            Convert_Models_InFolder(ifd::FileDialog::Instance().GetResult().wstring().c_str());
+            printf("CONVERT FOLDER[%s]\n", res.c_str());
+        }
+        ifd::FileDialog::Instance().Close();
+    }
 
     if (ifd::FileDialog::Instance().IsDone("PrototypeSaveDialog")) {
         static bool bAnim = false;
@@ -97,6 +105,7 @@ HRESULT CToolBar::Render()
         }
         ifd::FileDialog::Instance().Close();
     }
+    
 #pragma endregion
     if (m_bShow)
     {
@@ -171,6 +180,10 @@ HRESULT CToolBar::Render()
                 if (ImGui::MenuItem("Convert Model", "Ctrl+Alt+C")) {
                     ifd::FileDialog::Instance().Open("ModelOpenDialog", "Open a Model", "model file (*.fbx){.fbx},.*", true, ASSETPATH);
                     printf("Clicked File->Convert Model\n");
+                }
+                if (ImGui::MenuItem("Convert Models in Folder", "Ctrl+Alt+F")) {
+                    ifd::FileDialog::Instance().Open("ModelFolderDialog", "Select Folder with Models", "", false, ASSETPATH);
+                    printf("Clicked File->Convert Models in Folder\n");
                 }
                 ImGui::Separator();
                 if (ImGui::MenuItem("Exit")) {
@@ -553,6 +566,51 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
 
 
     return S_OK;
+}
+
+HRESULT CToolBar::Convert_Models_InFolder(const _tchar* pFolderPath)
+{
+    using namespace std::filesystem;
+
+    try
+    {
+        // 폴더 경로 유효성 검사
+        path folderPath(pFolderPath);
+        if (!exists(folderPath) || !is_directory(folderPath))
+            return E_FAIL;
+
+        _uint iConvertedCount = 0;
+        _uint iFailedCount = 0;
+
+        // 폴더 내의 모든 파일 순회
+        for (const auto& entry : directory_iterator(folderPath))
+        {
+            // .fbx 확장자 파일만 처리
+            if (entry.path().extension() == L".fbx" || entry.path().extension() == L".FBX")
+            {
+                const wstring& filePath = entry.path().wstring();
+
+                // 현재 처리 중인 파일 정보 출력
+                wprintf(L"Converting: %s\n", filePath.c_str());
+
+                // 모델 변환
+                HRESULT hr = Convert_Model(filePath.c_str());
+                if (SUCCEEDED(hr))
+                    ++iConvertedCount;
+                else
+                    ++iFailedCount;
+            }
+        }
+
+        wprintf(L"변환 완료! 성공: %d, 실패: %d\n", iConvertedCount, iFailedCount);
+        return (iFailedCount == 0) ? S_OK : S_FALSE;
+    }
+    catch (const std::exception& e)
+    {
+        // 예외 발생 시 오류 메시지 출력
+        printf("Error: %s\n", e.what());
+        return E_FAIL;
+    }
 }
 
 HRESULT CToolBar::Write_BoneNode(ofstream& ofs, aiNode* pAiNode, _int iParentBoneIndex)

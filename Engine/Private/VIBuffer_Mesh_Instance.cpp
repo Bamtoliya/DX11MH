@@ -78,6 +78,137 @@ HRESULT CVIBuffer_Mesh_Instance::Initialize(void* pArg)
 	return S_OK;
 }
 
+#pragma region Save&Load
+HRESULT CVIBuffer_Mesh_Instance::Serialize(json& outJosn)
+{
+	// 부모 클래스 직렬화 실행
+	if (FAILED(__super::Serialize(outJosn)))
+		return E_FAIL;
+
+	// 인스턴스 개수 저장
+	outJosn["NumInstance"] = m_iNumInstance;
+
+	// 인스턴스 데이터 배열 생성
+	json instancesArray = json::array();
+
+	// 각 인스턴스의 트랜스폼 정보 저장
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		json instanceData;
+
+		// 인스턴스 인덱스 저장
+		instanceData["Index"] = i;
+
+		// 위치 정보 저장
+		instanceData["Position"] = {
+			m_EditData[i].vPosition.x,
+			m_EditData[i].vPosition.y,
+			m_EditData[i].vPosition.z
+		};
+
+		// 회전 정보 저장
+		instanceData["Rotation"] = {
+			m_EditData[i].vRotation.x,
+			m_EditData[i].vRotation.y,
+			m_EditData[i].vRotation.z
+		};
+
+		// 크기 정보 저장
+		instanceData["Scale"] = {
+			m_EditData[i].vScale.x,
+			m_EditData[i].vScale.y,
+			m_EditData[i].vScale.z
+		};
+
+		// 배열에 인스턴스 데이터 추가
+		instancesArray.push_back(instanceData);
+	}
+
+	// 인스턴스 배열을 json 객체에 추가
+	outJosn["Instances"] = instancesArray;
+}
+
+HRESULT CVIBuffer_Mesh_Instance::Deserialize(simdjson::ondemand::object& jsonData)
+{
+	// 부모 클래스 역직렬화 실행
+	if (FAILED(__super::Deserialize(jsonData)))
+		return E_FAIL;
+
+	try {
+		// 인스턴스 수 가져오기
+		_uint iNumInstances = static_cast<_uint>(jsonData["NumInstance"].get_uint64());
+
+		// 인스턴스 수가 변경되었다면 리사이즈
+		if (iNumInstances != m_iNumInstance) {
+			if (FAILED(Resize(iNumInstances)))
+				return E_FAIL;
+		}
+
+		// 인스턴스 배열이 없으면 종료
+		if (!jsonData["Instances"].error()) {
+			auto instances = jsonData["Instances"].get_array();
+
+			// 각 인스턴스 데이터 로드
+			_uint i = 0;
+			for (auto instance : instances) {
+				if (i >= m_iNumInstance)
+					break;
+
+				auto instanceObj = instance.get_object();
+
+				// 인덱스 확인 (선택사항)
+				_uint idx = static_cast<_uint>(instanceObj["Index"].get_uint64());
+				if (idx >= m_iNumInstance)
+					continue;
+
+				// 위치 데이터 로드
+				auto positionArray = instanceObj["Position"].get_array();
+				auto posIter = positionArray.begin();
+				m_EditData[idx].vPosition.x = static_cast<_float>((*posIter).get_double());
+				m_EditData[idx].vPosition.y = static_cast<_float>((*(++posIter)).get_double());
+				m_EditData[idx].vPosition.z = static_cast<_float>((*(++posIter)).get_double());
+
+				// 회전 데이터 로드
+				auto rotationArray = instanceObj["Rotation"].get_array();
+				auto rotIter = rotationArray.begin();
+				m_EditData[idx].vRotation.x = static_cast<_float>((*rotIter).get_double());
+				m_EditData[idx].vRotation.y = static_cast<_float>((*(++rotIter)).get_double());
+				m_EditData[idx].vRotation.z = static_cast<_float>((*(++rotIter)).get_double());
+
+				// 크기 데이터 로드
+				auto scaleArray = instanceObj["Scale"].get_array();
+				auto scaleIter = scaleArray.begin();
+				m_EditData[idx].vScale.x = static_cast<_float>((*scaleIter).get_double());
+				m_EditData[idx].vScale.y = static_cast<_float>((*(++scaleIter)).get_double());
+				m_EditData[idx].vScale.z = static_cast<_float>((*(++scaleIter)).get_double());
+
+				++i;
+			}
+
+			// 변경된 데이터를 버퍼에 적용
+			ApplyChanges();
+		}
+	}
+	catch (const simdjson::simdjson_error& e) {
+		MSG_BOX("JSON 파싱 에러: 인스턴스 데이터 로드 실패");
+		return S_OK;
+	}
+
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Mesh_Instance::Prototype_Serialize(json& data)
+{
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Mesh_Instance::Prototype_Deserialize(simdjson::ondemand::object& jsonData)
+{
+	return S_OK;
+}
+#pragma endregion
+
+
 void CVIBuffer_Mesh_Instance::Update(const vector<_float4x4>& worldMatrices)
 {
 	if (worldMatrices.size() > m_iNumInstance)

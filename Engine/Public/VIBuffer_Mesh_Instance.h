@@ -25,14 +25,23 @@ public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
 public:
+#pragma region Save&Load
+public:
+	virtual HRESULT Serialize(json& data) override;
+	virtual HRESULT Deserialize(simdjson::ondemand::object& jsonData) override;
+	virtual HRESULT Prototype_Serialize(json& data) override;
+	virtual HRESULT Prototype_Deserialize(simdjson::ondemand::object& jsonData) override;
+#pragma endregion
+
+public:
 	void Update(const vector<_float4x4>& worldMatrices);
 	virtual HRESULT Resize(_uint iNumInstance) override;
 	virtual HRESULT ApplyChanges() override;
 	virtual void EditInstance(_uint iIndex)  override;
 	virtual HRESULT ResetInstances()  override;
 protected:
-	VTXMESH_INSTANCE* m_pVertexInstances = { nullptr };
-	vector<InstanceData> m_EditData;
+	VTXMESH_INSTANCE*		m_pVertexInstances = { nullptr };
+	vector<InstanceData>	m_EditData;
 
 public:
 	static CVIBuffer_Mesh_Instance* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -90,7 +90,7 @@ HRESULT CTransform::Serialize(json& outJson)
 	json data;
 	// 1. 부모 클래스(CComponent)의 Serialize 호출
 	if (FAILED(__super::Serialize(outJson)))
-		return E_FAIL;	
+		return E_FAIL;
 
 	// 3. TRANSFORM_DESC 멤버 변수 저장
 	// WorldMatrix는 직접 저장하기보다 SQT(Scale, Quaternion, Translation)로 분해하여 저장하는 것이 일반적입니다.

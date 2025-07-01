@@ -40,6 +40,7 @@
     <ClCompile Include="..\private\Man.cpp" />
     <ClCompile Include="..\private\Motora.cpp" />
     <ClCompile Include="..\private\Rail.cpp" />
+    <ClCompile Include="..\private\Ring.cpp" />
     <ClCompile Include="..\private\Sonic.cpp" />
     <ClCompile Include="..\private\Hierarchy.cpp" />
     <ClCompile Include="..\private\Inspector.cpp" />
@@ -99,6 +100,7 @@
     <ClInclude Include="..\public\Man.h" />
     <ClInclude Include="..\public\Motora.h" />
     <ClInclude Include="..\public\Rail.h" />
+    <ClInclude Include="..\public\Ring.h" />
     <ClInclude Include="..\public\Sonic.h" />
     <ClInclude Include="..\public\Hierarchy.h" />
     <ClInclude Include="..\public\Inspector.h" />

@@ -253,6 +253,24 @@
     <Filter Include="02.GameObject\03.Monster\Enemy\Enemy_Controller\States">
       <UniqueIdentifier>{6c3e5487-6ec7-49f0-84f3-c92b0e02a9b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Items">
+      <UniqueIdentifier>{2ae86f4a-d6a1-4707-abc5-d5d3cf973ef6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Items\Ring">
+      <UniqueIdentifier>{3faf998e-8ed3-4620-8604-16428c5b9ddd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\Sonic">
+      <UniqueIdentifier>{7e7c673d-1592-42b9-9f43-8154183308e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\Sonic\Cyloop">
+      <UniqueIdentifier>{605ea440-a98f-40a7-b7cc-7e9d799c6353}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\Sonic\Boost">
+      <UniqueIdentifier>{9a169c80-43d2-4eca-80a5-6c39b1766389}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Effect\EnemyCommon">
+      <UniqueIdentifier>{5786de91-0d4d-43e7-ba9c-e8375988c499}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -410,6 +428,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Enemy_Controller.cpp">
       <Filter>02.GameObject\03.Monster\Enemy\Enemy_Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Ring.cpp">
+      <Filter>02.GameObject\Items\Ring</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -601,6 +622,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Enemy_Controller.h">
       <Filter>02.GameObject\03.Monster\Enemy\Enemy_Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Ring.h">
+      <Filter>02.GameObject\Items\Ring</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

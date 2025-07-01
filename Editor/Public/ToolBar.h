@@ -21,6 +21,7 @@ private:
 
 #pragma region Convert fbx Model to Binary
 	HRESULT Convert_Model(const _tchar* pFilePath);
+	HRESULT Convert_Models_InFolder(const _tchar* pFolderPath);
 	HRESULT Write_BoneNode(ofstream& ofs, aiNode* pAiNode, _int iParentBoneIndex);
 #pragma endregion
 
