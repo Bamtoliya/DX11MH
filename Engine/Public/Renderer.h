@@ -12,8 +12,13 @@ private:
 
 public:
 	HRESULT Initialize();
-	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pRenderObject);
+	HRESULT Add_RenderGroup(RENDERGROUP eRenderGroup, class CGameObject* pRenderObject);	
 	HRESULT Draw();
+
+#ifdef _DEBUG
+public:
+	HRESULT Add_DebugComponent(class CComponent* pDebugCom);
+#endif
 
 private:
 	ID3D11Device*				m_pDevice = { nullptr };
@@ -32,6 +37,11 @@ private:
 	_uint           m_iNumMaxDebugLineVertices = 0; // 버퍼의 최대 정점 수
 	_bool           m_bPhysXDebugRender = true;
 
+#ifdef _DEBUG
+private:
+	list<class CComponent*>		m_DebugComponent;
+#endif
+
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonBlend();
@@ -44,8 +54,9 @@ private:
 	//HRESULT Render_Specular();
 	//HRESULT Render_Picking();
 	//HRESULT Render_Lights();
-
 	HRESULT Render_Lights();
+	HRESULT Render_BackBuffer();
+	HRESULT Render_NonLight();
 
 #ifdef _DEBUG
 private:

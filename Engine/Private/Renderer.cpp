@@ -146,6 +146,13 @@ HRESULT CRenderer::Draw()
 	//if (FAILED(Render_Lights()))
 	//	return E_FAIL;
 
+	if (FAILED(Render_BackBuffer()))
+		return E_FAIL;
+
+	if (FAILED(Render_NonLight()))
+		return E_FAIL;
+
+	/* 블렌딩이전에 백버퍼를 완성시키낟.  */
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
@@ -167,6 +174,19 @@ HRESULT CRenderer::Draw()
 
 	return S_OK;
 }
+
+#ifdef _DEBUG
+
+HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)
+{
+	m_DebugComponent.push_back(pDebugCom);
+
+	Safe_AddRef(pDebugCom);
+
+	return S_OK;
+}
+
+#endif
 
 HRESULT CRenderer::Render_Priority()
 {
@@ -339,10 +359,53 @@ HRESULT CRenderer::Render_Lights()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_BackBuffer()
+{
+	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_Diffuse"), m_pShader, "g_DiffuseTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_Shade"), m_pShader, "g_ShadeTexture")))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	m_pShader->Begin(3);
+
+	m_pVIBuffer->Bind_Buffers();
+	m_pVIBuffer->Render();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_NonLight()
+{
+	for (auto& pGameObject : m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_NONLIGHT)])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+	m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_NONLIGHT)].clear();
+
+	return S_OK;
+}
+
 #ifdef _DEBUG
 
 HRESULT CRenderer::Render_Debug()
 {
+	for (auto& pDebugCom : m_DebugComponent)
+	{
+		pDebugCom->Render();
+		Safe_Release(pDebugCom);
+	}
+	m_DebugComponent.clear();
+
 	m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix);
 	m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix);
 
