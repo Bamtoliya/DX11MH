@@ -14,6 +14,9 @@ HRESULT CLevel_Test::Initialize()
     if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Test_Field.json")))
         return E_FAIL;
 
+    if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Stage/W6D01/level_gameobjects.json")))
+        return E_FAIL;
+
     /*Ready_Layer_GameObjects(L"Layer_GameObjects");
     Ready_Layer_Light(L"Layer_Light");
     Ready_Layer_Terrain(L"Layer_Virtual_Space");

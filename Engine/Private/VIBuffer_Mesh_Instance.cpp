@@ -273,7 +273,7 @@ HRESULT CVIBuffer_Mesh_Instance::Bind_Buffers(CMesh* pMesh)
 		0,
 		0
 	};
-	m_pContext->IASetVertexBuffers(0, pMesh->Get_NumVertexBuffers(), pVertexBuffers, iVertexStrides, iOffsets);
+	m_pContext->IASetVertexBuffers(0, m_iNumVertexBuffers, pVertexBuffers, iVertexStrides, iOffsets);
 	m_pContext->IASetIndexBuffer(pMesh->Get_IndexBuffer(), m_eIndexFormat, 0);
 	m_pContext->IASetPrimitiveTopology(m_ePrimitiveTopology);
 

@@ -19,6 +19,7 @@ CComponent::CComponent(const CComponent& Prototype)
 	, m_bIsCloned{ true }
 	, m_bActive{ Prototype.m_bActive }
 {
+	m_strPrototypeTag = Prototype.m_strPrototypeTag;
 	Safe_AddRef(m_pGameInstance);
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);

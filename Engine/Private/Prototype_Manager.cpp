@@ -25,6 +25,7 @@ HRESULT CPrototype_Manager::Add_Prototype(_uint iPrototypeLevelIndex, const _wst
 		nullptr != Find_Prototype(iPrototypeLevelIndex, strPrototypeTag))
 		return E_FAIL;
 
+	pPrototype->SetPrototypeTag(strPrototypeTag);
 	m_pPrototypes[iPrototypeLevelIndex].emplace(strPrototypeTag, pPrototype);
 
 	return S_OK;
@@ -37,6 +38,7 @@ HRESULT CPrototype_Manager::Add_Prototype(_uint iPrototypeLevelIndex, const _wst
 		nullptr != Find_Prototype(iPrototypeLevelIndex, strPrototypeTag))
 		return E_FAIL;
 
+	pPrototype->SetPrototypeTag(strPrototypeTag);
 	m_pPrototypes[iPrototypeLevelIndex].emplace(strPrototypeTag, pPrototype);
 
 	return S_OK;

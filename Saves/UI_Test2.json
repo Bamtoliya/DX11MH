@@ -1,0 +1,117 @@
+{
+    "Layer_Background": {
+        "GameObjects": [
+            {
+                "CBackGround": {
+                    "Active": true,
+                    "CShader": {
+                        "Layout": "VTXPOSTEX",
+                        "Tiling": true,
+                        "TilingOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "TilingScale": [
+                            1.0,
+                            1.0
+                        ]
+                    },
+                    "CTransform": {
+                        "EulerRotation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "IsRelativePosition": false,
+                        "IsRelativeRotation": false,
+                        "IsRelativeScale": false,
+                        "Orientation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "RotationPerSec": 0.0,
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpeedPerSec": 0.0
+                    },
+                    "CVIBuffer_Rect": {
+                        "Size": [
+                            200.0,
+                            200.0
+                        ]
+                    },
+                    "LayerTag": "Layer_Background",
+                    "NumTextures": 2,
+                    "PrototypeTag": "Prototype_GameObject_BackGround",
+                    "TextureFilePath": "../../Assets/Resources/Textures/Default%d.jpg",
+                    "UseTextureRegion": false,
+                    "Visible": true
+                }
+            }
+        ]
+    },
+    "Layer_Camera": {
+        "GameObjects": [
+            {
+                "CCamera_Free": {
+                    "Active": true,
+                    "CCamera": {
+                        "Active": true,
+                        "bOrthographic": false,
+                        "fFar": 500.0,
+                        "fFovy": 60.0,
+                        "fNear": 0.10000000149011612,
+                        "fZoomPerSec": 1.0,
+                        "vAt": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ]
+                    },
+                    "CTransform": {
+                        "EulerRotation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "IsRelativePosition": false,
+                        "IsRelativeRotation": false,
+                        "IsRelativeScale": false,
+                        "Orientation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Position": [
+                            0.0,
+                            20.0,
+                            -15.0
+                        ],
+                        "RotationPerSec": 1.0,
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpeedPerSec": 10.0
+                    },
+                    "LayerTag": "Layer_Camera",
+                    "PrototypeTag": "Prototype_GameObject_Camera_Free",
+                    "Visible": true
+                }
+            }
+        ]
+    }
+}

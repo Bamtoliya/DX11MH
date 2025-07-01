@@ -25,8 +25,12 @@ public:
 	virtual HRESULT Prototype_Serialize(json& data) override { return S_OK; }
 	virtual HRESULT Prototype_Deserialize(simdjson::ondemand::object & jsonData) override { return S_OK; }
 
+	const _wstring GetPrototypeTag() const { return m_strPrototypeTag; }
+	void SetPrototypeTag(const _wstring strPrototypeTag) { m_strPrototypeTag = strPrototypeTag; }
+
 protected:
 	unsigned int		m_iRefCnt = { };
+	_wstring			m_strPrototypeTag = { L"" };
 
 public:
 	virtual void Free();

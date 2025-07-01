@@ -114,7 +114,6 @@ HRESULT CGameObject_Mesh_Instance::Ready_Components()
 	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_GrindRail"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
-	m_pModelCom->SetPrototypeTag(L"Prototype_Component_Model_GrindRail");
 
 	CVIBuffer_Mesh_Instance::MESH_INSTANCE_DESC meshInstanceDesc;
 	meshInstanceDesc.pMesh = m_pModelCom->Get_Meshes()[0];
@@ -160,7 +159,7 @@ HRESULT CGameObject_Mesh_Instance::Serialize(json& outJson)
 		return E_FAIL;
 	outJson["CGameObject_Mesh_Instance"] = data;
 	outJson["CGameObject_Mesh_Instance"]["PrototypeTag"] = "Prototype_GameObject_Mesh_Instance";
-	outJson["CGameObject_Mesh_Instance"]["PrototypeModelTag"] = WideToUtf8(m_pModelCom->GetPrototypeTag()).c_str();
+	outJson["CGameObject_Mesh_Instance"]["PrototypeModelTag"] = WideToUtf8(m_pModelCom->GetPrototypeTag().c_str()).c_str();
 	return S_OK;
 }
 
@@ -187,12 +186,13 @@ HRESULT CGameObject_Mesh_Instance::Deserialize(simdjson::ondemand::object& jsonD
 			{
 				// ¸ðµ¨ ÄÄÆ÷³ÍÆ® ±³Ã¼
 				Safe_Release(m_pModelCom);
-				m_pModelCom = pNewModel;
+				m_pModelCom = pNewModel;	
+				m_Components[m_pModelCom->GetName()] = m_pModelCom;
 				Safe_AddRef(m_pModelCom);
 
 				m_pModelCom->Set_OwnerGameObject(this);
-				CVIBuffer_Mesh_Instance::MESH_INSTANCE_DESC meshInstanceDesc;
-				meshInstanceDesc.pMesh = m_pModelCom->Get_Meshes()[0];
+				/*CVIBuffer_Mesh_Instance::MESH_INSTANCE_DESC meshInstanceDesc;
+				meshInstanceDesc.pMesh = m_pModelCom->Get_Meshes()[0];*/
 			}
 		}
 	}
@@ -259,7 +259,7 @@ HRESULT CGameObject_Mesh_Instance::Render()
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
-			if (FAILED(m_pVIBufferInstanceCom->Bind_Buffers(m_pModelCom->Get_Meshes()[i])))
+		if (FAILED(m_pVIBufferInstanceCom->Bind_Buffers(m_pModelCom->Get_Meshes()[i])))
 			return E_FAIL;
 
 		if (FAILED(m_pVIBufferInstanceCom->Render()))

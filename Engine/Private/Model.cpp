@@ -463,6 +463,7 @@ void CModel::Set_Animation(_uint iIndex, _bool isLoop)
 
 HRESULT CModel::RenderImGui()
 {
+	ImGui::PushID(this);
 	if (ImGui::CollapsingHeader("Model", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		string strType = "Non Anim";
@@ -561,5 +562,6 @@ HRESULT CModel::RenderImGui()
 			ImGui::Unindent();
 		}
 	} 
+	ImGui::PopID();
 	return S_OK;
 }
