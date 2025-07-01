@@ -146,11 +146,11 @@ HRESULT CRenderer::Draw()
 	//if (FAILED(Render_Lights()))
 	//	return E_FAIL;
 
-	if (FAILED(Render_BackBuffer()))
+	/*if (FAILED(Render_BackBuffer()))
 		return E_FAIL;
 
 	if (FAILED(Render_NonLight()))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	/* 블렌딩이전에 백버퍼를 완성시키낟.  */
 	if (FAILED(Render_Blend()))

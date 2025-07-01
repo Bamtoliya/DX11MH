@@ -1,27 +1,4 @@
 {
-  "Prototype_Component_Model_Sonic": {
-    "Class": "CModel",
-    "ModelFilePath": "G:/My Drive/Assets/Models/Sonic/SonicAllActions.model",
-    "PreTransformedMatrix": [
-      -1.0,
-      0.0,
-      -0.0,
-      0.0,
-      0.0,
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      -1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ],
-    "Type": "ANIM"
-  },
   "Prototype_Component_Model_Spring": {
     "Class": "CModel",
     "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Spring.fbx",
@@ -93,7 +70,7 @@
   },
   "Prototype_Component_Model_Virtual_Space": {
     "Class": "CModel",
-    "ModelFilePath": "G:/My Drive/Assets/Models/Virtual Space6.fbx",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Virtual Space.fbx",
     "PreTransformedMatrix": [
       -1.0,
       0.0,

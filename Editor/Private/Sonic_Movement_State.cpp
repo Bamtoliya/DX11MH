@@ -108,7 +108,8 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 	{
 		_vector vGroundNormal = XMLoadFloat3((_float3*)&hitBuffer.block.normal);
 
-		// 경사각 체크 (이전 답변 내용)
+		// 경사각 계산 (단순히 정보 제공 목적)
+		// 경사각 계산 (단순히 정보 제공 목적)
 		status.fCurSlope = acosf(XMVectorGetX(XMVector3Dot(XMVectorSet(0, 1, 0, 0), vGroundNormal))) * 180.f / XM_PI;
 		if (status.fCurSlope > status.fSlopeLimitAngle)
 		{
@@ -117,33 +118,81 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 			//return;
 		}
 
-		// 지면에 맞춰 캐릭터 기울이기
-		_vector vCurrentUp = pTransform->Get_State(STATE::UP);
-		_vector vRotationAxis = XMVector3Cross(vCurrentUp, vGroundNormal);
-		float fRotationAngle = acosf(XMVectorGetX(XMVector3Dot(vCurrentUp, vGroundNormal)));
-		const float fGroundRotationSpeed = 10.f;
-		if (fRotationAngle > 0.001f)
-		{
-			_matrix matRotation = XMMatrixRotationAxis(vRotationAxis, min(fRotationAngle, fGroundRotationSpeed * fTimeDelta));
-			pTransform->Set_State(STATE::RIGHT, XMVector3TransformNormal(pTransform->Get_State(STATE::RIGHT), matRotation));
-			pTransform->Set_State(STATE::UP, XMVector3TransformNormal(pTransform->Get_State(STATE::UP), matRotation));
-			pTransform->Set_State(STATE::LOOK, XMVector3TransformNormal(pTransform->Get_State(STATE::LOOK), matRotation));
+		// === 속도 기반 표면 접착력 계산 ===
+		// 속도가 빠를수록 더 가파른 경사로와 루프를 탈 수 있음
+		float fMinSpeedForLoop = 5.0f; // 루프를 타기 위한 최소 속도
+		float fMaxSlopeAtMinSpeed = 60.0f; // 최소 속도에서 탈 수 있는 최대 경사각
+		float fMaxSlopeAtMaxSpeed = 360.0f; // 최대 속도에서 탈 수 있는 최대 경사각
+
+	/*	_float fMaxSlopeAtMinSpeed = 45.f;
+		_float fMaxSlopeAtMaxSpeed = 180.f;
+		_float fMinSpeedForLoop = 10.f;*/
+
+		// 현재 속도에 따른 최대 경사각 계산 (선형 보간)
+		float fCurrentMaxSlope = fMaxSlopeAtMinSpeed;
+		if (status.fMoveSpeed.first >= fMinSpeedForLoop) {
+			float speedRatio = min(1.0f, (status.fMoveSpeed.first - fMinSpeedForLoop) /
+				(status.fMaxBoostSpeed - fMinSpeedForLoop));
+			fCurrentMaxSlope = fMaxSlopeAtMinSpeed +
+				speedRatio * (fMaxSlopeAtMaxSpeed - fMaxSlopeAtMinSpeed);
 		}
+
+		// 현재 표면이 타기에 너무 가파르면 미끄러짐 상태로 전환 가능
+		bool bTooSteep = status.fCurSlope > fCurrentMaxSlope;
+
+		// 미끄러짐 상태 처리는 여기에 추가 (현재는 생략)
+
+		// === 지면에 맞춰 캐릭터 완전히 정렬 (360도 회전 지원) ===
+		// 1. 현재 Look 방향이 지면에 평행하도록 투영
+		_vector vCurrentLook = pTransform->Get_State(STATE::LOOK);
+		_vector vProjectedLook = vCurrentLook - XMVector3Dot(vCurrentLook, vGroundNormal) * vGroundNormal;
+		vProjectedLook = XMVector3Normalize(vProjectedLook);
+
+		// 2. UP 벡터를 지면 법선과 일치시킴
+		_vector vNewUp = vGroundNormal;
+
+		// 3. 새 RIGHT 벡터 계산 (새 UP과 새 LOOK의 외적)
+		_vector vNewRight = XMVector3Cross(vNewUp, vProjectedLook);
+		vNewRight = XMVector3Normalize(vNewRight);
+
+		// 4. LOOK 벡터 재계산 (RIGHT와 UP의 외적으로 정확한 직교성 보장)
+		_vector vNewLook = XMVector3Cross(vNewRight, vNewUp);
+		vNewLook = XMVector3Normalize(vNewLook);
+
+		// 5. 회전 속도 제한 (너무 급격한 회전 방지)
+		const float fMaxRotationRate = 10.0f; // 초당 최대 회전 속도
+		float fRotationSpeed = min(fMaxRotationRate * fTimeDelta, 1.0f);
+
+		// 6. 현재 방향에서 목표 방향으로 부드럽게 보간
+		_vector vCurrentRight = pTransform->Get_State(STATE::RIGHT);
+		_vector vCurrentUp = pTransform->Get_State(STATE::UP);
+
+		_vector vInterpolatedRight = XMVectorLerp(vCurrentRight, vNewRight, fRotationSpeed);
+		_vector vInterpolatedUp = XMVectorLerp(vCurrentUp, vNewUp, fRotationSpeed);
+		_vector vInterpolatedLook = XMVectorLerp(vCurrentLook, vNewLook, fRotationSpeed);
+
+		// 정규직교화 (orthonormalization)로 벡터 정확도 유지
+		vInterpolatedRight = XMVector3Normalize(vInterpolatedRight);
+		vInterpolatedUp = XMVector3Normalize(vInterpolatedUp);
+		vInterpolatedLook = XMVector3Cross(vInterpolatedRight, vInterpolatedUp);
+		vInterpolatedLook = XMVector3Normalize(vInterpolatedLook);
+		vInterpolatedRight = XMVector3Cross(vInterpolatedUp, vInterpolatedLook);
+
+		// 변환 행렬 적용
+		pTransform->Set_State(STATE::RIGHT, vInterpolatedRight);
+		pTransform->Set_State(STATE::UP, vInterpolatedUp);
+		pTransform->Set_State(STATE::LOOK, vInterpolatedLook);
 
 		// === 2. 입력 기반 방향 회전 (수정된 코드) ===
 		_vector vMoveDirection = XMLoadFloat3(&status.vMoveDirection);
 		if (status.fMoveSpeed.first > 0.f) // 움직임 입력이 있을 때만 회전
 		{
-			// 목표 방향을 현재 캐릭터의 지면 평면에 투영합니다.
-			_vector vProjectedMoveDir = vMoveDirection - XMVector3Dot(vMoveDirection, pTransform->Get_State(STATE::UP)) * pTransform->Get_State(STATE::UP);
+			// 이동 방향을 현재 표면 평면에 투영
+			_vector vProjectedMoveDir = vMoveDirection - XMVector3Dot(vMoveDirection, vInterpolatedUp) * vInterpolatedUp;
 			vProjectedMoveDir = XMVector3Normalize(vProjectedMoveDir);
 
-			// 현재 Look 벡터와 목표 Look 벡터 사이를 부드럽게 회전시킵니다.
-			_vector vCurrentLook = pTransform->Get_State(STATE::LOOK);
-
-			// 두 벡터 사이의 각도 계산
-			float fDot = XMVectorGetX(XMVector3Dot(vCurrentLook, vProjectedMoveDir));
-			// acos의 입력값은 [-1, 1] 범위여야 하므로 클램핑
+			// 현재 Look 벡터와 투영된 이동 벡터 사이 각도 계산
+			float fDot = XMVectorGetX(XMVector3Dot(vInterpolatedLook, vProjectedMoveDir));
 			fDot = max(-1.f, min(1.f, fDot));
 			float fRotationAngle = acosf(fDot);
 
@@ -152,25 +201,23 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 			{
 				_vector vRotationAxis;
 
-				// [수정 2] 180도 회전 문제 처리
-				if (fDot < -0.9999f) // 두 벡터가 거의 정반대 방향일 때
+				// 180도 회전 처리
+				if (fDot < -0.9999f)
 				{
-					// 회전 축이 모호하므로, 캐릭터의 UP 벡터를 회전 축으로 사용
-					vRotationAxis = pTransform->Get_State(STATE::UP);
+					vRotationAxis = vInterpolatedUp; // 캐릭터의 UP 벡터를 회전 축으로 사용
 				}
 				else
 				{
-					// 그 외의 경우, 외적을 통해 회전 축 계산
-					vRotationAxis = XMVector3Cross(vCurrentLook, vProjectedMoveDir);
+					vRotationAxis = XMVector3Cross(vInterpolatedLook, vProjectedMoveDir);
 				}
 
-				// 벡터 외적을 사용하여 회전 방향 결정
-				if (XMVectorGetX(XMVector3Dot(pTransform->Get_State(STATE::UP), vRotationAxis)) < 0.f)
+				// 회전 방향 결정
+				if (XMVectorGetX(XMVector3Dot(vInterpolatedUp, vRotationAxis)) < 0.f)
 				{
-					fRotationAngle *= -1.f; // 반대 방향이면 회전각을 음수로
+					fRotationAngle *= -1.f;
 				}
 
-				// [수정 1] 이번 프레임에 회전할 각도를 올바르게 제한(clamp)
+				// 이번 프레임에 회전할 각도 제한
 				float fMaxTurnThisFrame = fTurnSpeed * fTimeDelta;
 				float fClampedAngle = fRotationAngle;
 
@@ -181,14 +228,15 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 					fClampedAngle = -fMaxTurnThisFrame;
 				}
 
-				// 최종 회전 행렬 생성 및 적용
-				_matrix matTurnRotation = XMMatrixRotationAxis(pTransform->Get_State(STATE::UP), fClampedAngle);
+				// 회전 행렬 생성 및 적용
+				_matrix matTurnRotation = XMMatrixRotationAxis(vInterpolatedUp, fClampedAngle);
 
 				pTransform->Set_State(STATE::RIGHT, XMVector3TransformNormal(pTransform->Get_State(STATE::RIGHT), matTurnRotation));
 				pTransform->Set_State(STATE::LOOK, XMVector3TransformNormal(pTransform->Get_State(STATE::LOOK), matTurnRotation));
 			}
 		}
 
+		// 상태에 따른 이동 속도 처리
 		switch (m_eMovementState)
 		{
 		case CSonic_Movement_State::EMovementState::IDLE:	Idle(fTimeDelta); break;
@@ -319,7 +367,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 
 		// 기본적인 공중 이동 및 중력 적용 (예시, 실제로는 점프/낙하 상태에서 처리)
 		_vector vAirMovement = pTransform->Get_State(STATE::LOOK) * status.fMoveSpeed.first * 0.1 * fTimeDelta;
-		_vector vGravity = XMVectorSet(0.f, -9.8f * fTimeDelta * fTimeDelta, 0.f, 0.f); // 간단한 중력
+		_vector vGravity = XMVectorSet(0.f, -9.8f * fTimeDelta, 0.f, 0.f); // 간단한 중력
 		pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + vAirMovement + vGravity);
 	}
 }

@@ -47,6 +47,7 @@ protected:
 	ID3D11DeviceContext* m_pDeferredContext = { nullptr };
 	class CGameInstance* m_pGameInstance = { nullptr };
 protected:
+	_tchar m_szPrototypeTag[MAX_PATH] = { L"" };
 	_tchar m_szName[MAX_PATH] = { L"" };	
 	class CGameObject* m_pOwner = { nullptr };
 #pragma endregion
@@ -57,5 +58,8 @@ protected:
 public:
 	const _tchar* GetName() const { return m_szName; }
 	void SetName(const _tchar* szName) { wcscpy_s(m_szName, szName); }
+
+	const _tchar* GetPrototypeTag() const { return m_szPrototypeTag; }
+	void SetPrototypeTag(const _tchar* szPrototypeTag) { wcscpy_s(m_szPrototypeTag, szPrototypeTag); }
 };
 NS_END

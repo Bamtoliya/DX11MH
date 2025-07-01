@@ -432,6 +432,9 @@
     <ClCompile Include="..\private\Ring.cpp">
       <Filter>02.GameObject\Items\Ring</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\GameObject_Effect.cpp">
+      <Filter>02.GameObject\Effect</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor.h">
@@ -625,6 +628,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Ring.h">
       <Filter>02.GameObject\Items\Ring</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameObject_Effect.h">
+      <Filter>02.GameObject\Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

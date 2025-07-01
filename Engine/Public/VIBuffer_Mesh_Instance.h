@@ -27,18 +27,24 @@ public:
 public:
 #pragma region Save&Load
 public:
-	virtual HRESULT Serialize(json& data) override;
+	virtual HRESULT Serialize(json& outJson) override;
 	virtual HRESULT Deserialize(simdjson::ondemand::object& jsonData) override;
 	virtual HRESULT Prototype_Serialize(json& data) override;
 	virtual HRESULT Prototype_Deserialize(simdjson::ondemand::object& jsonData) override;
 #pragma endregion
 
 public:
+	virtual HRESULT Bind_Buffers() override;
+	virtual HRESULT Bind_Buffers(CMesh* pMesh);
 	void Update(const vector<_float4x4>& worldMatrices);
 	virtual HRESULT Resize(_uint iNumInstance) override;
 	virtual HRESULT ApplyChanges() override;
 	virtual void EditInstance(_uint iIndex)  override;
 	virtual HRESULT ResetInstances()  override;
+private:
+	void ExtractSRTFromMatrix(const VTXMESH_INSTANCE& instance, _float3& outPosition, _float3& outRotation, _float3& outScale);
+	void CreateMatrixFromSRT(VTXMESH_INSTANCE& outInstance, const _float3& position, const _float3& rotation, const _float3& scale);
+	HRESULT UpdateSingleInstance(_uint iIndex);
 protected:
 	VTXMESH_INSTANCE*		m_pVertexInstances = { nullptr };
 	vector<InstanceData>	m_EditData;

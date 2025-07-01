@@ -11,6 +11,10 @@ HRESULT CLevel_Stage01::Initialize()
 {
 	if (FAILED(m_pGameInstance->Load_GameObjects(ENUM_CLASS(LEVEL::STAGE01), SAVEPATH L"Stage01.json")))
 		return E_FAIL;
+
+	if(FAILED(Ready_Layer_ImGui()))
+		return S_OK;
+
 	return S_OK;
 }
 

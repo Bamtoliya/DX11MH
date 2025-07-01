@@ -82,7 +82,7 @@ namespace Engine
 		float				fRange;
 
 		XMFLOAT4			vDiffuse;
-		float				fAmbient;
+		XMFLOAT4			vAmbient;
 		XMFLOAT4			vSpecular;
 	}LIGHT_DESC;
 #pragma endregion

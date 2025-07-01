@@ -43,6 +43,10 @@ HRESULT CMainApp::Initialize()
 
 void CMainApp::Update(_float fTimeDelta)
 {
+	if (KEY_DOWN(DIK_O))
+	{
+		m_pGameInstance->ToggleShowImGui(L"ToolBar");
+	}
 	m_pGameInstance->Update_Engine(fTimeDelta);
 }
 

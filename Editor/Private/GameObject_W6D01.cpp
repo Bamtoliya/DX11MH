@@ -80,6 +80,9 @@ HRESULT CGameObject_W6D01::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	if (FAILED(Late_Initialize()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -92,6 +95,9 @@ HRESULT CGameObject_W6D01::Initialize(simdjson::ondemand::object& jsonData)
 		return E_FAIL;
 
 	if (FAILED(Deserialize(jsonData)))
+		return E_FAIL;
+
+	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
 	return S_OK;
@@ -123,6 +129,7 @@ HRESULT CGameObject_W6D01::Ready_Components()
 	CRigidBody::RIGIDBODY_DESC rigidDesc;
 	rigidDesc.eBodyType = CRigidBody::EBodyType::STATIC;
 	rigidDesc.bIsConvex = false;
+	rigidDesc.pModelForMesh = m_pModelColliderCom;
 	_uint i = 0;
 	for (auto& pMesh : m_pModelColliderCom->Get_Meshes())
 	{
@@ -131,10 +138,11 @@ HRESULT CGameObject_W6D01::Ready_Components()
 		shapeDesc.bIsQueryShape = true;
 		shapeDesc.iMeshIndex = i++;
 		shapeDesc.eShapeType = CRigidBody::EShapeType::TRIANGLE_MESH;
+		rigidDesc.vShapeDescs.push_back(shapeDesc);
 	}
 
 	/* For.Com_RigidBody */
-	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
+ 	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom), &rigidDesc)))
 		return E_FAIL;
 
@@ -213,19 +221,6 @@ HRESULT CGameObject_W6D01::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &m_oID, sizeof(_uint))))
 		return E_FAIL;
 
-	const LIGHT_DESC* pLightDesc = m_pGameInstance->Get_Light(0);
-	if (pLightDesc == nullptr)
-		return S_OK;
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -242,8 +237,6 @@ HRESULT CGameObject_W6D01::Render()
 	{
 		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
-
-		//m_pModelCom->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;

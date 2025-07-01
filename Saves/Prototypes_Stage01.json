@@ -1,28 +1,4 @@
 {
-  "Prototype_Component_Model_Sonic": {
-    "Class": "CModel",
-    "ModelFilePath": "G:/My Drive/Assets/Models/Sonic/SonicAllActions.model",
-    "PreTransformedMatrix": [
-      -1.0,
-      0.0,
-      -0.0,
-      0.0,
-      0.0,
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      -1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ],
-    "Type": "ANIM",
-    "ColliderMesh": "FALSE"
-  },
   "Prototype_Component_Model_W6D01": {
     "Class": "CModel",
     "ModelFilePath": "G:/My Drive/Assets/Stage/W6d01/W6d01.model",

@@ -114,6 +114,7 @@ HRESULT CGameObject_Mesh_Instance::Ready_Components()
 	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_GrindRail"),
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
+	m_pModelCom->SetPrototypeTag(L"Prototype_Component_Model_GrindRail");
 
 	CVIBuffer_Mesh_Instance::MESH_INSTANCE_DESC meshInstanceDesc;
 	meshInstanceDesc.pMesh = m_pModelCom->Get_Meshes()[0];
@@ -159,6 +160,7 @@ HRESULT CGameObject_Mesh_Instance::Serialize(json& outJson)
 		return E_FAIL;
 	outJson["CGameObject_Mesh_Instance"] = data;
 	outJson["CGameObject_Mesh_Instance"]["PrototypeTag"] = "Prototype_GameObject_Mesh_Instance";
+	outJson["CGameObject_Mesh_Instance"]["PrototypeModelTag"] = WideToUtf8(m_pModelCom->GetPrototypeTag()).c_str();
 	return S_OK;
 }
 
@@ -166,6 +168,34 @@ HRESULT CGameObject_Mesh_Instance::Deserialize(simdjson::ondemand::object& jsonD
 {
 	if (FAILED(__super::Deserialize(jsonData)))
 		return E_FAIL;
+
+	// 모델 프로토타입 태그 검색
+	string_view modelProtoTagSV;
+	jsonData["PrototypeModelTag"].get_string().get(modelProtoTagSV);
+	if (jsonData["PrototypeModelTag"].get_string().get(modelProtoTagSV) == simdjson::SUCCESS)
+	{
+		_wstring modelProtoTag = Utf8ToWide(string(modelProtoTagSV));
+
+		CModel* pOldModel = m_pModelCom;
+
+		// 새 모델 프로토타입 찾아서 클론
+		CComponent* pPrototype = m_pGameInstance->Find_Prototype(PROTOTYPE::TYPE_COMPONENT, m_pGameInstance->Get_CurrentLevelIndex(), modelProtoTag);
+		if (pPrototype != nullptr)
+		{
+			CModel* pNewModel = (CModel*)pPrototype->Clone(nullptr);
+			if (pNewModel != nullptr)
+			{
+				// 모델 컴포넌트 교체
+				Safe_Release(m_pModelCom);
+				m_pModelCom = pNewModel;
+				Safe_AddRef(m_pModelCom);
+
+				m_pModelCom->Set_OwnerGameObject(this);
+				CVIBuffer_Mesh_Instance::MESH_INSTANCE_DESC meshInstanceDesc;
+				meshInstanceDesc.pMesh = m_pModelCom->Get_Meshes()[0];
+			}
+		}
+	}
 	return S_OK;
 }
 
@@ -195,16 +225,6 @@ void CGameObject_Mesh_Instance::Update(_float fTimeDelta)
 
 void CGameObject_Mesh_Instance::Late_Update(_float fTimeDelta)
 {
-	/*vector<_float4x4> worldMatrices;
-	worldMatrices.reserve(m_pInstanceTransform.size());
-
-	for (auto& pTransform : m_pInstanceTransform)
-	{
-		worldMatrices.push_back(pTransform->Get_World4x4());
-	}
-
-	m_pVIBufferInstanceCom->Update(worldMatrices);*/
-
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
 }
 
@@ -217,19 +237,6 @@ HRESULT CGameObject_Mesh_Instance::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &m_oID, sizeof(_uint))))
-		return E_FAIL;
-
-	const LIGHT_DESC* pLightDesc = m_pGameInstance->Get_Light(0);
-	if (pLightDesc == nullptr)
-		return S_OK;
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
 		return E_FAIL;
 
 	return S_OK;
@@ -248,21 +255,15 @@ HRESULT CGameObject_Mesh_Instance::Render()
 	{
 		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
-
-		//m_pModelCom->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);
 		
-
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
-		if (FAILED(m_pVIBufferInstanceCom->Bind_Buffers()))
+			if (FAILED(m_pVIBufferInstanceCom->Bind_Buffers(m_pModelCom->Get_Meshes()[i])))
 			return E_FAIL;
 
 		if (FAILED(m_pVIBufferInstanceCom->Render()))
 			return E_FAIL;
-
-		/*if (FAILED(m_pModelCom->Render(i)))
-			return E_FAIL;*/
 	}
 
 	return S_OK;

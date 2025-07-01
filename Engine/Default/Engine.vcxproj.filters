@@ -488,6 +488,9 @@
     <ClInclude Include="..\public\GameObject_Mesh_Instance.h">
       <Filter>01.Utility\03.GameObject\Base\InstanceTest</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\VIBuffer_Model_Instance.h">
+      <Filter>01.Utility\04.Components\VIBuffer\Instance\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -917,6 +920,9 @@
     <ClCompile Include="..\private\GameObject_Mesh_Instance.cpp">
       <Filter>01.Utility\03.GameObject\Base\InstanceTest</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\VIBuffer_Model_Instance.cpp">
+      <Filter>01.Utility\04.Components\VIBuffer\Instance\Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -1227,6 +1233,9 @@
     </Filter>
     <Filter Include="01.Utility\03.GameObject\Base\InstanceTest">
       <UniqueIdentifier>{69fdbad6-4837-4cf1-bba2-5c805936cb16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\04.Components\VIBuffer\Instance\Model">
+      <UniqueIdentifier>{a257328a-4fc9-41c5-b544-9383699b728f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

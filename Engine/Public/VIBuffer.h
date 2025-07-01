@@ -26,11 +26,12 @@ public:
 	_float3 Get_LocalSize() { return m_vLocalSize; }
 	void Set_LocalSize(const _float3& vSize) { memcpy(&m_vLocalSize, &vSize, sizeof(_float3)); }
 	void Set_LocalSize(_float x = 1.f, _float y = 1.f, _float z = 1.f) { m_vLocalSize = { x, y, z }; }
-	const _float3* Get_VertexPositions() const { return m_pVertexPositions; }
+ 	const _float3* Get_VertexPositions() const { return m_pVertexPositions; }
 	const _uint Get_NumVertices() const { return m_iNumVertices; }
 	const _uint Get_NumIndices() const { return m_iNumIndices; }
 	ID3D11Buffer* Get_VertexBuffer() { return m_pVB; }
 	ID3D11Buffer* Get_IndexBuffer() { return m_pIB; }
+	const _uint Get_VertexStride() const { return m_iVertexStride; }
 	const _uint Get_NumVertexBuffers() const { return m_iNumVertexBuffers; }
 	const _uint Get_NumPrimitive() const { return m_iNumPrimitive; }
 	const _uint Get_NumIndicesPerPrimitive() const { return m_iNumIndicesPerPrimitive; }

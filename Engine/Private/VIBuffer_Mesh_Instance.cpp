@@ -62,12 +62,24 @@ HRESULT CVIBuffer_Mesh_Instance::Initialize(void* pArg)
 
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
-		m_pVertexInstances[i].vRight = {1.0f, 0.f, 0.f, 0.f};
-		m_pVertexInstances[i].vUp = { 0.f, 1.f, 0.f, 0.f };
-		m_pVertexInstances[i].vLook = { 0.f, 0.f, 1.f, 0.f };
-		m_pVertexInstances[i].vTranslation = { (i % 20) * 2.f, 0.f, (i / 20) * 2.f, 1.0f };
+		_float3 position = _float3((i % 20) * 2.f, 0.f, (i / 20) * 2.f);
+		_float3 rotation = _float3(0.f, 0.f, 0.f);
+		_float3 scale = _float3(1.f, 1.f, 1.f);
 		//_float3 vPos = _float3((i % 20) * 2.f, 0.f, (i / 20) * 2.f);
 		//pTransform->Set_State(STATE::POSITION, XMLoadFloat3(&vPos));	
+
+		// SRT 정보로부터 행렬 생성
+		CreateMatrixFromSRT(m_pVertexInstances[i], position, rotation, scale);
+	}
+
+	// 7. EditData 초기화 (호환성을 위해 유지)
+	m_EditData.resize(m_iNumInstance);
+	for (_uint i = 0; i < m_iNumInstance; ++i)
+	{
+		ExtractSRTFromMatrix(m_pVertexInstances[i],
+			m_EditData[i].vPosition,
+			m_EditData[i].vRotation,
+			m_EditData[i].vScale);
 	}
 
 	m_VBInstanceSubresourceData.pSysMem = m_pVertexInstances;
@@ -79,45 +91,51 @@ HRESULT CVIBuffer_Mesh_Instance::Initialize(void* pArg)
 }
 
 #pragma region Save&Load
-HRESULT CVIBuffer_Mesh_Instance::Serialize(json& outJosn)
+HRESULT CVIBuffer_Mesh_Instance::Serialize(json& outJson)
 {
 	// 부모 클래스 직렬화 실행
-	if (FAILED(__super::Serialize(outJosn)))
+	if (FAILED(__super::Serialize(outJson)))
 		return E_FAIL;
 
 	// 인스턴스 개수 저장
-	outJosn["NumInstance"] = m_iNumInstance;
+	outJson["NumInstance"] = m_iNumInstance;
 
 	// 인스턴스 데이터 배열 생성
 	json instancesArray = json::array();
 
-	// 각 인스턴스의 트랜스폼 정보 저장
+	// 각 인스턴스의 변환 행렬 저장
 	for (_uint i = 0; i < m_iNumInstance; ++i)
 	{
 		json instanceData;
-
-		// 인스턴스 인덱스 저장
 		instanceData["Index"] = i;
 
-		// 위치 정보 저장
-		instanceData["Position"] = {
-			m_EditData[i].vPosition.x,
-			m_EditData[i].vPosition.y,
-			m_EditData[i].vPosition.z
+		// 행렬 데이터 저장
+		instanceData["Right"] = {
+			m_pVertexInstances[i].vRight.x,
+			m_pVertexInstances[i].vRight.y,
+			m_pVertexInstances[i].vRight.z,
+			m_pVertexInstances[i].vRight.w
 		};
 
-		// 회전 정보 저장
-		instanceData["Rotation"] = {
-			m_EditData[i].vRotation.x,
-			m_EditData[i].vRotation.y,
-			m_EditData[i].vRotation.z
+		instanceData["Up"] = {
+			m_pVertexInstances[i].vUp.x,
+			m_pVertexInstances[i].vUp.y,
+			m_pVertexInstances[i].vUp.z,
+			m_pVertexInstances[i].vUp.w
 		};
 
-		// 크기 정보 저장
-		instanceData["Scale"] = {
-			m_EditData[i].vScale.x,
-			m_EditData[i].vScale.y,
-			m_EditData[i].vScale.z
+		instanceData["Look"] = {
+			m_pVertexInstances[i].vLook.x,
+			m_pVertexInstances[i].vLook.y,
+			m_pVertexInstances[i].vLook.z,
+			m_pVertexInstances[i].vLook.w
+		};
+
+		instanceData["Translation"] = {
+			m_pVertexInstances[i].vTranslation.x,
+			m_pVertexInstances[i].vTranslation.y,
+			m_pVertexInstances[i].vTranslation.z,
+			m_pVertexInstances[i].vTranslation.w
 		};
 
 		// 배열에 인스턴스 데이터 추가
@@ -125,7 +143,9 @@ HRESULT CVIBuffer_Mesh_Instance::Serialize(json& outJosn)
 	}
 
 	// 인스턴스 배열을 json 객체에 추가
-	outJosn["Instances"] = instancesArray;
+	outJson["Instances"] = instancesArray;
+
+	return S_OK;
 }
 
 HRESULT CVIBuffer_Mesh_Instance::Deserialize(simdjson::ondemand::object& jsonData)
@@ -161,37 +181,56 @@ HRESULT CVIBuffer_Mesh_Instance::Deserialize(simdjson::ondemand::object& jsonDat
 				if (idx >= m_iNumInstance)
 					continue;
 
-				// 위치 데이터 로드
-				auto positionArray = instanceObj["Position"].get_array();
-				auto posIter = positionArray.begin();
-				m_EditData[idx].vPosition.x = static_cast<_float>((*posIter).get_double());
-				m_EditData[idx].vPosition.y = static_cast<_float>((*(++posIter)).get_double());
-				m_EditData[idx].vPosition.z = static_cast<_float>((*(++posIter)).get_double());
+				// Right 벡터 로드
+				auto rightArray = instanceObj["Right"].get_array();
+				auto rightIter = rightArray.begin();
+				m_pVertexInstances[idx].vRight.x = static_cast<_float>((*rightIter).get_double());
+				m_pVertexInstances[idx].vRight.y = static_cast<_float>((*(++rightIter)).get_double());
+				m_pVertexInstances[idx].vRight.z = static_cast<_float>((*(++rightIter)).get_double());
+				m_pVertexInstances[idx].vRight.w = static_cast<_float>((*(++rightIter)).get_double());
 
-				// 회전 데이터 로드
-				auto rotationArray = instanceObj["Rotation"].get_array();
-				auto rotIter = rotationArray.begin();
-				m_EditData[idx].vRotation.x = static_cast<_float>((*rotIter).get_double());
-				m_EditData[idx].vRotation.y = static_cast<_float>((*(++rotIter)).get_double());
-				m_EditData[idx].vRotation.z = static_cast<_float>((*(++rotIter)).get_double());
+				// Up 벡터 로드
+				auto upArray = instanceObj["Up"].get_array();
+				auto upIter = upArray.begin();
+				m_pVertexInstances[idx].vUp.x = static_cast<_float>((*upIter).get_double());
+				m_pVertexInstances[idx].vUp.y = static_cast<_float>((*(++upIter)).get_double());
+				m_pVertexInstances[idx].vUp.z = static_cast<_float>((*(++upIter)).get_double());
+				m_pVertexInstances[idx].vUp.w = static_cast<_float>((*(++upIter)).get_double());
 
-				// 크기 데이터 로드
-				auto scaleArray = instanceObj["Scale"].get_array();
-				auto scaleIter = scaleArray.begin();
-				m_EditData[idx].vScale.x = static_cast<_float>((*scaleIter).get_double());
-				m_EditData[idx].vScale.y = static_cast<_float>((*(++scaleIter)).get_double());
-				m_EditData[idx].vScale.z = static_cast<_float>((*(++scaleIter)).get_double());
+				// Look 벡터 로드
+				auto lookArray = instanceObj["Look"].get_array();
+				auto lookIter = lookArray.begin();
+				m_pVertexInstances[idx].vLook.x = static_cast<_float>((*lookIter).get_double());
+				m_pVertexInstances[idx].vLook.y = static_cast<_float>((*(++lookIter)).get_double());
+				m_pVertexInstances[idx].vLook.z = static_cast<_float>((*(++lookIter)).get_double());
+				m_pVertexInstances[idx].vLook.w = static_cast<_float>((*(++lookIter)).get_double());
+
+				// Translation 벡터 로드
+				auto transArray = instanceObj["Translation"].get_array();
+				auto transIter = transArray.begin();
+				m_pVertexInstances[idx].vTranslation.x = static_cast<_float>((*transIter).get_double());
+				m_pVertexInstances[idx].vTranslation.y = static_cast<_float>((*(++transIter)).get_double());
+				m_pVertexInstances[idx].vTranslation.z = static_cast<_float>((*(++transIter)).get_double());
+				m_pVertexInstances[idx].vTranslation.w = static_cast<_float>((*(++transIter)).get_double());
 
 				++i;
 			}
 
+			// EditData 업데이트 (호환성을 위해)
+			for (_uint i = 0; i < m_iNumInstance; ++i) {
+				ExtractSRTFromMatrix(m_pVertexInstances[i],
+					m_EditData[i].vPosition,
+					m_EditData[i].vRotation,
+					m_EditData[i].vScale);
+			}
+
 			// 변경된 데이터를 버퍼에 적용
-			ApplyChanges();
+			return ApplyChanges();
 		}
 	}
 	catch (const simdjson::simdjson_error& e) {
 		MSG_BOX("JSON 파싱 에러: 인스턴스 데이터 로드 실패");
-		return S_OK;
+		return E_FAIL;
 	}
 
 	return S_OK;
@@ -208,6 +247,38 @@ HRESULT CVIBuffer_Mesh_Instance::Prototype_Deserialize(simdjson::ondemand::objec
 }
 #pragma endregion
 
+HRESULT CVIBuffer_Mesh_Instance::Bind_Buffers()
+{
+	if (FAILED(__super::Bind_Buffers()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Mesh_Instance::Bind_Buffers(CMesh* pMesh)
+{
+	m_iNumIndexPerInstance = pMesh->Get_NumIndices();
+	ID3D11Buffer* pVertexBuffers[] = {
+		pMesh->Get_VertexBuffer(),
+		m_pVBInstance,
+	};
+
+	_uint		iVertexStrides[] = {
+		pMesh->Get_VertexStride(),
+		m_iVertexInstanceStride
+
+	};
+
+	_uint		iOffsets[] = {
+		0,
+		0
+	};
+	m_pContext->IASetVertexBuffers(0, pMesh->Get_NumVertexBuffers(), pVertexBuffers, iVertexStrides, iOffsets);
+	m_pContext->IASetIndexBuffer(pMesh->Get_IndexBuffer(), m_eIndexFormat, 0);
+	m_pContext->IASetPrimitiveTopology(m_ePrimitiveTopology);
+
+	return S_OK;
+}
 
 void CVIBuffer_Mesh_Instance::Update(const vector<_float4x4>& worldMatrices)
 {
@@ -219,15 +290,25 @@ void CVIBuffer_Mesh_Instance::Update(const vector<_float4x4>& worldMatrices)
 
 	for (size_t i = 0; i < worldMatrices.size(); ++i)
 	{
-		// VTXMESH_INSTANCE 구조체에 맞게 월드 행렬 복사
+		// 직접 행렬 데이터 복사
 		memcpy(&m_pVertexInstances[i].vRight, &worldMatrices[i].m[0], sizeof(_float4));
 		memcpy(&m_pVertexInstances[i].vUp, &worldMatrices[i].m[1], sizeof(_float4));
 		memcpy(&m_pVertexInstances[i].vLook, &worldMatrices[i].m[2], sizeof(_float4));
 		memcpy(&m_pVertexInstances[i].vTranslation, &worldMatrices[i].m[3], sizeof(_float4));
 	}
 
+	// 변경된 모든 인스턴스 데이터를 GPU 버퍼에 복사
 	memcpy(SubResource.pData, m_pVertexInstances, sizeof(VTXMESH_INSTANCE) * worldMatrices.size());
 	m_pContext->Unmap(m_pVBInstance, 0);
+
+	// EditData 동기화 (호환성을 위해 필요하다면)
+	for (size_t i = 0; i < worldMatrices.size(); ++i)
+	{
+		ExtractSRTFromMatrix(m_pVertexInstances[i],
+			m_EditData[i].vPosition,
+			m_EditData[i].vRotation,
+			m_EditData[i].vScale);
+	}
 }
 
 HRESULT CVIBuffer_Mesh_Instance::Resize(_uint iNumInstance)
@@ -288,38 +369,16 @@ HRESULT CVIBuffer_Mesh_Instance::Resize(_uint iNumInstance)
 
 HRESULT CVIBuffer_Mesh_Instance::ApplyChanges()
 {
-	if (m_EditData.empty() || m_EditData.size() != m_iNumInstance)
-		return E_FAIL;
-
-	// 각 인스턴스마다 SRT 행렬 계산하여 적용
-	for (_uint i = 0; i < m_iNumInstance; ++i) {
-		// 스케일, 회전, 이동 행렬 계산
-		XMMATRIX scaleMat = XMMatrixScaling(
-			m_EditData[i].vScale.x,
-			m_EditData[i].vScale.y,
-			m_EditData[i].vScale.z
-		);
-
-		XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(
-			XMConvertToRadians(m_EditData[i].vRotation.x),
-			XMConvertToRadians(m_EditData[i].vRotation.y),
-			XMConvertToRadians(m_EditData[i].vRotation.z)
-		);
-
-		XMMATRIX transMat = XMMatrixTranslation(
-			m_EditData[i].vPosition.x,
-			m_EditData[i].vPosition.y,
-			m_EditData[i].vPosition.z
-		);
-
-		// 최종 행렬 계산 (S * R * T)
-		XMMATRIX worldMat = scaleMat * rotMat * transMat;
-
-		// 행렬을 인스턴스 데이터에 저장
-		XMStoreFloat4(&m_pVertexInstances[i].vRight, worldMat.r[0]);
-		XMStoreFloat4(&m_pVertexInstances[i].vUp, worldMat.r[1]);
-		XMStoreFloat4(&m_pVertexInstances[i].vLook, worldMat.r[2]);
-		XMStoreFloat4(&m_pVertexInstances[i].vTranslation, worldMat.r[3]);
+	// m_EditData가 있는 경우 이를 기반으로 m_pVertexInstances 업데이트
+	if (!m_EditData.empty() && m_EditData.size() == m_iNumInstance)
+	{
+		for (_uint i = 0; i < m_iNumInstance; ++i)
+		{
+			CreateMatrixFromSRT(m_pVertexInstances[i],
+				m_EditData[i].vPosition,
+				m_EditData[i].vRotation,
+				m_EditData[i].vScale);
+		}
 	}
 
 	// GPU 버퍼 업데이트
@@ -336,18 +395,47 @@ HRESULT CVIBuffer_Mesh_Instance::ApplyChanges()
 
 void CVIBuffer_Mesh_Instance::EditInstance(_uint iIndex)
 {
-	if (iIndex >= m_iNumInstance || m_EditData.size() <= iIndex) {
-		m_EditData.resize(m_iNumInstance);
-	}
+	if (iIndex >= m_iNumInstance)
+		return;
+
+	// 현재 인스턴스에서 SRT 정보 추출
+	_float3 position, rotation, scale;
+	ExtractSRTFromMatrix(m_pVertexInstances[iIndex], position, rotation, scale);
+
+	bool bModified = false;
 
 	// 위치 편집
-	ImGui::DragFloat3("Position", &m_EditData[iIndex].vPosition.x, 0.1f);
+	if (ImGui::DragFloat3("Position", &position.x, 0.1f))
+	{
+		bModified = true;
+	}
 
 	// 회전 편집 (오일러 각)
-	ImGui::DragFloat3("Rotation", &m_EditData[iIndex].vRotation.x, 0.1f);
+	if (ImGui::DragFloat3("Rotation", &rotation.x, 0.1f))
+	{
+		bModified = true;
+	}
 
 	// 크기 편집
-	ImGui::DragFloat3("Scale", &m_EditData[iIndex].vScale.x, 0.1f, 0.1f, 10.0f);
+	if (ImGui::DragFloat3("Scale", &scale.x, 0.1f, 0.1f, 10.0f))
+	{
+		bModified = true;
+	}
+
+	// 변경사항이 있을 때만 갱신
+	if (bModified)
+	{
+		// 수정된 SRT 정보로 행렬 업데이트
+		CreateMatrixFromSRT(m_pVertexInstances[iIndex], position, rotation, scale);
+
+		// GPU 버퍼 갱신
+		UpdateSingleInstance(iIndex);
+
+		// EditData 동기화 (호환성을 위해)
+		m_EditData[iIndex].vPosition = position;
+		m_EditData[iIndex].vRotation = rotation;
+		m_EditData[iIndex].vScale = scale;
+	}
 }
 
 HRESULT CVIBuffer_Mesh_Instance::ResetInstances()
@@ -363,6 +451,85 @@ HRESULT CVIBuffer_Mesh_Instance::ResetInstances()
 
 	// 변경 사항 적용
 	return ApplyChanges();
+}
+
+void CVIBuffer_Mesh_Instance::ExtractSRTFromMatrix(const VTXMESH_INSTANCE& instance, _float3& outPosition, _float3& outRotation, _float3& outScale)
+{
+	// 4x4 행렬 구성
+	_float4x4 worldMatrix;
+	memcpy(&worldMatrix.m[0], &instance.vRight, sizeof(_float4));
+	memcpy(&worldMatrix.m[1], &instance.vUp, sizeof(_float4));
+	memcpy(&worldMatrix.m[2], &instance.vLook, sizeof(_float4));
+	memcpy(&worldMatrix.m[3], &instance.vTranslation, sizeof(_float4));
+
+	// 행렬 분해
+	_vector scale, rotation, translation;
+	if (XMMatrixDecompose(&scale, &rotation, &translation, XMLoadFloat4x4(&worldMatrix)))
+	{
+		// 위치 저장
+		XMStoreFloat3(&outPosition, translation);
+
+		// 회전 쿼터니언에서 오일러 각으로 변환
+		XMMATRIX rotMat = XMMatrixRotationQuaternion(rotation);
+
+		// 회전 행렬에서 오일러 각 추출 (라디안)
+		float pitch = asinf(-XMVectorGetZ(rotMat.r[0]));
+		float yaw = atan2f(XMVectorGetZ(rotMat.r[1]), XMVectorGetZ(rotMat.r[2]));
+		float roll = atan2f(XMVectorGetY(rotMat.r[0]), XMVectorGetX(rotMat.r[0]));
+
+		// 라디안에서 각도로 변환
+		outRotation.x = XMConvertToDegrees(pitch);
+		outRotation.y = XMConvertToDegrees(yaw);
+		outRotation.z = XMConvertToDegrees(roll);
+
+		// 스케일 저장
+		XMStoreFloat3(&outScale, scale);
+	}
+	else
+	{
+		// 행렬 분해 실패 시 기본값 설정
+		outPosition = _float3(instance.vTranslation.x, instance.vTranslation.y, instance.vTranslation.z);
+		outRotation = _float3(0.f, 0.f, 0.f);
+		outScale = _float3(1.f, 1.f, 1.f);
+	}
+}
+
+void CVIBuffer_Mesh_Instance::CreateMatrixFromSRT(VTXMESH_INSTANCE& outInstance, const _float3& position, const _float3& rotation, const _float3& scale)
+{
+	// SRT 행렬 계산
+	XMMATRIX scaleMat = XMMatrixScaling(scale.x, scale.y, scale.z);
+	XMMATRIX rotMat = XMMatrixRotationRollPitchYaw(
+		XMConvertToRadians(rotation.x),
+		XMConvertToRadians(rotation.y),
+		XMConvertToRadians(rotation.z)
+	);
+	XMMATRIX transMat = XMMatrixTranslation(position.x, position.y, position.z);
+
+	// 최종 행렬 계산 (S * R * T)
+	XMMATRIX worldMat = scaleMat * rotMat * transMat;
+
+	// 행렬을 인스턴스 데이터에 저장
+	XMStoreFloat4(&outInstance.vRight, worldMat.r[0]);
+	XMStoreFloat4(&outInstance.vUp, worldMat.r[1]);
+	XMStoreFloat4(&outInstance.vLook, worldMat.r[2]);
+	XMStoreFloat4(&outInstance.vTranslation, worldMat.r[3]);
+}
+
+HRESULT CVIBuffer_Mesh_Instance::UpdateSingleInstance(_uint iIndex)
+{
+	if (iIndex >= m_iNumInstance)
+		return E_FAIL;
+
+	D3D11_MAPPED_SUBRESOURCE SubResource;
+	HRESULT hr = m_pContext->Map(m_pVBInstance, 0, D3D11_MAP_WRITE_DISCARD, 0, &SubResource);
+	if (FAILED(hr))
+		return hr;
+
+	// 전체 버퍼 갱신 (개별 업데이트는 D3D11에서 직접 지원하지 않음)
+	memcpy(SubResource.pData, m_pVertexInstances, sizeof(VTXMESH_INSTANCE) * m_iNumInstance);
+	m_pContext->Unmap(m_pVBInstance, 0);
+
+	return S_OK;
 }
 
 CVIBuffer_Mesh_Instance* CVIBuffer_Mesh_Instance::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

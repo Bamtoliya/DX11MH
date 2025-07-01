@@ -298,7 +298,6 @@ HRESULT CModel::Serialize(json& outJson)
 
 HRESULT CModel::Deserialize(simdjson::ondemand::object& jsonData)
 {
-
 	return S_OK;
 }
 

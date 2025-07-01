@@ -63,7 +63,7 @@ CRigidBody* CRigidBody::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 CRigidBody* CRigidBody::Clone(void* pArg)
 {
 	CRigidBody* pInstance = new CRigidBody(*this);
-	if (FAILED(pInstance->Initialize(pArg)))
+ 	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX("Failed to Created : CRigidBody");
 		Safe_Release(pInstance);
@@ -103,6 +103,35 @@ HRESULT CRigidBody::Serialize(json& outJson)
 	rbData["LockRotZ"] = m_tRigidBodyDesc.bLockRotZ;
 	rbData["KinematicTarget"] = m_tRigidBodyDesc.bKinematicTarget;
 	rbData["IsConvex"] = m_tRigidBodyDesc.bIsConvex; // bIsConvex 추가
+
+	if (m_tRigidBodyDesc.pModelForMesh != nullptr)
+	{
+		// m_pOwner의 모든 컴포넌트를 순회하여 pModelForMesh와 일치하는 컴포넌트 찾기
+		if (m_pOwner)
+		{
+			// 컴포넌트 이름을 저장할 변수
+			wstring modelComponentName = L"";
+
+			// 기본 모델 컴포넌트 확인
+			CComponent* pModelComponent = m_pOwner->Get_Component(L"Com_Model");
+			if (pModelComponent == m_tRigidBodyDesc.pModelForMesh)
+			{
+				modelComponentName = L"Com_Model";
+			}
+			else
+			{
+				// 다른 이름의 모델 컴포넌트가 있을 수 있음 (예: "Com_Model2", "Com_AlternativeModel" 등)
+				// 추가적인 이름 체크가 필요하다면 여기에 구현
+			}
+
+			if (!modelComponentName.empty())
+			{
+				// 찾은 컴포넌트 이름을 저장
+				string modelComponentNameUtf8 = WideToUtf8(modelComponentName.c_str());
+				rbData["ModelComponentName"] = modelComponentNameUtf8;
+			}
+		}
+	}
 
 	// Shapes 직렬화
 	json shapesArray = json::array();
@@ -203,6 +232,21 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 	}
 
 
+	// 모델 컴포넌트 정보 복원
+	if (m_pOwner && rbObject["ModelComponentName"].get_string().error() == simdjson::SUCCESS)
+	{
+		std::string_view modelComponentNameUtf8 = rbObject["ModelComponentName"].get_string().value_unsafe();
+		wstring modelComponentName = Utf8ToWide(std::string(modelComponentNameUtf8));
+
+		// 저장된 이름으로 모델 컴포넌트 가져오기
+		CComponent* pModelComponent = m_pOwner->Get_Component(modelComponentName.c_str());
+		if (pModelComponent != nullptr)
+		{
+			// 모델 컴포넌트이면 pModelForMesh에 설정
+			m_tRigidBodyDesc.pModelForMesh = static_cast<CModel*>(pModelComponent);
+		}
+	}
+
 	// Shapes 역직렬화
 	m_tRigidBodyDesc.vShapeDescs.clear();
 	simdjson::ondemand::array shapesJsonArray;
@@ -278,7 +322,7 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 					_int meshIndex = static_cast<_int>(shapeObject["MeshIndex"].get_int64().value_unsafe());
 					if (meshIndex != -1)
 					{
-						shapeDesc.pMesh = static_cast<CModel*>(m_pOwner->Get_Component(L"Com_Model"))->Get_Meshes()[meshIndex];
+						shapeDesc.pMesh = m_tRigidBodyDesc.pModelForMesh->Get_Meshes()[meshIndex];
 						shapeDesc.iMeshIndex = (_uint)meshIndex;
 					}
 				}
@@ -1002,9 +1046,7 @@ HRESULT CRigidBody::Create_Actor()
 			pGeometry = new physx::PxCapsuleGeometry(shapeDesc.vShapeSize.x, shapeDesc.vShapeSize.y); // radius, halfHeight
 			break;
 		case EShapeType::TRIANGLE_MESH:
-		{
-			CModel* pModel = m_tRigidBodyDesc.pModelForMesh;
-			
+		{	
 			CMesh* pMesh = shapeDesc.pMesh;
 			const _float3* vertexDataPtr = pMesh->Get_VertexPositions();
 			vector<_uint> tempIndices;

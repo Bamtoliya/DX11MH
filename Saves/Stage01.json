@@ -70,10 +70,11 @@
                                 1.0
                             ]
                         },
-                        "CameraPitch": 0.7853981852531433,
+                        "CameraPitch": -0.7853981852531433,
                         "CameraYaw": 0.0,
-                        "Distance": 114019.96875,
-                        "SmoothFactor": 0.20000000298023224
+                        "Distance": 10.0,
+                        "SmoothFactor": 1.0,
+                        "TargetName": "Sonic"
                     },
                     "CTransform": {
                         "EulerRotation": [
@@ -91,15 +92,15 @@
                             1.0
                         ],
                         "Position": [
-                            0.0,
-                            20.0,
-                            -15.0
+                            -601.6361694335938,
+                            158.57066345214844,
+                            -384.05279541015625
                         ],
                         "RotationPerSec": 1.0,
                         "Scale": [
-                            1.0,
-                            1.0,
-                            1.0
+                            0.9999758005142212,
+                            1.0000001192092896,
+                            0.9999896883964539
                         ],
                         "SpeedPerSec": 10.0
                     },
@@ -204,15 +205,15 @@
                             1.0
                         ],
                         "Position": [
-                            -601.5,
-                            159.66563415527344,
-                            -387.24578857421875
+                            -601.6376953125,
+                            150.5,
+                            -376.98089599609375
                         ],
                         "RotationPerSec": 0.0,
                         "Scale": [
-                            0.9999772310256958,
                             1.0,
-                            0.9999772310256958
+                            1.0,
+                            1.0
                         ],
                         "SpeedPerSec": 0.0
                     },
@@ -324,53 +325,113 @@
     "Layer_Stage01": {
         "GameObjects": [
             {
-              "CGameObject_W6D01": {
-                "Active": true,
-                "CShader": {
-                  "Layout": "VTXMESH",
-                  "Tiling": true,
-                  "TilingOffset": [
-                    0.0,
-                    0.0
-                  ],
-                  "TilingScale": [
-                    1.0,
-                    1.0
-                  ]
-                },
-                "CTransform": {
-                  "EulerRotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "IsRelativePosition": false,
-                  "IsRelativeRotation": false,
-                  "IsRelativeScale": false,
-                  "Orientation": [
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                  ],
-                  "Position": [
-                    0.0,
-                    0.0,
-                    0.0
-                  ],
-                  "RotationPerSec": 0.0,
-                  "Scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                  ],
-                  "SpeedPerSec": 0.0
-                },
-                "LayerTag": "Layer_Stage01",
-                "Name": "Stage01",
-                "PrototypeTag": "Prototype_GameObject_W6D01",
-                "Visible": true
-              }
+                "CGameObject_W6D01": {
+                    "Active": true,
+                    "CRigidBody": {
+                        "BodyType": 0,
+                        "DynamicFriction": 0.5,
+                        "Gravity": true,
+                        "IsConvex": false,
+                        "KinematicTarget": false,
+                        "LocalEulerRotation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "LocalPosition": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "LocalRotationQuat": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "LockRotX": false,
+                        "LockRotY": false,
+                        "LockRotZ": false,
+                        "Mass": 1.0,
+                        "Restitution": 0.5,
+                        "Shapes": [
+                            {
+                                "EulerRotationX": 0.0,
+                                "EulerRotationY": 0.0,
+                                "EulerRotationZ": 0.0,
+                                "FilterData0": 1,
+                                "FilterData1": 1,
+                                "FilterData2": 0,
+                                "FilterData3": 0,
+                                "IsDoubleSided": false,
+                                "IsQueryShape": true,
+                                "LocalPosition": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "MeshIndex": 0,
+                                "RotationQuat": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "ShapeSize": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ],
+                                "ShapeType": 4
+                            }
+                        ],
+                        "StaticFriction": 0.5
+                    },
+                    "CShader": {
+                        "Layout": "VTXMESH",
+                        "Tiling": true,
+                        "TilingOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "TilingScale": [
+                            1.0,
+                            1.0
+                        ]
+                    },
+                    "CTransform": {
+                        "EulerRotation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "IsRelativePosition": false,
+                        "IsRelativeRotation": false,
+                        "IsRelativeScale": false,
+                        "Orientation": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "Position": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "RotationPerSec": 0.0,
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpeedPerSec": 0.0
+                    },
+                    "LayerTag": "Layer_Stage01",
+                    "Name": "Stage01",
+                    "PrototypeTag": "Prototype_GameObject_W6D01",
+                    "Visible": true
+                }
             }
         ]
     }
