@@ -32,7 +32,6 @@ private:
 	CShader* m_pShaderCom = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 	CVIBuffer_Mesh_Instance* m_pVIBufferInstanceCom = { nullptr };
-	//vector<CVIBuffer_Instance*> m_InstanceBuffers = {};
 	vector<CTransform*> m_pInstanceTransform = {};
 #pragma endregion
 
