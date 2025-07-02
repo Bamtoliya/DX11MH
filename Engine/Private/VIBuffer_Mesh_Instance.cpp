@@ -164,6 +164,9 @@ HRESULT CVIBuffer_Mesh_Instance::Deserialize(simdjson::ondemand::object& jsonDat
 				return E_FAIL;
 		}
 
+		// EditData 크기 조정 및 초기화
+		m_EditData.resize(m_iNumInstance);
+
 		// 인스턴스 배열이 없으면 종료
 		if (!jsonData["Instances"].error()) {
 			auto instances = jsonData["Instances"].get_array();
@@ -181,101 +184,46 @@ HRESULT CVIBuffer_Mesh_Instance::Deserialize(simdjson::ondemand::object& jsonDat
 				if (idx >= m_iNumInstance)
 					continue;
 
-				// Position 배열 로드
-				auto positionArray = instanceObj["Position"].get_array();
-				auto posIter = positionArray.begin();
-				_float3 position;
-				position.x = static_cast<_float>((*posIter).get_double());
-				position.y = static_cast<_float>((*(++posIter)).get_double());
-				position.z = static_cast<_float>((*(++posIter)).get_double());
+				// Right 벡터 로드
+				auto rightArray = instanceObj["Right"].get_array();
+				auto rightIter = rightArray.begin();
+				m_pVertexInstances[idx].vRight.x = static_cast<_float>((*rightIter).get_double());
+				m_pVertexInstances[idx].vRight.y = static_cast<_float>((*(++rightIter)).get_double());
+				m_pVertexInstances[idx].vRight.z = static_cast<_float>((*(++rightIter)).get_double());
+				m_pVertexInstances[idx].vRight.w = static_cast<_float>((*(++rightIter)).get_double());
 
-				// EulerRotation 배열 로드 (도 단위 -> 라디안으로 변환)
-				auto rotationArray = instanceObj["EulerRotation"].get_array();
-				auto rotIter = rotationArray.begin();
-				_float3 rotation;
-				// JSON의 도 값을 라디안으로 변환
-				rotation.x = XMConvertToRadians(static_cast<_float>((*rotIter).get_double()));
-				rotation.y = XMConvertToRadians(static_cast<_float>((*(++rotIter)).get_double()));
-				rotation.z = XMConvertToRadians(static_cast<_float>((*(++rotIter)).get_double()));
+				// Up 벡터 로드
+				auto upArray = instanceObj["Up"].get_array();
+				auto upIter = upArray.begin();
+				m_pVertexInstances[idx].vUp.x = static_cast<_float>((*upIter).get_double());
+				m_pVertexInstances[idx].vUp.y = static_cast<_float>((*(++upIter)).get_double());
+				m_pVertexInstances[idx].vUp.z = static_cast<_float>((*(++upIter)).get_double());
+				m_pVertexInstances[idx].vUp.w = static_cast<_float>((*(++upIter)).get_double());
 
-				// Scale 배열 로드
-				auto scaleArray = instanceObj["Scale"].get_array();
-				auto scaleIter = scaleArray.begin();
-				_float3 scale;
-				scale.x = static_cast<_float>((*scaleIter).get_double());
-				scale.y = static_cast<_float>((*(++scaleIter)).get_double());
-				scale.z = static_cast<_float>((*(++scaleIter)).get_double());
+				// Look 벡터 로드
+				auto lookArray = instanceObj["Look"].get_array();
+				auto lookIter = lookArray.begin();
+				m_pVertexInstances[idx].vLook.x = static_cast<_float>((*lookIter).get_double());
+				m_pVertexInstances[idx].vLook.y = static_cast<_float>((*(++lookIter)).get_double());
+				m_pVertexInstances[idx].vLook.z = static_cast<_float>((*(++lookIter)).get_double());
+				m_pVertexInstances[idx].vLook.w = static_cast<_float>((*(++lookIter)).get_double());
 
-				// SRT 데이터로부터 행렬 생성 (이제 라디안 값으로 전달됨)
-				CreateMatrixFromSRT(m_pVertexInstances[idx], position, rotation, scale);
+				// Translation 벡터 로드
+				auto transArray = instanceObj["Translation"].get_array();
+				auto transIter = transArray.begin();
+				m_pVertexInstances[idx].vTranslation.x = static_cast<_float>((*transIter).get_double());
+				m_pVertexInstances[idx].vTranslation.y = static_cast<_float>((*(++transIter)).get_double());
+				m_pVertexInstances[idx].vTranslation.z = static_cast<_float>((*(++transIter)).get_double());
+				m_pVertexInstances[idx].vTranslation.w = static_cast<_float>((*(++transIter)).get_double());
 
-				// EditData 업데이트 (호환성을 위해) - 라디안 값으로 저장
-				m_EditData[idx].vPosition = position;
-				m_EditData[idx].vRotation = rotation;
-				m_EditData[idx].vScale = scale;
+				// JSON에서 로드한 행렬 데이터로부터 SRT 정보 추출하여 EditData에 저장
+				ExtractSRTFromMatrix(m_pVertexInstances[idx],
+					m_EditData[idx].vPosition,
+					m_EditData[idx].vRotation,
+					m_EditData[idx].vScale);
 
 				++i;
 			}
-
-			// 변경된 데이터를 버퍼에 적용
-			return ApplyChanges();
-
-			//// 각 인스턴스 데이터 로드
-			//_uint i = 0;
-			//for (auto instance : instances) {
-			//	if (i >= m_iNumInstance)
-			//		break;
-
-			//	auto instanceObj = instance.get_object();
-
-			//	// 인덱스 확인 (선택사항)
-			//	_uint idx = static_cast<_uint>(instanceObj["Index"].get_uint64());
-			//	if (idx >= m_iNumInstance)
-			//		continue;
-
-			//	// Right 벡터 로드
-			//	auto rightArray = instanceObj["Right"].get_array();
-			//	auto rightIter = rightArray.begin();
-			//	m_pVertexInstances[idx].vRight.x = static_cast<_float>((*rightIter).get_double());
-			//	m_pVertexInstances[idx].vRight.y = static_cast<_float>((*(++rightIter)).get_double());
-			//	m_pVertexInstances[idx].vRight.z = static_cast<_float>((*(++rightIter)).get_double());
-			//	m_pVertexInstances[idx].vRight.w = static_cast<_float>((*(++rightIter)).get_double());
-
-			//	// Up 벡터 로드
-			//	auto upArray = instanceObj["Up"].get_array();
-			//	auto upIter = upArray.begin();
-			//	m_pVertexInstances[idx].vUp.x = static_cast<_float>((*upIter).get_double());
-			//	m_pVertexInstances[idx].vUp.y = static_cast<_float>((*(++upIter)).get_double());
-			//	m_pVertexInstances[idx].vUp.z = static_cast<_float>((*(++upIter)).get_double());
-			//	m_pVertexInstances[idx].vUp.w = static_cast<_float>((*(++upIter)).get_double());
-
-			//	// Look 벡터 로드
-			//	auto lookArray = instanceObj["Look"].get_array();
-			//	auto lookIter = lookArray.begin();
-			//	m_pVertexInstances[idx].vLook.x = static_cast<_float>((*lookIter).get_double());
-			//	m_pVertexInstances[idx].vLook.y = static_cast<_float>((*(++lookIter)).get_double());
-			//	m_pVertexInstances[idx].vLook.z = static_cast<_float>((*(++lookIter)).get_double());
-			//	m_pVertexInstances[idx].vLook.w = static_cast<_float>((*(++lookIter)).get_double());
-
-			//	// Translation 벡터 로드
-			//	auto transArray = instanceObj["Translation"].get_array();
-			//	auto transIter = transArray.begin();
-			//	m_pVertexInstances[idx].vTranslation.x = static_cast<_float>((*transIter).get_double());
-			//	m_pVertexInstances[idx].vTranslation.y = static_cast<_float>((*(++transIter)).get_double());
-			//	m_pVertexInstances[idx].vTranslation.z = static_cast<_float>((*(++transIter)).get_double());
-			//	m_pVertexInstances[idx].vTranslation.w = static_cast<_float>((*(++transIter)).get_double());
-
-			//	++i;
-			//}
-
-			// EditData 업데이트 (호환성을 위해)
-			/*for (_uint i = 0; i < m_iNumInstance; ++i) {
-				ExtractSRTFromMatrix(m_pVertexInstances[i],
-					m_EditData[i].vPosition,
-					m_EditData[i].vRotation,
-					m_EditData[i].vScale);
-			}*/
-
 			// 변경된 데이터를 버퍼에 적용
 			return ApplyChanges();
 		}

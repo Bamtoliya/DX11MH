@@ -90,8 +90,8 @@ CAnimator* CAnimator::Clone(void* pArg)
 void CAnimator::Free()
 {
 	__super::Free();
-	Safe_Release(m_pCurAnimation);
-	Safe_Release(m_pPreAnimation);
+	m_pCurAnimation = nullptr;
+	m_pPreAnimation = nullptr;
 }
 #pragma endregion
 #pragma region Save&Load

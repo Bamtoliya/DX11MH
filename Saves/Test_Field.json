@@ -7,7 +7,7 @@
                     "CCamera": {
                         "Active": true,
                         "bOrthographic": false,
-                        "fFar": 500.0,
+                        "fFar": 5000.0,
                         "fFovy": 60.0,
                         "fNear": 0.10000000149011612,
                         "fZoomPerSec": 1.0,
@@ -34,9 +34,9 @@
                             0.935026228427887
                         ],
                         "Position": [
-                            0.21021172404289246,
-                            10.151891708374023,
-                            -5.968502044677734
+                            600.0,
+                            165.0,
+                            420
                         ],
                         "RotationPerSec": 1.0,
                         "Scale": [
@@ -44,7 +44,7 @@
                             1.0000016689300537,
                             1.0000030994415283
                         ],
-                        "SpeedPerSec": 10.0
+                        "SpeedPerSec": 1000.0
                     },
                     "LayerTag": "Layer_Camera",
                     "Name": "Camera",
