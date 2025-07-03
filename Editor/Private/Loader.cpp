@@ -210,7 +210,7 @@ HRESULT CLoader::Loading_For_Test()
 		return E_FAIL;
 	}
 
-	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::TEST), SAVEPATH L"Stage/W6D01/Prototypes_W6D01.json", CLoader::JsonLoadCallback, this)))
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::TEST), SAVEPATH L"Stage/W6D01/Prototypes_W6D01_Instance_Models.json", CLoader::JsonLoadCallback, this)))
 	{
 		return E_FAIL;
 	}
@@ -224,6 +224,11 @@ HRESULT CLoader::Loading_For_Test()
 HRESULT CLoader::Loading_For_Stage01()
 {
 	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STAGE01), SAVEPATH L"Prototypes_Stage01.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STAGE01), SAVEPATH L"Stage/W6D01/Prototypes_W6D01_Instance_Models.json", CLoader::JsonLoadCallback, this)))
 	{
 		return E_FAIL;
 	}

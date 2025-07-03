@@ -95,6 +95,9 @@ HRESULT CJson_Loader::Initialize() {
     RegisterBaseCreator<CGameObject_Spline>("CGameObject_Spline");
     RegisterBaseCreator<CGameObject_SplineMesh>("CGameObject_SplineMesh");
     RegisterBaseCreator<CGameObject_Mesh_Instance>("CGameObject_Mesh_Instance");
+    RegisterBaseCreator<CGameObject_Empty>("CGameObject_Empty");
+    RegisterBaseCreator<CGameObject_Mesh_Collider>("CGameObject_Mesh_Collider");
+    
 #pragma endregion
 
     return S_OK;

@@ -9,7 +9,10 @@ CLevel_Stage01::CLevel_Stage01(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 HRESULT CLevel_Stage01::Initialize()
 {
-	if (FAILED(m_pGameInstance->Load_GameObjects(ENUM_CLASS(LEVEL::STAGE01), SAVEPATH L"Stage01.json")))
+	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Stage01.json")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Stage/W6D01/level_gameobjects.json")))
 		return E_FAIL;
 
 	if(FAILED(Ready_Layer_ImGui()))

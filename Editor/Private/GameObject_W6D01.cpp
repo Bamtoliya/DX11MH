@@ -110,10 +110,10 @@ HRESULT CGameObject_W6D01::Ready_Components()
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
-	/* For.Com_Model */
-	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_W6D01"),
-		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-		return E_FAIL;
+	///* For.Com_Model */
+	//if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_W6D01"),
+	//	TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+	//	return E_FAIL;
 
 	/* For.Com_Model_Collider */
 	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_W6D01_Collider"),
@@ -207,7 +207,7 @@ void CGameObject_W6D01::Update(_float fTimeDelta)
 
 void CGameObject_W6D01::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
+	//m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
 }
 
 HRESULT CGameObject_W6D01::Bind_ShaderResources()

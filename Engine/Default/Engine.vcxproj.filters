@@ -491,6 +491,12 @@
     <ClInclude Include="..\public\VIBuffer_Model_Instance.h">
       <Filter>01.Utility\04.Components\VIBuffer\Instance\Model</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\GameObject_Empty.h">
+      <Filter>01.Utility\03.GameObject\Base\Empty</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GameObject_Mesh_Collider.h">
+      <Filter>01.Utility\03.GameObject\Base\Mesh_Collider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -923,6 +929,12 @@
     <ClCompile Include="..\private\VIBuffer_Model_Instance.cpp">
       <Filter>01.Utility\04.Components\VIBuffer\Instance\Model</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\GameObject_Empty.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Empty</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GameObject_Mesh_Collider.cpp">
+      <Filter>01.Utility\03.GameObject\Base\Mesh_Collider</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="00.System">
@@ -1236,6 +1248,12 @@
     </Filter>
     <Filter Include="01.Utility\04.Components\VIBuffer\Instance\Model">
       <UniqueIdentifier>{a257328a-4fc9-41c5-b544-9383699b728f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Empty">
+      <UniqueIdentifier>{a2eff6f1-f93a-4c94-baeb-d3bbab998498}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.GameObject\Base\Mesh_Collider">
+      <UniqueIdentifier>{20eafa94-a667-4ddd-808b-a3c41d4091d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -246,6 +246,8 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\GameObject.h" />
     <ClInclude Include="..\public\GameObject_Capsule.h" />
     <ClInclude Include="..\public\GameObject_Cube.h" />
+    <ClInclude Include="..\public\GameObject_Empty.h" />
+    <ClInclude Include="..\Public\GameObject_Mesh_Collider.h" />
     <ClInclude Include="..\public\GameObject_Mesh_Instance.h" />
     <ClInclude Include="..\public\GameObject_ModelTest.h" />
     <ClInclude Include="..\public\GameObject_Plane.h" />
@@ -403,6 +405,8 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\GameObject.cpp" />
     <ClCompile Include="..\private\GameObject_Capsule.cpp" />
     <ClCompile Include="..\private\GameObject_Cube.cpp" />
+    <ClCompile Include="..\Private\GameObject_Empty.cpp" />
+    <ClCompile Include="..\Private\GameObject_Mesh_Collider.cpp" />
     <ClCompile Include="..\private\GameObject_Mesh_Instance.cpp" />
     <ClCompile Include="..\private\GameObject_ModelTest.cpp" />
     <ClCompile Include="..\private\GameObject_Plane.cpp" />
