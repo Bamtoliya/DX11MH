@@ -540,27 +540,39 @@ void CVIBuffer_Mesh_Instance::ExtractSRTFromMatrix(const VTXMESH_INSTANCE& insta
 	memcpy(&worldMatrix.m[3], &instance.vTranslation, sizeof(_float4));
 
 	// 행렬 분해
-	_vector scale, rotation, translation;
+	_vector scale, rotation, translation;	
 	if (XMMatrixDecompose(&scale, &rotation, &translation, XMLoadFloat4x4(&worldMatrix)))
 	{
 		// 위치 저장
 		XMStoreFloat3(&outPosition, translation);
 
-		// 회전 쿼터니언에서 오일러 각으로 변환
-		XMMATRIX rotMat = XMMatrixRotationQuaternion(rotation);
-
-		// 회전 행렬에서 오일러 각 추출 (라디안)
-		float pitch = asinf(-XMVectorGetZ(rotMat.r[0]));
-		float yaw = atan2f(XMVectorGetZ(rotMat.r[1]), XMVectorGetZ(rotMat.r[2]));
-		float roll = atan2f(XMVectorGetY(rotMat.r[0]), XMVectorGetX(rotMat.r[0]));
+		// SimpleMath 라이브러리의 Quaternion을 사용하여 오일러 각 추출
+		DirectX::SimpleMath::Quaternion quat(rotation);
+		DirectX::SimpleMath::Vector3 eulerRadians = quat.ToEuler();
 
 		// 라디안에서 각도로 변환
-		outRotation.x = XMConvertToDegrees(pitch);
-		outRotation.y = XMConvertToDegrees(yaw);
-		outRotation.z = XMConvertToDegrees(roll);
+		outRotation.x = XMConvertToDegrees(eulerRadians.x);
+		outRotation.y = XMConvertToDegrees(eulerRadians.y);
+		outRotation.z = XMConvertToDegrees(eulerRadians.z);
 
 		// 스케일 저장
 		XMStoreFloat3(&outScale, scale);
+
+		// 회전 쿼터니언에서 오일러 각으로 변환
+		//XMMATRIX rotMat = XMMatrixRotationQuaternion(rotation);
+		//
+		//// 회전 행렬에서 오일러 각 추출 (라디안)
+		//float pitch = asinf(-XMVectorGetZ(rotMat.r[0]));
+		//float yaw = atan2f(XMVectorGetZ(rotMat.r[1]), XMVectorGetZ(rotMat.r[2]));
+		//float roll = atan2f(XMVectorGetY(rotMat.r[0]), XMVectorGetX(rotMat.r[0]));
+		//
+		//// 라디안에서 각도로 변환
+		//outRotation.x = XMConvertToDegrees(pitch);
+		//outRotation.y = XMConvertToDegrees(yaw);
+		//outRotation.z = XMConvertToDegrees(roll);
+		//
+		//// 스케일 저장
+		//XMStoreFloat3(&outScale, scale);
 	}
 	else
 	{
