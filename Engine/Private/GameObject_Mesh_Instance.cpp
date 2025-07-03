@@ -1,4 +1,4 @@
-
+ 
 #include "GameObject_Mesh_Instance.h"
 #include "GameInstance.h"
 
@@ -33,7 +33,7 @@ CGameObject* CGameObject_Mesh_Instance::Clone(void* pArg)
 	CGameObject_Mesh_Instance* pInstance = new CGameObject_Mesh_Instance(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
-	{
+	{ 
 		MSG_BOX("Failed to Cloned : CGameObject_Mesh_Instance");
 		Safe_Release(pInstance);
 	}
@@ -90,7 +90,7 @@ HRESULT CGameObject_Mesh_Instance::Initialize(simdjson::ondemand::object& jsonDa
 		return E_FAIL;
 
 	if (FAILED(Ready_Components()))
-		return E_FAIL;
+ 		return E_FAIL;
 
 	if (FAILED(Deserialize(jsonData)))
 		return E_FAIL;

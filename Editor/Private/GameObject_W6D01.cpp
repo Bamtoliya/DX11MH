@@ -105,26 +105,10 @@ HRESULT CGameObject_W6D01::Initialize(simdjson::ondemand::object& jsonData)
 
 HRESULT CGameObject_W6D01::Ready_Components()
 {
-	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxMesh"),
-		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-		return E_FAIL;
-
-	///* For.Com_Model */
-	//if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_W6D01"),
-	//	TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-	//	return E_FAIL;
-
 	/* For.Com_Model_Collider */
 	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_W6D01_Collider"),
 		TEXT("Com_Model_Collider"), reinterpret_cast<CComponent**>(&m_pModelColliderCom))))
 		return E_FAIL;
-
-	/* For.Com_VIBuffer */
-	/*if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_VIBuffer_Mesh_Instance"),
-		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferCom))))
-		return E_FAIL;*/
-
 	
 	CRigidBody::RIGIDBODY_DESC rigidDesc;
 	rigidDesc.eBodyType = CRigidBody::EBodyType::STATIC;
@@ -153,11 +137,8 @@ HRESULT CGameObject_W6D01::Ready_Components()
 void CGameObject_W6D01::Free()
 {
 	__super::Free();
-	Safe_Release(m_pModelCom);
 	Safe_Release(m_pModelColliderCom);
 	Safe_Release(m_pRigidBodyCom);
-	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pShaderCom);
 }
 
 #pragma endregion
@@ -210,40 +191,10 @@ void CGameObject_W6D01::Late_Update(_float fTimeDelta)
 	//m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
 }
 
-HRESULT CGameObject_W6D01::Bind_ShaderResources()
-{
-	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::VIEW))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &m_oID, sizeof(_uint))))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-
 HRESULT CGameObject_W6D01::Render()
 {
 	if (!m_bVisible)
 		return S_OK;
-	Bind_ShaderResources();
-
-	_uint		iNumMesh = m_pModelCom->Get_NumMeshes();
-
-	for (_uint i = 0; i < iNumMesh; i++)
-	{
-		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
-			return E_FAIL;
-
-		if (FAILED(m_pShaderCom->Begin(0)))
-			return E_FAIL;
-
-		if (FAILED(m_pModelCom->Render(i)))
-			return E_FAIL;
-	}
 
 	return S_OK;
 }

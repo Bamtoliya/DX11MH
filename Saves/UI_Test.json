@@ -50,68 +50,72 @@
                             1080.0
                         ]
                     },
+                    "Childs": [
+                        {
+                            "CBackGround": {
+                                "Active": true,
+                                "CShader": {
+                                    "Layout": "VTXPOSTEX",
+                                    "Tiling": true,
+                                    "TilingOffset": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "TilingScale": [
+                                        1.0,
+                                        1.0
+                                    ]
+                                },
+                                "CTransform": {
+                                    "EulerRotation": [
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "IsRelativePosition": false,
+                                    "IsRelativeRotation": false,
+                                    "IsRelativeScale": false,
+                                    "Orientation": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ],
+                                    "Position": [
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "RotationPerSec": 0.0,
+                                    "Scale": [
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "SpeedPerSec": 0.0
+                                },
+                                "CVIBuffer_Rect": {
+                                    "Size": [
+                                        1168.0,
+                                        552.0
+                                    ]
+                                },
+                                "LayerTag": "Layer_Background",
+                                "Name": "Title",
+                                "NumTextures": 1,
+                                "PrototypeTag": "Prototype_GameObject_BackGround",
+                                "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodeopening_ko/uiRANGE_word_title3.dds",
+                                "UseTextureRegion": false,
+                                "Visible": true
+                            }
+                        }
+                    ],
                     "LayerTag": "Layer_Background",
                     "Name": "Background",
                     "NumTextures": 1,
                     "PrototypeTag": "Prototype_GameObject_BackGround",
                     "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodetitle/uiRANGE_img_title202205.dds",
-                    "Visible": true
-                }
-            },
-            {
-                "CBackGround": {
-                    "Active": true,
-                    "CShader": {
-                        "Layout": "VTXPOSTEX",
-                        "Tiling": true,
-                        "TilingOffset": [
-                            0.0,
-                            0.0
-                        ],
-                        "TilingScale": [
-                            1.0,
-                            1.0
-                        ]
-                    },
-                    "CTransform": {
-                        "EulerRotation": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "IsRelativePosition": false,
-                        "IsRelativeRotation": false,
-                        "IsRelativeScale": false,
-                        "Orientation": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ],
-                        "Position": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "RotationPerSec": 0.0,
-                        "Scale": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "SpeedPerSec": 0.0
-                    },
-                    "CVIBuffer_Rect": {
-                        "Size": [
-                            1168.0,
-                            552.0
-                        ]
-                    },
-                    "LayerTag": "Layer_Background",
-                    "Name": "Title",
-                    "NumTextures": 1,
-                    "PrototypeTag": "Prototype_GameObject_BackGround",
-                    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodeopening_ko/uiRANGE_word_title3.dds",
+                    "UseTextureRegion": false,
                     "Visible": true
                 }
             }

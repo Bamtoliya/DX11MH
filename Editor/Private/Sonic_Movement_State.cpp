@@ -381,59 +381,76 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 
 	CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
 	if (nullptr == pAnimator) return;
+
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
 	if (nullptr == pTransform) return;
 
 	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
-
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
 
 	CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
 	if (nullptr == pRigidBody) return;
 
-	
-
-	// 1. 카메라의 뷰 행렬 가져오기
+	// 카메라의 월드 행렬 가져오기
 	_matrix camWorldMatrix = m_pGameInstance->Get_Transform_MatrixInverse(D3DTS::VIEW);
 
-	// 3. 카메라의 월드 공간 기준 Forward 및 Right 벡터 추출
+	// 카메라의 월드 공간 기준 Forward 및 Right 벡터 추출
 	_vector camLookWorld = camWorldMatrix.r[2]; // 카메라의 Z축 (바라보는 방향)
 	_vector camRightWorld = camWorldMatrix.r[0]; // 카메라의 X축 (오른쪽 방향)
+	_vector camUpWorld = camWorldMatrix.r[1];    // 카메라의 Y축 (위쪽 방향)
 
-	// 4. 카메라 방향 벡터를 XZ 평면에 투영하고 정규화 (수평 이동을 위해 Y성분 제거)
-	_vector camLookXZ = XMVectorSet(XMVectorGetX(camLookWorld), 0.f, XMVectorGetZ(camLookWorld), 0.f);
-	camLookXZ = XMVector3Normalize(camLookXZ);
+	// 캐릭터의 현재 UP 벡터 가져오기 (표면 법선 방향)
+	_vector characterUp = pTransform->Get_State(STATE::UP);
 
-	_vector camRightXZ = XMVectorSet(XMVectorGetX(camRightWorld), 0.f, XMVectorGetZ(camRightWorld), 0.f);
-	camRightXZ = XMVector3Normalize(camRightXZ);
-	// 또는 camRightXZ = XMVector3Cross(XMVectorSet(0.f, 1.f, 0.f, 0.f), camLookXZ); 로 계산 가능
+	// 캐릭터 표면의 평면 구성
+	// 캐릭터의 UP 벡터에 수직인 벡터들이 이 평면을 형성
 
+	// 카메라 Look 벡터를 캐릭터의 표면 평면에 투영
+	_vector projectedCamLook = camLookWorld - XMVector3Dot(camLookWorld, characterUp) * characterUp;
+	float projectedLookLength = XMVectorGetX(XMVector3Length(projectedCamLook));
+
+	// 너무 작은 벡터(거의 수직인 경우)는 기본값으로 대체
+	if (projectedLookLength < 0.01f) {
+		// 캐릭터의 현재 Look 벡터와 카메라의 Right 벡터의 외적으로 대체 방향 계산
+		projectedCamLook = XMVector3Cross(characterUp, camRightWorld);
+		if (XMVectorGetX(XMVector3Length(projectedCamLook)) < 0.01f) {
+			// 비상 대안으로 월드 축 사용
+			projectedCamLook = XMVector3Cross(characterUp, XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f));
+		}
+	}
+	projectedCamLook = XMVector3Normalize(projectedCamLook);
+
+	// 카메라 Right 벡터도 표면 평면에 투영
+	_vector projectedCamRight = XMVector3Cross(characterUp, projectedCamLook);
+	projectedCamRight = XMVector3Normalize(projectedCamRight);
+
+	// 입력에 따른 이동 방향 계산 (이제 표면 평면에 제대로 투영된 벡터 사용)
 	_vector vMovementDirection = XMVectorZero();
-	vMovementDirection.m128_f32[1] = -0.98f;
 	_bool bIsMoving = false;
 
-	if (KEY_PRESSING(DIK_W)) { vMovementDirection += camLookXZ; bIsMoving = true; }
-	if (KEY_PRESSING(DIK_S)) { vMovementDirection -= camLookXZ; bIsMoving = true; }
-	if (KEY_PRESSING(DIK_A)) { vMovementDirection -= camRightXZ; bIsMoving = true; }
-	if (KEY_PRESSING(DIK_D)) { vMovementDirection += camRightXZ; bIsMoving = true; }
-	if (KEY_PRESSING(DIK_Q)) { vMovementDirection -= camRightXZ; }
-	if (KEY_PRESSING(DIK_E)) { vMovementDirection += camRightXZ; }
+	if (KEY_PRESSING(DIK_W)) { vMovementDirection += projectedCamLook; bIsMoving = true; }
+	if (KEY_PRESSING(DIK_S)) { vMovementDirection -= projectedCamLook; bIsMoving = true; }
+	if (KEY_PRESSING(DIK_A)) { vMovementDirection -= projectedCamRight; bIsMoving = true; }
+	if (KEY_PRESSING(DIK_D)) { vMovementDirection += projectedCamRight; bIsMoving = true; }
+
+	// 벡터의 길이가 0이 아닌 경우에만 정규화
+	if (XMVectorGetX(XMVector3LengthSq(vMovementDirection)) > 0.001f) {
+		vMovementDirection = XMVector3Normalize(vMovementDirection);
+	}
 
 	if (KEY_PRESSING(DIK_LSHIFT))
 	{
 		m_eMovementState = EMovementState::BOOST;
 		if (!bIsMoving)
 			XMStoreFloat3(&status.vMoveDirection, XMVector4Normalize(pTransform->Get_State(STATE::LOOK)));
-		else 
-			XMStoreFloat3(&status.vMoveDirection, XMVector3Normalize(vMovementDirection));
+		else
+			XMStoreFloat3(&status.vMoveDirection, vMovementDirection);
 		return;
 	}
 
 	if (KEY_DOWN(DIK_SPACE))
 	{
-		//status.
-		//m_tStateParams.bCanJump = false;
-		//pController->Change_State(ENUM_CLASS(CSonic::STATE::JUMP_U));
+		// 기존 코드 유지
 	}
 
 	if (KEY_DOWN(DIK_I))
@@ -441,16 +458,15 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::COMBAT), ENUM_CLASS(CSonic::STATE::COMBO_KICK01) + status.iCombos.first++, 1.5f, false);
 		return;
 	}
-		
+
 	if (bIsMoving)
 	{
-		XMStoreFloat3(&status.vMoveDirection, XMVector3Normalize(vMovementDirection));
+		XMStoreFloat3(&status.vMoveDirection, vMovementDirection);
 		if (status.fMoveSpeed.first >= 1.5f && status.fMoveSpeed.first < 8.5f)
 		{
 			m_eMovementState = EMovementState::RUN;
-			
 		}
-		else if(status.fMoveSpeed.first >= 8.5f)
+		else if (status.fMoveSpeed.first >= 8.5f)
 		{
 			m_eMovementState = EMovementState::DASH;
 		}
@@ -473,9 +489,6 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 			}
 		}
 	}
-	
-
-	
 }
 
 CSonic_Movement_State* CSonic_Movement_State::Create(CGameObject* pOwner)

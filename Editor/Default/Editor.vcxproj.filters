@@ -271,6 +271,9 @@
     <Filter Include="02.GameObject\Effect\EnemyCommon">
       <UniqueIdentifier>{5786de91-0d4d-43e7-ba9c-e8375988c499}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stages\01\Collider">
+      <UniqueIdentifier>{247b41e4-fdb0-4e7f-b06c-7a41df8ee4fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">

@@ -88,7 +88,7 @@ HRESULT CGameObject_Skybox::Ready_Components()
 	_uint curLevelIndex = m_pGameInstance->Get_CurrentLevelIndex();
 	
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(curLevelIndex), TEXT("Prototype_Component_Texture_Sky"),
+	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Texture_Sky"),
 		TEXT("Com_Texture"), reinterpret_cast<CComponent**>(&m_pTextureCom))))
 		return E_FAIL;
 
@@ -98,7 +98,7 @@ HRESULT CGameObject_Skybox::Ready_Components()
 		return E_FAIL;
 
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(ENUM_CLASS(0), TEXT("Prototype_Component_Shader_VtxCubeTex"),
+	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_VtxCubeTex"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 

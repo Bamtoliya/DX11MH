@@ -33,10 +33,7 @@ public:
 
 #pragma region Variables
 private:
-	CShader*				m_pShaderCom = { nullptr };
-	CModel*					m_pModelCom = { nullptr };
 	CModel*					m_pModelColliderCom = { nullptr };
-	CVIBuffer_Instance*		m_pVIBufferCom = { nullptr };
 	CRigidBody*				m_pRigidBodyCom = { nullptr };
 #pragma endregion
 
@@ -53,8 +50,6 @@ public:
 	virtual void Priority_Update(_float fTimeDelta);
 	virtual void Update(_float fTimeDelta);
 	virtual void Late_Update(_float fTimeDelta);
-private:
-	HRESULT Bind_ShaderResources();
 public:
 	virtual HRESULT Render();
 #pragma endregion

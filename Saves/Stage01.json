@@ -5,7 +5,7 @@
                 "CCamera_Free": {
                     "Active": true,
                     "CCamera": {
-                        "Active": true,
+                        "Active": false,
                         "bOrthographic": false,
                         "fFar": 10000.0,
                         "fFovy": 60.0,
@@ -20,29 +20,29 @@
                     },
                     "CTransform": {
                         "EulerRotation": [
-                            0.30990907549858093,
-                            -0.0197011586278677,
-                            -3.5033585277233215e-07
+                            0.36150914430618286,
+                            0.2648261487483978,
+                            -5.894420382901444e-07
                         ],
                         "IsRelativePosition": false,
                         "IsRelativeRotation": false,
                         "IsRelativeScale": false,
                         "Orientation": [
-                            0.15432772040367126,
-                            -0.009732372127473354,
-                            0.0015200936468318105,
-                            0.9879706501960754
+                            0.1781981885433197,
+                            0.12987558543682098,
+                            -0.023734936490654945,
+                            0.9750971794128418
                         ],
                         "Position": [
-                            -602.4111328125,
-                            165.160888671875,
-                            -399.3287658691406
+                            -1004.0266723632813,
+                            281.9064636230469,
+                            -309.18817138671875
                         ],
                         "RotationPerSec": 1.0,
                         "Scale": [
-                            1.000001311302185,
-                            1.000007152557373,
-                            1.0000134706497192
+                            1.0000025033950806,
+                            1.0000104904174805,
+                            1.00001859664917
                         ],
                         "SpeedPerSec": 100.0
                     },
@@ -70,8 +70,8 @@
                                 1.0
                             ]
                         },
-                        "CameraPitch": -0.7853981852531433,
-                        "CameraYaw": 0.0,
+                        "CameraPitch": -0.43492475152015686,
+                        "CameraYaw": 9.420061111450195,
                         "Distance": 10.0,
                         "SmoothFactor": 1.0,
                         "TargetName": "Sonic"
@@ -92,15 +92,15 @@
                             1.0
                         ],
                         "Position": [
-                            -601.6361694335938,
-                            158.57066345214844,
-                            -384.05279541015625
+                            600.4760131835938,
+                            155.71315002441406,
+                            392.71771240234375
                         ],
                         "RotationPerSec": 1.0,
                         "Scale": [
-                            0.9999758005142212,
-                            1.0000001192092896,
-                            0.9999896883964539
+                            0.9997302293777466,
+                            0.999890148639679,
+                            0.9998726844787598
                         ],
                         "SpeedPerSec": 10.0
                     },
@@ -205,9 +205,9 @@
                             1.0
                         ],
                         "Position": [
-                            -601.6376953125,
+                            600.5177001953125,
                             150.5,
-                            -376.98089599609375
+                            383.64825439453125
                         ],
                         "RotationPerSec": 0.0,
                         "Scale": [
@@ -322,73 +322,13 @@
             }
         ]
     },
-    "Layer_Stage01": {
+    "Layer_Skybox": {
         "GameObjects": [
             {
-                "CGameObject_W6D01": {
+                "CGameObject_Skybox": {
                     "Active": true,
-                    "CRigidBody": {
-                        "BodyType": 0,
-                        "DynamicFriction": 0.5,
-                        "Gravity": true,
-                        "IsConvex": false,
-                        "KinematicTarget": false,
-                        "LocalEulerRotation": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "LocalPosition": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "LocalRotationQuat": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ],
-                        "LockRotX": false,
-                        "LockRotY": false,
-                        "LockRotZ": false,
-                        "Mass": 1.0,
-                        "Restitution": 0.5,
-                        "Shapes": [
-                            {
-                                "EulerRotationX": 0.0,
-                                "EulerRotationY": 0.0,
-                                "EulerRotationZ": 0.0,
-                                "FilterData0": 1,
-                                "FilterData1": 1,
-                                "FilterData2": 0,
-                                "FilterData3": 0,
-                                "IsDoubleSided": false,
-                                "IsQueryShape": true,
-                                "LocalPosition": [
-                                    0.0,
-                                    0.0,
-                                    0.0
-                                ],
-                                "MeshIndex": 0,
-                                "RotationQuat": [
-                                    0.0,
-                                    0.0,
-                                    0.0,
-                                    1.0
-                                ],
-                                "ShapeSize": [
-                                    1.0,
-                                    1.0,
-                                    1.0
-                                ],
-                                "ShapeType": 4
-                            }
-                        ],
-                        "StaticFriction": 0.5
-                    },
                     "CShader": {
-                        "Layout": "VTXMESH",
+                        "Layout": "VTXCUBETEX",
                         "Tiling": true,
                         "TilingOffset": [
                             0.0,
@@ -415,9 +355,9 @@
                             1.0
                         ],
                         "Position": [
-                            0.0,
-                            0.0,
-                            0.0
+                            600.4761352539063,
+                            155.71315002441406,
+                            392.7176818847656
                         ],
                         "RotationPerSec": 0.0,
                         "Scale": [
@@ -427,9 +367,12 @@
                         ],
                         "SpeedPerSec": 0.0
                     },
-                    "LayerTag": "Layer_Stage01",
-                    "Name": "Stage01",
-                    "PrototypeTag": "Prototype_GameObject_W6D01",
+                    "LayerTag": "Layer_Skybox",
+                    "Name": "Skybox",
+                    "NumTextures": 1,
+                    "PrototypeTag": "Prototype_GameObject_Skybox",
+                    "TextureFilePath": "../../Assets/Textures/Skybox/XYZ.dds",
+                    "UseTextureRegion": false,
                     "Visible": true
                 }
             }

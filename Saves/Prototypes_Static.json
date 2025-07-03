@@ -64,6 +64,11 @@
     "NumTexture": 2,
     "TextureFilePath": "G:/My Drive/Assets/Resources/Textures/Default%d.jpg"
   },
+  "Prototype_Component_Texture_Sky": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "../../Assets/Textures/Skybox/XYZ.dds"
+  },
   "Prototype_Component_VIBuffer_Rect": {
     "Class": "CVIBuffer_Rect"
   },
