@@ -81,13 +81,11 @@ public:
 		if (m_pParent)
 		{
 			m_pParent->Remove_ChildByName(m_szName);
-			Safe_Release(m_pParent);
 		}
 		m_pParent = pParent;
 		if (m_pParent)
 		{
 			m_pParent->Add_Child(m_szName, this);
-			Safe_AddRef(m_pParent);
 		}
 			
 	}

@@ -810,8 +810,6 @@ void CGameInstance::Release_Engine()
 	if (m_pMyImGui_Manager)
 		Safe_Release(m_pMyImGui_Manager);
 
-	Safe_Release(m_pPhysics_System);
-
 	Safe_Release(m_pPicking);
 
 	Safe_Release(m_pJson_Loader);
@@ -835,6 +833,8 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pLevel_Manager);
 
 	Safe_Release(m_pPrototype_Manager);
+
+	Safe_Release(m_pPhysics_System);
 
 	Safe_Release(m_pPicking_System);
 

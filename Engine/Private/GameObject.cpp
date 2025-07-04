@@ -101,17 +101,17 @@ void CGameObject::Free()
 	if (m_pGameInstance->Get_PickedObject() == this)
 		m_pGameInstance->Clear_PickedObject();
 
-	Safe_Release(m_pParent);
+	for (auto& Pair : m_Childs)
+		Safe_Release(Pair.second);
+	m_Childs.clear();
+
+	//Safe_Release(m_pParent);
 	Safe_Release(m_pGameInstance);
 	Safe_Release(m_pTransformCom);
 
 	for (auto& Pair : m_Components)
 		Safe_Release(Pair.second);
 	m_Components.clear();
-
-	for(auto& Pair:m_Childs)
-		Safe_Release(Pair.second);
-	m_Childs.clear();
 
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
@@ -125,7 +125,6 @@ CGameObject* CGameObject::Clone(CGameObject* pGameObject, void* pArg)
 	if (pGameObject)
 	{
 		pInstance->m_pParent = pGameObject;
-		Safe_AddRef(m_pParent);
 		pInstance->m_pParent->Add_Child(pInstance->m_szName, pInstance);
 	}
 	return pInstance;
@@ -137,7 +136,6 @@ CGameObject* CGameObject::Clone(CGameObject* pGameObject, simdjson::ondemand::ob
 	if (pGameObject)
 	{
 		pInstance->m_pParent = pGameObject;
-		Safe_AddRef(m_pParent);
 		pInstance->m_pParent->Add_Child(pInstance->m_szName, pInstance);
 	}
 	return pInstance;
@@ -283,6 +281,7 @@ HRESULT CGameObject::Add_Child(const _wstring& strChildTag, CGameObject* pChild)
 		return E_FAIL;
 	m_Childs.emplace(strChildTag, pChild);
 	Safe_AddRef(pChild);
+	pChild->m_pParent = this;
 	return S_OK;
 }
 
