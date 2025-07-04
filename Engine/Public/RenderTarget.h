@@ -32,6 +32,7 @@ public:
     HRESULT Resize(_uint iWinResizeX, _uint iWinResizeY);
 
     HRESULT Bind_ShaderResource(class CShader* pShader, const _char* pContant);
+    HRESULT Copy_Resource(ID3D11Texture2D* pDest);
 
 #ifdef _DEBUG
 public:

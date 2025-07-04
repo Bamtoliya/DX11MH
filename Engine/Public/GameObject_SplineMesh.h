@@ -5,6 +5,7 @@
 NS_BEGIN(Engine)
 class CShader;
 class CModel;
+class CVIBuffer_Mesh_Instance;
 class CVIBuffer_Instance;
 class CSpline_Component;
 class ENGINE_DLL CGameObject_SplineMesh final : public CGameObject

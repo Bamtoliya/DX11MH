@@ -76,6 +76,8 @@ void CMyImGui_Manager::Free()
         Safe_Release(pair.second);
     }
     m_MyImGuis.clear();
+
+    ImGui_ImplDX11_InvalidateDeviceObjects();
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();

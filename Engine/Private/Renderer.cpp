@@ -53,7 +53,6 @@ HRESULT CRenderer::Initialize()
 		MSG_BOX("Failed to create RT_FinalScene Render Target");
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
-
 	if (FAILED(m_pGameInstance->Add_RenderTarget(
 		L"RT_Picking",                // 렌더 타겟 고유 태그
 		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
@@ -66,13 +65,38 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 
+	// if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Depth"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 1.f, 0.f, 0.f))))
+	// 	return E_FAIL;
+	// if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Specular"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
+	// 	return E_FAIL;
+	// if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_PickPos"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
+	// 	return E_FAIL;
+	
+
+	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Normal"))))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_PickPos"))))
+	//	return E_FAIL;		
+	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Shade"))))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Specular"))))
+	//	return E_FAIL;
+
+	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pVIBuffer){
+		return E_FAIL;
+	}
+
 	vector<wstring> SkyboxTargets = { L"RT_Skybox", L"RT_FinalScene" };
 	if (FAILED(m_pGameInstance->Add_MRT(L"RT_Skybox_Group", SkyboxTargets)))
 	{
 		MSG_BOX("Failed to create RT_Skybox group");
 		return E_FAIL;
 	}
-
 	vector<wstring> FinalTargets = { L"RT_ObjectsOnly", L"RT_Picking", L"RT_FinalScene" };
 	if (FAILED(m_pGameInstance->Add_MRT(L"RT_FinalScene_Group", FinalTargets)))
 	{
@@ -81,6 +105,7 @@ HRESULT CRenderer::Initialize()
 	}
 #pragma endregion
 
+#ifdef _DEBUG
 #pragma region Prepare Physx DebugDraw
 	m_iNumMaxDebugLineVertices = 20000;
 	D3D11_BUFFER_DESC BufferDesc;
@@ -97,8 +122,15 @@ HRESULT CRenderer::Initialize()
 		MSG_BOX("CRenderer::Initialize - Failed to create m_pVB_DebugLine");
 		return E_FAIL;
 	}
-#pragma endregion
-
+	//if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Normal"), 150.0f, 450.0f, 300.f, 300.f)))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Shade"), 450.0f, 150.0f, 300.f, 300.f)))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Shade"), 300.f, 100.0f, 200.0f, 200.0f)))
+	//	return E_FAIL;
+	//if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Specular"), 300.f, 300.0f, 200.0f, 200.0f)))
+	//	return E_FAIL;
+#endif
 	return S_OK;
 }
 
@@ -343,12 +375,22 @@ HRESULT CRenderer::Render_Lights()
 
 	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_Normal"), m_pShader, "g_NormalTexture")))
 		return E_FAIL;	
+	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_Depth"), m_pShader, "g_DepthTexture")))
+		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
 	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrixInv", m_pGameInstance->Get_Transform_Float4x4Inverse(D3DTS::VIEW))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrixInv", m_pGameInstance->Get_Transform_Float4x4Inverse(D3DTS::PROJ))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Bind_RawValue("g_vCamPosition", m_pGameInstance->Get_CamPosition(), sizeof(_float4))))
 		return E_FAIL;
 
 	m_pGameInstance->Render_Lights(m_pShader, m_pVIBuffer);
@@ -364,6 +406,8 @@ HRESULT CRenderer::Render_BackBuffer()
 	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_Diffuse"), m_pShader, "g_DiffuseTexture")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_Shade"), m_pShader, "g_ShadeTexture")))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_Specular"), m_pShader, "g_SpecularTexture")))
 		return E_FAIL;
 
 	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
@@ -434,14 +478,17 @@ void CRenderer::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pDevice);
-	Safe_Release(m_pContext);
-	Safe_Release(m_pGameInstance);
-
 	for (auto& ObjectList : m_RenderObjects)
 	{
 		for (auto& pGameObject : ObjectList)
 			Safe_Release(pGameObject);
 		ObjectList.clear();
 	}		
+
+	Safe_Release(m_pVIBuffer);
+	Safe_Release(m_pVB_DebugLine);
+
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pContext);
+	Safe_Release(m_pGameInstance);
 }

@@ -105,12 +105,17 @@
 
     void CTexture::Free()
     {
-    __super::Free();
+        __super::Free();
 
-    for (auto& pSRV : m_SRVs)
-	    Safe_Release(pSRV);
+        for (auto& pSRV : m_SRVs)
+	        Safe_Release(pSRV);
 
-    m_SRVs.clear();
+        m_SRVs.clear();
+
+        // 추가로 해제해야 할 리소스들
+        Safe_Release(m_pTextureArrayResource);
+        Safe_Release(m_pIndexMapTexture);
+        Safe_Release(m_pIndexMapSRV);
     }
     #pragma endregion
 
@@ -675,5 +680,3 @@
     ImGui::PopID();
     return S_OK;
     }
-
-

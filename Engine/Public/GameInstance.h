@@ -99,6 +99,8 @@ public:
 
 	HRESULT Bind_RT_ShaderResource(const _wstring& strTargetTag, class CShader* pShader, const _char* pContantName);
 
+	HRESULT Copy_RT_Resource(const _wstring& strTargetTag, ID3D11Texture2D* pDest);
+
 #ifdef _DEBUG
 	HRESULT Ready_RT_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
 	HRESULT Render_MRT_Debug(const _wstring& strMRTTag, class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
@@ -211,12 +213,10 @@ public:
 	HRESULT Add_Font(const _wstring& strFontTag, const _tchar* pFontFilePath);
 	void Draw_Font(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f), _float fRotation = 0.f, const _float2& vOrigin = _float2(0.f, 0.f), _float fScale = 1.f);
 #pragma endregion
-//
-//#pragma region PICKING
-//	void Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse);
-//	_bool Picking_InWorld(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
-//	_bool Picking_InLocal(_float3& vPickedPos, const _float3& vPointA, const _float3& vPointB, const _float3& vPointC);
-//#pragma endregion
+
+#pragma region PICKING
+	_bool Picking(_float4* pOut);
+#pragma endregion
 
 private:
 #pragma region Device
@@ -242,6 +242,7 @@ private:
 	class CPrototype_Manager*	m_pPrototype_Manager = { nullptr };
 
 
+	class CPicking*				m_pPicking = { nullptr };
 	class CRenderer*			m_pRenderer = { nullptr };
 	class CPipeLine*			m_pPipeLine = { nullptr };
 	class CJson_Loader*			m_pJson_Loader = { nullptr };	

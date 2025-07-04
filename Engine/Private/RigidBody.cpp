@@ -72,8 +72,8 @@ CRigidBody* CRigidBody::Clone(void* pArg)
 }
 void CRigidBody::Free()
 {
-	__super::Free();
 	Release_Actor();
+	__super::Free();
 }
 #pragma endregion
 

@@ -289,7 +289,6 @@ void CTextureArray::Free()
 	m_SRVs.clear();
 
 	Safe_Release(m_pTextureArrayResource);
-
 	Safe_Release(m_pIndexMapTexture);
 	Safe_Release(m_pIndexMapSRV);
 

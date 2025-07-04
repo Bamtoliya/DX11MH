@@ -1,4 +1,5 @@
 ﻿#include "RenderTarget.h"
+#include "GameInstance.h"
 
 CRenderTarget::CRenderTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : m_pDevice{ pDevice }
@@ -7,6 +8,7 @@ CRenderTarget::CRenderTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 {
     Safe_AddRef(m_pDevice);
     Safe_AddRef(m_pContext);
+    Safe_AddRef(m_pGameInstance);
 }
 
 HRESULT CRenderTarget::Initialize(const _wstring& strName, _uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor)
@@ -150,7 +152,7 @@ HRESULT CRenderTarget::Resize(_uint iWinResizeX, _uint iWinResizeY)
     D3D11_TEXTURE2D_DESC textureDesc = {};
     textureDesc.Width = m_iWidth;
     textureDesc.Height = m_iHeight;
-    textureDesc.MipLevels = 1;
+    textureDesc.MipLevels = 0;
     textureDesc.ArraySize = 1;
     textureDesc.Format = m_eFormat; // 기존 포맷 사용
     textureDesc.SampleDesc.Count = 1;
@@ -218,6 +220,14 @@ HRESULT CRenderTarget::Resize(_uint iWinResizeX, _uint iWinResizeY)
 HRESULT CRenderTarget::Bind_ShaderResource(CShader* pShader, const _char* pContantName)
 {
 	return pShader->Bind_SRV(pContantName, m_pSRV);
+}
+
+HRESULT CRenderTarget::Copy_Resource(ID3D11Texture2D* pDest)
+{
+	
+	m_pContext->CopyResource(pDest, m_pTexture);
+
+	return S_OK;
 }
 
 #ifdef _DEBUG

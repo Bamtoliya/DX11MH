@@ -279,6 +279,9 @@ void CLoader::Free()
 		Safe_Release(pList);
 	}
 
+	if (m_pDeferredContext)
+		m_pDeferredContext->ClearState();
+
 	// 지연된 컨텍스트 해제
 	Safe_Release(m_pDeferredContext);
 

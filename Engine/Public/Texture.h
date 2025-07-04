@@ -35,8 +35,8 @@ private:
 
 	// 인덱스 맵 Texture1D 및 SRV
 	map<_uint, _uint>								m_originalToActualIndexMap = {}; // 원본 인덱스 -> 실제 SRV 인덱스 매핑
-	ID3D11Texture1D* m_pIndexMapTexture = { nullptr };
-	ID3D11ShaderResourceView* m_pIndexMapSRV = { nullptr };
+	ID3D11Texture1D*								m_pIndexMapTexture = { nullptr };
+	ID3D11ShaderResourceView*						m_pIndexMapSRV = { nullptr };
 #pragma endregion
 
 #pragma region Save&Load

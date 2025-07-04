@@ -29,7 +29,10 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 	}
 	else
 	{
-
+		if (FAILED(pShader->Bind_RawValue("g_vLightPos", &m_tInfo.vPosition, sizeof(_float4))))
+			return E_FAIL;
+		if (FAILED(pShader->Bind_RawValue("g_fLightRange", &m_tInfo.fRange, sizeof(_float))))
+			return E_FAIL;
 
 		iPassIndex = 2;
 	}

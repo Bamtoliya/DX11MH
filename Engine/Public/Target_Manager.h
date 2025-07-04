@@ -32,6 +32,7 @@ public:
     HRESULT Resize(_uint iWinResizeX, _uint iWinResizeY);
     map<const _wstring, CRenderTarget*> Get_RenderTargetMap() { return m_RenderTargets; }
     HRESULT Bind_ShaderResource(const _wstring& strTargetTag, class CShader* pShader, const _char* pContantName);
+    HRESULT Copy_Resource(const _wstring& strTargetTag, ID3D11Texture2D* pDest);
 
 #ifdef _DEBUG
 public:

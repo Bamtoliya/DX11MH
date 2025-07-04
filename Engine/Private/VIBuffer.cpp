@@ -32,6 +32,7 @@ void CVIBuffer::Free()
     __super::Free();
 
 	Safe_Delete_Array(m_pVertexPositions);
+    Safe_Delete_Array(m_iVertexIndicies);
 
     Safe_Release(m_pVB);
     Safe_Release(m_pIB);

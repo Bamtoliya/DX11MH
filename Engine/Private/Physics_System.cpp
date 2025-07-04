@@ -39,6 +39,8 @@ void CPhysics_System::Free()
     __super::Free(); // 만약 CBase에 가상 Free가 있고 호출해야 한다면
 
     // PhysX 객체 해제 (생성 역순으로 하는 것이 안전)
+    if (m_pScene)
+        m_pScene->release();
     PX_RELEASE(m_pDispatcher);
     if (m_pCudaContextManager) // CUDA 컨텍스트 매니저 해제 추가
         PX_RELEASE(m_pCudaContextManager);

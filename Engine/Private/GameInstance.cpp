@@ -91,12 +91,9 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 
 
 
-	//m_pPicking = CPicking::Create(*ppOut, EngineDesc.hWnd, EngineDesc.iWinSizeX, EngineDesc.iWinSizeY);
-	//if (nullptr == m_pPicking)
-	//	return E_FAIL;
-
-
-
+	m_pPicking = CPicking::Create(EngineDesc.hWnd, *ppDeviceOut, *ppContextOut);
+	if (nullptr == m_pPicking)
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -105,10 +102,9 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 #pragma region Loops
 void CGameInstance::Update_Engine(_float fTimeDelta)
 {
-	if (m_pPhysics_System)
-		m_pPhysics_System->Priority_Update(fTimeDelta);
-	m_pLight_Manager->Update();
+	//m_pPicking->Update();
 	m_pInput_Device->Update(fTimeDelta);
+
 	m_pObject_Manager->Priority_Update(fTimeDelta);
 	m_pCamera_Manager->Priority_Update(fTimeDelta);
 	m_pPipeLine->Update();
@@ -146,6 +142,8 @@ HRESULT CGameInstance::Draw()
 		return E_FAIL;
 
 	m_pRenderer->Draw();
+
+	
 
 	if (m_pMyImGui_Manager)
 		m_pMyImGui_Manager->Render();
@@ -375,6 +373,11 @@ HRESULT CGameInstance::Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTa
 HRESULT CGameInstance::Bind_RT_ShaderResource(const _wstring& strTargetTag, CShader* pShader, const _char* pContantName)
 {
 	return m_pTarget_Manager->Bind_ShaderResource(strTargetTag, pShader, pContantName);
+}
+
+HRESULT CGameInstance::Copy_RT_Resource(const _wstring& strTargetTag, ID3D11Texture2D* pDest)
+{
+	return m_pTarget_Manager->Copy_Resource(strTargetTag, pDest);
 }
 
 #ifdef _DEBUG
@@ -652,14 +655,12 @@ const _float4x4* CGameInstance::Get_Transform_Float4x4Inverse(D3DTS eState) cons
 _matrix CGameInstance::Get_Transform_Matrix(D3DTS eState) const
 {
 	return m_pPipeLine->Get_Transform_Matrix(eState);
-
 }
 
 _matrix CGameInstance::Get_Transform_MatrixInverse(D3DTS eState) const
 {
 	return m_pPipeLine->Get_Transform_MatrixInverse(eState);
 }
-
 
 const _float4* CGameInstance::Get_CamPosition() const
 {
@@ -784,6 +785,10 @@ void CGameInstance::Draw_Font(const _wstring& strFontTag, const _tchar* pText, c
 }
 #pragma endregion
 
+
+
+
+
 //#pragma region PICKING
 //void CGameInstance::Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse)
 //{
@@ -802,11 +807,24 @@ void CGameInstance::Draw_Font(const _wstring& strFontTag, const _tchar* pText, c
 
 void CGameInstance::Release_Engine()
 {
-	//Safe_Release(m_pPicking);
+	if (m_pMyImGui_Manager)
+		Safe_Release(m_pMyImGui_Manager);
+
+	Safe_Release(m_pPhysics_System);
+
+	Safe_Release(m_pPicking);
+
+	Safe_Release(m_pJson_Loader);
+
+	Safe_Release(m_pTarget_Manager);
+
+	Safe_Release(m_pFont_Manager);
 
 	Safe_Release(m_pLight_Manager);
 
 	Safe_Release(m_pPipeLine);
+
+	Safe_Release(m_pCamera_Manager);
 
 	Safe_Release(m_pTimer_Manager);
 
@@ -814,11 +832,11 @@ void CGameInstance::Release_Engine()
 
 	Safe_Release(m_pObject_Manager);
 
-	Safe_Release(m_pTarget_Manager);
+	Safe_Release(m_pLevel_Manager);
 
 	Safe_Release(m_pPrototype_Manager);
 
-	Safe_Release(m_pLevel_Manager);
+	Safe_Release(m_pPicking_System);
 
 	Safe_Release(m_pInput_Device);
 
