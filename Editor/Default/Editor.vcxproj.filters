@@ -438,6 +438,9 @@
     <ClCompile Include="..\private\GameObject_Effect.cpp">
       <Filter>02.GameObject\Effect</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\GameObject_FallDead_Collider.cpp">
+      <Filter>02.GameObject\Stages\01\Collider</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor.h">
@@ -634,6 +637,9 @@
     </ClInclude>
     <ClInclude Include="..\public\GameObject_Effect.h">
       <Filter>02.GameObject\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameObject_FallDead_Collider.h">
+      <Filter>02.GameObject\Stages\01\Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
