@@ -86,7 +86,9 @@ HRESULT CLoader::Loading()
 	case LEVEL::TEST:
 		hr = Loading_For_Test();
 		break;
-
+	case LEVEL::OPEN:
+		hr = Loading_For_Open();
+		break;
 	case LEVEL::STAGE01:
 		hr = Loading_For_Stage01();
 		break;
@@ -221,9 +223,37 @@ HRESULT CLoader::Loading_For_Test()
 	return S_OK;
 }
 
+HRESULT CLoader::Loading_For_Open()
+{
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::OPEN), SAVEPATH L"Prototypes_Open.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::OPEN), SAVEPATH L"Stage/Open/Prototypes_Open_Collider_Models.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::OPEN), SAVEPATH L"Stage/Open/Prototypes_Open_Instance_Models.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+
+	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
+
+	m_isFinished = true;
+	return S_OK;
+}
+
 HRESULT CLoader::Loading_For_Stage01()
 {
 	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STAGE01), SAVEPATH L"Prototypes_Stage01.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STAGE01), SAVEPATH L"Stage/W6D01/Prototypes_W6D01_Collider_Models.json", CLoader::JsonLoadCallback, this)))
 	{
 		return E_FAIL;
 	}
@@ -245,6 +275,17 @@ HRESULT CLoader::Loading_For_Stage02()
 	{
 		return E_FAIL;
 	}
+
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STAGE02), SAVEPATH L"Stage/W6D02/Prototypes_W6D02_Collider_Models.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STAGE02), SAVEPATH L"Stage/W6D02/Prototypes_W6D02_Instance_Models.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+
 
 	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
 

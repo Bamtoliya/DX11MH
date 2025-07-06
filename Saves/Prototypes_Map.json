@@ -22,29 +22,6 @@
     ],
     "Type": "NONANIM"
   },
-  "Prototype_Component_Model_Open": {
-    "Class": "CModel",
-    "ModelFilePath": "G:/My Drive/Assets/Terrain/w1r03Model4.fbx",
-    "PreTransformedMatrix": [
-      -1.0,
-      0.0,
-      -0.0,
-      0.0,
-      0.0,
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      -1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ],
-    "Type": "NONANIM"
-  },
   "Prototype_Component_RigidBody": {
     "Class": "CRigidBody"
   },

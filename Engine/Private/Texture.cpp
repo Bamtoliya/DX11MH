@@ -155,14 +155,14 @@
 
     HRESULT CTexture::Deserialize(simdjson::ondemand::object & jsonData)
     {
-    using namespace simdjson;
+        using namespace simdjson;
 
-    // 부모 클래스 역직렬화 호출
-    if (FAILED(__super::Deserialize(jsonData)))
-        return E_FAIL;
+        // 부모 클래스 역직렬화 호출
+        if (FAILED(__super::Deserialize(jsonData)))
+            return E_FAIL;
 
-    bool useRegion = false;
-    if (jsonData["UseTextureRegion"].get_bool().get(useRegion) == simdjson::SUCCESS)
+        bool useRegion = false;
+        if (jsonData["UseTextureRegion"].get_bool().get(useRegion) == simdjson::SUCCESS)
     {
         m_bUseRegion = useRegion;
 
@@ -192,11 +192,11 @@
         }
     }
 
-    // 프로토타입 정보 확인 (프로토타입 태그가 있는 경우)
-    string_view prototypeTagSV;
-    uint64_t prototypeLevelIndex = 0;
+        // 프로토타입 정보 확인 (프로토타입 태그가 있는 경우)
+        string_view prototypeTagSV;
+        uint64_t prototypeLevelIndex = 0;
 
-    if (jsonData["PrototypeTag"].get_string().get(prototypeTagSV) == simdjson::SUCCESS)
+        if (jsonData["PrototypeTag"].get_string().get(prototypeTagSV) == simdjson::SUCCESS)
     {
         // 프로토타입 정보 복원
         _wstring strPrototypeTag = Utf8ToWide(string(prototypeTagSV));
@@ -234,9 +234,9 @@
         }
     }
 
-    // 프로토타입 정보가 없거나 찾지 못한 경우, 파일 경로에서 직접 로드
-    string_view texturePathSV;
-    if (jsonData["TextureFilePath"].get_string().get(texturePathSV) == simdjson::SUCCESS)
+        // 프로토타입 정보가 없거나 찾지 못한 경우, 파일 경로에서 직접 로드
+        string_view texturePathSV;
+        if (jsonData["TextureFilePath"].get_string().get(texturePathSV) == simdjson::SUCCESS)
     {
         string texturePathStr(texturePathSV);
         uint64_t numTextures = 1;
@@ -251,7 +251,7 @@
         return Initialize_Prototype(Utf8ToWide(texturePathStr).c_str(), static_cast<_uint>(numTextures));
     }
 
-    return E_FAIL;
+        return S_OK;
     }
 
     HRESULT CTexture::Prototype_Serialize(json& outJson)

@@ -6,6 +6,7 @@ NS_BEGIN(Engine)
 class CGameInstance;
 class CSound_Manager;
 class CMyImGui_Manager;
+class CGame_Manager;
 NS_END
 
 NS_BEGIN(Editor)
@@ -32,7 +33,7 @@ private:
 	ID3D11Device*			m_pDevice		= { nullptr };
 	ID3D11DeviceContext*	m_pContext		= { nullptr };
 	CSound_Manager*			m_pSound_Manager = { nullptr };
-
+	CGame_Manager*			m_pGame_Manager = { nullptr };	
 public:
 	static CMainApp* Create();
 	virtual void Free() override;

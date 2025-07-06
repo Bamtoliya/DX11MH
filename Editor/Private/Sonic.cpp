@@ -89,6 +89,8 @@ HRESULT CSonic::Initialize(void* pArg)
 	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
+	m_pGameInstance->Register_Player(this);
+	m_pGameInstance->AddActorToScene(m_pRigidBodyCom->Get_Actors()[0]);
 	return S_OK;
 }
 
@@ -109,6 +111,8 @@ HRESULT CSonic::Initialize(simdjson::ondemand::object& jsonData)
 	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
+	m_pGameInstance->Register_Player(this);
+	m_pGameInstance->AddActorToScene(m_pRigidBodyCom->Get_Actors()[0]);
 	return S_OK;
 }
 

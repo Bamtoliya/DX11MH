@@ -4,8 +4,6 @@
 
 NS_BEGIN(Engine)
 class CModel;
-class CVIBuffer_Instance;
-class CShader;
 class CRigidBody;
 NS_END
 
@@ -33,10 +31,7 @@ public:
 
 #pragma region Variables
 private:
-	CShader* m_pShaderCom = { nullptr };
-	CModel* m_pModelCom = { nullptr };
 	CModel* m_pModelColliderCom = { nullptr };
-	CVIBuffer_Instance* m_pVIBufferCom = { nullptr };
 	CRigidBody* m_pRigidBodyCom = { nullptr };
 #pragma endregion
 

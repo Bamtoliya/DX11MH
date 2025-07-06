@@ -1,0 +1,123 @@
+{
+  "Prototype_Component_Model_GrindRail": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Objects/GrindRail/GrindRail.fbx",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "NONANIM",
+    "ColliderMesh" :  "FALSE"
+  },
+  "Prototype_Component_VIBuffer_Mesh_Instance": {
+    "Class": "CVIBuffer_Mesh_Instance"
+  },
+  "Prototype_Component_RigidBody": {
+    "Class": "CRigidBody"
+  },
+  "Prototype_Component_Sonic_Controller": {
+    "Class": "CSonic_Controller"
+  },
+  "Prototype_Component_HeightField": {
+    "Class": "CHeightField"
+  },
+  "Prototype_Component_Texture_Sky": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/Skybox/XYZ.dds"
+  },
+  "Prototype_Component_Texture_Terrain": {
+    "Class": "CTexture",
+    "NumTexture": 2,
+    "TextureFilePath": "G:/My Drive/Assets/Resources/Textures/Terrain/Tile%d.dds"
+  },
+  "Prototype_Component_Texture_Terrain_Water": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Terrain/Ocean/w1_ocean501_tk1_abd.dds"
+  },
+  "Prototype_Component_Texture_Terrain_SplatMap": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Terrain/w1r03_trr_height/w1r03_splatmap.dds"
+  },
+  "Prototype_Component_Texture_Terrain_BaseDiffuse": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "G:/My Drive/Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_base_abd.dds"
+  },
+  "Prototype_Component_Texture_Terrain_BaseParameter": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "G:/My Drive/Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_base_prm.dds"
+  },
+  "Prototype_Component_Texture_Terrain_DetailDiffuse": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "G:/My Drive/Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_detail_abd.dds"
+  },
+  "Prototype_Component_Texture_Terrain_DetailHeight": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "G:/My Drive/Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_detail_hgt.dds"
+  },
+  "Prototype_Component_Texture_Terrain_DetailNormal": {
+    "Class": "CTextureArray",
+    "NumTexture": 46,
+    "TextureFilePath": "G:/My Drive/Assets/Terrain/w1r03_trr_height/w1r01_%03d_terrain_detail_nrm.dds"
+  },
+  "Prototype_Component_VIBuffer_Terrain": {
+    "Class": "CVIBuffer_Terrain",
+    "HeightMapFilePath": "G:/My Drive/Assets/Resources/Textures/Terrain/Height.bmp"
+  },
+  "Prototype_GameObject_Open": {
+    "Class": "CGameObject_Open"
+  },
+  "Prototype_GameObject_BackGround": {
+    "Class": "CBackGround"
+  },
+  "Prototype_GameObject_Camera_Free": {
+    "Class": "CCamera_Free"
+  },
+  "Prototype_GameObject_Camera_Follow": {
+    "Class": "CCamera_Follow"
+  },
+  "Prototype_GameObject_Light_Direction": {
+    "Class": "CLight_Direction"
+  },
+  "Prototype_GameObject_Light_Point": {
+    "Class": "CLight_Point"
+  },
+  "Prototype_GameObject_Skybox": {
+    "Class": "CGameObject_Skybox"
+  },
+  "Prototype_GameObject_Sonic": {
+    "Class": "CSonic"
+  },
+  "Prototype_GameObject_Statue": {
+    "Class": "CStatue"
+  },
+  "Prototype_GameObject_Terrain": {
+    "Class": "CTerrain"
+  },
+  "Prototype_GameObject_Mesh_Instance": {
+    "Class": "CGameObject_Mesh_Instance"
+  },
+  "Prototype_GameObject_Mesh_Collider": {
+    "Class": "CGameObject_Mesh_Collider"
+  }
+}

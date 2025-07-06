@@ -77,6 +77,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	if (nullptr == m_pCamera_Manager)
 		return E_FAIL;
 
+	m_pGame_Manager = CGame_Manager::Create();
+	if (nullptr == m_pGame_Manager)
+		return E_FAIL;
+
 #pragma endregion
 
 	m_pRenderer = CRenderer::Create(*ppDeviceOut, *ppContextOut);
@@ -242,6 +246,15 @@ const vector<DEBUG_TRIANGLE>& CGameInstance::Get_DebugTriangles()
 const _bool CGameInstance::Get_IsDebugDraw()
 {
 	return m_pPhysics_System->Get_IsDebugDraw();
+}
+void CGameInstance::AddActorToScene(PxActor* pActor)
+{
+	m_pPhysics_System->AddActorToScene(pActor);
+}
+
+void CGameInstance::RemoveActorFromScene(PxActor* pActor)
+{
+	m_pPhysics_System->RemoveActorFromScene(pActor);
 }
 #pragma endregion
 
@@ -785,6 +798,20 @@ void CGameInstance::Draw_Font(const _wstring& strFontTag, const _tchar* pText, c
 }
 #pragma endregion
 
+#pragma region GAME_MANAGER
+CGameObject* CGameInstance::Get_CurrentPlayer()
+{
+	return m_pGame_Manager->GetCurrentPlayer();
+}
+void CGameInstance::Register_Player(CGameObject* pPlayer)
+{
+	m_pGame_Manager->RegisterPlayer(pPlayer);
+}
+void CGameInstance::Unregister_Player()
+{
+	m_pGame_Manager->UnregisterPlayer();
+}
+#pragma endregion
 
 
 
@@ -809,6 +836,8 @@ void CGameInstance::Release_Engine()
 {
 	if (m_pMyImGui_Manager)
 		Safe_Release(m_pMyImGui_Manager);
+
+	Safe_Release(m_pGame_Manager);
 
 	Safe_Release(m_pPicking);
 

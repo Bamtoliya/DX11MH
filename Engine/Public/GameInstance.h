@@ -43,7 +43,8 @@ public:
 	const vector<DEBUG_LINE>& Get_DebugLines();
 	const vector<DEBUG_TRIANGLE>& Get_DebugTriangles();
 	const _bool	Get_IsDebugDraw();
-
+	void AddActorToScene(PxActor* pActor);
+	void RemoveActorFromScene(PxActor* pActor);
 #pragma endregion
 
 
@@ -218,6 +219,13 @@ public:
 	_bool Picking(_float4* pOut);
 #pragma endregion
 
+#pragma region GAME_MANAGER
+	CGameObject* Get_CurrentPlayer();
+	void Register_Player(CGameObject* pPlayer);
+	void Unregister_Player();
+#pragma endregion
+
+
 private:
 #pragma region Device
 	class CInput_Device*	m_pInput_Device = { nullptr };
@@ -230,6 +238,7 @@ private:
 #pragma endregion
 
 #pragma region Manager
+	class CGame_Manager*		m_pGame_Manager = { nullptr };	
 	class CFont_Manager*		m_pFont_Manager = { nullptr };
 	class CLight_Manager*		m_pLight_Manager = { nullptr };
 	class CTimer_Manager*		m_pTimer_Manager = { nullptr };

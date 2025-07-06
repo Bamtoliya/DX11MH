@@ -302,6 +302,16 @@ HRESULT CGameObject::Add_Component(_uint iPrototypeLevelIndex, const _wstring& s
 	return S_OK;
 }
 
+HRESULT CGameObject::Remove_Component(const _wstring& strComponentTag)
+{
+	auto& iter = m_Components.find(strComponentTag);
+	if (iter != m_Components.end())
+	{
+		m_Components.erase(strComponentTag);
+	}
+	return S_OK;
+}
+
 HRESULT CGameObject::Serialize(json& data)
 {
 	data["Name"] = WideToUtf8(m_szName).c_str();

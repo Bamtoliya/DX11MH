@@ -335,9 +335,11 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 			_float xPos = static_cast<_float>(j); //-halfWidth;
 			_float zPos = static_cast<_float>(i); //-halfDepth;
 
-			_float actualHeight = heightValues[(_uint)i * m_iNumVerticesX + (m_iNumVerticesX - 1 - (_uint)j)] * m_fHeightScale;
+			// 좌우 및 상하 반전을 위해 인덱스 계산
+			_uint flipped_i = m_iNumVerticesZ - 1 - (_uint)i;
+			_uint flipped_j = m_iNumVerticesX - 1 - (_uint)j;
+			_float actualHeight = heightValues[flipped_i * m_iNumVerticesX + (_uint)j] * m_fHeightScale;
 
-			_float test = heightValues[iIndex] * m_fHeightScale;
 			pVertices[iIndex].vPosition = _float3(xPos, (actualHeight), zPos);
 			m_pVertexPositions[iIndex] = pVertices[iIndex].vPosition;
 			pVertices[iIndex].vNormal = _float3(0.f, 0.f, 0.f);

@@ -1,7 +1,11 @@
 #pragma once
-#include "C:\Users\m\Desktop\DX11MH\EngineSDK\Inc\GameObject.h"
-class CGameObject_Effect :
-    public CGameObject
+#include "GameObject.h"
+
+NS_BEGIN(Editor)
+class CGameObject_Effect : public CGameObject
 {
+private:
+public:
+
 };
 

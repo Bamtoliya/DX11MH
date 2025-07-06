@@ -1,25 +1,25 @@
-#include "GameObject_FallDead_Collider.h"
+#include "GameObject_W1FallDead_Collider.h"
 #include "GameInstance.h"
 
 #pragma region Constructor/Destructor
-CGameObject_FallDead_Collider::CGameObject_FallDead_Collider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CGameObject_W1FallDead_Collider::CGameObject_W1FallDead_Collider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject{ pDevice, pContext }
 {
 
 }
 
-CGameObject_FallDead_Collider::CGameObject_FallDead_Collider(const CGameObject_FallDead_Collider& Prototype)
+CGameObject_W1FallDead_Collider::CGameObject_W1FallDead_Collider(const CGameObject_W1FallDead_Collider& Prototype)
 	: CGameObject{ Prototype }
 {
 
 }
-CGameObject_FallDead_Collider* CGameObject_FallDead_Collider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CGameObject_W1FallDead_Collider* CGameObject_W1FallDead_Collider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CGameObject_FallDead_Collider* pInstance = new CGameObject_FallDead_Collider(pDevice, pContext);
+	CGameObject_W1FallDead_Collider* pInstance = new CGameObject_W1FallDead_Collider(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Created : CGameObject_FallDead_Collider");
+		MSG_BOX("Failed to Created : CGameObject_W1FallDead_Collider");
 		Safe_Release(pInstance);
 	}
 
@@ -27,38 +27,38 @@ CGameObject_FallDead_Collider* CGameObject_FallDead_Collider::Create(ID3D11Devic
 }
 
 
-CGameObject* CGameObject_FallDead_Collider::Clone(void* pArg)
+CGameObject* CGameObject_W1FallDead_Collider::Clone(void* pArg)
 {
-	CGameObject_FallDead_Collider* pInstance = new CGameObject_FallDead_Collider(*this);
+	CGameObject_W1FallDead_Collider* pInstance = new CGameObject_W1FallDead_Collider(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned : CGameObject_FallDead_Collider");
+		MSG_BOX("Failed to Cloned : CGameObject_W1FallDead_Collider");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CGameObject_FallDead_Collider::Clone(simdjson::ondemand::object& jsonData)
+CGameObject* CGameObject_W1FallDead_Collider::Clone(simdjson::ondemand::object& jsonData)
 {
-	CGameObject_FallDead_Collider* pInstance = new CGameObject_FallDead_Collider(*this);
+	CGameObject_W1FallDead_Collider* pInstance = new CGameObject_W1FallDead_Collider(*this);
 
 	if (FAILED(pInstance->Initialize(jsonData)))
 	{
-		MSG_BOX("Failed to Cloned : CGameObject_FallDead_Collider");
+		MSG_BOX("Failed to Cloned : CGameObject_W1FallDead_Collider");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-HRESULT CGameObject_FallDead_Collider::Initialize_Prototype()
+HRESULT CGameObject_W1FallDead_Collider::Initialize_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CGameObject_FallDead_Collider::Initialize(void* pArg)
+HRESULT CGameObject_W1FallDead_Collider::Initialize(void* pArg)
 {
 	GAMEOBJECT_DESC			Desc{};
 	if (pArg != nullptr)
@@ -86,7 +86,7 @@ HRESULT CGameObject_FallDead_Collider::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CGameObject_FallDead_Collider::Initialize(simdjson::ondemand::object& jsonData)
+HRESULT CGameObject_W1FallDead_Collider::Initialize(simdjson::ondemand::object& jsonData)
 {
 	if (FAILED(__super::Initialize(jsonData)))
 		return E_FAIL;
@@ -103,10 +103,10 @@ HRESULT CGameObject_FallDead_Collider::Initialize(simdjson::ondemand::object& js
 	return S_OK;
 }
 
-HRESULT CGameObject_FallDead_Collider::Ready_Components()
+HRESULT CGameObject_W1FallDead_Collider::Ready_Components()
 {
 	/* For.Com_Model_Collider */
-	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_FallDead_Collider"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_W1FallDeadCol"),
 		TEXT("Com_Model_Collider"), reinterpret_cast<CComponent**>(&m_pModelColliderCom))))
 		return E_FAIL;
 
@@ -134,7 +134,7 @@ HRESULT CGameObject_FallDead_Collider::Ready_Components()
 	return S_OK;
 }
 
-void CGameObject_FallDead_Collider::Free()
+void CGameObject_W1FallDead_Collider::Free()
 {
 	__super::Free();
 	Safe_Release(m_pModelColliderCom);
@@ -145,30 +145,30 @@ void CGameObject_FallDead_Collider::Free()
 
 #pragma region Save&Load
 
-HRESULT CGameObject_FallDead_Collider::Serialize(json& outJson)
+HRESULT CGameObject_W1FallDead_Collider::Serialize(json& outJson)
 {
 	json data;
 	if (FAILED(__super::Serialize(data)))
 		return E_FAIL;
-	outJson["CGameObject_FallDead_Collider"] = data;
-	outJson["CGameObject_FallDead_Collider"]["PrototypeTag"] = "Prototype_GameObject_FallDead_Collider";
+	outJson["CGameObject_W1FallDead_Collider"] = data;
+	outJson["CGameObject_W1FallDead_Collider"]["PrototypeTag"] = "Prototype_GameObject_FallDead_Collider";
 	return S_OK;
 }
 
-HRESULT CGameObject_FallDead_Collider::Deserialize(simdjson::ondemand::object& jsonData)
+HRESULT CGameObject_W1FallDead_Collider::Deserialize(simdjson::ondemand::object& jsonData)
 {
 	if (FAILED(__super::Deserialize(jsonData)))
 		return E_FAIL;
 	return S_OK;
 }
 
-HRESULT CGameObject_FallDead_Collider::Prototype_Serialize(json& outJson)
+HRESULT CGameObject_W1FallDead_Collider::Prototype_Serialize(json& outJson)
 {
-	outJson["Class"] = "CGameObject_FallDead_Collider";
+	outJson["Class"] = "CGameObject_W1FallDead_Collider";
 	return S_OK;
 }
 
-HRESULT CGameObject_FallDead_Collider::Prototype_Deserialize(simdjson::ondemand::object& jsonData)
+HRESULT CGameObject_W1FallDead_Collider::Prototype_Deserialize(simdjson::ondemand::object& jsonData)
 {
 	return S_OK;
 }
@@ -176,26 +176,35 @@ HRESULT CGameObject_FallDead_Collider::Prototype_Deserialize(simdjson::ondemand:
 #pragma endregion
 
 #pragma region Loops
-void CGameObject_FallDead_Collider::Priority_Update(_float fTimeDelta)
+void CGameObject_W1FallDead_Collider::Priority_Update(_float fTimeDelta)
 {
 
 }
 
-void CGameObject_FallDead_Collider::Update(_float fTimeDelta)
+void CGameObject_W1FallDead_Collider::Update(_float fTimeDelta)
 {
 
 }
 
-void CGameObject_FallDead_Collider::Late_Update(_float fTimeDelta)
+void CGameObject_W1FallDead_Collider::Late_Update(_float fTimeDelta)
 {
-	//m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
+
 }
 
-HRESULT CGameObject_FallDead_Collider::Render()
+HRESULT CGameObject_W1FallDead_Collider::Render()
 {
 	if (!m_bVisible)
 		return S_OK;
 
 	return S_OK;
+}
+void CGameObject_W1FallDead_Collider::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
+{
+}
+void CGameObject_W1FallDead_Collider::OnCollisionOverlapping(PxActor* pOther)
+{
+}
+void CGameObject_W1FallDead_Collider::OnCollisionExit(PxActor* pOther)
+{
 }
 #pragma endregion

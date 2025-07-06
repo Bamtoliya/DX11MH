@@ -78,6 +78,12 @@ HRESULT CGameObject_Mesh_Collider::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(&Desc)))
 		return E_FAIL;
 
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
+	if (FAILED(Late_Initialize()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -86,7 +92,43 @@ HRESULT CGameObject_Mesh_Collider::Initialize(simdjson::ondemand::object& jsonDa
 	if (FAILED(__super::Initialize(jsonData)))
 		return E_FAIL;
 
+	if (FAILED(Ready_Components()))
+		return E_FAIL;
+
 	if (FAILED(Deserialize(jsonData)))
+		return E_FAIL;
+
+	if(FAILED(Late_Initialize()))
+		return E_FAIL;	
+
+	return S_OK;
+}
+
+HRESULT CGameObject_Mesh_Collider::Ready_Components()
+{
+	/* For.Com_Model */
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_GrindRail"),
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+		return E_FAIL;
+
+	CRigidBody::RIGIDBODY_DESC rigidDesc;
+	rigidDesc.eBodyType = CRigidBody::EBodyType::STATIC;
+	rigidDesc.bIsConvex = false;
+	rigidDesc.pModelForMesh = m_pModelCom;
+	_uint i = 0;
+	for (auto& pMesh : m_pModelCom->Get_Meshes())
+	{
+		CRigidBody::SHAPE_DESC shapeDesc;
+		shapeDesc.pMesh = pMesh;
+		shapeDesc.bIsQueryShape = true;
+		shapeDesc.iMeshIndex = i++;
+		shapeDesc.eShapeType = CRigidBody::EShapeType::TRIANGLE_MESH;
+		rigidDesc.vShapeDescs.push_back(shapeDesc);
+	}
+	
+	/* For.RigidBody */
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom), &rigidDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -95,6 +137,8 @@ HRESULT CGameObject_Mesh_Collider::Initialize(simdjson::ondemand::object& jsonDa
 void CGameObject_Mesh_Collider::Free()
 {
 	__super::Free();
+	Safe_Release(m_pModelCom);
+	Safe_Release(m_pRigidBodyCom);
 }
 
 #pragma endregion
@@ -107,7 +151,7 @@ HRESULT CGameObject_Mesh_Collider::Serialize(json& outJson)
 	if (FAILED(__super::Serialize(data)))
 		return E_FAIL;
 	outJson["CGameObject_Mesh_Collider"] = data;
-	outJson["CGameObject_Mesh_Collider"]["PrototypeTag"] = "Prototype_GameObject_GameObject_Mesh_Collider";
+	outJson["CGameObject_Mesh_Collider"]["PrototypeTag"] = "Prototype_GameObject_Mesh_Collider";
 	return S_OK;
 }
 
@@ -115,6 +159,36 @@ HRESULT CGameObject_Mesh_Collider::Deserialize(simdjson::ondemand::object& jsonD
 {
 	if (FAILED(__super::Deserialize(jsonData)))
 		return E_FAIL;
+
+	CRigidBody::RIGIDBODY_DESC rigidBodyDesc;
+
+	string_view modelProtoTagSV;
+	if (jsonData["PrototypeModelTag"].get_string().get(modelProtoTagSV) == simdjson::SUCCESS)
+	{
+		_wstring modelProtoTag = Utf8ToWide(string(modelProtoTagSV));
+
+		CModel* pOldModel = m_pModelCom;
+
+		// 새 모델 프로토타입 찾아서 클론
+		CComponent* pPrototype = m_pGameInstance->Find_Prototype(PROTOTYPE::TYPE_COMPONENT, m_pGameInstance->Get_CurrentLevelIndex(), modelProtoTag);
+		if (pPrototype != nullptr)
+		{
+			CModel* pNewModel = (CModel*)pPrototype->Clone(nullptr);
+			if (pNewModel != nullptr)
+			{
+				// 모델 컴포넌트 교체
+				
+				Safe_Release(m_pModelCom);
+				m_Components[m_pModelCom->GetName()] = pNewModel;
+				pNewModel->SetName(m_pModelCom->GetName());
+				m_pModelCom = pNewModel;
+				Safe_AddRef(m_pModelCom);
+
+				m_pModelCom->Set_OwnerGameObject(this);
+				m_pRigidBodyCom->Change_RigidBodyModel(m_pModelCom);
+			}
+		}
+	}
 	return S_OK;
 }
 
@@ -139,7 +213,7 @@ void CGameObject_Mesh_Collider::Priority_Update(_float fTimeDelta)
 
 void CGameObject_Mesh_Collider::Update(_float fTimeDelta)
 {
-
+	m_pRigidBodyCom->Update(fTimeDelta);
 }
 
 void CGameObject_Mesh_Collider::Late_Update(_float fTimeDelta)

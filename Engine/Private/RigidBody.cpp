@@ -4,10 +4,39 @@
 #include "GameInstance.h"
 #include "Mesh.h"
 
+namespace { // 익명 네임스페이스 사용
+	physx::PxTransform ToPxTransform(const _float4x4& matrix) {
+		physx::PxMat44 pxMat(reinterpret_cast<const physx::PxMat44&>(matrix));
+		return physx::PxTransform(pxMat);
+	}
+
+	_float4x4 ToFloat4x4(const physx::PxTransform& transform) {
+		_float4x4 matrix;
+		XMStoreFloat4x4(&matrix, XMLoadFloat4x4(reinterpret_cast<const XMFLOAT4X4*>(&physx::PxMat44(transform))));
+		return matrix;
+	}
+
+	physx::PxVec3 ToPxVec3(const _float3& vec) {
+		return physx::PxVec3(vec.x, vec.y, vec.z);
+	}
+	_float3 ToFloat3(const physx::PxVec3& vec) {
+		return _float3(vec.x, vec.y, vec.z);
+	}
+
+	_float4 ToFloat4(const PxQuat& quat)
+	{
+		return _float4(quat.x, quat.y, quat.z, quat.z);
+	}
+
+	PxQuat ToPxQuat(const _float4& quat) {
+		return PxQuat(quat.x, quat.y, quat.z, quat.w);
+	}
+}
+
 #pragma region Constructor/Destructor
 CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent{ pDevice, pContext }
-	, m_pActor{ nullptr }
+	, m_pActors{ nullptr }
 	, m_pShapes{ nullptr }
 	, m_Materials{ nullptr }
 {
@@ -17,7 +46,7 @@ CRigidBody::CRigidBody(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CRigidBody::CRigidBody(const CRigidBody& Prototype)
 	: CComponent{ Prototype }
 	, m_tRigidBodyDesc{ Prototype.m_tRigidBodyDesc }	// 생성 시 디스크립션 복사
-	, m_pActor{ nullptr }								// 복제 후 Initialize에서 새로 생성
+	, m_pActors{ nullptr }								// 복제 후 Initialize에서 새로 생성
 	, m_pShapes{ nullptr }
 	, m_Materials{ nullptr }
 {
@@ -322,7 +351,8 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 					_int meshIndex = static_cast<_int>(shapeObject["MeshIndex"].get_int64().value_unsafe());
 					if (meshIndex != -1)
 					{
-						shapeDesc.pMesh = m_tRigidBodyDesc.pModelForMesh->Get_Meshes()[meshIndex];
+						if(m_tRigidBodyDesc.pModelForMesh)
+							shapeDesc.pMesh = m_tRigidBodyDesc.pModelForMesh->Get_Meshes()[meshIndex];
 						shapeDesc.iMeshIndex = (_uint)meshIndex;
 					}
 				}
@@ -338,7 +368,7 @@ HRESULT CRigidBody::Deserialize(simdjson::ondemand::object& jsonData)
 #pragma region Loops
 void CRigidBody::Priority_Update(_float fTimeDelta)
 {
-	if (!m_bActive || !m_bLateInitialized || !m_pActor)
+	if (!m_bActive || !m_bLateInitialized)
 		return;
 
 	// 게임 오브젝트의 Transform이 변경되었다면 PhysX 액터에 반영
@@ -351,14 +381,34 @@ void CRigidBody::Priority_Update(_float fTimeDelta)
 }
 void CRigidBody::Update(_float fTimeDelta)
 {
-
+	CGameObject* pPlayer = m_pGameInstance->Get_CurrentPlayer();
+	if(pPlayer == nullptr)
+		return;
+	CTransform* pTransform = static_cast<CTransform*>(pPlayer->Get_Component(g_strTransformTag));
+	_vector playerPosition = pTransform->Get_State(STATE::POSITION);
+	for (size_t i = 0; i < m_pShapes.size(); ++i)
+	{
+		_vector localPose = XMLoadFloat3(&ToFloat3(m_pShapes[i]->getLocalPose().p));
+		_vector difference = XMVectorSubtract(localPose, playerPosition);
+		_float distance = XMVectorGetX(XMVector3Length(difference));
+		if (distance < 300.f)
+		{
+			m_pGameInstance->AddActorToScene(m_pActors[i]);
+		}
+		else
+		{
+			m_pGameInstance->RemoveActorFromScene(m_pActors[i]);
+		}
+		/*shape->getLocalPose();
+		m_pGameInstance->Get_PhysicsScene()->RemoveShape*/
+	}
 }
 void CRigidBody::Late_Update(_float fTimeDelta)
 {
-	if (!m_bActive || !m_bLateInitialized || !m_pActor)
+	if (!m_bActive || !m_bLateInitialized )
 		return;
 	// Dynamic 또는 Kinematic 액터의 경우, 물리 시뮬레이션 결과를 Transform에 반영
-	if (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC)
+	if (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
 	{
 		Synchronize_Physics_To_Transform();
 	}
@@ -546,7 +596,7 @@ HRESULT CRigidBody::RenderImGui()
 
 				if (filterDataModified)
 				{
-					if (m_pActor && i < m_pShapes.size() && m_pShapes[i])
+					if (i < m_pActors.size() && i < m_pShapes.size() && m_pShapes[i])
 					{
 						physx::PxShape* pShape = m_pShapes[i];
 						physx::PxFilterData newFilterData(shape.filterData0, shape.filterData1, shape.filterData2, shape.filterData3);
@@ -554,8 +604,8 @@ HRESULT CRigidBody::RenderImGui()
 						pShape->setQueryFilterData(newFilterData); // Also update query filter data
 
 						// Important: Re-filter the actor in the scene to apply changes
-						if (m_pActor->getScene()) {
-							m_pActor->getScene()->resetFiltering(*m_pActor);
+						if (m_pActors[i]->getScene()) {
+							m_pActors[i]->getScene()->resetFiltering(*m_pActors[i]);
 						}
 					}
 				}
@@ -574,7 +624,7 @@ HRESULT CRigidBody::RenderImGui()
 		}
 
 		// 현재 속도 정보 (읽기 전용)
-		if (m_pActor && (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC))
+		if (!m_pActors.empty() && (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC))
 		{
 			_float3 linearVel = Get_Linear_Velocity();
 			_float3 angularVel = Get_Angular_Velocity();
@@ -648,41 +698,12 @@ CRigidBody::SHAPE_DESC* CRigidBody::Get_Shape(_uint iIndex)
 }
 #pragma endregion
 
-namespace { // 익명 네임스페이스 사용
-	physx::PxTransform ToPxTransform(const _float4x4& matrix) {
-		physx::PxMat44 pxMat(reinterpret_cast<const physx::PxMat44&>(matrix));
-		return physx::PxTransform(pxMat);
-	}
-
-	_float4x4 ToFloat4x4(const physx::PxTransform& transform) {
-		_float4x4 matrix;
-		XMStoreFloat4x4(&matrix, XMLoadFloat4x4(reinterpret_cast<const XMFLOAT4X4*>(&physx::PxMat44(transform))));
-		return matrix;
-	}
-
-	physx::PxVec3 ToPxVec3(const _float3& vec) {
-		return physx::PxVec3(vec.x, vec.y, vec.z);
-	}
-	_float3 ToFloat3(const physx::PxVec3& vec) {
-		return _float3(vec.x, vec.y, vec.z);
-	}
-
-	_float4 ToFloat4(const PxQuat& quat)
-	{
-		return _float4(quat.x, quat.y, quat.z, quat.z);
-	}
-
-	PxQuat ToPxQuat(const _float4& quat) {
-		return PxQuat(quat.x, quat.y, quat.z, quat.w);
-	}
-}
-
 #pragma region Physics
-void CRigidBody::Add_Force(const _float3& vForce, PxForceMode::Enum eForceMode)
+void CRigidBody::Add_Force(const _float3& vForce, PxForceMode::Enum eForceMode, _uint iActorIndex)
 {
-	if (m_pActor && m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
+	if (iActorIndex < m_pActors.size() && m_pActors[iActorIndex] && m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
 	{
-		physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(m_pActor);
+		physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(m_pActors[iActorIndex]);
 		if (pDynamicActor)
 		{
 			pDynamicActor->addForce(ToPxVec3(vForce), eForceMode);
@@ -690,11 +711,11 @@ void CRigidBody::Add_Force(const _float3& vForce, PxForceMode::Enum eForceMode)
 	}
 }
 
-void CRigidBody::Add_Torque(const _float3& vTorque, PxForceMode::Enum eForceMode)
+void CRigidBody::Add_Torque(const _float3& vTorque, PxForceMode::Enum eForceMode, _uint iActorIndex)
 {
-	if (m_pActor && m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
+	if (iActorIndex < m_pActors.size() && m_pActors[iActorIndex] && m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
 	{
-		physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(m_pActor);
+		physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(m_pActors[iActorIndex]);
 		if (pDynamicActor)
 		{
 			pDynamicActor->addTorque(ToPxVec3(vTorque), eForceMode);
@@ -702,14 +723,14 @@ void CRigidBody::Add_Torque(const _float3& vTorque, PxForceMode::Enum eForceMode
 	}
 }
 
-void CRigidBody::Set_Linear_Velocity(const _float3& vVelocity)
+void CRigidBody::Set_Linear_Velocity(const _float3& vVelocity, _uint iActorIndex)
 {
-	if (m_pActor && (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC))
+	if (iActorIndex < m_pActors.size() && m_pActors[iActorIndex] && (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC))
 	{
-		physx::PxRigidBody* pBody = static_cast<physx::PxRigidBody*>(m_pActor);
+		physx::PxRigidBody* pBody = static_cast<physx::PxRigidBody*>(m_pActors[iActorIndex]);
 		if (pBody)
 		{
-			
+
 			PxVec3 velocityChange = ToPxVec3(vVelocity) - pBody->getLinearVelocity();
 			velocityChange.y = pBody->getLinearVelocity().y;
 			//pBody->setlin
@@ -720,11 +741,11 @@ void CRigidBody::Set_Linear_Velocity(const _float3& vVelocity)
 	}
 }
 
-_float3 CRigidBody::Get_Linear_Velocity() const
+_float3 CRigidBody::Get_Linear_Velocity(_uint iActorIndex) const
 {
-	if (m_pActor && (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC))
+	if (iActorIndex < m_pActors.size() && m_pActors[iActorIndex] && (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC))
 	{
-		physx::PxRigidBody* pBody = static_cast<physx::PxRigidBody*>(m_pActor);
+		physx::PxRigidBody* pBody = static_cast<physx::PxRigidBody*>(m_pActors[iActorIndex]);
 		if (pBody)
 		{
 			return ToFloat3(pBody->getLinearVelocity());
@@ -733,11 +754,11 @@ _float3 CRigidBody::Get_Linear_Velocity() const
 	return _float3(0.f, 0.f, 0.f);
 }
 
-void CRigidBody::Set_Angular_Velocity(const _float3& vVelocity)
+void CRigidBody::Set_Angular_Velocity(const _float3& vVelocity, _uint iActorIndex)
 {
-	if (m_pActor && (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC))
+	if (iActorIndex < m_pActors.size() && m_pActors[iActorIndex] && (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC))
 	{
-		physx::PxRigidBody* pBody = static_cast<physx::PxRigidBody*>(m_pActor);
+		physx::PxRigidBody* pBody = static_cast<physx::PxRigidBody*>(m_pActors[iActorIndex]);
 		if (pBody)
 		{
 			//pBody->setAngularVelocity(ToPxVec3(vVelocity));
@@ -745,11 +766,11 @@ void CRigidBody::Set_Angular_Velocity(const _float3& vVelocity)
 	}
 }
 
-_float3 CRigidBody::Get_Angular_Velocity() const
+_float3 CRigidBody::Get_Angular_Velocity(_uint iActorIndex) const
 {
-	if (m_pActor && (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC))
+	if (iActorIndex < m_pActors.size() && m_pActors[iActorIndex] && (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC || m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC))
 	{
-		physx::PxRigidBody* pBody = static_cast<physx::PxRigidBody*>(m_pActor);
+		physx::PxRigidBody* pBody = static_cast<physx::PxRigidBody*>(m_pActors[iActorIndex]);
 		if (pBody)
 		{
 			return ToFloat3(pBody->getAngularVelocity());
@@ -758,11 +779,11 @@ _float3 CRigidBody::Get_Angular_Velocity() const
 	return _float3(0.f, 0.f, 0.f);
 }
 
-void CRigidBody::Set_Kinematic_Target(const _float4x4& matTargetWorld)
-{		
-	if (m_pActor && m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC)
+void CRigidBody::Set_Kinematic_Target(const _float4x4& matTargetWorld, _uint iActorIndex)
+{
+	if (iActorIndex < m_pActors.size() && m_pActors[iActorIndex] && m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC)
 	{
-		physx::PxRigidDynamic* pKinematicActor = static_cast<physx::PxRigidDynamic*>(m_pActor);
+		physx::PxRigidDynamic* pKinematicActor = static_cast<physx::PxRigidDynamic*>(m_pActors[iActorIndex]);
 		if (pKinematicActor)
 		{
 			pKinematicActor->setKinematicTarget(ToPxTransform(matTargetWorld));
@@ -771,18 +792,21 @@ void CRigidBody::Set_Kinematic_Target(const _float4x4& matTargetWorld)
 	}
 }
 
-_bool CRigidBody::SweepMove(const _float3& vMove, _float3& outHitNormal, _float& outHitDist, _float fInflation)
+_bool CRigidBody::SweepMove(const _float3& vMove, _float3& outHitNormal, _float& outHitDist, _float fInflation, _uint iShapeIndex)
 {
+	if (iShapeIndex >= m_pActors.size() || iShapeIndex >= m_pShapes.size())
+		return false;
+
 	PxSweepBuffer hit;
 	_float moveDistance = XMVector3Length(XMLoadFloat3(&vMove)).m128_f32[0];
-	_float3 moveDir; 
+	_float3 moveDir;
 	XMStoreFloat3(&moveDir, XMVector3Normalize(XMLoadFloat3(&vMove)));
 	if (moveDistance < 1e-6f) // 0에 가까우면 sweep 호출하지 않음
 		return false;
 
 	const PxHitFlags hitFlags = PxHitFlag::ePOSITION | PxHitFlag::eNORMAL; //| PxHitFlag::ePRECISE_SWEEP;
-	PxTransform worldShapePose = m_pActor->getGlobalPose() * m_pShapes[0]->getLocalPose();
-	_bool isHit = m_pGameInstance->Get_PhysicsScene()->sweep(m_pShapes[0]->getGeometry(), worldShapePose, ToPxVec3(moveDir), moveDistance, hit, hitFlags, PxQueryFilterData(), nullptr, nullptr, fInflation);
+	PxTransform worldShapePose = m_pActors[iShapeIndex]->getGlobalPose() * m_pShapes[iShapeIndex]->getLocalPose();
+	_bool isHit = m_pGameInstance->Get_PhysicsScene()->sweep(m_pShapes[iShapeIndex]->getGeometry(), worldShapePose, ToPxVec3(moveDir), moveDistance, hit, hitFlags, PxQueryFilterData(), nullptr, nullptr, fInflation);
 	if (isHit)
 	{
 		const PxSweepHit& sweepHit = hit.block;
@@ -796,13 +820,13 @@ _bool CRigidBody::SweepMove(const _float3& vMove, _float3& outHitNormal, _float&
 	return isHit;
 }
 
-_bool CRigidBody::ComputeDepenetration(_float3& outDepenVector)
+_bool CRigidBody::ComputeDepenetration(_float3& outDepenVector, _uint iShapeIndex)
 {
-	if (!m_pActor || m_pShapes.empty())
+	if (iShapeIndex >= m_pActors.size() || iShapeIndex >= m_pShapes.size())
 		return false;
 
-	const PxGeometry& geometry = m_pShapes[0]->getGeometry();
-	const PxTransform pose = m_pActor->getGlobalPose() * m_pShapes[0]->getLocalPose();
+	const PxGeometry& geometry = m_pShapes[iShapeIndex]->getGeometry();
+	const PxTransform pose = m_pActors[iShapeIndex]->getGlobalPose() * m_pShapes[iShapeIndex]->getLocalPose();
 
 	const PxU32 maxOverlaps = 16;
 	PxOverlapHit overlapHits[maxOverlaps];
@@ -821,7 +845,7 @@ _bool CRigidBody::ComputeDepenetration(_float3& outDepenVector)
 			const PxOverlapHit& overlapHit = hitBuffer.getTouch(i);
 
 			// 자기 자신과의 겹침은 무시
-			if (overlapHit.actor == m_pActor)
+			if (overlapHit.actor == m_pActors[iShapeIndex])
 				continue;
 
 			PxVec3 direction;
@@ -866,23 +890,32 @@ void CRigidBody::Set_Body_Type(EBodyType eType)
 
 void CRigidBody::Set_Mass(_float fMass)
 {
-	if (m_pActor && m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
+	if (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
 	{
-		physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(m_pActor);
-		if (pDynamicActor)
+		m_tRigidBodyDesc.fMass = fMass;
+		for (auto& pActor : m_pActors)
 		{
-			m_tRigidBodyDesc.fMass = fMass;
-			pDynamicActor->setMass(fMass);
+			if (pActor)
+			{
+				physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(pActor);
+				if (pDynamicActor)
+				{
+					pDynamicActor->setMass(fMass);
+				}
+			}
 		}
 	}
 }
 
 void CRigidBody::Enable_Gravity(_bool bEnable)
 {
-	if (m_pActor)
+	m_tRigidBodyDesc.bGravity = bEnable;
+	for (auto& pActor : m_pActors)
 	{
-		m_tRigidBodyDesc.bGravity = bEnable;
-		m_pActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !bEnable);
+		if (pActor)
+		{
+			pActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !bEnable);
+		}
 	}
 }
 
@@ -906,21 +939,47 @@ void CRigidBody::Set_Material_Properties(_float fStaticFriction, _float fDynamic
 
 void CRigidBody::Lock_Rotation_Axis(_bool bLockX, _bool bLockY, _bool bLockZ)
 {
-	if (m_pActor && m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
+	if (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
 	{
-		physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(m_pActor);
-		if (pDynamicActor)
+		m_tRigidBodyDesc.bLockRotX = bLockX;
+		m_tRigidBodyDesc.bLockRotY = bLockY;
+		m_tRigidBodyDesc.bLockRotZ = bLockZ;
+
+		physx::PxRigidDynamicLockFlags flags;
+		if (bLockX) flags |= physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X;
+		if (bLockY) flags |= physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y;
+		if (bLockZ) flags |= physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z;
+
+		for (auto& pActor : m_pActors)
 		{
-			m_tRigidBodyDesc.bLockRotX = bLockX;
-			m_tRigidBodyDesc.bLockRotY = bLockY;
-			m_tRigidBodyDesc.bLockRotZ = bLockZ;
+			if (pActor)
+			{
+				physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(pActor);
+				if (pDynamicActor)
+				{
+					pDynamicActor->setRigidDynamicLockFlags(flags);
+				}
+			}
+		}
+	}
+}
 
-			physx::PxRigidDynamicLockFlags flags;
-			if (bLockX) flags |= physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X;
-			if (bLockY) flags |= physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y;
-			if (bLockZ) flags |= physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z;
-
-			pDynamicActor->setRigidDynamicLockFlags(flags);
+void CRigidBody::Change_RigidBodyModel(CModel* pModel)
+{
+	m_tRigidBodyDesc.pModelForMesh = pModel;
+	for(auto& shapeDesc : m_tRigidBodyDesc.vShapeDescs)
+	{
+		if (shapeDesc.pMesh && pModel)
+		{
+			// 메시 인덱스가 유효한지 확인
+			if (shapeDesc.iMeshIndex < pModel->Get_Meshes().size())
+			{
+				shapeDesc.pMesh = pModel->Get_Meshes()[shapeDesc.iMeshIndex];
+			}
+			else
+			{
+				shapeDesc.pMesh = nullptr; // 인덱스가 유효하지 않으면 nullptr로 설정
+			}
 		}
 	}
 }
@@ -933,67 +992,6 @@ HRESULT CRigidBody::Create_Actor()
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
 	if (pTransform == nullptr)
 		return E_FAIL;
-
-	// 1. Actor 생성 및 위치 설정 준비
-	_matrix cTransformWorldMatrix = pTransform->Get_WorldMatrix();
-
-	_float3 rbLocalPos = m_tRigidBodyDesc.vLocalPosition;
-	XMVECTOR rbLocalRotQuatVec = XMQuaternionRotationRollPitchYaw(
-		m_tRigidBodyDesc.fCurRotationX, // Pitch
-		m_tRigidBodyDesc.fCurRotationY, // Yaw
-		m_tRigidBodyDesc.fCurRotationZ  // Roll
-	);
-	rbLocalRotQuatVec = XMQuaternionNormalize(rbLocalRotQuatVec);
-	XMStoreFloat4(&m_tRigidBodyDesc.qRotation, rbLocalRotQuatVec);
-
-	_matrix rbLocalTranslationMatrix = XMMatrixTranslation(rbLocalPos.x, rbLocalPos.y, rbLocalPos.z);
-	_matrix rbLocalRotationMatrix = XMMatrixRotationQuaternion(rbLocalRotQuatVec);
-	_matrix rbLocalMatrix = rbLocalRotationMatrix * rbLocalTranslationMatrix;
-
-	_matrix finalActorWorldMatrix = rbLocalMatrix * cTransformWorldMatrix;
-
-	_vector scale, rot, trans;
-	XMMatrixDecompose(&scale, &rot, &trans, finalActorWorldMatrix);
-
-	_float3 finalActorPos; XMStoreFloat3(&finalActorPos, trans);
-	_float4 finalActorRot; XMStoreFloat4(&finalActorRot, rot);
-
-	PxTransform actorPose(ToPxVec3(finalActorPos), ToPxQuat(finalActorRot));
-
-	switch (m_tRigidBodyDesc.eBodyType)
-	{
-	case EBodyType::STATIC:
-		m_pActor = pPhysics->createRigidStatic(actorPose);
-		break;
-	case EBodyType::DYNAMIC:
-		m_pActor = pPhysics->createRigidDynamic(actorPose);
-		if (m_pActor)
-		{
-			physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(m_pActor);
-			pDynamicActor->setMass(m_tRigidBodyDesc.fMass);
-			pDynamicActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !m_tRigidBodyDesc.bGravity);
-
-			physx::PxRigidDynamicLockFlags flags;
-			if (m_tRigidBodyDesc.bLockRotX) flags |= physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X;
-			if (m_tRigidBodyDesc.bLockRotY) flags |= physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y;
-			if (m_tRigidBodyDesc.bLockRotZ) flags |= physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z;
-			pDynamicActor->setRigidDynamicLockFlags(flags);
-		}
-		break;
-	case EBodyType::KINEMATIC:
-		m_pActor = pPhysics->createRigidDynamic(actorPose);
-		if (m_pActor)
-		{
-			static_cast<physx::PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
-			static_cast<physx::PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eFORCE_KINE_KINE_NOTIFICATIONS, true);
-			static_cast<physx::PxRigidDynamic*>(m_pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eFORCE_STATIC_KINE_NOTIFICATIONS, true);
-		}
-		break;
-	default:
-		return E_FAIL; // 지원하지 않는 바디 타입
-	}
-
-	
 
 	// 2. Shape Geometry 생성
 	PxGeometry* pGeometry = nullptr;
@@ -1016,6 +1014,67 @@ HRESULT CRigidBody::Create_Actor()
 
 	for (const auto& shapeDesc : m_tRigidBodyDesc.vShapeDescs)
 	{
+		PxRigidActor* pActor = nullptr;
+
+		// 1. Actor 생성 및 위치 설정 준비
+		_matrix cTransformWorldMatrix = pTransform->Get_WorldMatrix();
+
+		_float3 rbLocalPos = m_tRigidBodyDesc.vLocalPosition;
+		XMVECTOR rbLocalRotQuatVec = XMQuaternionRotationRollPitchYaw(
+			m_tRigidBodyDesc.fCurRotationX, // Pitch
+			m_tRigidBodyDesc.fCurRotationY, // Yaw
+			m_tRigidBodyDesc.fCurRotationZ  // Roll
+		);
+		rbLocalRotQuatVec = XMQuaternionNormalize(rbLocalRotQuatVec);
+		XMStoreFloat4(&m_tRigidBodyDesc.qRotation, rbLocalRotQuatVec);
+
+		_matrix rbLocalTranslationMatrix = XMMatrixTranslation(rbLocalPos.x, rbLocalPos.y, rbLocalPos.z);
+		_matrix rbLocalRotationMatrix = XMMatrixRotationQuaternion(rbLocalRotQuatVec);
+		_matrix rbLocalMatrix = rbLocalRotationMatrix * rbLocalTranslationMatrix;
+
+		_matrix finalActorWorldMatrix = rbLocalMatrix * cTransformWorldMatrix;
+
+		_vector scale, rot, trans;
+		XMMatrixDecompose(&scale, &rot, &trans, finalActorWorldMatrix);
+
+		_float3 finalActorPos; XMStoreFloat3(&finalActorPos, trans);
+		_float4 finalActorRot; XMStoreFloat4(&finalActorRot, rot);
+
+		PxTransform actorPose(ToPxVec3(finalActorPos), ToPxQuat(finalActorRot));
+
+		switch (m_tRigidBodyDesc.eBodyType)
+		{
+		case EBodyType::STATIC:
+			pActor = pPhysics->createRigidStatic(actorPose);
+			break;
+		case EBodyType::DYNAMIC:
+			pActor = pPhysics->createRigidDynamic(actorPose);
+			if (pActor)
+			{
+				physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(pActor);
+				pDynamicActor->setMass(m_tRigidBodyDesc.fMass);
+				pDynamicActor->setActorFlag(physx::PxActorFlag::eDISABLE_GRAVITY, !m_tRigidBodyDesc.bGravity);
+
+				physx::PxRigidDynamicLockFlags flags;
+				if (m_tRigidBodyDesc.bLockRotX) flags |= physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_X;
+				if (m_tRigidBodyDesc.bLockRotY) flags |= physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y;
+				if (m_tRigidBodyDesc.bLockRotZ) flags |= physx::PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z;
+				pDynamicActor->setRigidDynamicLockFlags(flags);
+			}
+			break;
+		case EBodyType::KINEMATIC:
+			pActor = pPhysics->createRigidDynamic(actorPose);
+			if (pActor)
+			{
+				static_cast<physx::PxRigidDynamic*>(pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eKINEMATIC, true);
+				static_cast<physx::PxRigidDynamic*>(pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eFORCE_KINE_KINE_NOTIFICATIONS, true);
+				static_cast<physx::PxRigidDynamic*>(pActor)->setRigidBodyFlag(physx::PxRigidBodyFlag::eFORCE_STATIC_KINE_NOTIFICATIONS, true);
+			}
+			break;
+		default:
+			return E_FAIL; // 지원하지 않는 바디 타입
+		}
+
 
 		physx::PxMaterial* pMaterial = pPhysics->createMaterial(
 			m_tRigidBodyDesc.fStaticFriction,
@@ -1185,6 +1244,7 @@ HRESULT CRigidBody::Create_Actor()
 
 		// 쉐이프 생성 및 액터에 부착
 		physx::PxShape* pShape = pPhysics->createShape(*pGeometry, *pMaterial, true);
+		
 		if (pShape)
 		{
 			pShape->setContactOffset(0.02f);
@@ -1196,8 +1256,10 @@ HRESULT CRigidBody::Create_Actor()
 			pShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, true);
 			pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, shapeDesc.bIsQueryShape); // Use bIsQueryShape from desc
 			pShape->setLocalPose(shapePose);
-			m_pActor->attachShape(*pShape);
+			pActor->attachShape(*pShape);
+			pActor->userData = m_pOwner; // 액터의 userData에 CRigidBody 인스턴스 포인터 저장 (콜백 등에서 사용 가능)
 			m_pShapes.push_back(pShape);
+			m_pActors.push_back(pActor); // 액터도 저장 (필요시 사용)
 		}
 
 		delete pGeometry; // 지오메트리는 쉐이프 생성 후 필요 없음
@@ -1211,8 +1273,7 @@ HRESULT CRigidBody::Create_Actor()
 	}
 
 	// 5. Actor를 Scene에 추가
-	m_pActor->userData = m_pOwner; // 액터의 userData에 CRigidBody 인스턴스 포인터 저장 (콜백 등에서 사용 가능)
-	pScene->addActor(*m_pActor);
+	//pScene->addActor(*pActor);
 
  	return S_OK;
 }
@@ -1220,23 +1281,19 @@ HRESULT CRigidBody::Create_Actor()
 void CRigidBody::Release_Actor()
 {
 	PxScene* pScene = m_pGameInstance->Get_PhysicsScene();
-	if (m_pActor && pScene)
+	if (pScene)
 	{
-		pScene->removeActor(*m_pActor);
+		for (auto& pActor : m_pActors)
+		{
+			if (pActor)
+			{
+				m_pGameInstance->RemoveActorFromScene(pActor);
+				pActor->release();
+			}
+		}
 	}
-
-	// 모든 쉐이프 해제
-	//for (auto& pShape : m_pShapes)
-	//{
-	//	if (pShape)
-	//	{
-	//		/*m_pActor->detachShape(*pShape);
-	//		pShape->release();*/
-	//	}
-	//}
+	m_pActors.clear();
 	m_pShapes.clear();
-	
-	
 
 	// 모든 재질 해제
 	for (auto& pMaterial : m_Materials)
@@ -1245,17 +1302,11 @@ void CRigidBody::Release_Actor()
 			pMaterial->release();
 	}
 	m_Materials.clear();
-
-	if (m_pActor)
-	{
-		m_pActor->release();
-		m_pActor = nullptr;
-	}
 }
 
 void CRigidBody::Synchronize_Transform_To_Physics()
 {
-	if (!m_pActor || !m_pOwner) return;
+	if (m_pActors.empty() || !m_pOwner) return;
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
 	if (!pTransform) return;
 
@@ -1278,35 +1329,48 @@ void CRigidBody::Synchronize_Transform_To_Physics()
 
 	PxTransform physxActorWorldPose(ToPxVec3(finalActorPos), ToPxQuat(finalActorRot));
 
-	if (m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC)
+	// 모든 액터에 대해 위치 동기화
+	for (auto& pActor : m_pActors)
 	{
-		static_cast<physx::PxRigidDynamic*>(m_pActor)->setKinematicTarget(physxActorWorldPose);
-		m_bIsTransformDirty = true;
-	}
-	else
-	{
-		m_pActor->setGlobalPose(physxActorWorldPose);
-		if (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
+		if (!pActor) continue;
+
+		if (m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC)
 		{
-			physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(m_pActor);
-			if (pDynamicActor->isSleeping())
+			static_cast<physx::PxRigidDynamic*>(pActor)->setKinematicTarget(physxActorWorldPose);
+		}
+		else
+		{
+			pActor->setGlobalPose(physxActorWorldPose);
+			if (m_tRigidBodyDesc.eBodyType == EBodyType::DYNAMIC)
 			{
-				pDynamicActor->wakeUp();
+				physx::PxRigidDynamic* pDynamicActor = static_cast<physx::PxRigidDynamic*>(pActor);
+				if (pDynamicActor->isSleeping())
+				{
+					pDynamicActor->wakeUp();
+				}
 			}
 		}
+	}
+	if (m_tRigidBodyDesc.eBodyType == EBodyType::KINEMATIC)
+	{
+		m_bIsTransformDirty = true;
 	}
 }
 
 void CRigidBody::Synchronize_Physics_To_Transform()
 {
-	
-	if (!m_pActor || !m_pOwner || !m_bIsTransformDirty) return;
+	if (m_pActors.empty() || !m_pOwner || m_bIsTransformDirty) return;
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
 	if (!pTransform) return;
 
 	if (m_tRigidBodyDesc.eBodyType == EBodyType::STATIC) return;
 
-	physx::PxTransform physxActorCurrentWorldPose = m_pActor->getGlobalPose();
+	// 첫 번째 액터의 위치를 기준으로 동기화합니다.
+	// 복합 충돌체의 경우, 기준이 되는 액터의 정책을 정해야 합니다.
+	physx::PxRigidActor* pActor = m_pActors[0];
+	if (!pActor) return;
+
+	physx::PxTransform physxActorCurrentWorldPose = pActor->getGlobalPose();
 	_matrix actorWorldMatrix = XMLoadFloat4x4(&ToFloat4x4(physxActorCurrentWorldPose));
 
 	_float3 rbLocalPos = m_tRigidBodyDesc.vLocalPosition;

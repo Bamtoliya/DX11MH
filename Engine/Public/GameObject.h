@@ -66,7 +66,7 @@ public:
 	_bool Get_Picked() { return m_bPicked; }
 	void Set_Picked(_bool bPicked) { m_bPicked = bPicked; }
 	_bool Get_Visible() { return m_bVisible; }
-	void Set_Visible(_bool bVisible) { m_bVisible = bVisible; }
+	void Set_Visible(_bool bVisible) { m_bVisible = bVisible; for (auto& Pair : m_Childs) { Pair.second->Set_Visible(bVisible); } }
 	_bool Get_Dead() { return m_bDead; }
 	void Set_Dead(_bool bDead = true) { m_bDead = bDead; }
 	_bool Get_Active() { return m_bActive; }
@@ -95,7 +95,7 @@ public:
 public:
 
 	HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CComponent** ppOut, void* pArg = nullptr);
-	//HRESULT Add_Component(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, const _wstring& strComponentTag, CGameObject* pOwner, void* pArg = nullptr);
+	HRESULT Remove_Component(const _wstring& strComponentTag);
 
 #pragma region Collides
 public:

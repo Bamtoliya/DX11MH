@@ -255,6 +255,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClInclude Include="..\public\GameObject_Sphere.h" />
     <ClInclude Include="..\public\GameObject_Spline.h" />
     <ClInclude Include="..\public\GameObject_SplineMesh.h" />
+    <ClInclude Include="..\Public\Game_Manager.h" />
     <ClInclude Include="..\Public\Graphic_Device.h" />
     <ClInclude Include="..\public\GameInput_Device.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -416,6 +417,7 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     <ClCompile Include="..\private\GameObject_Sphere.cpp" />
     <ClCompile Include="..\private\GameObject_Spline.cpp" />
     <ClCompile Include="..\private\GameObject_SplineMesh.cpp" />
+    <ClCompile Include="..\Private\Game_Manager.cpp" />
     <ClCompile Include="..\Private\Graphic_Device.cpp" />
     <ClCompile Include="..\private\GameInput_Device.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

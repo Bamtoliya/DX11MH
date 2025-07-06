@@ -39282,6 +39282,43 @@
             }
           ]
         }
+      },
+      {
+        "CGameObject_W6D01FallDead_Collider": {
+          "Active": true,
+          "Visible": true,
+          "Name": "W6D01FallDead_Collider",
+          "LayerTag": "Layer_Stage01",
+          "PrototypeTag": "Prototype_GameObject_W6D01FallDead_Collider",
+          "CTransform": {
+            "IsRelativePosition": false,
+            "IsRelativeRotation": false,
+            "IsRelativeScale": false,
+            "Position": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Scale": [
+              1.0,
+              1.0,
+              1.0
+            ],
+            "EulerRotation": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "Orientation": [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ],
+            "SpeedPerSec": 0.0,
+            "RotationPerSec": 0.0
+          }
+        }
       }
     ]
   }

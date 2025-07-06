@@ -138,6 +138,7 @@ void CPhysics_System::Update(_float fTimeDelta)
 
 void CPhysics_System::Late_Update(_float fTimeDelta)
 {
+
 }
 
 physx::PxFilterFlags CustomFilterShader(
@@ -176,7 +177,6 @@ PxScene* CPhysics_System::Create_Scene()
     if (m_pCudaContextManager && m_pCudaContextManager->contextIsValid()) // CUDA 컨텍스트 매니저가 유효한지 확인
     {
         sceneDesc.flags |= PxSceneFlag::eENABLE_GPU_DYNAMICS; // GPU 다이나믹스 활성화 플래그 (버전에 따라 다를 수 있음, 일반적으로는 gpuDispatcher 설정으로 충분)
-        //sceneDesc.flags |= PxSceneFlag::eENABLE_DIRECT_GPU_API; // GPU 다이나믹스 활성화 (버전에 따라 이 플래그가 없거나, cudaContextManager 설정만으로 충분할 수 있음)
         sceneDesc.broadPhaseType = PxBroadPhaseType::eGPU;    // GPU 브로드페이즈 사용
         sceneDesc.cudaContextManager = m_pCudaContextManager;
         sceneDesc.solverType = PxSolverType::eTGS; // GPU 가속에 최적화된 솔버
@@ -454,8 +454,33 @@ void CPhysics_System::AddDebugTriangle(const PxVec3& p0, const PxVec3& p1, const
     m_DebugTriangles.push_back(tri);
 }
 
+#pragma region Culling
+void CPhysics_System::AddActorToScene(PxActor* pActor)
+{
+    auto it = find(m_ActorsInScene.begin(), m_ActorsInScene.end(), pActor);
+    if (it != m_ActorsInScene.end())
+    {
+        return;
+    }
+    m_ActorsInScene.push_back(pActor);
+	m_pScene->addActor(*pActor);
+}
+
+void CPhysics_System::RemoveActorFromScene(PxActor* pActor)
+{
+    auto it = find(m_ActorsInScene.begin(), m_ActorsInScene.end(), pActor);
+    if (it != m_ActorsInScene.end())
+    {
+        m_ActorsInScene.erase(it);
+        m_pScene->removeActor(*pActor);
+    }
+}
+#pragma endregion
+
+
 
 #pragma region Collision Event
+
 void CPhysics_System::onConstraintBreak(PxConstraintInfo* constraints, PxU32 count)
 {
 }
@@ -518,5 +543,4 @@ void CPhysics_System::onAdvance(const PxRigidBody* const* bodyBuffer, const PxTr
 {
     cout << "Physics_System OnAdvance Called\n";
 }
-
 #pragma endregion

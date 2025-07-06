@@ -3,6 +3,8 @@
 #include "GameObject.h"
 
 NS_BEGIN(Engine)
+class CModel;
+class CRigidBody;
 class ENGINE_DLL CGameObject_Mesh_Collider : public CGameObject
 {
 #pragma region Constructor/Destructor
@@ -39,13 +41,17 @@ public:
 	virtual HRESULT Render() override;
 	virtual HRESULT Post_Render() override;
 #pragma endregion
-
+private:
 #pragma region MyRegion
 	HRESULT Ready_Components();
 #ifdef _DEBUG
 	HRESULT Bind_ShaderResource();
 #endif
 #pragma endregion
+
+private:
+	CModel* m_pModelCom = { nullptr };
+	CRigidBody* m_pRigidBodyCom = { nullptr };
 
 };
 NS_END;

@@ -20,7 +20,9 @@
 
 #pragma region Stage
 #include "GameObject_W6D01.h"
+#include "GameObject_W6D01FallDead_Collider.h"
 #include "GameObject_W6D02.h"
+#include "GameObject_W6D02FallDead_Collider.h"
 #include "GameObject_Open.h"
 #pragma endregion
 

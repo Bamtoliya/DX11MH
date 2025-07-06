@@ -41,6 +41,8 @@ public:
 	HRESULT Render_ImGuiLayerList(_uint iLevelIndex, _char* szBuffer, _uint& iGameObjectID, _uint iBufferSize);
 	HRESULT Save_GameObjects(json& outJson);
 	HRESULT Save_GameObjects(_uint iLevelIndex, json& outJson);
+public:
+	_bool	Check_Culling_Colliders(CGameObject* pGameObjet, _float fDistance);
 private:
 	static _uint						m_oID;
 	_uint								m_iNumLevels = {};

@@ -2,6 +2,7 @@
 #include "Editor_Defines.h"
 #include "Level.h"
 NS_BEGIN(Editor)
+class CGame_Manager;
 class CLevel_Stage01 : public CLevel
 {
 private:
@@ -24,5 +25,8 @@ private:
 public:
 	static CLevel_Stage01* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
+
+private:
+	CGame_Manager* m_pGame_Manager = { nullptr };
 };
 NS_END

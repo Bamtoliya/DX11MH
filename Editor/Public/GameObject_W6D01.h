@@ -4,8 +4,6 @@
 
 NS_BEGIN(Engine)
 class CModel;
-class CVIBuffer_Instance;
-class CShader;
 class CRigidBody;
 NS_END
 

@@ -10,15 +10,15 @@ class CRigidBody;
 NS_END
 
 NS_BEGIN(Editor)
-class CGameObject_FallDead_Collider : public CGameObject
+class CGameObject_W1FallDead_Collider : public CGameObject
 {
 #pragma region Constructor/Destructor
 private:
-	CGameObject_FallDead_Collider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CGameObject_FallDead_Collider(const CGameObject_FallDead_Collider& Prototype);
-	virtual ~CGameObject_FallDead_Collider() = default;
+	CGameObject_W1FallDead_Collider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CGameObject_W1FallDead_Collider(const CGameObject_W1FallDead_Collider& Prototype);
+	virtual ~CGameObject_W1FallDead_Collider() = default;
 public:
-	static CGameObject_FallDead_Collider* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CGameObject_W1FallDead_Collider* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual CGameObject* Clone(simdjson::ondemand::object& jsonData) override;
 public:
@@ -52,6 +52,13 @@ public:
 	virtual void Late_Update(_float fTimeDelta);
 public:
 	virtual HRESULT Render();
+#pragma endregion
+
+#pragma region Collision
+public:
+	virtual void OnCollisionEnter(PxActor* pOther, const PxContactPair& cp) override;
+	virtual void OnCollisionOverlapping(PxActor* pOther) override;
+	virtual void OnCollisionExit(PxActor* pOther) override;
 #pragma endregion
 };
 NS_END

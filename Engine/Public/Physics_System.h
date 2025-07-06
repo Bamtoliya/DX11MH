@@ -16,6 +16,7 @@ NS_END
 
 NS_BEGIN(Engine)
 class CGameInstance;
+class CGameObject;
 class CPhysics_System final : public CBase, public PxSimulationEventCallback
 {
 #pragma region Constructor/Destructor
@@ -61,6 +62,8 @@ private:
 	PxControllerManager*	m_pControllerManager = nullptr;
 	PxPvd* m_pPvd = nullptr;
 
+	list<PxActor*> m_ActorsInScene; // 물리 객체 리스트
+
 public:
 	void Collect_DebugRenderData(); // 디버그 데이터 수집 함수
 	void AddDebugLine(const physx::PxVec3& p0, const physx::PxVec3& p1, const _float4& color);
@@ -68,6 +71,10 @@ public:
 	const vector<DEBUG_LINE>& Get_DebugLines() const { return m_DebugLines; }
 	const vector<DEBUG_TRIANGLE>& Get_DebugTriangles() const { return m_DebugTriangles; }
 	const _bool	Get_IsDebugDraw() const { return m_bPhysicsDebugDraw; }
+
+public:
+	void AddActorToScene(PxActor* pActor);
+	void RemoveActorFromScene(PxActor* pActor);
 
 public:
 	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) override;

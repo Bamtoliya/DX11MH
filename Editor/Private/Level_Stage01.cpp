@@ -16,7 +16,7 @@ HRESULT CLevel_Stage01::Initialize()
    		return E_FAIL;
 
 	if(FAILED(Ready_Layer_ImGui()))
-		return S_OK;
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -34,11 +34,6 @@ HRESULT CLevel_Stage01::Render()
 HRESULT CLevel_Stage01::Ready_Layer_ImGui()
 {
 	m_pGameInstance->HideAll();
-	//m_pGameInstance->ShowImGui(L"ToolBar");
-	//m_pGameInstance->ShowImGui(L"Inspector");
-	//m_pGameInstance->ShowImGui(L"Hierarchy");
-	//m_pGameInstance->ShowImGui(L"Asset Browser");
-	//m_pGameInstance->ShowImGui(L"Viewport3D");
 	return S_OK;
 }
 

@@ -95,19 +95,19 @@ public:
     _uint Get_Shape_Count() const { return static_cast<_uint>(m_tRigidBodyDesc.vShapeDescs.size()); }
     SHAPE_DESC* Get_Shape(_uint iIndex);
     const vector<SHAPE_DESC>& Get_Shapes() const { return m_tRigidBodyDesc.vShapeDescs; }
-    PxRigidActor* Get_Actor() const { return m_pActor; }
+    vector<PxRigidActor*> Get_Actors() const { return m_pActors; }
 
     // 힘 및 속도 제어 (Dynamic Body용)
-    void Add_Force(const _float3& vForce, PxForceMode::Enum eForceMode = PxForceMode::eFORCE);
-    void Add_Torque(const _float3& vTorque, PxForceMode::Enum eForceMode = PxForceMode::eFORCE);
-    void Set_Linear_Velocity(const _float3& vVelocity);
-    _float3 Get_Linear_Velocity() const;
-    void Set_Angular_Velocity(const _float3& vVelocity);
-    _float3 Get_Angular_Velocity() const;
-    void Set_Kinematic_Target(const _float4x4& matTargetWorld); // 키네마틱 액터 목표 위치/회전 설정
+    void Add_Force(const _float3& vForce, PxForceMode::Enum eForceMode = PxForceMode::eFORCE, _uint iActorIndex = 0);
+    void Add_Torque(const _float3& vTorque, PxForceMode::Enum eForceMode = PxForceMode::eFORCE, _uint iActorIndex = 0);
+    void Set_Linear_Velocity(const _float3& vVelocity, _uint iActorIndex = 0);
+    _float3 Get_Linear_Velocity(_uint iActorIndex = 0) const;
+    void Set_Angular_Velocity(const _float3& vVelocity, _uint iActorIndex = 0);
+    _float3 Get_Angular_Velocity(_uint iActorIndex = 0) const;
+    void Set_Kinematic_Target(const _float4x4& matTargetWorld, _uint iActorIndex = 0); // 키네마틱 액터 목표 위치/회전 설정
 
-    _bool   SweepMove(const _float3& vMove, _float3& outHitNormal, _float& outHitDist, _float fInflation);
-    _bool   ComputeDepenetration(_float3& outDepenVector);
+    _bool   SweepMove(const _float3& vMove, _float3& outHitNormal, _float& outHitDist, _float fInflation, _uint iShapeIndex = 0);
+    _bool   ComputeDepenetration(_float3& outDepenVector, _uint iShapeIndex = 0);
 
     // 속성 설정
     void Set_Body_Type(EBodyType eType); // 런타임 타입 변경 (주의해서 사용)
@@ -115,6 +115,8 @@ public:
     void Enable_Gravity(_bool bEnable);
     void Set_Material_Properties(_float fStaticFriction, _float fDynamicFriction, _float fRestitution);
     void Lock_Rotation_Axis(_bool bLockX, _bool bLockY, _bool bLockZ);
+
+    void Change_RigidBodyModel(class CModel* pModel);
 
 private:
     HRESULT Create_Actor();        // PhysX 액터 생성 로직
@@ -126,7 +128,7 @@ public:
     HRESULT Create_Colliders_Along_Spline(class CSpline_Component* pSplineComponent, _float fRadius = 0.5f);
 
 private:
-    PxRigidActor*           m_pActor = nullptr;           // PhysX 액터 (Static 또는 Dynamic)
+    vector<PxRigidActor*>   m_pActors = {};           // PhysX 액터 (Static 또는 Dynamic)
     vector<PxShape*>        m_pShapes = {};           // PhysX 충돌 형태
     vector<PxMaterial*>     m_Materials = {};        // PhysX 재질
 

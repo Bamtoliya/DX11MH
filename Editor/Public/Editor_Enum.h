@@ -3,7 +3,7 @@
 
 namespace Editor
 {
-	enum class LEVEL { STATIC, LOADING, LOGO, UI, MAP, EFFECT, ANIMATION, GAMEPLAY, TEST, STAGE01, STAGE02, END };
+	enum class LEVEL { STATIC, LOADING, LOGO, UI, MAP, EFFECT, ANIMATION, GAMEPLAY, TEST, OPEN, STAGE01, STAGE02, END };
 	inline const char* ToString(LEVEL e)
 	{
 		switch (e)
@@ -26,6 +26,8 @@ namespace Editor
 			return "Gameplay";
 		case Editor::LEVEL::TEST:
 			return "Test";
+		case Editor::LEVEL::OPEN:
+			return "Open";
 		case Editor::LEVEL::STAGE01:
 			return "Stage01";
 		case Editor::LEVEL::STAGE02:
@@ -58,6 +60,8 @@ namespace Editor
 			return "Gameplay";
 		case static_cast<unsigned int>(Editor::LEVEL::TEST):
 			return "Test";
+		case static_cast<unsigned int>(Editor::LEVEL::OPEN):
+			return "Open";
 		case static_cast<unsigned int>(Editor::LEVEL::STAGE01):
 			return "Stage01";
 		case static_cast<unsigned int>(Editor::LEVEL::STAGE02):

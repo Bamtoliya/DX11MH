@@ -106,7 +106,7 @@ HRESULT CGameObject_W6D01::Initialize(simdjson::ondemand::object& jsonData)
 HRESULT CGameObject_W6D01::Ready_Components()
 {
 	/* For.Com_Model_Collider */
-	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_W6D01_Collider"),
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Model_W6D01StageCol"),
 		TEXT("Com_Model_Collider"), reinterpret_cast<CComponent**>(&m_pModelColliderCom))))
 		return E_FAIL;
 	
@@ -188,7 +188,7 @@ void CGameObject_W6D01::Update(_float fTimeDelta)
 
 void CGameObject_W6D01::Late_Update(_float fTimeDelta)
 {
-	//m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
+
 }
 
 HRESULT CGameObject_W6D01::Render()

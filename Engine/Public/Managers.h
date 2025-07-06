@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "UI_Manager.h"
 #include "Font_Manager.h"
+#include "Game_Manager.h"
 #include "Timer_Manager.h"
 #include "Level_Manager.h"
 #include "Sound_Manager.h"

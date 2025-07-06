@@ -1,0 +1,53 @@
+{
+  "Prototype_Component_Model_W6D02FallDeadCol": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Stage/Collider/W6D02FallDeadCol.model",
+    "PreTransformedMatrix": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "Type": "NONANIM",
+    "ColliderMesh": "TRUE"
+  },
+  "Prototype_Component_Model_W6D02StageCol": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Stage/Collider/W6d02StageCol.model",
+    "PreTransformedMatrix": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "Type": "NONANIM",
+    "ColliderMesh": "TRUE"
+  },
+  "Prototype_GameObject_W6D02FallDead_Collider": {
+    "Class": "CGameObject_W6D02FallDead_Collider"
+  }
+}

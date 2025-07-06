@@ -133,8 +133,8 @@ HRESULT CToolBar::Render()
                 }
                 ImGui::Separator();
                 // 레벨 선택 콤보 박스 추가
-                const char* level_names[] = { "Static", "UI", "Map", "Effect", "Animation", "GamePlay", "Test", "Stage01", "Stage02", "All"}; // LEVEL enum에 맞게 이름 정의
-                LEVEL level_values[] = { LEVEL::STATIC, LEVEL::UI, LEVEL::MAP, LEVEL::EFFECT, LEVEL::ANIMATION, LEVEL::GAMEPLAY, LEVEL::TEST, LEVEL::STAGE01, LEVEL::STAGE02, LEVEL::END }; // 실제 LEVEL enum 값
+                const char* level_names[] = { "Static", "UI", "Map", "Effect", "Animation", "GamePlay", "Test", "Open", "Stage01", "Stage02", "All"}; // LEVEL enum에 맞게 이름 정의
+                LEVEL level_values[] = { LEVEL::STATIC, LEVEL::UI, LEVEL::MAP, LEVEL::EFFECT, LEVEL::ANIMATION, LEVEL::GAMEPLAY, LEVEL::TEST, LEVEL::OPEN, LEVEL::STAGE01, LEVEL::STAGE02, LEVEL::END }; // 실제 LEVEL enum 값
                 static int current_level_idx = 0; // 기본 선택 인덱스 (STATIC)
 
                 // m_eLevelToSavePrototypes와 일치하는 인덱스 찾기
@@ -277,6 +277,12 @@ HRESULT CToolBar::Render()
                     printf("Clicked Help->About\n");
                     // open_about_popup = true; // 예시
                 }
+                if (ImGui::MenuItem("Open")) {
+                    if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::OPEN))))
+                        return E_FAIL;
+                    printf("Clicked to Change Level to Open\n");
+                    // open_about_popup = true; // 예시
+                }
                 if (ImGui::MenuItem("Stage01")) {
                     if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::STAGE01))))
                         return E_FAIL;
@@ -390,8 +396,8 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     //pFinalPath.append(pTargetPath.replace_extension(".model").generic_wstring());
     //pFinalEnumPath.append(pTargetPath.replace_extension(".txt").generic_wstring());
 
-    _uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
-    if (!m_bConvertAnim)
+    _uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Quality;
+    if (!m_bConvertAnim && !m_bColliderMesh)
         iFlag |= aiProcess_PreTransformVertices;
     Assimp::Importer asImporter;
     const aiScene* pAiScene = asImporter.ReadFile(WideToUtf8(pFilePath).c_str(), iFlag);

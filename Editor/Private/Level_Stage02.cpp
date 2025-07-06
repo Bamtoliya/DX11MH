@@ -9,8 +9,15 @@ CLevel_Stage02::CLevel_Stage02(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 
 HRESULT CLevel_Stage02::Initialize()
 {
-	if (FAILED(m_pGameInstance->Load_GameObjects(ENUM_CLASS(LEVEL::STAGE02), SAVEPATH L"Stage02.json")))
+	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Stage02.json")))
 		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Stage/W6D02/GameObjects_W6D02.json")))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_ImGui()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -27,11 +34,6 @@ HRESULT CLevel_Stage02::Render()
 HRESULT CLevel_Stage02::Ready_Layer_ImGui()
 {
 	m_pGameInstance->HideAll();
-	//m_pGameInstance->ShowImGui(L"ToolhBar");
-	//m_pGameInstance->ShowImGui(L"Inspector");
-	//m_pGameInstance->ShowImGui(L"Hierarchy");
-	//m_pGameInstance->ShowImGui(L"Asset Browser");
-	//m_pGameInstance->ShowImGui(L"Viewport3D");
 	return S_OK;
 }
 

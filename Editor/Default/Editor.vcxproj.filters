@@ -142,9 +142,6 @@
     <Filter Include="02.GameObject\04.Player\Sonic\Controller\States\Movement">
       <UniqueIdentifier>{798046ee-b3d7-4cbd-97fb-6d479d40073b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\NewFilter1">
-      <UniqueIdentifier>{40731129-8493-4d84-ab68-7e42ca71ac92}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Levels\Test">
       <UniqueIdentifier>{7e7d2f67-dfd6-428d-87b0-c569027ae1f5}</UniqueIdentifier>
     </Filter>
@@ -273,6 +270,33 @@
     </Filter>
     <Filter Include="02.GameObject\Stages\01\Collider">
       <UniqueIdentifier>{247b41e4-fdb0-4e7f-b06c-7a41df8ee4fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stages\01\Spline">
+      <UniqueIdentifier>{7ca991c2-7c51-494b-b857-32fd6606de53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stages\01\Spline\Loop">
+      <UniqueIdentifier>{0aa800c4-c5c7-4b87-806d-3c8bb0f6e427}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stages\01\Exit">
+      <UniqueIdentifier>{390f2c09-7c3d-4fe9-b755-08719630fe21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\StageObjects\Boost">
+      <UniqueIdentifier>{7deaed82-cdee-44d5-9632-16ca4d3dba32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stages\02\Collider">
+      <UniqueIdentifier>{210d2363-ec4b-46c1-aa48-5784d222b8fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stages\Open\Collider">
+      <UniqueIdentifier>{8298003c-b5b5-482c-a906-7cc8adcce5aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\StageObjects\ClearPortal">
+      <UniqueIdentifier>{7f005964-7f4b-429f-9b57-ce3d89d1a64d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.MainApp\Game">
+      <UniqueIdentifier>{74e204b5-183d-4283-9824-d3a1bd1dc096}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Levels\Open">
+      <UniqueIdentifier>{01a20325-770f-4afc-84ad-b5c9603cad0f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -438,8 +462,17 @@
     <ClCompile Include="..\private\GameObject_Effect.cpp">
       <Filter>02.GameObject\Effect</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\GameObject_FallDead_Collider.cpp">
+    <ClCompile Include="..\private\GameObject_W6D01FallDead_Collider.cpp">
       <Filter>02.GameObject\Stages\01\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GameObject_W6D02FallDead_Collider.cpp">
+      <Filter>02.GameObject\Stages\02\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GameObject_W1FallDead_Collider.cpp">
+      <Filter>02.GameObject\Stages\Open\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Level_Open.cpp">
+      <Filter>01.Levels\Open</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -638,8 +671,17 @@
     <ClInclude Include="..\public\GameObject_Effect.h">
       <Filter>02.GameObject\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\GameObject_FallDead_Collider.h">
+    <ClInclude Include="..\public\GameObject_W6D01FallDead_Collider.h">
       <Filter>02.GameObject\Stages\01\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GameObject_W6D02FallDead_Collider.h">
+      <Filter>02.GameObject\Stages\02\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GameObject_W1FallDead_Collider.h">
+      <Filter>02.GameObject\Stages\Open\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Level_Open.h">
+      <Filter>01.Levels\Open</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

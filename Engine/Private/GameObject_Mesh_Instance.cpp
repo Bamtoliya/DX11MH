@@ -100,11 +100,6 @@ HRESULT CGameObject_Mesh_Instance::Initialize(simdjson::ondemand::object& jsonDa
 
 HRESULT CGameObject_Mesh_Instance::Ready_Components()
 {
-	///* For.Com_Shader */
-	//if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_VtxMesh"),
-	//	TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
-	//	return E_FAIL;
-
 	/* For.Com_Shader */
 	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_VtxMeshInstance"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
@@ -123,15 +118,6 @@ HRESULT CGameObject_Mesh_Instance::Ready_Components()
 	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_VIBuffer_Mesh_Instance"),
 		TEXT("Com_VIBuffer"), reinterpret_cast<CComponent**>(&m_pVIBufferInstanceCom), &meshInstanceDesc)))
 		return E_FAIL;
-
-	// 인스턴스들의 Transform 생성 (예시: 100개)
-	/*for (int i = 0; i < 100; ++i)
-	{
-		CTransform* pTransform = CTransform::Create(m_pDevice, m_pContext);
-		_float3 vPos = _float3((i % 20) * 2.f, 0.f, (i / 20) * 2.f);
-		pTransform->Set_State(STATE::POSITION, XMLoadFloat3(&vPos));
-		m_pInstanceTransform.push_back(pTransform);
-	}*/
 
 	return S_OK;
 }
@@ -170,7 +156,6 @@ HRESULT CGameObject_Mesh_Instance::Deserialize(simdjson::ondemand::object& jsonD
 
 	// 모델 프로토타입 태그 검색
 	string_view modelProtoTagSV;
-	jsonData["PrototypeModelTag"].get_string().get(modelProtoTagSV);
 	if (jsonData["PrototypeModelTag"].get_string().get(modelProtoTagSV) == simdjson::SUCCESS)
 	{
 		_wstring modelProtoTag = Utf8ToWide(string(modelProtoTagSV));
@@ -186,8 +171,8 @@ HRESULT CGameObject_Mesh_Instance::Deserialize(simdjson::ondemand::object& jsonD
 			{
 				// 모델 컴포넌트 교체
 				Safe_Release(m_pModelCom);
-				m_pModelCom = pNewModel;	
-				m_Components[m_pModelCom->GetName()] = m_pModelCom;
+				m_Components[m_pModelCom->GetName()] = pNewModel;
+				m_pModelCom = pNewModel;
 				Safe_AddRef(m_pModelCom);
 
 				m_pModelCom->Set_OwnerGameObject(this);
