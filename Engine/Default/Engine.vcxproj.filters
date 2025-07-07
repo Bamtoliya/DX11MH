@@ -506,6 +506,9 @@
     <ClInclude Include="..\Public\Game_Manager.h">
       <Filter>00.System\Game</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Shadow.h">
+      <Filter>01.Utility\11.Shadow</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Timer.cpp">
@@ -949,9 +952,6 @@
     </ClCompile>
     <ClCompile Include="..\private\Picking.cpp">
       <Filter>01.Utility\10.Picking</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Game_Manager.cpp">
-      <Filter>00.System\Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1404,6 +1404,9 @@
     </Filter>
     <Filter Include="01.Utility\10.Picking">
       <UniqueIdentifier>{811241ec-7bee-4ac9-bae6-67f2ea51a5ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\11.Shadow">
+      <UniqueIdentifier>{2cce6eba-56a5-4a7a-8e9b-937d540f8182}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
