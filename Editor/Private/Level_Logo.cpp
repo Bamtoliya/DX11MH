@@ -2,6 +2,7 @@
 
 #include "GameInstance.h"
 #include "Level_Loading.h"
+#include "Level_Open.h"
 
 CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 		: CLevel { pDevice, pContext }
@@ -11,7 +12,8 @@ CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLevel_Logo::Initialize()
 {
-
+	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Logo.json")))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -19,6 +21,8 @@ void CLevel_Logo::Update(_float fTimeDelta)
 {
 	if (GetKeyState(VK_RETURN) & 0x8000)
 	{
+		if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::OPEN))))
+			return;
 	}
 
 }

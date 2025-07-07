@@ -265,17 +265,20 @@ HRESULT CSonic::Render()
 }
 void CSonic::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
 {
-	cout << "Sonic Collide Entered with " + WideToUtf8(reinterpret_cast<CGameObject*>(pOther->userData)->Get_Name().c_str()) << "\n";
+	if(pOther->userData)
+		cout << "Sonic Collide Entered with " + WideToUtf8(reinterpret_cast<CGameObject*>(pOther->userData)->Get_Name().c_str()) << "\n";
 	//pOther.get
 	//reinterpret_cast<CGameObject*>(pOther->userData);
 	return;
 }
 void CSonic::OnCollisionOverlapping(PxActor* pOther)
 {
-	cout << "Sonic Collide Overlapping with " + WideToUtf8(reinterpret_cast<CGameObject*>(pOther->userData)->Get_Name().c_str()) << "\n";
+	if (pOther->userData)
+		cout << "Sonic Collide Overlapping with " + WideToUtf8(reinterpret_cast<CGameObject*>(pOther->userData)->Get_Name().c_str()) << "\n";
 }
 void CSonic::OnCollisionExit(PxActor* pOther)
 {
-	cout << "Sonic Collide Exited with " + WideToUtf8(reinterpret_cast<CGameObject*>(pOther->userData)->Get_Name().c_str()) << "\n";
+	if (pOther->userData)
+		cout << "Sonic Collide Exited with " + WideToUtf8(reinterpret_cast<CGameObject*>(pOther->userData)->Get_Name().c_str()) << "\n";
 }
 #pragma endregion

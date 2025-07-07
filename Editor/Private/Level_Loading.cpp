@@ -14,6 +14,12 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 
 	/* 로딩레벨 자체에 필요한 객체를 생성한다. */
 	/* 배경, 로딩바, 버튼, font */
+	/*if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::LOADING), SAVEPATH L"Prototypes_UI.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Logo.json")))
+		return E_FAIL;*/
 
 	/* 로딩의 역할(다음레벨에 필요한 자원(Resource)(텍스쳐, 모델, 사운드 등등등 )을 생성하는)을 
 	수행할 로더객체를 생성한다. */

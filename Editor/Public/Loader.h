@@ -117,6 +117,7 @@ public:
 #pragma region Loading For Level
 public:
     HRESULT Loading_For_Logo();
+    HRESULT Loading_For_Loading();
     HRESULT Loading_For_UI();
     HRESULT Loading_For_Map();
     HRESULT Loading_For_Effect();

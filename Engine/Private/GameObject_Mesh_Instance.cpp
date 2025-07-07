@@ -170,14 +170,14 @@ HRESULT CGameObject_Mesh_Instance::Deserialize(simdjson::ondemand::object& jsonD
 			if (pNewModel != nullptr)
 			{
 				// ¸ğµ¨ ÄÄÆ÷³ÍÆ® ±³Ã¼
-				Safe_Release(m_pModelCom);
-				m_Components[m_pModelCom->GetName()] = pNewModel;
+				Safe_Release(pOldModel);
+				Remove_Component(pOldModel->GetName());
+				m_Components[pOldModel->GetName()] = pNewModel;
+				pNewModel->SetName(pOldModel->GetName());
 				m_pModelCom = pNewModel;
 				Safe_AddRef(m_pModelCom);
 
 				m_pModelCom->Set_OwnerGameObject(this);
-				/*CVIBuffer_Mesh_Instance::MESH_INSTANCE_DESC meshInstanceDesc;
-				meshInstanceDesc.pMesh = m_pModelCom->Get_Meshes()[0];*/
 			}
 		}
 	}

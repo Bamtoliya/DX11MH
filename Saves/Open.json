@@ -2,57 +2,6 @@
     "Layer_Camera": {
         "GameObjects": [
             {
-                "CCamera_Free": {
-                    "Active": true,
-                    "CCamera": {
-                        "Active": false,
-                        "bOrthographic": false,
-                        "fFar": 10000.0,
-                        "fFovy": 60.0,
-                        "fNear": 0.10000000149011612,
-                        "fZoomPerSec": 1.0,
-                        "vAt": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ]
-                    },
-                    "CTransform": {
-                        "EulerRotation": [
-                            0.36150914430618286,
-                            0.2648261487483978,
-                            -5.894420382901444e-07
-                        ],
-                        "IsRelativePosition": false,
-                        "IsRelativeRotation": false,
-                        "IsRelativeScale": false,
-                        "Orientation": [
-                            0.1781981885433197,
-                            0.12987558543682098,
-                            -0.023734936490654945,
-                            0.9750971794128418
-                        ],
-                        "Position": [
-                            -1004.0266723632813,
-                            281.9064636230469,
-                            -309.18817138671875
-                        ],
-                        "RotationPerSec": 1.0,
-                        "Scale": [
-                            1.0000025033950806,
-                            1.0000104904174805,
-                            1.00001859664917
-                        ],
-                        "SpeedPerSec": 100.0
-                    },
-                    "LayerTag": "Layer_Camera",
-                    "Name": "Camera",
-                    "PrototypeTag": "Prototype_GameObject_Camera_Free",
-                    "Visible": true
-                }
-            },
-            {
                 "CCamera_Follow": {
                     "Active": true,
                     "CFollow_Camera": {
@@ -205,9 +154,9 @@
                             1.0
                         ],
                         "Position": [
-                            865,
-                            140.5,
-                            -1320.0 
+                            1806.0,
+                            100.0,
+                            -1211.0 
                         ],
                         "RotationPerSec": 0.0,
                         "Scale": [
@@ -430,7 +379,7 @@
                             4
                         ],
                         "HeightMapFilePath": "G:/My Drive/Assets/Terrain/w1r03_trr_height/w1r03_heightmap_%03d.dds",
-                        "HeightScale": 1024.0,
+                        "HeightScale": 1000.0,
                         "Maps": 16
                     },
                     "LayerTag": "Layer_Terrain",

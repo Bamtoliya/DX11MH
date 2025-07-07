@@ -332,8 +332,8 @@ HRESULT CVIBuffer_Terrain::Initialize_Prototype(const _tchar* pHeightMapFilePath
 		{
 			_uint		iIndex = (_uint)i * m_iNumVerticesX + (_uint)j;
 
-			_float xPos = static_cast<_float>(j); //-halfWidth;
-			_float zPos = static_cast<_float>(i); //-halfDepth;
+			_float xPos = static_cast<_float>(j) - halfWidth; //-halfWidth;
+			_float zPos = static_cast<_float>(i) - halfDepth; //-halfDepth;
 
 			// 좌우 및 상하 반전을 위해 인덱스 계산
 			_uint flipped_i = m_iNumVerticesZ - 1 - (_uint)i;
