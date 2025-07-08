@@ -106,5 +106,29 @@
     ],
     "Type": "ANIM",
     "ColliderMesh": "FALSE"
+  },
+  "Prototype_Component_Model_SonicSpin": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Sonic/SonicSpin.model",
+    "PreTransformedMatrix": [
+      -1.0,
+      0.0,
+      -0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "Type": "ANIM",
+    "ColliderMesh": "FALSE"
   }
 }

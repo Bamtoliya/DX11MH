@@ -32,9 +32,10 @@ public:
 		pair<_float, _float> fBoostGauge = { 100.f, 100.f };
 		_float fSlopeLimitAngle = { 60.f };
 		_float fCurSlope = { 0.f };
-		_float fFriction = 0.99f;
+		_float fFriction = 0.95f;
 		_float fJumpForce = { 10.f };
-		_float fVerticalVelocity = { 0.f };
+		pair<_float, _float> fVerticalVelocity = { 0.f, 15.f };
+		_bool bIsAir = { false };
 
 		//Combat
 		pair<_float, _float>	fAtkDamage = { 4.f, 6.f };

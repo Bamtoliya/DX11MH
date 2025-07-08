@@ -174,7 +174,7 @@ void CTutorial_Enemy::Priority_Update(_float fTimeDelta)
 
 void CTutorial_Enemy::Update(_float fTimeDelta)
 {
-
+	if (m_pRigidBodyCom) m_pRigidBodyCom->Update(fTimeDelta);
 }
 
 void CTutorial_Enemy::Late_Update(_float fTimeDelta)

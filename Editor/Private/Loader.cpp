@@ -209,11 +209,6 @@ HRESULT CLoader::Loading_For_Test()
 		return E_FAIL;
 	}
 
-	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::TEST), SAVEPATH L"Stage/W6D01/Prototypes_W6D01_Instance_Models.json", CLoader::JsonLoadCallback, this)))
-	{
-		return E_FAIL;
-	}
-
 	lstrcpy(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
 
 	m_isFinished = true;

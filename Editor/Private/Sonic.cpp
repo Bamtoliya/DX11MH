@@ -118,6 +118,7 @@ HRESULT CSonic::Initialize(simdjson::ondemand::object& jsonData)
 
 HRESULT CSonic::Ready_Components()
 {
+	m_pModelComs.resize(2);
 	/* For.Com_Shader */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Shader_VtxAnimMesh"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
@@ -126,7 +127,7 @@ HRESULT CSonic::Ready_Components()
 	
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_Sonic"),
-		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
+		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelComs[0]))))
 		return E_FAIL;
 
 	/* For.Com_Controller */
@@ -146,9 +147,9 @@ HRESULT CSonic::Ready_Components()
 
 
 	/* For.Com_Model */
-	//if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::MAP), TEXT("Prototype_Component_Model_SonicSpin"),
-	//	TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
-	//	return E_FAIL;
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Model_SonicSpin"),
+		TEXT("Com_Model_Spin"), reinterpret_cast<CComponent**>(&m_pModelComs[1]))))
+ 		return E_FAIL;
 
 
 	return S_OK;
@@ -165,12 +166,16 @@ void CSonic::Free()
 {
 	__super::Free();
 
+
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pControllerCom);
 	Safe_Release(m_pAnimatorCom);
-	Safe_Release(m_pModelCom);
+	for (auto& pModel : m_pModelComs)
+	{
+		Safe_Release(pModel);
+	}
+	m_pModelComs.clear();
 	Safe_Release(m_pRigidBodyCom);
-	Safe_Release(m_pSpinModelCom);
 }
 #pragma endregion
 
@@ -211,6 +216,8 @@ void CSonic::Priority_Update(_float fTimeDelta)
 
 void CSonic::Update(_float fTimeDelta)
 {
+	if (m_pRigidBodyCom)
+		m_pRigidBodyCom->Update(fTimeDelta);
 	if(m_pControllerCom)
 		m_pControllerCom->Update(fTimeDelta);
 	if (m_pAnimatorCom)
@@ -245,19 +252,19 @@ HRESULT CSonic::Render()
 		return S_OK;
 	Bind_ShaderResources();
 
-	_uint		iNumMesh = m_pModelCom->Get_NumMeshes();
+	_uint		iNumMesh = m_pModelComs[m_iCurModelIndex]->Get_NumMeshes();
 
 	for (_uint i = 0; i < iNumMesh; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
+		if (FAILED(m_pModelComs[m_iCurModelIndex]->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
 			return E_FAIL;
 
-		m_pModelCom->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);
+		m_pModelComs[m_iCurModelIndex]->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
 
-		if (FAILED(m_pModelCom->Render(i)))
+		if (FAILED(m_pModelComs[m_iCurModelIndex]->Render(i)))
 			return E_FAIL;
 	}
 

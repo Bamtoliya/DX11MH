@@ -124,20 +124,8 @@ HRESULT CVirtual_Space::Ready_Components()
 	shapeDesc.eShapeType = CRigidBody::EShapeType::TRIANGLE_MESH;
 	shapeDesc.pMesh = m_pModelCom->Get_Meshes()[0];
 	rigidBodyDesc.vShapeDescs.push_back(shapeDesc);
-	/*for (auto pMesh : m_pModelCom->Get_Meshes())
-	{
-		CRigidBody::SHAPE_DESC shapeDesc;
-		shapeDesc.eShapeType = CRigidBody::EShapeType::TRIANGLE_MESH;
-		shapeDesc.pMesh = pMesh;
-		rigidBodyDesc.vShapeDescs.push_back(shapeDesc);
-	}*/
-
-	/* For.Com_HeightField */
-	/*if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_HeightField"),
-		TEXT("Com_HeightField"), reinterpret_cast<CComponent**>(&m_pHeightFieldCom))))
-		return E_FAIL;*/
 	
-	///* For.Com_RigidBody */
+	/* For.Com_RigidBody */
 	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
 		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom), &rigidBodyDesc)))
 		return E_FAIL;
@@ -196,7 +184,7 @@ void CVirtual_Space::Priority_Update(_float fTimeDelta)
 
 void CVirtual_Space::Update(_float fTimeDelta)
 {
-
+	if(m_pRigidBodyCom) m_pRigidBodyCom->Update(fTimeDelta);
 }
 
 void CVirtual_Space::Late_Update(_float fTimeDelta)

@@ -14,6 +14,7 @@ void CSonic_Movement_State::Idle(_float fTimeDelta)
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
 	status.fMoveSpeed.first = 0.f;
 	XMStoreFloat3(&status.vMoveDirection, XMVectorZero());
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
 	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::IDLE_LOOP));
 	return;
 }
@@ -25,6 +26,7 @@ void CSonic_Movement_State::Walk(_float fTimeDelta)
 	status.fMoveSpeed.first += status.fMoveAccelration * fTimeDelta;
 	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
 		status.fMoveSpeed.first = status.fMoveSpeed.second;
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
 	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::WALK_LOOP), 1.5f);
 }
 
@@ -35,6 +37,7 @@ void CSonic_Movement_State::Run(_float fTimeDelta)
 	status.fMoveSpeed.first += status.fMoveAccelration * 2.f * fTimeDelta;
 	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
 		status.fMoveSpeed.first = status.fMoveSpeed.second;
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
 	if (status.fCurSlope >= status.fSlopeLimitAngle)
 	{
 		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::WALLRUN_U_LOOP), status.fMoveSpeed.first);
@@ -50,7 +53,7 @@ void CSonic_Movement_State::Dash(_float fTimeDelta)
 	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
 	status.fMoveSpeed.first += status.fMoveAccelration * 3.f * fTimeDelta;
-
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
 	if (status.fMoveSpeed.first > status.fMoveSpeed.second)
 	{
 		status.fMoveSpeed.first -= status.fMoveAccelration * 5.f * fTimeDelta;
@@ -66,9 +69,19 @@ void CSonic_Movement_State::Boost(_float fTimeDelta)
 	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
 	status.fMoveSpeed.first += status.fMoveAccelration * 5.f * fTimeDelta;
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
 	if (status.fMoveSpeed.first >= status.fMaxBoostSpeed)
 		status.fMoveSpeed.first = status.fMaxBoostSpeed;
-	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::BOOST_LOOP), status.fMoveSpeed.first, true, 1.f);
+
+	if (status.bOnGround)
+	{
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::BOOST_LOOP), status.fMoveSpeed.first, true, 1.f);
+	}
+	else
+	{
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::BOOST_JUMP_LOOP), status.fMoveSpeed.first, true, 1.f);
+	}
+	
 }
 
 void CSonic_Movement_State::Brake(_float fTimeDelta)
@@ -76,6 +89,7 @@ void CSonic_Movement_State::Brake(_float fTimeDelta)
 	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
 	status.fMoveSpeed.first *= status.fFriction;
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
 	if (status.fMoveSpeed.first <= 0.f)
 		status.fMoveSpeed.first = 0.f;
 	if (status.fCurSlope >= 30.f)
@@ -88,9 +102,101 @@ void CSonic_Movement_State::Brake(_float fTimeDelta)
 	}
 }
 
+void CSonic_Movement_State::Jump(_float fTimeDelta)
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+
+	status.fMoveSpeed.first += status.fMoveAccelration * fTimeDelta;
+	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
+		status.fMoveSpeed.first = status.fMoveSpeed.second;
+
+	if (status.fVerticalVelocity.first <= 0.f || pAnimator->Get_AnimationProgress() >= 0.75f)
+	{
+		static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(1);
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::SPINSTATE::SPIN_JUMP), 1.5f, false);
+	}
+	else
+	{
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::JUMP_U), 1.5f, false);
+		
+	}
+	
+}
+
+void CSonic_Movement_State::ResolveCollisions(_vector vMovement, _float fTimeDelta)
+{
+	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+	CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
+	CSonic_Controller::SONIC_STATUS& status = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"))->Get_Status();
+
+	const float skinWidth = 0.02f;
+	const int maxIterations = 5;
+	_vector remainingMovement = vMovement;
+
+	for (int i = 0; i < maxIterations; ++i)
+	{
+		_float remainingLength = XMVectorGetX(XMVector3Length(remainingMovement));
+		if (remainingLength < 1e-6f)
+			break;
+
+		_float3 v3Move;
+		XMStoreFloat3(&v3Move, remainingMovement);
+		_float3 hitNormal_float3;
+		_float hitDist;
+
+		if (pRigidBody->SweepMove(v3Move, hitNormal_float3, hitDist, skinWidth))
+		{
+			_vector vHitNormal = XMLoadFloat3(&hitNormal_float3);
+			_vector vMoveDir = XMVector3Normalize(remainingMovement);
+
+			if (!status.bOnGround) // 공중 상태일 때만 수직 속도 처리
+			{
+				float fVerticalImpact = XMVectorGetX(XMVector3Dot(vHitNormal, pTransform->Get_State(STATE::UP)));
+				if (abs(fVerticalImpact) > 0.5f)
+				{
+					status.fVerticalVelocity.first = 0.f;
+				}
+			}
+
+			if (hitDist < 0.001f) // 끼임 상태 처리
+			{
+				const float unstickOffset = 0.002f;
+				pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + vHitNormal * unstickOffset);
+
+				float dotProduct = XMVectorGetX(XMVector3Dot(remainingMovement, vHitNormal));
+				remainingMovement = remainingMovement - vHitNormal * dotProduct;
+			}
+			else // 일반 충돌
+			{
+				pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + vMoveDir * max(0.f, hitDist));
+
+				float remainingAfterImpactDist = remainingLength - hitDist;
+				if (remainingAfterImpactDist > 1e-6f)
+				{
+					_vector vLeftoverMove = vMoveDir * remainingAfterImpactDist;
+					float dotProduct = XMVectorGetX(XMVector3Dot(vLeftoverMove, vHitNormal));
+					remainingMovement = vLeftoverMove - vHitNormal * dotProduct;
+				}
+				else
+				{
+					remainingMovement = XMVectorZero();
+				}
+			}
+		}
+		else
+		{
+			pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + remainingMovement);
+			break;
+		}
+	}
+}
+
 void CSonic_Movement_State::Execute(_float fTimeDelta)
 {
 	if (!m_pOwner) return;
+	
 
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
 	CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
@@ -99,34 +205,47 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 	CSonic_Controller::SONIC_STATUS& status = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"))->Get_Status();
 
 	// === 1. 지면 탐지 및 정렬 (두 번째 코드 블록의 역할) ===
-	const float fRayDistance = 2.0f;
-	_vector vRayOrigin = pTransform->Get_State(STATE::POSITION) + pTransform->Get_State(STATE::UP) * 0.1f;
+	const float fRayDistance = 1.0f;
+	_vector vRayOrigin = pTransform->Get_State(STATE::POSITION) + pTransform->Get_State(STATE::UP) * 0.5f;
 	_vector vRayDirection = -pTransform->Get_State(STATE::UP);
 
 	PxRaycastBuffer hitBuffer;
-	if (m_pGameInstance->Get_PhysicsScene()->raycast((PxVec3&)vRayOrigin, (PxVec3&)vRayDirection, fRayDistance, hitBuffer))
+	
+	if (m_pGameInstance->Get_PhysicsScene()->raycast((PxVec3&)vRayOrigin, (PxVec3&)vRayDirection, fRayDistance, hitBuffer) && status.fVerticalVelocity.first <= 0)
 	{
 		_vector vGroundNormal = XMLoadFloat3((_float3*)&hitBuffer.block.normal);
-
-		// 경사각 계산 (단순히 정보 제공 목적)
+	
 		// 경사각 계산 (단순히 정보 제공 목적)
 		status.fCurSlope = acosf(XMVectorGetX(XMVector3Dot(XMVectorSet(0, 1, 0, 0), vGroundNormal))) * 180.f / XM_PI;
 		if (status.fCurSlope > status.fSlopeLimitAngle)
 		{
 			cout << "On Slope\n";
-			//static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"))->Change_State(CSonic::STATE::JUMP_D);
+			//static_cast<CSonic_Controller*>(m_pO	wner->Get_Component(L"Com_Controller"))->Change_State(CSonic::STATE::JUMP_D);
 			//return;
 		}
 
+		// 이전에 공중에 있었다면 착지한 것임
+		if (!status.bOnGround)
+		{
+			status.fVerticalVelocity.first = 0.f;
+			status.bCanJump = true;
+			status.bCanDoubleJump = false;
+			if (status.fMoveSpeed.first > 0.f)
+			{
+				m_eMovementState = EMovementState::WALK;
+			}
+			else
+			{
+				m_eMovementState = EMovementState::IDLE; // IDLE로 초기화, HandleInput에서 이동 상태로 변경
+			}
+		}
+		status.bOnGround = true;
+		
 		// === 속도 기반 표면 접착력 계산 ===
 		// 속도가 빠를수록 더 가파른 경사로와 루프를 탈 수 있음
 		float fMinSpeedForLoop = 5.0f; // 루프를 타기 위한 최소 속도
 		float fMaxSlopeAtMinSpeed = 60.0f; // 최소 속도에서 탈 수 있는 최대 경사각
 		float fMaxSlopeAtMaxSpeed = 360.0f; // 최대 속도에서 탈 수 있는 최대 경사각
-
-	/*	_float fMaxSlopeAtMinSpeed = 45.f;
-		_float fMaxSlopeAtMaxSpeed = 180.f;
-		_float fMinSpeedForLoop = 10.f;*/
 
 		// 현재 속도에 따른 최대 경사각 계산 (선형 보간)
 		float fCurrentMaxSlope = fMaxSlopeAtMinSpeed;
@@ -245,6 +364,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		case CSonic_Movement_State::EMovementState::DASH:	Dash(fTimeDelta); break;
 		case CSonic_Movement_State::EMovementState::BOOST:	Boost(fTimeDelta); break;
 		case CSonic_Movement_State::EMovementState::BRAKE:	Brake(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::JUMP:	Jump(fTimeDelta); break;
 		default:
 			break;
 		}
@@ -299,76 +419,61 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		_matrix newTransform = pTransform->Get_WorldMatrix(); // Set_State로 위치가 보정된 최신 월드 행렬을 가져옵니다.
 		newTransform.r[3] += vMovement; // 이동량 적용
 
-		// --- 반복적 충돌 해결 로직 시작 ---
-		const int maxIterations = 5; // 최대 반복 횟수 (무한 루프 방지)
-		_vector remainingMovement = vMovement;
-
-		for (int i = 0; i < maxIterations; ++i)
-		{
-			_float remainingLength = XMVectorGetX(XMVector3Length(remainingMovement));
-			if (remainingLength < 1e-6f)
-				break; // 이동할 거리가 없으면 종료
-
-			_float3 v3Move;
-			XMStoreFloat3(&v3Move, remainingMovement);
-			_float3 hitNormal_float3;
-			_float hitDist;
-
-			if (pRigidBody->SweepMove(v3Move, hitNormal_float3, hitDist, skinWidth))
-			{
-				_vector vHitNormal = XMLoadFloat3(&hitNormal_float3);
-				_vector vMoveDir = XMVector3Normalize(remainingMovement);
-
-				// [수정] 저속 충돌로 인한 '끼임' 상태에 대한 처리 추가
-				if (hitDist < 0.001f) // 충돌 거리가 거의 0인가? (이미 닿아있거나 겹친 상태)
-				{
-					// 1. 먼저 충돌 법선 방향으로 아주 살짝 밀어내어 끼임 상태를 해소합니다.
-					//    이렇게 하면 다음 슬라이드 계산을 위한 최소한의 공간이 확보됩니다.
-					const float unstickOffset = 0.002f;
-					pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + vHitNormal * unstickOffset);
-
-					// 2. 남은 이동 벡터 전체를 충돌면에 투영하여 미끄러질 방향을 계산합니다.
-					float dotProduct = XMVectorGetX(XMVector3Dot(remainingMovement, vHitNormal));
-					remainingMovement = remainingMovement - vHitNormal * dotProduct;
-				}
-				else // 정상적인 스윕 충돌의 경우
-				{
-					// 1. 충돌 지점까지만 먼저 이동
-					_vector vMoveToImpact = vMoveDir * max(0.f, hitDist);
-					pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + vMoveToImpact);
-
-					// 2. 남은 이동 거리를 계산
-					float remainingAfterImpactDist = remainingLength - hitDist;
-
-					if (remainingAfterImpactDist > 1e-6f)
-					{
-						// 3. 남은 이동 벡터를 충돌면에 투영하여 다음 반복에 사용할 '슬라이드 벡터'를 만듦
-						_vector vLeftoverMove = vMoveDir * remainingAfterImpactDist;
-						float dotProduct = XMVectorGetX(XMVector3Dot(vLeftoverMove, vHitNormal));
-						remainingMovement = vLeftoverMove - vHitNormal * dotProduct;
-					}
-					else
-					{
-						remainingMovement = XMVectorZero(); // 남은 이동 없음
-					}
-				}
-			}
-			else
-			{
-				// 충돌 없음: 남은 거리를 모두 이동하고 루프 종료
-				pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + remainingMovement);
-				break;
-			}
-		}
+		ResolveCollisions(vMovement, fTimeDelta);
 	}
 	else
 	{
-		//static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"))->Change_State(CSonic::STATE::JUMP_E);
+		switch (m_eMovementState)
+		{
+		case Editor::CSonic_Movement_State::EMovementState::BOOST:
+			Boost(fTimeDelta);
+			break;
+		case Editor::CSonic_Movement_State::EMovementState::POLESPIN:
+			break;
+		case Editor::CSonic_Movement_State::EMovementState::PULLEY:
+			break;
+		case Editor::CSonic_Movement_State::EMovementState::RIDER:
+			break;
+		case Editor::CSonic_Movement_State::EMovementState::WALL:
+			break;
+		default:
+			Jump(fTimeDelta);
+			break;
+		}
+		
+		status.bOnGround = false;
+		const float fGravity = -9.8f;
+		status.fVerticalVelocity.first += fGravity * fTimeDelta;
 
-		// 기본적인 공중 이동 및 중력 적용 (예시, 실제로는 점프/낙하 상태에서 처리)
-		_vector vAirMovement = pTransform->Get_State(STATE::LOOK) * status.fMoveSpeed.first * 0.1 * fTimeDelta;
-		_vector vGravity = XMVectorSet(0.f, -9.8f * fTimeDelta, 0.f, 0.f); // 간단한 중력
-		pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + vAirMovement + vGravity);
+		// 수직 속도를 양수(점프)와 음수(낙하) 모두에 대해 최대 속도로 제한합니다.
+		status.fVerticalVelocity.first = max(-status.fVerticalVelocity.second, min(status.fVerticalVelocity.first, status.fVerticalVelocity.second));
+
+		// 공중 이동 벡터 계산
+		_vector vAirMovement = XMLoadFloat3(&status.vMoveDirection) * status.fMoveSpeed.first * fTimeDelta;
+		_vector vVerticalMovement = pTransform->Get_State(STATE::UP) * status.fVerticalVelocity.first * fTimeDelta;
+
+		// 최종 이동 벡터
+		_vector vTotalMovement = vAirMovement + vVerticalMovement;
+
+		// Sweep으로 충돌 감지하며 이동
+		_float3 v3Move;
+		XMStoreFloat3(&v3Move, vTotalMovement);
+	  	const float skinWidth = 0.02f;
+
+		_float3 depenetrationVector;
+		if (pRigidBody->ComputeDepenetration(depenetrationVector))
+		{
+			// 겹쳐있다면, 밖으로 밀어내는 벡터를 적용
+			const float depenBias = 0.01f;
+			_vector depenDir = XMVector3Normalize(XMLoadFloat3(&depenetrationVector));
+			_vector depenMag = XMVector3Length(XMLoadFloat3(&depenetrationVector));
+
+			// 겹친 거리 + 약간의 여유만큼 밀어냅니다.
+			pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + depenDir * (XMVectorGetX(depenMag) + skinWidth));
+			//pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + XMLoadFloat3(&depenetrationVector));
+		}
+
+		ResolveCollisions(vTotalMovement, fTimeDelta);
 	}
 }
 
@@ -452,9 +557,9 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 	{
 		if (status.bCanJump)
 		{
+			m_eMovementState = EMovementState::JUMP;
 			// 초기 수직 점프 속도 설정
-			status.fVerticalVelocity = status.fJumpForce;
-			pController->Change_State(ENUM_CLASS(CSonic_Controller::States::JUMP), ENUM_CLASS(CSonic::STATE::JUMP_A));
+			status.fVerticalVelocity.first = status.fJumpForce;
 			status.bOnGround = false; // 공중 상태로 전환
 			status.bCanJump = false;
 			status.bCanDoubleJump = true;

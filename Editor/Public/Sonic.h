@@ -640,13 +640,15 @@ public:
 	virtual void OnCollisionOverlapping(PxActor* pOther) override;
 	virtual void OnCollisionExit(PxActor* pOther) override;
 #pragma endregion
-
+public:
+	void Change_ModelIndex(_uint i) { m_iCurModelIndex = i; }
 
 #pragma region Components
 private:
 	CShader* m_pShaderCom = { nullptr };
-	CModel* m_pModelCom = { nullptr };
-	CModel* m_pSpinModelCom = { nullptr };
+	vector<CModel*> m_pModelComs = {};
+	//CModel* m_pModelCom = { nullptr };
+	//CModel* m_pSpinModelCom = { nullptr };
 	CAnimator* m_pAnimatorCom = { nullptr };
 	CController* m_pControllerCom = { nullptr };
 	CRigidBody* m_pRigidBodyCom = { nullptr };
@@ -658,6 +660,7 @@ private:
 	void Set_CurStateIndex(_uint iCurStateIndex) { m_iCurStateIndex = iCurStateIndex; }
 	void Set_NextStateIndex(_uint iNextStateIndex) { m_iNextStateIndex =  iNextStateIndex; }
 private:
+	_uint m_iCurModelIndex = { 0 };
 	_uint m_iCurStateIndex = { ENUM_CLASS(IDLE01_LOOP) };
 	_uint m_iNextStateIndex = { ENUM_CLASS(IDLE01_LOOP) };
 #pragma endregion
