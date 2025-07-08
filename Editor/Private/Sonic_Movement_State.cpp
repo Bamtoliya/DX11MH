@@ -450,7 +450,16 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 
 	if (KEY_DOWN(DIK_SPACE))
 	{
-		// 기존 코드 유지
+		if (status.bCanJump)
+		{
+			// 초기 수직 점프 속도 설정
+			status.fVerticalVelocity = status.fJumpForce;
+			pController->Change_State(ENUM_CLASS(CSonic_Controller::States::JUMP), ENUM_CLASS(CSonic::STATE::JUMP_A));
+			status.bOnGround = false; // 공중 상태로 전환
+			status.bCanJump = false;
+			status.bCanDoubleJump = true;
+			return;
+		}
 	}
 
 	if (KEY_DOWN(DIK_I))

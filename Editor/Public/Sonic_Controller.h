@@ -25,6 +25,7 @@ public:
 		_float	fMoveAccelration = { 1.f };
 		_float	fBoostAccelration = { 5.f };
 		_float	fRotationSpeed = { 50.f };
+		_bool	bOnGround = { false };
 		_bool	bCanJump = { true };
 		_bool	bCanDoubleJump = { false };
 		_bool	bSliding = { false };
@@ -33,6 +34,7 @@ public:
 		_float fCurSlope = { 0.f };
 		_float fFriction = 0.99f;
 		_float fJumpForce = { 10.f };
+		_float fVerticalVelocity = { 0.f };
 
 		//Combat
 		pair<_float, _float>	fAtkDamage = { 4.f, 6.f };

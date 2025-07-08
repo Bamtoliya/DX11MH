@@ -23,6 +23,7 @@ public:
 	CGameObject* GetCurrentPlayer() const { return m_pCurrentPlayer; }
 private:
 	void Culling_Collider(_float fDistance);
+
 private:
 	CGameInstance*	m_pGameInstance = { nullptr };
 	CGameObject*	m_pCurrentPlayer = { nullptr };
