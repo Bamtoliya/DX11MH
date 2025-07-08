@@ -30,6 +30,7 @@
     <ClCompile Include="..\private\Camera_TPS.cpp" />
     <ClCompile Include="..\private\Defender.cpp" />
     <ClCompile Include="..\private\Enemy_Controller.cpp" />
+    <ClCompile Include="..\private\GameObject_Interact.cpp" />
     <ClCompile Include="..\Private\GameObject_W1FallDead_Collider.cpp" />
     <ClCompile Include="..\private\GameObject_W6D01FallDead_Collider.cpp" />
     <ClCompile Include="..\private\GameObject_Effect.cpp" />
@@ -95,6 +96,7 @@
     <ClInclude Include="..\Public\Editor_Macro.h" />
     <ClInclude Include="..\public\Enemy_Controller.h" />
     <ClInclude Include="..\Public\GameObjects.h" />
+    <ClInclude Include="..\public\GameObject_Interact.h" />
     <ClInclude Include="..\Public\GameObject_W1FallDead_Collider.h" />
     <ClInclude Include="..\public\GameObject_W6D01FallDead_Collider.h" />
     <ClInclude Include="..\public\GameObject_Effect.h" />

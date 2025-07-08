@@ -641,7 +641,7 @@ public:
 	virtual void OnCollisionExit(PxActor* pOther) override;
 #pragma endregion
 public:
-	void Change_ModelIndex(_uint i) { m_iCurModelIndex = i; }
+	void Change_ModelIndex(_uint i);
 
 #pragma region Components
 private:
@@ -655,14 +655,8 @@ private:
 #pragma endregion
 
 #pragma region Variables
-	_uint Get_CurStateIndex() { return m_iCurStateIndex; }
-	_uint Get_NextStateIndex() { return m_iNextStateIndex; }
-	void Set_CurStateIndex(_uint iCurStateIndex) { m_iCurStateIndex = iCurStateIndex; }
-	void Set_NextStateIndex(_uint iNextStateIndex) { m_iNextStateIndex =  iNextStateIndex; }
 private:
 	_uint m_iCurModelIndex = { 0 };
-	_uint m_iCurStateIndex = { ENUM_CLASS(IDLE01_LOOP) };
-	_uint m_iNextStateIndex = { ENUM_CLASS(IDLE01_LOOP) };
 #pragma endregion
 
 	

@@ -288,4 +288,8 @@ void CSonic::OnCollisionExit(PxActor* pOther)
 	if (pOther->userData)
 		cout << "Sonic Collide Exited with " + WideToUtf8(reinterpret_cast<CGameObject*>(pOther->userData)->Get_Name().c_str()) << "\n";
 }
+void CSonic::Change_ModelIndex(_uint i)
+{
+	m_iCurModelIndex = i;
+}
 #pragma endregion

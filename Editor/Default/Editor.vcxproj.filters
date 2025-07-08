@@ -298,6 +298,9 @@
     <Filter Include="01.Levels\Open">
       <UniqueIdentifier>{01a20325-770f-4afc-84ad-b5c9603cad0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\InteractableObject">
+      <UniqueIdentifier>{1c530b24-68e1-4b14-8a90-e80e04e07368}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -473,6 +476,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Level_Open.cpp">
       <Filter>01.Levels\Open</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\GameObject_Interact.cpp">
+      <Filter>02.GameObject\InteractableObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -682,6 +688,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Level_Open.h">
       <Filter>01.Levels\Open</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameObject_Interact.h">
+      <Filter>02.GameObject\InteractableObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
