@@ -112,7 +112,7 @@ HRESULT CTarget_Manager::Add_MRT(const _wstring& strMRTTag, const std::vector<_w
     return S_OK;
 }
 
-HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV)
+HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV, _bool isDepthClear)
 {
     if (m_pContext == nullptr) return E_FAIL;
 
@@ -132,6 +132,8 @@ HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencil
     // 1. 현재 상태 백업
     m_iNumViews = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; // 최대 개수만큼 가져오기 시도
     m_pContext->OMGetRenderTargets(m_iNumViews, m_pBackupRTVs, &m_pBackupDSV);
+    if (true == isDepthClear)
+		m_pContext->ClearDepthStencilView(m_pBackupDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
     // 실제 바인딩된 뷰 개수 확인 (OMGetRenderTargets는 첫 번째 nullptr에서 멈춤)
     for (m_iNumViews = 0; m_iNumViews < D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; ++m_iNumViews) {
         if (m_pBackupRTVs[m_iNumViews] == nullptr) break;

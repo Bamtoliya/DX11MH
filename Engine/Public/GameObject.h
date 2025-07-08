@@ -50,6 +50,7 @@ public:
 	virtual HRESULT Pre_Render();
 	virtual HRESULT Render();
 	virtual HRESULT Post_Render();	
+	virtual HRESULT Render_Shadow() { return S_OK; }
 	virtual HRESULT RenderImGuiComponents();
 	virtual HRESULT RenderImGuiObjects();
 #pragma endregion

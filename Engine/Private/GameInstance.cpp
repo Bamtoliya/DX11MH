@@ -1,5 +1,7 @@
 ﻿#include "GameInstance.h"
 
+
+#include "Shadow.h"
 #include "Systems.h"
 #include "Devices.h"
 #include "Managers.h"
@@ -97,6 +99,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 
 	m_pPicking = CPicking::Create(EngineDesc.hWnd, *ppDeviceOut, *ppContextOut);
 	if (nullptr == m_pPicking)
+		return E_FAIL;
+
+	m_pShadow = CShadow::Create(*ppDeviceOut, *ppContextOut);
+	if (nullptr == m_pShadow)
 		return E_FAIL;
 
 	return S_OK;
@@ -362,9 +368,9 @@ HRESULT CGameInstance::Add_MRT(const _wstring& strMRTTag, const std::vector<_wst
 {
 	return m_pTarget_Manager->Add_MRT(strMRTTag, pTargetTags);
 }
-HRESULT CGameInstance::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV)
+HRESULT CGameInstance::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV, _bool isDepthClear)
 {
-	return m_pTarget_Manager->Begin_MRT(strMRTTag, pDSV);
+	return m_pTarget_Manager->Begin_MRT(strMRTTag, pDSV, isDepthClear);
 }
 HRESULT CGameInstance::End_MRT(ID3D11RenderTargetView* pBackBufferRTV, ID3D11DepthStencilView* pMainDSV, const D3D11_VIEWPORT& vp)
 {
@@ -811,10 +817,25 @@ void CGameInstance::Unregister_Player()
 {
 	m_pGame_Manager->UnregisterPlayer();
 }
+
 #pragma endregion
 
+#pragma region SHADOW
 
+HRESULT CGameInstance::Ready_Light_For_Shadow(const CShadow::SHADOW_DESC& Desc)
+{
+	return m_pShadow->Ready_Light_For_Shadow(Desc);
+}
 
+const _float4x4* CGameInstance::Get_Light_ViewMatrix()
+{
+	return m_pShadow->Get_Light_ViewMatrix();
+}
+const _float4x4* CGameInstance::Get_Light_ProjMatrix()
+{
+	return m_pShadow->Get_Light_ProjMatrix();
+}
+#pragma endregion
 
 //#pragma region PICKING
 //void CGameInstance::Transform_Picking_ToLocalSpace(const _float4x4& WorldMatrixInverse)
@@ -834,6 +855,8 @@ void CGameInstance::Unregister_Player()
 
 void CGameInstance::Release_Engine()
 {
+	Safe_Release(m_pShadow);
+
 	if (m_pMyImGui_Manager)
 		Safe_Release(m_pMyImGui_Manager);
 

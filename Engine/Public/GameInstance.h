@@ -4,6 +4,7 @@
 /* 엔진 내에 존재하는 유일한 싱글톤 클래스이다. */
 /* 엔진 개발자가 클라개밫자에게 보여주고싶은 함수를 ... */
 #include "Prototype_Manager.h"
+#include "Shadow.h"
 
 NS_BEGIN(Engine)
 
@@ -93,7 +94,7 @@ public:
 	HRESULT Clear_RenderTarget(const _wstring& strTargetTag, _float4* pClearColor = nullptr);
 	//MRT
 	HRESULT Add_MRT(const _wstring& strMRTTag, const std::vector<_wstring>& pTargetTags);
-	HRESULT Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV); // 메인 깊이 버퍼 사용
+	HRESULT Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV, _bool isDepthClear = false); // 메인 깊이 버퍼 사용
 	HRESULT End_MRT(ID3D11RenderTargetView* pBackBufferRTV, ID3D11DepthStencilView* pMainDSV, const D3D11_VIEWPORT& vp);
 	HRESULT Clear_MRT(const _wstring& strMRTTag);
 	ID3D11ShaderResourceView* Get_SRV(const _wstring& strTargetTag) const;
@@ -215,6 +216,13 @@ public:
 	void Draw_Font(const _wstring& strFontTag, const _tchar* pText, const _float2& vPosition, _fvector vColor = XMVectorSet(1.f, 1.f, 1.f, 1.f), _float fRotation = 0.f, const _float2& vOrigin = _float2(0.f, 0.f), _float fScale = 1.f);
 #pragma endregion
 
+#pragma region SHADOW
+	HRESULT Ready_Light_For_Shadow(const CShadow::SHADOW_DESC& Desc);
+	const _float4x4* Get_Light_ViewMatrix();
+	const _float4x4* Get_Light_ProjMatrix();
+#pragma region
+
+
 #pragma region PICKING
 	_bool Picking(_float4* pOut);
 #pragma endregion
@@ -250,19 +258,17 @@ private:
 	class CMyImGui_Manager*		m_pMyImGui_Manager = { nullptr };
 	class CPrototype_Manager*	m_pPrototype_Manager = { nullptr };
 
-
+#pragma endregion
+	class CJson_Loader*			m_pJson_Loader = { nullptr };
 	class CPicking*				m_pPicking = { nullptr };
 	class CRenderer*			m_pRenderer = { nullptr };
 	class CPipeLine*			m_pPipeLine = { nullptr };
-	class CJson_Loader*			m_pJson_Loader = { nullptr };	
-	// class CPicking*				m_pPicking = { nullptr };
-#pragma endregion
-	
-
+	class CShadow*				m_pShadow = { nullptr };	
 
 #pragma region Boolean
 	_bool	m_bIsEditor = { true };
 #pragma endregion
+
 public:
 	void Release_Engine();
 	virtual void Free() override;

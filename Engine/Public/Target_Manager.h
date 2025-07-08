@@ -2,6 +2,8 @@
 #include "Base.h"
 NS_BEGIN(Engine)
 class CRenderTarget;
+class CVIBuffer_Rect;
+class CShader;
 class ENGINE_DLL CTarget_Manager final : public CBase
 {
 #pragma region Constructor&Destructor
@@ -20,7 +22,7 @@ public:
     HRESULT Add_RenderTarget(const _wstring& strTargetTag, _uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor);
 
     HRESULT Add_MRT(const _wstring& strMRTTag, const std::vector<_wstring>& pTargetTags);
-    HRESULT Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV);
+    HRESULT Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV, _bool isDepthClear = false);
     HRESULT End_MRT(ID3D11RenderTargetView* pBackBufferRTV, ID3D11DepthStencilView* pMainDSV, const D3D11_VIEWPORT& vp);
     HRESULT Clear_RenderTarget(const _wstring& strTargetTag, _float4* pClearColor = nullptr);
     HRESULT Clear_MRT(const _wstring& strMRTTag);
@@ -38,7 +40,7 @@ public:
 public:
 	HRESULT Ready_Debug(const _wstring& strTargetTag, _float fX, _float fY, _float fSizeX, _float fSizeY);
     HRESULT Render_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer);
-	HRESULT Render_Debug_Collider(const _wstring& strMRTTag, class CShader* pShader, class CVIBuffer_Rect* pVIBuffer);
+	HRESULT Render_Debug_Collider(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer);
 #endif
 
 private:
