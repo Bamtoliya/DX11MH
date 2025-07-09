@@ -36,7 +36,6 @@ public:
 	ID3D11ShaderResourceView* Get_BackBufferSRV() const;
 #pragma endregion
 
-
 #pragma region PHYSICS_SYSTEM
 	PxPhysics* Get_Physics();
 	PxScene* Get_PhysicsScene(_uint iIndex = 0);
@@ -47,7 +46,6 @@ public:
 	void AddActorToScene(PxActor* pActor);
 	void RemoveActorFromScene(PxActor* pActor);
 #pragma endregion
-
 
 #pragma region INPUT_DEVICE
 	_byte	Get_DIKeyState(_ubyte byKeyID);
@@ -62,7 +60,6 @@ public:
 	_bool	Mouse_Pressing(DIM eMouseKeyID);
 #pragma endregion
 
-public:
 #pragma region LEVEL_MANAGER
 	HRESULT Change_Level(_uint iLevelIndex, class CLevel* pNewLevel);
 	_uint Get_CurrentLevelIndex();
@@ -95,7 +92,7 @@ public:
 	//MRT
 	HRESULT Add_MRT(const _wstring& strMRTTag, const std::vector<_wstring>& pTargetTags);
 	HRESULT Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr, _bool isDepthClear = false); // 메인 깊이 버퍼 사용
-	HRESULT End_MRT(ID3D11RenderTargetView* pBackBufferRTV, ID3D11DepthStencilView* pMainDSV, const D3D11_VIEWPORT& vp);
+	HRESULT End_MRT(ID3D11RenderTargetView* pBackBufferRTV = nullptr, ID3D11DepthStencilView* pMainDSV = nullptr, const D3D11_VIEWPORT& vp = {});
 	HRESULT Clear_MRT(const _wstring& strMRTTag);
 	ID3D11ShaderResourceView* Get_SRV(const _wstring& strTargetTag) const;
 
@@ -121,7 +118,6 @@ public:
 	void Change_Camera(_uint iIndex);
 	void Clear_CameraManager();
 #pragma endregion
-
 
 #pragma region OBJECT_MANAGER
 	HRESULT Add_GameObject(_uint iPrototypeLevelIndex, const _wstring& strPrototypeTag, _uint iLevelIndex, const _wstring& strLayerTag, void* pArg = nullptr);

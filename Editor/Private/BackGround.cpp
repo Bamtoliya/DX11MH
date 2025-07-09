@@ -160,7 +160,7 @@ void CBackGround::Update(_float fTimeDelta)
 
 void CBackGround::Late_Update(_float fTimeDelta)
 {
-	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
+	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_UI, this);
 }
 
 HRESULT CBackGround::Render()

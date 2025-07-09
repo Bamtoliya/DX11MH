@@ -343,7 +343,7 @@
     {
         pTexture2D->GetDesc(&textureDesc);
         pTexture2D->Release();
-        return _float2(textureDesc.Width, textureDesc.Height);
+        return _float2((_float)textureDesc.Width, (_float)textureDesc.Height);
     }
     return _float2(0, 0);
     }

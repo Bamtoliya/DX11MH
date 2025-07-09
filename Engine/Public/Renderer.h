@@ -31,6 +31,8 @@ private:
 
 	_float4x4					m_WorldMatrix{}, m_ViewMatrix{}, m_ProjMatrix{};
 
+	ID3D11DepthStencilView*		m_pMainDSV = { nullptr };
+
 	ID3D11DepthStencilView*		m_pShadowDSV = { nullptr };
 	_uint						m_iOriginalViewportWidth{}, m_iOriginalViewportHeight{};
 

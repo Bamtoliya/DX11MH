@@ -438,6 +438,7 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
                 if (!m_bColliderMesh)
                 {
                     outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTangents[j]), sizeof(_float3));
+                    outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mBitangents[j]), sizeof(_float3));
                     outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTextureCoords[0][j]), sizeof(_float2));
                 }
             }
