@@ -151,6 +151,8 @@ HRESULT CGameObject_Interact::Render()
 {
 	if (!m_bVisible)
 		return S_OK;
+
+	return S_OK;
 }
 void CGameObject_Interact::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
 {

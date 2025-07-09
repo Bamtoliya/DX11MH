@@ -83,7 +83,7 @@ HRESULT CRenderer::Initialize()
 		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
 		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
 		DXGI_FORMAT_R16G16B16A16_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
-		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
+		_float4(1.f, 1.f, 1.f, 1.f)			// 클리어 색상 (불투명 하양)
 	)))
 	{
 		MSG_BOX("Failed to create RT_Picking Render Target");
@@ -94,7 +94,18 @@ HRESULT CRenderer::Initialize()
 		L"RT_Depth",                // 렌더 타겟 고유 태그
 		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
 		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
-		DXGI_FORMAT_R16G16B16A16_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
+		DXGI_FORMAT_R32G32B32A32_FLOAT,		// 포맷 (백버퍼/ImGui 호환성 고려)
+		_float4(0.f, 1.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
+	)))
+	{
+		MSG_BOX("Failed to create RT_Picking Render Target");
+		return E_FAIL; // 또는 적절한 에러 처리
+	}
+	if (FAILED(m_pGameInstance->Add_RenderTarget(
+		L"RT_PickPos",                // 렌더 타겟 고유 태그
+		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
+		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		DXGI_FORMAT_R32G32B32A32_FLOAT,		// 포맷 (백버퍼/ImGui 호환성 고려)
 		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
 	)))
 	{
@@ -130,36 +141,27 @@ HRESULT CRenderer::Initialize()
 #pragma endregion
 
 #pragma region Shadow
-
+	if (FAILED(m_pGameInstance->Add_RenderTarget(
+		L"RT_Shadow",                // 렌더 타겟 고유 태그
+		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
+		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		DXGI_FORMAT_R32G32B32A32_FLOAT,		// 포맷 (백버퍼/ImGui 호환성 고려)
+		_float4(1.f, 1.f, 1.f, 1.f)      // 클리어 색상 (불투명 하양 등)
+	)))
+	{
+		MSG_BOX("Failed to create RT_Shadow Render Target");
+		return E_FAIL; // 또는 적절한 에러 처리
+	}
 #pragma endregion
-	// if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Depth"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 1.f, 0.f, 0.f))))
-	// 	return E_FAIL;
-	// if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_Specular"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_R16G16B16A16_UNORM, _float4(0.0f, 0.f, 0.f, 0.f))))
-	// 	return E_FAIL;
-	// if (FAILED(m_pGameInstance->Add_RenderTarget(TEXT("Target_PickPos"), ViewportDesc.Width, ViewportDesc.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, _float4(0.0f, 0.f, 0.f, 0.f))))
-	// 	return E_FAIL;
-	
-
-	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Diffuse"))))
-	//	return E_FAIL;
-	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Normal"))))
-	//	return E_FAIL;
-	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_Depth"))))
-	//	return E_FAIL;
-	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_GameObjects"), TEXT("Target_PickPos"))))
-	//	return E_FAIL;		
-	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Shade"))))
-	//	return E_FAIL;
-	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_Lights"), TEXT("Target_Specular"))))
-	//	return E_FAIL;
-
-	//if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_ShadowObjects"), TEXT("Target_Shadow"))))
-	//	return E_FAIL;
 
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pVIBuffer){
 		return E_FAIL;
 	}
+
+	m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("G:/My Drive/Assets/ShaderFiles/Shader_Deferred.hlsl"), VTXPOSTEX::Elements, VTXPOSTEX::iNumElements, "VTXPOSTEX");
+	if (nullptr == m_pShader)
+		return E_FAIL;
 
 	vector<wstring> SkyboxTargets = { L"RT_Skybox", L"RT_FinalScene" };
 	if (FAILED(m_pGameInstance->Add_MRT(L"RT_Skybox_Group", SkyboxTargets)))
@@ -168,13 +170,28 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	}
 
-	vector<wstring> GameObjectsTargets = { L"RT_Diffuse", L"RT_Normal", L"RT_Specular", L"RT_Shade", L"RT_Depth" };
+	vector<wstring> GameObjectsTargets = { L"RT_Diffuse", L"RT_Normal", L"RT_Depth", L"RT_Picking" };
+	if (FAILED(m_pGameInstance->Add_MRT(L"MRT_GameObjects", GameObjectsTargets)))
+	{
+		MSG_BOX("Failed to create MRT_GameObjects");
+		return E_FAIL;
+	}
 	vector<wstring> LightsTargets = { L"RT_Shade", L"RT_Specular" };
+	if (FAILED(m_pGameInstance->Add_MRT(L"MRT_Lights", LightsTargets)))
+	{
+		MSG_BOX("Failed to create MRT_GameObjects");
+		return E_FAIL;
+	}
 	vector<wstring> ShadowTargets = { L"RT_Shadow" };
+	if (FAILED(m_pGameInstance->Add_MRT(L"MRT_ShadowObjects", ShadowTargets)))
+	{
+		MSG_BOX("Failed to create MRT_ShadowObjects");
+		return E_FAIL;
+	}
 	vector<wstring> FinalTargets = { L"RT_ObjectsOnly", L"RT_Picking", L"RT_FinalScene" };
 	if (FAILED(m_pGameInstance->Add_MRT(L"RT_FinalScene_Group", FinalTargets)))
 	{
-		MSG_BOX("Failed to create RT_FinalScene group");
+		MSG_BOX("Failed to create MRT_FinalScene group");
 		return E_FAIL;
 	}
 #pragma endregion
