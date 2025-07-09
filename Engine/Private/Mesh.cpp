@@ -205,12 +205,16 @@ HRESULT CMesh::Ready_NonAnim_Mesh(const aiMesh* pAIMesh, _fmatrix PreTransformMa
 		if (!m_bColliderMesh)
 		{
 			memcpy(&pVertices[i].vTangent, &pAIMesh->mTangents[i], sizeof(_float3));
+			XMStoreFloat3(&pVertices[i].vTangent, XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vTangent), PreTransformMatrix));
+			memcpy(&pVertices[i].vBinormal, &pAIMesh->mBitangents[i], sizeof(_float3));
+			XMStoreFloat3(&pVertices[i].vBinormal, XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vBinormal), PreTransformMatrix));
 			memcpy(&pVertices[i].vTexcoord, &pAIMesh->mTextureCoords[0][i], sizeof(_float2));
 		}
 		else
 		{
 			// 콜라이더 메시일 경우 tangent와 texcoord 데이터를 0으로 초기화
 			ZeroMemory(&pVertices[i].vTangent, sizeof(_float3));
+			ZeroMemory(&pVertices[i].vBinormal, sizeof(_float3));
 			ZeroMemory(&pVertices[i].vTexcoord, sizeof(_float2));
 		}
 	}

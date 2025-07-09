@@ -154,6 +154,13 @@ HRESULT CRenderer::Initialize()
 	}
 #pragma endregion
 
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_BlurX"), TEXT("Target_BlurX"))))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_BlurY"), TEXT("Target_BlurY"))))
+		return E_FAIL;
+
+
+
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pVIBuffer){
 		return E_FAIL;
@@ -513,6 +520,8 @@ HRESULT CRenderer::Render_Lights()
 
 HRESULT CRenderer::Render_BackBuffer()
 {
+	m_pGameInstance->Begin_MRT(TEXT("MRT_Final"));
+
 	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_Diffuse"), m_pShader, "g_DiffuseTexture")))
 		return E_FAIL;
 	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_Shade"), m_pShader, "g_ShadeTexture")))
@@ -547,6 +556,8 @@ HRESULT CRenderer::Render_BackBuffer()
 	m_pVIBuffer->Bind_Buffers();
 	m_pVIBuffer->Render();
 
+	m_pGameInstance->End_MRT();
+
 	return S_OK;
 }
 
@@ -560,6 +571,91 @@ HRESULT CRenderer::Render_NonLight()
 		Safe_Release(pGameObject);
 	}
 	m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_NONLIGHT)].clear();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Render_Blur()
+{
+
+	if (FAILED(m_pShader->Bind_Matrix("g_WorldMatrix", &m_WorldMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Bind_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+		return E_FAIL;
+
+	m_pGameInstance->Begin_MRT(TEXT("MRT_BlurX"));
+
+	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_Final"), m_pShader, "g_FinalTexture")))
+		return E_FAIL;
+
+	m_pShader->Begin(4);
+	m_pVIBuffer->Bind_Buffers();
+	m_pVIBuffer->Render();
+
+	m_pGameInstance->End_MRT();
+
+	
+	/* 백버퍼에 찍는다. */
+	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("Target_BlurX"), m_pShader, "g_BlurXTexture")))
+		return E_FAIL;
+
+	m_pShader->Begin(5);
+	m_pVIBuffer->Bind_Buffers();
+	m_pVIBuffer->Render();
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Ready_DepthStencilView(_uint iWidth, _uint iHeight)
+{
+	ID3D11Texture2D* pDepthStencilTexture = nullptr;
+
+	D3D11_TEXTURE2D_DESC	TextureDesc;
+	ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+
+	/* 깊이 버퍼의 픽셀은 백버퍼의 픽셀과 갯수가 동일해야만 깊이 텍스트가 가능해진다. */
+	/* 픽셀의 수가 다르면 아에 렌더링을 못함. */
+	TextureDesc.Width = iWidth;
+	TextureDesc.Height = iHeight;
+	TextureDesc.MipLevels = 1;
+	TextureDesc.ArraySize = 1;
+	TextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+	TextureDesc.SampleDesc.Quality = 0;
+	TextureDesc.SampleDesc.Count = 1;
+
+	TextureDesc.Usage = D3D11_USAGE_DEFAULT;	
+	TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	TextureDesc.CPUAccessFlags = 0;
+	TextureDesc.MiscFlags = 0;
+
+	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &pDepthStencilTexture)))
+		return E_FAIL;
+
+
+	if (FAILED(m_pDevice->CreateDepthStencilView(pDepthStencilTexture, nullptr, &m_pShadowDSV)))
+		return E_FAIL;
+
+	Safe_Release(pDepthStencilTexture);
+
+	return S_OK;
+}
+
+HRESULT CRenderer::Change_ViewportDesc(_uint iWidth, _uint iHeight)
+{
+	D3D11_VIEWPORT			ViewportDesc{};
+	_uint					iNumViewports = { 1 };
+
+	ViewportDesc.TopLeftX = 0;
+	ViewportDesc.TopLeftY = 0;
+	ViewportDesc.Width = iWidth;
+	ViewportDesc.Height = iHeight;
+	ViewportDesc.MinDepth = 0.f;
+	ViewportDesc.MaxDepth = 1.f;	
+
+	m_pContext->RSSetViewports(iNumViewports, &ViewportDesc);
 
 	return S_OK;
 }

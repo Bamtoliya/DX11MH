@@ -711,6 +711,15 @@
     <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Struct.hlsli">
       <Filter>ShaderFiles</Filter>
     </None>
+    <None Include="G:\My Drive\Assets\ShaderFiles\Shader_State.hlsli">
+      <Filter>ShaderFiles</Filter>
+    </None>
+    <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Variable.hlsli">
+      <Filter>ShaderFiles</Filter>
+    </None>
+    <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Sampler.hlsli">
+      <Filter>ShaderFiles</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_DebugLine.hlsl">
