@@ -159,6 +159,7 @@
     <ResourceCompile Include="Editor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Function.hlsli" />
     <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Sampler.hlsli" />
     <None Include="G:\My Drive\Assets\ShaderFiles\Shader_State.hlsli" />
     <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Struct.hlsli" />

@@ -187,7 +187,7 @@ HRESULT CRenderer::Initialize()
 	vector<wstring> LightsTargets = { L"RT_Shade", L"RT_Specular" };
 	if (FAILED(m_pGameInstance->Add_MRT(L"MRT_Lights", LightsTargets)))
 	{
-		MSG_BOX("Failed to create MRT_GameObjects");
+		MSG_BOX("Failed to create MRT_Lights");
 		return E_FAIL;
 	}
 	vector<wstring> ShadowTargets = { L"RT_Shadow" };
@@ -256,13 +256,16 @@ HRESULT CRenderer::Draw()
 
 	if (FAILED(Render_NonBlend()))
 		return E_FAIL;
-	if(FAILED(Render_Lights()))
+	if (FAILED(Render_Lights()))
 		return E_FAIL;;
-
+	 
 	if (FAILED(Render_BackBuffer()))
 		return E_FAIL;
 
 	if (FAILED(Render_NonLight()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"MRT_Final")))
 		return E_FAIL;
 
 	/* 블렌딩이전에 백버퍼를 완성시키낟.  */
@@ -303,6 +306,7 @@ HRESULT CRenderer::Add_DebugComponent(CComponent* pDebugCom)
 
 HRESULT CRenderer::Render_Priority()
 {
+	m_pGameInstance->Begin_MRT(TEXT("MRT_Final"));
 	for (auto& pGameObject : m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_PRIORITY)])
 	{
 		if (nullptr != pGameObject)
@@ -311,6 +315,7 @@ HRESULT CRenderer::Render_Priority()
 		Safe_Release(pGameObject);
 	}
 	m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_PRIORITY)].clear();
+	m_pGameInstance->End_MRT();
 	return S_OK;
 }
 
@@ -526,7 +531,8 @@ HRESULT CRenderer::Render_BackBuffer()
 	m_pVIBuffer->Bind_Buffers();
 	m_pVIBuffer->Render();
 
-	m_pGameInstance->End_MRT();
+	if(FAILED(m_pGameInstance->End_MRT()))
+		return E_FAIL;
 
 	return S_OK;
 }

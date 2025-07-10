@@ -271,20 +271,6 @@ HRESULT CRenderTarget::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 
 #endif
 
-//// 디버깅용 이름 설정 함수 (선택 사항)
-//#if !defined(NO_D3D11_DEBUG_NAME) && ( defined(_DEBUG) || defined(PROFILE) )
-//#include <string> // std::string 사용 위해
-//void CRenderTarget::Set_DebugName(const std::string& name)
-//{
-//    if (m_pTexture) m_pTexture->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(name.length()), name.c_str());
-//    if (m_pRTV) m_pRTV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(name.length()), (name + "_RTV").c_str());
-//    if (m_pSRV) m_pSRV->SetPrivateData(WKPDID_D3DDebugObjectName, static_cast<UINT>(name.length()), (name + "_SRV").c_str());
-//}
-//#else
-//void CRenderTarget::Set_DebugName(const std::string&) {}
-//#endif
-
-
 CRenderTarget* CRenderTarget::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _wstring& strName, _uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor)
 {
     CRenderTarget* pInstance = new CRenderTarget(pDevice, pContext);

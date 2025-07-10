@@ -301,6 +301,9 @@
     <Filter Include="02.GameObject\InteractableObject">
       <UniqueIdentifier>{1c530b24-68e1-4b14-8a90-e80e04e07368}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ShaderFiles\Includes">
+      <UniqueIdentifier>{335f7a3b-9b3a-4505-8342-1bfb5e0a6375}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -708,17 +711,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Struct.hlsli">
-      <Filter>ShaderFiles</Filter>
+    <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Sampler.hlsli">
+      <Filter>ShaderFiles\Includes</Filter>
+    </None>
+    <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Function.hlsli">
+      <Filter>ShaderFiles\Includes</Filter>
     </None>
     <None Include="G:\My Drive\Assets\ShaderFiles\Shader_State.hlsli">
-      <Filter>ShaderFiles</Filter>
+      <Filter>ShaderFiles\Includes</Filter>
+    </None>
+    <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Struct.hlsli">
+      <Filter>ShaderFiles\Includes</Filter>
     </None>
     <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Variable.hlsli">
-      <Filter>ShaderFiles</Filter>
-    </None>
-    <None Include="G:\My Drive\Assets\ShaderFiles\Shader_Sampler.hlsli">
-      <Filter>ShaderFiles</Filter>
+      <Filter>ShaderFiles\Includes</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

@@ -516,7 +516,9 @@ CALL "$(SolutionDir)\UpdateLib.bat"</Command>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\ShaderFiles\Shader_Cell.hlsl" />
+    <FxCompile Include="..\..\ShaderFiles\Shader_Cell.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_Deferred.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

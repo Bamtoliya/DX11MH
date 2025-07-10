@@ -116,6 +116,10 @@ HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencil
 {
     if (m_pContext == nullptr) return E_FAIL;
 
+    // 이전에 바인딩된 모든 픽셀 셰이더 리소스를 해제하여 리소스 해저드를 방지합니다.
+    ID3D11ShaderResourceView* pSRVs[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT] = { nullptr, };
+    m_pContext->PSSetShaderResources(0, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, pSRVs);
+
     auto mrtIter = m_MRTs.find(strMRTTag);
     if (mrtIter == m_MRTs.end()) {
         MSG_BOX("MRT Group not found.");
@@ -130,7 +134,7 @@ HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencil
     }
 
     // 1. 현재 상태 백업
-    m_iNumViews = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; // 최대 개수만큼 가져오기 시도
+    m_iNumViews = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; // 최대 개수만\큼 가져오기 시도
     m_pContext->OMGetRenderTargets(m_iNumViews, m_pBackupRTVs, &m_pBackupDSV);
 
     ID3D11DepthStencilView* targetDSV = nullptr == pDSV ? m_pBackupDSV : pDSV;
