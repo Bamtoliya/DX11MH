@@ -42,7 +42,7 @@ HRESULT CRenderer::Initialize()
 		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
 	)))
 	{
-		MSG_BOX("Failed to create RT_Picking Render Target");
+		MSG_BOX("Failed to create RT_PickObj Render Target");
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 
@@ -54,7 +54,7 @@ HRESULT CRenderer::Initialize()
 		_float4(1.f, 1.f, 1.f, 1.f)			// 클리어 색상 (불투명 하양)
 	)))
 	{
-		MSG_BOX("Failed to create RT_Picking Render Target");
+		MSG_BOX("Failed to create RT_PickObj Render Target");
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 
@@ -66,19 +66,19 @@ HRESULT CRenderer::Initialize()
 		_float4(0.f, 1.f, 0.f, 0.f)			// 클리어 색상 (투명 검정 등)
 	)))
 	{
-		MSG_BOX("Failed to create RT_Picking Render Target");
+		MSG_BOX("Failed to create RT_PickObj Render Target");
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 
 	if (FAILED(m_pGameInstance->Add_RenderTarget(
-		L"RT_Picking",					// 렌더 타겟 고유 태그
+		L"RT_PickObj",					// 렌더 타겟 고유 태그
 		(_uint)ViewportDesc.Width,      // 초기 너비 (예: 윈도우 너비)
 		(_uint)ViewportDesc.Height,     // 초기 높이 (예: 윈도우 높이)
 		DXGI_FORMAT_R8G8B8A8_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
 		_float4(0.f, 0.f, 0.f, 0.f)     // 클리어 색상 (투명 검정 등)
 	)))
 	{
-		MSG_BOX("Failed to create RT_Picking Render Target");
+		MSG_BOX("Failed to create RT_PickObj Render Target");
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 	if (FAILED(m_pGameInstance->Add_RenderTarget(
@@ -89,7 +89,7 @@ HRESULT CRenderer::Initialize()
 		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
 	)))
 	{
-		MSG_BOX("Failed to create RT_Picking Render Target");
+		MSG_BOX("Failed to create RT_PickObj Render Target");
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 #pragma endregion
@@ -103,7 +103,7 @@ HRESULT CRenderer::Initialize()
 		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
 	)))
 	{
-		MSG_BOX("Failed to create RT_Picking Render Target");
+		MSG_BOX("Failed to create RT_PickObj Render Target");
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 
@@ -115,7 +115,7 @@ HRESULT CRenderer::Initialize()
 		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
 	)))
 	{
-		MSG_BOX("Failed to create RT_Picking Render Target");
+		MSG_BOX("Failed to create RT_PickObj Render Target");
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 #pragma endregion
@@ -123,8 +123,8 @@ HRESULT CRenderer::Initialize()
 #pragma region Shadow
 	if (FAILED(m_pGameInstance->Add_RenderTarget(
 		L"RT_Shadow",                // 렌더 타겟 고유 태그
-		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
-		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		(_uint)g_iMaxWidth,                      // 초기 너비 (예: 윈도우 너비)
+		(_uint)g_iMaxHeight,                      // 초기 높이 (예: 윈도우 높이)
 		DXGI_FORMAT_R32G32B32A32_FLOAT,		// 포맷 (백버퍼/ImGui 호환성 고려)
 		_float4(1.f, 1.f, 1.f, 1.f)      // 클리어 색상 (불투명 하양 등)
 	)))
@@ -134,12 +134,30 @@ HRESULT CRenderer::Initialize()
 	}
 #pragma endregion
 
-	/*if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_BlurX"), TEXT("Target_BlurX"))))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Add_MRT(TEXT("MRT_BlurY"), TEXT("Target_BlurY"))))
-		return E_FAIL;*/
-
-
+#pragma region Blur
+	if (FAILED(m_pGameInstance->Add_RenderTarget(
+		L"RT_BlurX",                // 렌더 타겟 고유 태그
+		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
+		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		DXGI_FORMAT_R32G32B32A32_FLOAT,		// 포맷 (백버퍼/ImGui 호환성 고려)
+		_float4(1.f, 1.f, 1.f, 1.f)      // 클리어 색상 (불투명 하양 등)
+	)))
+	{
+		MSG_BOX("Failed to create RT_BlurX Render Target");
+		return E_FAIL; // 또는 적절한 에러 처리
+	}
+	if (FAILED(m_pGameInstance->Add_RenderTarget(
+		L"RT_BlurY",                // 렌더 타겟 고유 태그
+		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
+		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		DXGI_FORMAT_R32G32B32A32_FLOAT,		// 포맷 (백버퍼/ImGui 호환성 고려)
+		_float4(1.f, 1.f, 1.f, 1.f)      // 클리어 색상 (불투명 하양 등)
+	)))
+	{
+		MSG_BOX("Failed to create RT_BlurY Render Target");
+		return E_FAIL; // 또는 적절한 에러 처리
+	}
+#pragma endregion
 
 	m_pVIBuffer = CVIBuffer_Rect::Create(m_pDevice, m_pContext);
 	if (nullptr == m_pVIBuffer){
@@ -150,7 +168,17 @@ HRESULT CRenderer::Initialize()
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
-	vector<wstring> GameObjectsTargets = { L"RT_Diffuse", L"RT_Normal", L"RT_Depth", L"RT_Picking", L"RT_PickPos" };
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling(ViewportDesc.Width, ViewportDesc.Height, 1.f));
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(ViewportDesc.Width, ViewportDesc.Height, 0.0f, 1.f));
+
+	m_iOriginalViewportWidth = ViewportDesc.Width;
+	m_iOriginalViewportHeight = ViewportDesc.Height;
+
+	if (FAILED(Ready_DepthStencilView(g_iMaxWidth, g_iMaxHeight)))
+		return E_FAIL;
+
+	vector<wstring> GameObjectsTargets = { L"RT_Diffuse", L"RT_Normal", L"RT_Depth", L"RT_PickObj", L"RT_PickPos" };
 	if (FAILED(m_pGameInstance->Add_MRT(L"MRT_GameObjects", GameObjectsTargets)))
 	{
 		MSG_BOX("Failed to create MRT_GameObjects");
@@ -169,7 +197,7 @@ HRESULT CRenderer::Initialize()
 		return E_FAIL;
 	}
 	vector<wstring> FinalTargets = { L"RT_FinalScene" };
-	if (FAILED(m_pGameInstance->Add_MRT(L"RT_FinalScene_Group", FinalTargets)))
+	if (FAILED(m_pGameInstance->Add_MRT(L"MRT_Final", FinalTargets)))
 	{
 		MSG_BOX("Failed to create MRT_FinalScene group");
 		return E_FAIL;
@@ -245,6 +273,7 @@ HRESULT CRenderer::Draw()
 		return E_FAIL;
 
 
+	
 
 #ifdef _DEBUG
 	if (m_pGameInstance->Get_IsDebugDraw())

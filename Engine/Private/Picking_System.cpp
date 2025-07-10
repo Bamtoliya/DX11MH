@@ -36,7 +36,7 @@ void CPicking_System::Free()
 
 HRESULT CPicking_System::ReadPickingTargetPixel(_int screenX, _int screenY, _float4* pPickedColor)
 {
-	CRenderTarget* pRT = m_pGameInstance->Get_RenderTarget(L"RT_Picking");
+	CRenderTarget* pRT = m_pGameInstance->Get_RenderTarget(L"RT_PickObj");
 	ID3D11Texture2D* pTexture = pRT->Get_Texture();
 	if (pTexture == nullptr) return E_FAIL;
 

@@ -156,7 +156,7 @@ HRESULT CGameInstance::Draw()
 	
 
 	if (m_pMyImGui_Manager)
-		m_pMyImGui_Manager->Render();
+ 		m_pMyImGui_Manager->Render();
 
 	m_pLevel_Manager->Render();
 

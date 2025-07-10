@@ -30,7 +30,7 @@ HRESULT CViewport_2D::Initialize(void* pArg)
 {
     m_bShow = true;
     m_bShowImage = true;
-    m_strRenderTargetKey = L"RT_Picking";
+    m_strRenderTargetKey = L"RT_PickObj";
     m_vImageGridPosition = { -(g_iWinSizeX/2.f), -(g_iWinSizeY / 2.f)}; // 그리드 (0,0) 기준 좌상단 좌표
     m_vImageGridSize = { g_iWinSizeX, g_iWinSizeY };   // 그리드 단위 크기
     return S_OK;

@@ -132,8 +132,11 @@ HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencil
     // 1. 현재 상태 백업
     m_iNumViews = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; // 최대 개수만큼 가져오기 시도
     m_pContext->OMGetRenderTargets(m_iNumViews, m_pBackupRTVs, &m_pBackupDSV);
+
+    ID3D11DepthStencilView* targetDSV = nullptr == pDSV ? m_pBackupDSV : pDSV;
+    
     if (true == isDepthClear)
-		m_pContext->ClearDepthStencilView(m_pBackupDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+		m_pContext->ClearDepthStencilView(targetDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
     // 실제 바인딩된 뷰 개수 확인 (OMGetRenderTargets는 첫 번째 nullptr에서 멈춤)
     for (m_iNumViews = 0; m_iNumViews < D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT; ++m_iNumViews) {
         if (m_pBackupRTVs[m_iNumViews] == nullptr) break;
@@ -150,7 +153,7 @@ HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencil
         pRenderTarget->Clear();
         pRenderTargets[iNumTargets++] = pRenderTarget->Get_RTV();
     }
-    m_pContext->OMSetRenderTargets(iNumTargets, pRenderTargets, pDSV);
+    m_pContext->OMSetRenderTargets(iNumTargets, pRenderTargets, targetDSV);
 
     // 3. 뷰포트 설정
     m_pContext->RSSetViewports(1, &(vpIter->second));
