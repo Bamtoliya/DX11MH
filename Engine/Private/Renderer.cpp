@@ -21,14 +21,14 @@ HRESULT CRenderer::Initialize()
 
 #pragma region DEBUG
 	if (FAILED(m_pGameInstance->Add_RenderTarget(
-		L"RT_FinalScene",               // 렌더 타겟 고유 태그
+		L"RT_Final",               // 렌더 타겟 고유 태그
 		(_uint)ViewportDesc.Width,      // 초기 너비 (예: 윈도우 너비)
 		(_uint)ViewportDesc.Height,     // 초기 높이 (예: 윈도우 높이)
 		DXGI_FORMAT_R8G8B8A8_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
 		_float4(0.f, 0.f, 0.f, 0.f)     // 클리어 색상 (투명 검정 등)
 	)))
 	{
-		MSG_BOX("Failed to create RT_FinalScene Render Target");
+		MSG_BOX("Failed to create RT_Final Render Target");
 		return E_FAIL; // 또는 적절한 에러 처리
 	}
 #pragma endregion
@@ -47,11 +47,47 @@ HRESULT CRenderer::Initialize()
 	}
 
 	if (FAILED(m_pGameInstance->Add_RenderTarget(
+		L"RT_UI",                // 렌더 타겟 고유 태그
+		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
+		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		DXGI_FORMAT_R8G8B8A8_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
+		_float4(0.f, 0.f, 0.f, 0.f)      // 클리어 색상 (투명 검정 등)
+	)))
+	{
+		MSG_BOX("Failed to create RT_PickObj Render Target");
+		return E_FAIL; // 또는 적절한 에러 처리
+	}
+
+	if (FAILED(m_pGameInstance->Add_RenderTarget(
 		L"RT_Normal",                // 렌더 타겟 고유 태그
 		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
 		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
 		DXGI_FORMAT_R16G16B16A16_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
 		_float4(1.f, 1.f, 1.f, 1.f)			// 클리어 색상 (불투명 하양)
+	)))
+	{
+		MSG_BOX("Failed to create RT_PickObj Render Target");
+		return E_FAIL; // 또는 적절한 에러 처리
+	}
+
+	if (FAILED(m_pGameInstance->Add_RenderTarget(
+		L"RT_Parameter",                // 렌더 타겟 고유 태그
+		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
+		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		DXGI_FORMAT_R16G16B16A16_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
+		_float4(0.f, 0.f, 0.f, 0.f)			// 클리어 색상 (불투명 하양)
+	)))
+	{
+		MSG_BOX("Failed to create RT_PickObj Render Target");
+		return E_FAIL; // 또는 적절한 에러 처리
+	}
+
+	if (FAILED(m_pGameInstance->Add_RenderTarget(
+		L"RT_Emissive",                // 렌더 타겟 고유 태그
+		(_uint)ViewportDesc.Width,                      // 초기 너비 (예: 윈도우 너비)
+		(_uint)ViewportDesc.Height,                      // 초기 높이 (예: 윈도우 높이)
+		DXGI_FORMAT_R8G8B8A8_UNORM,		// 포맷 (백버퍼/ImGui 호환성 고려)
+		_float4(0.f, 0.f, 0.f, 0.f)			// 클리어 색상 (불투명 하양)
 	)))
 	{
 		MSG_BOX("Failed to create RT_PickObj Render Target");
@@ -178,7 +214,7 @@ HRESULT CRenderer::Initialize()
 	if (FAILED(Ready_DepthStencilView(g_iMaxWidth, g_iMaxHeight)))
 		return E_FAIL;
 
-	vector<wstring> GameObjectsTargets = { L"RT_Diffuse", L"RT_Normal", L"RT_Depth", L"RT_PickObj", L"RT_PickPos" };
+	vector<wstring> GameObjectsTargets = { L"RT_Diffuse", L"RT_Normal", L"RT_Parameter", L"RT_Emissive", L"RT_Depth", L"RT_PickObj", L"RT_PickPos"};
 	if (FAILED(m_pGameInstance->Add_MRT(L"MRT_GameObjects", GameObjectsTargets)))
 	{
 		MSG_BOX("Failed to create MRT_GameObjects");
@@ -196,12 +232,18 @@ HRESULT CRenderer::Initialize()
 		MSG_BOX("Failed to create MRT_ShadowObjects");
 		return E_FAIL;
 	}
-	vector<wstring> FinalTargets = { L"RT_FinalScene" };
+	vector<wstring> FinalTargets = { L"RT_Final" };
 	if (FAILED(m_pGameInstance->Add_MRT(L"MRT_Final", FinalTargets)))
 	{
-		MSG_BOX("Failed to create MRT_FinalScene group");
+		MSG_BOX("Failed to create MRT_Final group");
 		return E_FAIL;
 	}
+	vector<wstring> UITargets = { L"RT_UI", L"RT_PickObj" };
+	if (FAILED(m_pGameInstance->Add_MRT(L"MRT_UI", UITargets)))
+	{
+		MSG_BOX("Failed to create MRT_UI");
+		return E_FAIL;
+	}	
 #pragma endregion
 
 #ifdef _DEBUG
@@ -265,7 +307,7 @@ HRESULT CRenderer::Draw()
 	if (FAILED(Render_NonLight()))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"MRT_Final")))
+	if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_Final")))
 		return E_FAIL;
 
 	/* 블렌딩이전에 백버퍼를 완성시키낟.  */
@@ -273,6 +315,9 @@ HRESULT CRenderer::Draw()
 		return E_FAIL;
 
 	if (FAILED(Render_UI()))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_UI")))
 		return E_FAIL;
 
 
@@ -448,6 +493,7 @@ HRESULT CRenderer::Render_Blend()
 
 HRESULT CRenderer::Render_UI()
 {
+	m_pGameInstance->Begin_MRT(L"MRT_UI");
 	for (auto& pGameObject : m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_UI)])
 	{
 		if (nullptr != pGameObject)
@@ -456,7 +502,7 @@ HRESULT CRenderer::Render_UI()
 		Safe_Release(pGameObject);
 	}
 	m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_UI)].clear();
-
+	m_pGameInstance->End_MRT();
 	return S_OK;
 }
 
@@ -570,7 +616,7 @@ HRESULT CRenderer::Render_Blur()
 	m_pVIBuffer->Bind_Buffers();
 	m_pVIBuffer->Render();
 
-	m_pGameInstance->End_MRT(nullptr, nullptr, {});
+	m_pGameInstance->End_MRT();
 
 	
 	/* 백버퍼에 찍는다. */

@@ -118,6 +118,8 @@ void CCamera::Bind_Matrices(CTransform* pTransformCom)
 		m_pGameInstance->Set_Transform(D3DTS::PROJ, XMMatrixOrthographicLH(m_tDesc.fFovy, m_tDesc.fAspect, m_tDesc.fNear, m_tDesc.fFar));
 	else
 		m_pGameInstance->Set_Transform(D3DTS::PROJ, XMMatrixPerspectiveFovLH(m_tDesc.fFovy, m_tDesc.fAspect, m_tDesc.fNear, m_tDesc.fFar));
+
+	m_pGameInstance->Set_CameraFar(m_tDesc.fFar);
 }
 
 void CCamera::ZoomIn(_float fTimeDelta)

@@ -252,6 +252,7 @@ CRenderTarget* CTarget_Manager::Get_RenderTarget(const _wstring& strTargetTag) c
 HRESULT CTarget_Manager::Copy_ToBackBuffer(const _wstring& strSourceRenderTargetTag)
 {
     // 1. 대상 리소스 (백버퍼) 가져오기
+    m_pContext->OMGetRenderTargets(1, m_pBackupRTVs, &m_pBackupDSV);
     ID3D11RenderTargetView* pBackBufferRTV = m_pBackupRTVs[0];
     if (!pBackBufferRTV)
     {
@@ -309,7 +310,7 @@ HRESULT CTarget_Manager::Copy_ToBackBuffer(const _wstring& strSourceRenderTarget
         pDestResource,      // 대상 리소스 (백버퍼 텍스처)
         uiDstSubresource,   // 대상 서브리소스 인덱스
         0, 0, 0,            // 대상의 복사 시작 위치 (x, y, z)
-        pSourceResource,    // 원본 리소스 (RT_FinalScene 텍스처)
+        pSourceResource,    // 원본 리소스 (RT_Final 텍스처)
         uiSrcSubresource,   // 원본 서브리소스 인덱스
         nullptr             // 원본의 복사할 영역 (nullptr은 전체 서브리소스)
     );

@@ -416,6 +416,7 @@ HRESULT CModel::Bind_Material(CShader* pShader, const _char* pConstantName, _uin
 	if (iMaterialIndex >= m_iNumMaterials)
 		return E_FAIL;
 
+
 	return m_Materials[iMaterialIndex]->Bind_ShaderResource(pShader, pConstantName, eType, iTextureIndex);	
 }
 

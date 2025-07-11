@@ -218,9 +218,28 @@ HRESULT CTutorial_Enemy::Render()
 
 	_uint		iNumMesh = m_pModelCom->Get_NumMeshes();
 
+	_bool tempTrue = true;
+	_bool tempFalse = false;
+
+
 	for (_uint i = 0; i < iNumMesh; i++)
 	{
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bDiffuseTexture", &tempTrue, sizeof(_bool))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bNormalTexture", &tempFalse, sizeof(_bool))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bParameterTexture", &tempFalse, sizeof(_bool))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bEmissiveTexture", &tempTrue, sizeof(_bool))))
+			return E_FAIL;
+
 		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_EmissiveTexture", i, aiTextureType_METALNESS, 0)))
 			return E_FAIL;
 
 		//m_pModelCom->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);

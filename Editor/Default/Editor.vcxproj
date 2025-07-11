@@ -173,6 +173,8 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_DebugLine.hlsl" />
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_Eye.hlsl" />
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_Sonic.hlsl" />
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_SplineModel.hlsl" />
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_Struct.hlsl" />
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_Terrain.hlsl" />

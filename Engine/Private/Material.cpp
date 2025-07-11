@@ -110,6 +110,8 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, const aiMaterial* pAI
                 return E_FAIL;
 
             m_SRVs[i].push_back(pSRV);
+            if(pSRV != nullptr)
+                m_IsSRVs[i].push_back(true);
         }
     }
 
@@ -169,6 +171,8 @@ HRESULT CMaterial::Initialize(const _char* pModelFilePath, ifstream& ifs)
 
             m_SRVs[i].push_back(pSRV);
             Safe_Delete_Array(szTexturePath);
+            if (pSRV != nullptr)
+                m_IsSRVs[i].push_back(true);
         }
     }
 
@@ -194,7 +198,7 @@ void CMaterial::Free()
 HRESULT CMaterial::Bind_ShaderResource(CShader* pShader, const _char* pConstantName, aiTextureType eType, _uint iTextureIndex)
 {
     if (iTextureIndex >= m_SRVs[eType].size())
-        return E_FAIL;
+        return E_FAIL; 
 
     return pShader->Bind_SRV(pConstantName, m_SRVs[eType][iTextureIndex]);    
 }

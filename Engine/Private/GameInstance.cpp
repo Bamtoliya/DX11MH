@@ -686,6 +686,16 @@ const _float4* CGameInstance::Get_CamPosition() const
 	return m_pPipeLine->Get_CamPosition();
 }
 
+const _float* CGameInstance::Get_CameraFar() const
+{
+	return m_pPipeLine->Get_CameraFar();
+}
+
+void CGameInstance::Set_CameraFar(_float fCameraFar)
+{
+	return m_pPipeLine->Set_CameraFar(fCameraFar);
+}
+
 #pragma endregion
 
 #pragma region Picking_System

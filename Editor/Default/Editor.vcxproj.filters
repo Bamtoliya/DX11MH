@@ -767,5 +767,11 @@
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_VtxMeshInstance.hlsl">
       <Filter>ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_Sonic.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_Eye.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

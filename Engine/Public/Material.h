@@ -48,6 +48,7 @@ private:
 private:
 	vector<string>							m_TexturePaths[AI_TEXTURE_TYPE_MAX] = {};
 	vector<ID3D11ShaderResourceView*>		m_SRVs[AI_TEXTURE_TYPE_MAX] = {};
+	vector<_bool>							m_IsSRVs[AI_TEXTURE_TYPE_MAX] = {};
 	_char									m_szName[MAX_PATH];
 #pragma endregion
 };

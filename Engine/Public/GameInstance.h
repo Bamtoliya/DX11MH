@@ -166,6 +166,8 @@ public:
 	_matrix Get_Transform_Matrix(D3DTS eState) const;
 	_matrix Get_Transform_MatrixInverse(D3DTS eState) const;
 	const _float4* Get_CamPosition() const;
+	const _float* Get_CameraFar() const;
+	void Set_CameraFar(_float fCameraFar);
 #pragma endregion
 
 #pragma region PICKING

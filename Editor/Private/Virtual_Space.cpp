@@ -203,19 +203,6 @@ HRESULT CVirtual_Space::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &m_oID, sizeof(_uint))))
 		return E_FAIL;
 
-	const LIGHT_DESC* pLightDesc = m_pGameInstance->Get_Light(0);
-	if (pLightDesc == nullptr)
-		return S_OK;
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
-		return E_FAIL;
-
 	return S_OK;
 }
 
@@ -224,16 +211,31 @@ HRESULT CVirtual_Space::Render()
 {
 	if (!m_bVisible)
 		return S_OK;
-	Bind_ShaderResources();
+
+	if (FAILED(Bind_ShaderResources()))
+		return E_FAIL;
 
 	_uint		iNumMesh = m_pModelCom->Get_NumMeshes();
 
+	_bool tempTrue = true;
+	_bool tempFalse = false;
+
 	for (_uint i = 0; i < iNumMesh; i++)
-	{
-		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
+	{	
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bDiffuseTexture", &tempTrue, sizeof(_bool))))
 			return E_FAIL;
 
-		//m_pModelCom->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bNormalTexture", &tempFalse, sizeof(_bool))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bParameterTexture", &tempFalse, sizeof(_bool))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bEmissiveTexture", &tempFalse, sizeof(_bool))))
+			return E_FAIL;
+
+		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
+			return E_FAIL;
 
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;

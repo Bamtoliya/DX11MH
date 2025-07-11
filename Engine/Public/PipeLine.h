@@ -21,7 +21,8 @@ public:
 	_matrix Get_Transform_Matrix(D3DTS eState) const;
 	_matrix Get_Transform_MatrixInverse(D3DTS eState) const;
 	const _float4* Get_CamPosition() const;
-
+	const _float* Get_CameraFar() const { return &m_fCameraFar; }
+	void Set_CameraFar(_float fCameraFar) { m_fCameraFar = fCameraFar; }
 
 public:
 	void Update();
@@ -30,6 +31,7 @@ private:
 	_float4x4				m_TransformationMatrices[ENUM_CLASS(D3DTS::END)] = {};
 	_float4x4				m_TransformationMatrixInverse[ENUM_CLASS(D3DTS::END)] = {};
 	_float4					m_vCamPosition = {};
+	_float					m_fCameraFar = { 500.f };
 
 public:
 	static CPipeLine* Create();
