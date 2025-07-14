@@ -170,7 +170,6 @@ HRESULT CGameObject_Mesh_Instance::Deserialize(simdjson::ondemand::object& jsonD
 			if (pNewModel != nullptr)
 			{
 				// ¸ğµ¨ ÄÄÆ÷³ÍÆ® ±³Ã¼
-				Safe_Release(pOldModel);
 				Remove_Component(pOldModel->GetName());
 				m_Components[pOldModel->GetName()] = pNewModel;
 				pNewModel->SetName(pOldModel->GetName());
@@ -210,6 +209,7 @@ void CGameObject_Mesh_Instance::Update(_float fTimeDelta)
 
 void CGameObject_Mesh_Instance::Late_Update(_float fTimeDelta)
 {
+	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
 }
 
@@ -236,13 +236,38 @@ HRESULT CGameObject_Mesh_Instance::Render()
 
 	_uint		iNumMesh = m_pModelCom->Get_NumMeshes();
 
+	_bool isTexture = false;
+	_uint iMaterialIndex = 0;
 	for (_uint i = 0; i < iNumMesh; i++)
 	{
-		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
+		iMaterialIndex = m_pModelCom->Get_Meshes()[i]->Get_MaterialIndex();
+		isTexture = m_pModelCom->Get_Material(iMaterialIndex)->Has_Texture(aiTextureType_DIFFUSE);
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bDiffuseTexture", &isTexture, sizeof(_bool))))
 			return E_FAIL;
+		if (isTexture)
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_DiffuseTexture", i, aiTextureType_DIFFUSE, 0)))
+				return E_FAIL;
+		
+		isTexture = m_pModelCom->Get_Material(iMaterialIndex)->Has_Texture(aiTextureType_NORMALS);
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bNormalTexture", &isTexture, sizeof(_bool))))
+			return E_FAIL;
+		if (isTexture)
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, aiTextureType_NORMALS, 0)))
+				return E_FAIL;
 
-		if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_NormalTexture", i, aiTextureType_NORMALS, 0)))
+		isTexture = m_pModelCom->Get_Material(iMaterialIndex)->Has_Texture(aiTextureType_SPECULAR);
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bParameterTexture", &isTexture, sizeof(_bool))))
 			return E_FAIL;
+		if (isTexture)
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_ParameterTexture", i, aiTextureType_SPECULAR, 0)))
+				return E_FAIL;
+
+		isTexture = m_pModelCom->Get_Material(iMaterialIndex)->Has_Texture(aiTextureType_EMISSIVE);
+		if (FAILED(m_pShaderCom->Bind_RawValue("g_bEmissiveTexture", &isTexture, sizeof(_bool))))
+			return E_FAIL;
+		if (isTexture)
+			if (FAILED(m_pModelCom->Bind_Material(m_pShaderCom, "g_EmissiveTexture", i, aiTextureType_EMISSIVE, 0)))
+				return E_FAIL;
 		
 		if (FAILED(m_pShaderCom->Begin(0)))
 			return E_FAIL;
@@ -254,6 +279,31 @@ HRESULT CGameObject_Mesh_Instance::Render()
 			return E_FAIL;
 	}
 
+	return S_OK;
+}
+HRESULT CGameObject_Mesh_Instance::Render_Shadow()
+{
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Light_ViewMatrix())))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Light_ProjMatrix())))
+		return E_FAIL;
+	_uint		iNumMesh = m_pModelCom->Get_NumMeshes();
+
+	for (size_t i = 0; i < iNumMesh; i++)
+	{
+		//m_pModelCom->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);
+
+		if (FAILED(m_pShaderCom->Begin(1)))
+			return E_FAIL;
+
+		if (FAILED(m_pVIBufferInstanceCom->Bind_Buffers(m_pModelCom->Get_Meshes()[i])))
+			return E_FAIL;
+
+		if (FAILED(m_pVIBufferInstanceCom->Render()))
+			return E_FAIL;
+	}
 	return S_OK;
 }
 #pragma endregion

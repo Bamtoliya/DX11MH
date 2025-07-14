@@ -109,7 +109,7 @@
   },
   "Prototype_Component_Model_SonicSpin": {
     "Class": "CModel",
-    "ModelFilePath": "G:/My Drive/Assets/Models/Sonic/SonicSpin.model",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Sonic/SonicSpin.fbx",
     "PreTransformedMatrix": [
       -1.0,
       0.0,

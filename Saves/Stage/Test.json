@@ -1,0 +1,26 @@
+{
+    "Prototype_Component_Model_w6_far_island_C_ins": {
+    "Class": "CModel",
+    "ModelFilePath": "G:/My Drive/Assets/Stage/Test.model",
+    "PreTransformedMatrix": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    "Type": "NONANIM",
+    "ColliderMesh": "FALSE"
+  }
+}

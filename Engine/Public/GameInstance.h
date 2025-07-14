@@ -91,7 +91,7 @@ public:
 	HRESULT Clear_RenderTarget(const _wstring& strTargetTag, _float4* pClearColor = nullptr);
 	//MRT
 	HRESULT Add_MRT(const _wstring& strMRTTag, const std::vector<_wstring>& pTargetTags);
-	HRESULT Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr, _bool isDepthClear = false); // 메인 깊이 버퍼 사용
+	HRESULT Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV = nullptr, _bool isTargetClear = true, _bool isDepthClear = false); // 메인 깊이 버퍼 사용
 	HRESULT End_MRT(ID3D11RenderTargetView* pBackBufferRTV = nullptr, ID3D11DepthStencilView* pMainDSV = nullptr, const D3D11_VIEWPORT& vp = {});
 	HRESULT Clear_MRT(const _wstring& strMRTTag);
 	ID3D11ShaderResourceView* Get_SRV(const _wstring& strTargetTag) const;

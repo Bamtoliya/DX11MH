@@ -217,14 +217,13 @@ HRESULT CRenderTarget::Resize(_uint iWinResizeX, _uint iWinResizeY)
     return S_OK;
 }
 
-HRESULT CRenderTarget::Bind_ShaderResource(CShader* pShader, const _char* pContantName)
+HRESULT CRenderTarget::Bind_ShaderResource(CShader* pShader, const _char* pConstantName)
 {
-	return pShader->Bind_SRV(pContantName, m_pSRV);
+	return pShader->Bind_SRV(pConstantName, m_pSRV);
 }
 
 HRESULT CRenderTarget::Copy_Resource(ID3D11Texture2D* pDest)
 {
-	
 	m_pContext->CopyResource(pDest, m_pTexture);
 
 	return S_OK;

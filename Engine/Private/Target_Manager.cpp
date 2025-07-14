@@ -112,7 +112,7 @@ HRESULT CTarget_Manager::Add_MRT(const _wstring& strMRTTag, const std::vector<_w
     return S_OK;
 }
 
-HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV, _bool isDepthClear)
+HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV, _bool isTargetClear, _bool isDepthClear)
 {
     if (m_pContext == nullptr) return E_FAIL;
 
@@ -154,7 +154,8 @@ HRESULT CTarget_Manager::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencil
     _uint iNumTargets = 0;
     for (auto& pRenderTarget : rtvs)
     {
-        pRenderTarget->Clear();
+        if(true == isTargetClear)
+            pRenderTarget->Clear();
         pRenderTargets[iNumTargets++] = pRenderTarget->Get_RTV();
     }
     m_pContext->OMSetRenderTargets(iNumTargets, pRenderTargets, targetDSV);
@@ -256,6 +257,8 @@ HRESULT CTarget_Manager::Copy_ToBackBuffer(const _wstring& strSourceRenderTarget
     ID3D11RenderTargetView* pBackBufferRTV = m_pBackupRTVs[0];
     if (!pBackBufferRTV)
     {
+        Safe_Release(m_pBackupRTVs[0]);
+        Safe_Release(m_pBackupDSV);
         MSG_BOX("Failed to get BackBuffer RTV from GameInstance.");
         return E_FAIL;
     }
@@ -264,6 +267,8 @@ HRESULT CTarget_Manager::Copy_ToBackBuffer(const _wstring& strSourceRenderTarget
     pBackBufferRTV->GetResource(&pDestResource); // AddRef됨
     if (!pDestResource)
     {
+        Safe_Release(m_pBackupRTVs[0]);
+        Safe_Release(m_pBackupDSV);
         MSG_BOX("Failed to get Resource from BackBuffer RTV.");
         return E_FAIL;
     }
@@ -274,6 +279,8 @@ HRESULT CTarget_Manager::Copy_ToBackBuffer(const _wstring& strSourceRenderTarget
     {
         MSG_BOX("Source Render Target not found for copy.");
         Safe_Release(pDestResource);
+        Safe_Release(m_pBackupRTVs[0]);
+        Safe_Release(m_pBackupDSV);
         return E_FAIL;
     }
 
@@ -283,6 +290,8 @@ HRESULT CTarget_Manager::Copy_ToBackBuffer(const _wstring& strSourceRenderTarget
     {
         MSG_BOX("Failed to get Texture from source Render Target.");
         Safe_Release(pDestResource);
+        Safe_Release(m_pBackupRTVs[0]);
+        Safe_Release(m_pBackupDSV);
         return E_FAIL;
     }
     // GetResource 대신 직접 텍스처를 가져와서 QueryInterface를 사용하거나,
@@ -318,6 +327,11 @@ HRESULT CTarget_Manager::Copy_ToBackBuffer(const _wstring& strSourceRenderTarget
     // 5. 사용한 리소스 참조 해제
     Safe_Release(pSourceResource);
     Safe_Release(pDestResource);
+
+    Safe_Release(m_pBackupRTVs[0]);
+    m_pBackupRTVs[0] = nullptr;
+    Safe_Release(m_pBackupDSV);
+    m_pBackupDSV = nullptr;
 
     return S_OK;
 }

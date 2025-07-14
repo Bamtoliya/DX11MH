@@ -4,66 +4,6 @@
       {
         "CGameObject_W6D01": {
           "Active": true,
-          "CRigidBody": {
-            "BodyType": 0,
-            "DynamicFriction": 0.5,
-            "Gravity": true,
-            "IsConvex": false,
-            "KinematicTarget": false,
-            "LocalEulerRotation": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "LocalPosition": [
-              0.0,
-              0.0,
-              0.0
-            ],
-            "LocalRotationQuat": [
-              0.0,
-              0.0,
-              0.0,
-              1.0
-            ],
-            "LockRotX": false,
-            "LockRotY": false,
-            "LockRotZ": false,
-            "Mass": 1.0,
-            "Restitution": 0.5,
-            "Shapes": [
-              {
-                "EulerRotationX": 0.0,
-                "EulerRotationY": 0.0,
-                "EulerRotationZ": 0.0,
-                "FilterData0": 1,
-                "FilterData1": 1,
-                "FilterData2": 0,
-                "FilterData3": 0,
-                "IsDoubleSided": false,
-                "IsQueryShape": true,
-                "LocalPosition": [
-                  0.0,
-                  0.0,
-                  0.0
-                ],
-                "MeshIndex": 0,
-                "RotationQuat": [
-                  0.0,
-                  0.0,
-                  0.0,
-                  1.0
-                ],
-                "ShapeSize": [
-                  1.0,
-                  1.0,
-                  1.0
-                ],
-                "ShapeType": 4
-              }
-            ],
-            "StaticFriction": 0.5
-          },
           "CTransform": {
             "EulerRotation": [
               0.0,

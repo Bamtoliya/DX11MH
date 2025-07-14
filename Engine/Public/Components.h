@@ -70,5 +70,8 @@
 #pragma endregion
 
 #pragma region Model
+#include "Mesh.h"
+#include "Material.h"
+#include "Animation.h"
 #include "Model.h"
 #pragma endregion

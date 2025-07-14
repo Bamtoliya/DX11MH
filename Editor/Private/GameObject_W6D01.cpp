@@ -83,6 +83,11 @@ HRESULT CGameObject_W6D01::Initialize(void* pArg)
 	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
+	for (auto& pActor : m_pRigidBodyCom->Get_Actors())
+	{
+		m_pGameInstance->AddActorToScene(pActor);
+	}
+
 	return S_OK;
 }
 
@@ -99,6 +104,11 @@ HRESULT CGameObject_W6D01::Initialize(simdjson::ondemand::object& jsonData)
 
 	if (FAILED(Late_Initialize()))
 		return E_FAIL;
+
+	for (auto& pActor : m_pRigidBodyCom->Get_Actors())
+	{
+		m_pGameInstance->AddActorToScene(pActor);
+	}
 
 	return S_OK;
 }

@@ -282,3 +282,9 @@ HRESULT CMaterial::RenderImGui()
     ImGui::PopID(); // 재질 객체 ID Pop
     return S_OK;
 }
+
+_bool CMaterial::Has_Texture(aiTextureType eType)
+{
+    if (m_SRVs[eType].empty()) return false;
+    return true;
+}

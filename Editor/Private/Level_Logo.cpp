@@ -7,13 +7,15 @@
 CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 		: CLevel { pDevice, pContext }
 {
-
+	m_iLevel = { ENUM_CLASS(LEVEL::LOGO) };
 }
 
 HRESULT CLevel_Logo::Initialize()
 {
 	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Logo.json")))
 		return E_FAIL;
+
+	m_pGameInstance->HideAll();
 	return S_OK;
 }
 

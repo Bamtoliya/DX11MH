@@ -40,6 +40,7 @@ public:
 public:
 	HRESULT Bind_ShaderResource(class CShader* pShader, const _char* pConstantName, aiTextureType eType, _uint iTextureIndex);
 	HRESULT RenderImGui();
+	_bool	Has_Texture(aiTextureType eType);
 
 #pragma region Variables
 private:

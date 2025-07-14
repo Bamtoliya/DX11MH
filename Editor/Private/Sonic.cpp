@@ -210,6 +210,7 @@ HRESULT CSonic::Prototype_Deserialize(simdjson::ondemand::object & jsonData)
 #pragma region Loops
 void CSonic::Priority_Update(_float fTimeDelta)
 {
+	m_pGameInstance->Register_Player(this);
 	if(m_pRigidBodyCom)
 		m_pRigidBodyCom->Priority_Update(fTimeDelta);
 }
@@ -229,6 +230,7 @@ void CSonic::Late_Update(_float fTimeDelta)
 	if (m_pRigidBodyCom)
 		m_pRigidBodyCom->Late_Update(fTimeDelta);
 
+	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_SHADOW, this);
 	m_pGameInstance->Add_RenderGroup(RENDERGROUP::RG_NONBLEND, this);
 }
 
@@ -306,6 +308,29 @@ HRESULT CSonic::Render()
 			return E_FAIL;
 	}
 
+	return S_OK;
+}
+HRESULT CSonic::Render_Shadow()
+{
+	if (FAILED(m_pTransformCom->Bind_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ViewMatrix", m_pGameInstance->Get_Light_ViewMatrix())))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Light_ProjMatrix())))
+		return E_FAIL;
+
+	_uint		iNumMesh = m_pModelComs[m_iCurModelIndex]->Get_NumMeshes();
+
+	for (size_t i = 0; i < iNumMesh; i++)
+	{
+		m_pModelComs[m_iCurModelIndex]->Bind_Bone_Matrices(m_pShaderCom, "g_BoneMatrices", i);
+
+		if (FAILED(m_pShaderCom->Begin(1)))
+			return E_FAIL;
+
+		if (FAILED(m_pModelComs[m_iCurModelIndex]->Render(i)))
+			return E_FAIL;
+	}
 	return S_OK;
 }
 void CSonic::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)

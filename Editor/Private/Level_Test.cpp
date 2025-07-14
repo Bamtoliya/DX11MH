@@ -19,6 +19,17 @@ HRESULT CLevel_Test::Initialize()
     Ready_Layer_Terrain(L"Layer_Virtual_Space");
     Ready_Layer_Camera(L"Layer_Camera");*/
 
+    CShadow::SHADOW_DESC		Desc{};
+    Desc.vEye = _float4(0.f, 20.f, -15.f, 1.f);
+    Desc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
+    Desc.fFovy = XMConvertToRadians(60.0f);
+    Desc.fNear = 0.1f;
+    Desc.fFar = 500.f;
+
+    if (FAILED(m_pGameInstance->Ready_Light_For_Shadow(Desc)))
+        return E_FAIL;
+
+
     if (FAILED(Ready_Layer_ImGui()))
         return E_FAIL;
     return S_OK;

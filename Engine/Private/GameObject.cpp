@@ -307,6 +307,7 @@ HRESULT CGameObject::Remove_Component(const _wstring& strComponentTag)
 	auto& iter = m_Components.find(strComponentTag);
 	if (iter != m_Components.end())
 	{
+		Safe_Release(iter->second);
 		m_Components.erase(strComponentTag);
 	}
 	return S_OK;

@@ -158,8 +158,8 @@ namespace Engine
 	{
 		XMFLOAT3	vPosition;
 		XMFLOAT3	vNormal;
-		XMFLOAT3	vBinormal;
 		XMFLOAT3	vTangent;
+		XMFLOAT3	vBinormal;
 		XMFLOAT2	vTexcoord;
 
 		static const unsigned int					iNumElements = { 5 };
@@ -198,7 +198,7 @@ namespace Engine
 		XMFLOAT4		vLook;
 		XMFLOAT4		vTranslation;		
 
-		static const unsigned int					iNumElements = { 8 };
+		static const unsigned int					iNumElements = { 9 };
 		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	}VTXMESH_INSTANCE;
 

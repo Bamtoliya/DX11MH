@@ -70,7 +70,7 @@
   },
   "Prototype_Component_Model_Virtual_Space": {
     "Class": "CModel",
-    "ModelFilePath": "G:/My Drive/Assets/Models/Virtual Space.fbx",
+    "ModelFilePath": "G:/My Drive/Assets/Models/Virtual Space.model",
     "PreTransformedMatrix": [
       -1.0,
       0.0,

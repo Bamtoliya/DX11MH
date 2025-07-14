@@ -450,7 +450,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 
 		// 공중 이동 벡터 계산
 		_vector vAirMovement = XMLoadFloat3(&status.vMoveDirection) * status.fMoveSpeed.first * fTimeDelta;
-		_vector vVerticalMovement = pTransform->Get_State(STATE::UP) * status.fVerticalVelocity.first * fTimeDelta;
+		_vector vVerticalMovement = XMVectorSet(0.f, 1.0f, 0.f, 0.f) * status.fVerticalVelocity.first * fTimeDelta;
 
 		// 최종 이동 벡터
 		_vector vTotalMovement = vAirMovement + vVerticalMovement;

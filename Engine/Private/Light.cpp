@@ -40,7 +40,7 @@ HRESULT CLight::Render(CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 
 	if (FAILED(pShader->Bind_RawValue("g_vLightDiffuse", &m_tInfo.vDiffuse, sizeof(_float4))))
 		return E_FAIL;
-	if (FAILED(pShader->Bind_RawValue("g_fLightAmbient", &m_tInfo.vAmbient, sizeof(_float4))))
+	if (FAILED(pShader->Bind_RawValue("g_vLightAmbient", &m_tInfo.vAmbient, sizeof(_float4))))
 		return E_FAIL;
 	if (FAILED(pShader->Bind_RawValue("g_vLightSpecular", &m_tInfo.vSpecular, sizeof(_float4))))
 		return E_FAIL;

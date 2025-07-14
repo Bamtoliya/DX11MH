@@ -388,10 +388,17 @@ void CRigidBody::Update(_float fTimeDelta)
 	_vector playerPosition = pTransform->Get_State(STATE::POSITION);
 	for (size_t i = 0; i < m_pShapes.size(); ++i)
 	{
-		_vector localPose = XMLoadFloat3(&ToFloat3(m_pShapes[i]->getLocalPose().p));
-		_vector difference = XMVectorSubtract(localPose, playerPosition);
+
+		const PxTransform& actorWorldPose = m_pActors[i]->getGlobalPose();
+		const PxTransform& shapeLocalPose = m_pShapes[i]->getLocalPose();
+
+		PxTransform shapeWorldPose = actorWorldPose * shapeLocalPose;
+
+		_vector shapePosition = XMLoadFloat3(&ToFloat3(shapeWorldPose.p));
+
+		_vector difference = XMVectorSubtract(shapePosition, playerPosition);
 		_float distance = XMVectorGetX(XMVector3Length(difference));
-		if (distance < 300.f)
+		if (distance <= 300.f)
 		{
 			m_pGameInstance->AddActorToScene(m_pActors[i]);
 		}
@@ -1134,8 +1141,8 @@ HRESULT CRigidBody::Create_Actor()
 					memcpy(tempIndices.data(), mappedResource.pData, pMesh->Get_NumIndices() * sizeof(_uint)); // Get_IndexStride() 필요
 					m_pContext->Unmap(pStagingIB, 0);
 					indicesPtr = tempIndices.data();
+					m_pContext->Unmap(pStagingIB, 0);
 				}
-				m_pContext->Unmap(pStagingIB, 0);
 				Safe_Release(pStagingIB);
 			}
 

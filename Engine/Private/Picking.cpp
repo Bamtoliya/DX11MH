@@ -50,7 +50,7 @@ HRESULT CPicking::Initialize(HWND hWnd)
 
 void CPicking::Update()
 {
-	if (FAILED(m_pGameInstance->Copy_RT_Resource(TEXT("Target_PickPos"), m_pTexture)))
+	if (FAILED(m_pGameInstance->Copy_RT_Resource(TEXT("RT_PickPos"), m_pTexture)))
 		return;
 
 	D3D11_MAPPED_SUBRESOURCE		SubResource{};

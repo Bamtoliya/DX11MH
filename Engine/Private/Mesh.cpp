@@ -256,6 +256,7 @@ HRESULT CMesh::Ready_Anim_Mesh(const aiMesh* pAIMesh, const vector<CBone*>& Bone
 		memcpy(&pVertices[i].vPosition, &pAIMesh->mVertices[i], sizeof(_float3));
 		memcpy(&pVertices[i].vNormal, &pAIMesh->mNormals[i], sizeof(_float3));
 		memcpy(&pVertices[i].vTangent, &pAIMesh->mTangents[i], sizeof(_float3));
+		memcpy(&pVertices[i].vBinormal, &pAIMesh->mBitangents[i], sizeof(_float3));
 		memcpy(&pVertices[i].vTexcoord, &pAIMesh->mTextureCoords[0][i], sizeof(_float2));
 	}
 
@@ -389,17 +390,20 @@ HRESULT CMesh::Ready_NonAnim_Mesh(ifstream& ifs, _fmatrix PreTransformMatrix)
 	{
 		ifs.read(reinterpret_cast<char*>(&pVertices[i].vPosition), sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vPosition, XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), PreTransformMatrix));
+
 		ifs.read(reinterpret_cast<char*>(&pVertices[i].vNormal), sizeof(_float3));
 		XMStoreFloat3(&pVertices[i].vNormal, XMVector3TransformNormal(XMLoadFloat3(&pVertices[i].vNormal), PreTransformMatrix));
 		if (!m_bColliderMesh)
 		{
 			ifs.read(reinterpret_cast<char*>(&pVertices[i].vTangent), sizeof(_float3));
+			ifs.read(reinterpret_cast<char*>(&pVertices[i].vBinormal), sizeof(_float3));
 			ifs.read(reinterpret_cast<char*>(&pVertices[i].vTexcoord), sizeof(_float2));
 		}
 		else
 		{
-			// 콜라이더 메시일 경우 tangent와 texcoord 데이터를 0으로 초기화
+			// 콜라이더 메시일 경우 tangent, binormal, texcoord 데이터를 0으로 초기화
 			ZeroMemory(&pVertices[i].vTangent, sizeof(_float3));
+			ZeroMemory(&pVertices[i].vBinormal, sizeof(_float3));
 			ZeroMemory(&pVertices[i].vTexcoord, sizeof(_float2));
 		}
 	}
@@ -441,6 +445,7 @@ HRESULT CMesh::Ready_Anim_Mesh(ifstream& ifs, const vector<class CBone*>& Bones)
 		ifs.read(reinterpret_cast<char*>(&pVertices[i].vPosition), sizeof(_float3));
 		ifs.read(reinterpret_cast<char*>(&pVertices[i].vNormal), sizeof(_float3));
 		ifs.read(reinterpret_cast<char*>(&pVertices[i].vTangent), sizeof(_float3));
+		ifs.read(reinterpret_cast<char*>(&pVertices[i].vBinormal), sizeof(_float3));
 		ifs.read(reinterpret_cast<char*>(&pVertices[i].vTexcoord), sizeof(_float2));
 	}
 

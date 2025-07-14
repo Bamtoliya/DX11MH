@@ -396,7 +396,7 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
     //pFinalPath.append(pTargetPath.replace_extension(".model").generic_wstring());
     //pFinalEnumPath.append(pTargetPath.replace_extension(".txt").generic_wstring());
 
-    _uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Quality;
+    _uint		iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
     if (!m_bConvertAnim && !m_bColliderMesh)
         iFlag |= aiProcess_PreTransformVertices;
     Assimp::Importer asImporter;
@@ -442,7 +442,7 @@ HRESULT CToolBar::Convert_Model(const _tchar* pFilePath)
                     outputFile.write(reinterpret_cast<const char*>(&pAiMesh->mTextureCoords[0][j]), sizeof(_float2));
                 }
             }
-
+             
             if (m_bConvertAnim)
             {
                 for (_uint j = 0; j < iNumBones; ++j)

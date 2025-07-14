@@ -263,14 +263,18 @@ HRESULT CRenderer::Initialize()
 		MSG_BOX("CRenderer::Initialize - Failed to create m_pVB_DebugLine");
 		return E_FAIL;
 	}
-	//if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Normal"), 150.0f, 450.0f, 300.f, 300.f)))
-	//	return E_FAIL;
-	//if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Shade"), 450.0f, 150.0f, 300.f, 300.f)))
-	//	return E_FAIL;
-	//if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Shade"), 300.f, 100.0f, 200.0f, 200.0f)))
-	//	return E_FAIL;
-	//if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("Target_Specular"), 300.f, 300.0f, 200.0f, 200.0f)))
-	//	return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("RT_Diffuse"), 100.0f, 100.0f, 200.0f, 200.0f)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("RT_Normal"), 100.0f, 300.0f, 200.0f, 200.0f)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("RT_Depth"), 100.0f, 500.0f, 200.0f, 200.0f)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("RT_Shade"), 300.f, 100.0f, 200.0f, 200.0f)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("RT_Specular"), 300.f, 300.0f, 200.0f, 200.0f)))
+		return E_FAIL;
+	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("RT_Shadow"), ViewportDesc.Width - 150.f, 150.0f, 300.0f, 300.0f)))
+		return E_FAIL;
 #endif
 	return S_OK;
 }
@@ -317,17 +321,14 @@ HRESULT CRenderer::Draw()
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_UI")))
-		return E_FAIL;
-
-
-	
+	/*if (FAILED(m_pGameInstance->Copy_ToBackBuffer(L"RT_UI")))
+		return E_FAIL;*/
 
 #ifdef _DEBUG
 	if (m_pGameInstance->Get_IsDebugDraw())
 	{
-		/*if (FAILED(Render_Debug()))
-			return E_FAIL;*/
+		if (FAILED(Render_Debug()))
+			return E_FAIL;
 		if (FAILED(Render_Debug_Collider()))
 			return E_FAIL;
 	}
@@ -493,7 +494,7 @@ HRESULT CRenderer::Render_Blend()
 
 HRESULT CRenderer::Render_UI()
 {
-	m_pGameInstance->Begin_MRT(L"MRT_UI");
+	/*m_pGameInstance->Begin_MRT(L"MRT_UI");*/
 	for (auto& pGameObject : m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_UI)])
 	{
 		if (nullptr != pGameObject)
@@ -502,7 +503,7 @@ HRESULT CRenderer::Render_UI()
 		Safe_Release(pGameObject);
 	}
 	m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_UI)].clear();
-	m_pGameInstance->End_MRT();
+	/*m_pGameInstance->End_MRT();*/
 	return S_OK;
 }
 
@@ -541,7 +542,7 @@ HRESULT CRenderer::Render_Lights()
 
 HRESULT CRenderer::Render_BackBuffer()
 {
-	m_pGameInstance->Begin_MRT(TEXT("MRT_Final"));
+	m_pGameInstance->Begin_MRT(TEXT("MRT_Final"), nullptr, false);
 
 	if (FAILED(m_pGameInstance->Bind_RT_ShaderResource(TEXT("RT_Diffuse"), m_pShader, "g_DiffuseTexture")))
 		return E_FAIL;
@@ -728,6 +729,8 @@ void CRenderer::Free()
 			Safe_Release(pGameObject);
 		ObjectList.clear();
 	}		
+
+	Safe_Release(m_pShadowDSV);
 
 	Safe_Release(m_pVIBuffer);
 	Safe_Release(m_pVB_DebugLine);

@@ -120,6 +120,7 @@ void CGameInstance::Update_Engine(_float fTimeDelta)
 	m_pPipeLine->Update();
 	m_pObject_Manager->Update(fTimeDelta);
 	m_pCamera_Manager->Update(fTimeDelta);
+	m_pLight_Manager->Update();
 	if(m_pPhysics_System)
 		m_pPhysics_System->Update(fTimeDelta);
 	m_pObject_Manager->Late_Update(fTimeDelta);
@@ -368,9 +369,9 @@ HRESULT CGameInstance::Add_MRT(const _wstring& strMRTTag, const std::vector<_wst
 {
 	return m_pTarget_Manager->Add_MRT(strMRTTag, pTargetTags);
 }
-HRESULT CGameInstance::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV, _bool isDepthClear)
+HRESULT CGameInstance::Begin_MRT(const _wstring& strMRTTag, ID3D11DepthStencilView* pDSV, _bool isTargetClear, _bool isDepthClear)
 {
-	return m_pTarget_Manager->Begin_MRT(strMRTTag, pDSV, isDepthClear);
+	return m_pTarget_Manager->Begin_MRT(strMRTTag, pDSV, isTargetClear, isDepthClear);
 }
 HRESULT CGameInstance::End_MRT(ID3D11RenderTargetView* pBackBufferRTV, ID3D11DepthStencilView* pMainDSV, const D3D11_VIEWPORT& vp)
 {
@@ -408,7 +409,7 @@ HRESULT CGameInstance::Ready_RT_Debug(const _wstring& strTargetTag, _float fX, _
 
 HRESULT CGameInstance::Render_MRT_Debug(const _wstring& strMRTTag, CShader* pShader, CVIBuffer_Rect* pVIBuffer)
 {
-	return m_pTarget_Manager->Render_Debug_Collider(strMRTTag, pShader, pVIBuffer);
+	return m_pTarget_Manager->Render_Debug(strMRTTag, pShader, pVIBuffer);
 }
 
 #endif

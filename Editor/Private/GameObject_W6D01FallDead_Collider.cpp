@@ -83,6 +83,7 @@ HRESULT CGameObject_W6D01FallDead_Collider::Initialize(void* pArg)
 	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
+	m_pGameInstance->AddActorToScene(m_pRigidBodyCom->Get_Actors()[0]);
 	return S_OK;
 }
 
@@ -100,6 +101,7 @@ HRESULT CGameObject_W6D01FallDead_Collider::Initialize(simdjson::ondemand::objec
 	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
+	m_pGameInstance->AddActorToScene(m_pRigidBodyCom->Get_Actors()[0]);
 	return S_OK;
 }
 

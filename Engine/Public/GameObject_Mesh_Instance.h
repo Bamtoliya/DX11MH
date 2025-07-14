@@ -52,6 +52,7 @@ private:
 	HRESULT Bind_ShaderResources();
 public:
 	virtual HRESULT Render();
+	virtual HRESULT Render_Shadow() override;
 #pragma endregion
 
 #pragma region Collision
