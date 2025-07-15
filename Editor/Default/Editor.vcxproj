@@ -31,6 +31,7 @@
     <ClCompile Include="..\private\Defender.cpp" />
     <ClCompile Include="..\private\Enemy_Controller.cpp" />
     <ClCompile Include="..\private\GameObject_Interact.cpp" />
+    <ClCompile Include="..\private\GameObject_SplineRoad.cpp" />
     <ClCompile Include="..\Private\GameObject_W1FallDead_Collider.cpp" />
     <ClCompile Include="..\private\GameObject_W6D01FallDead_Collider.cpp" />
     <ClCompile Include="..\private\GameObject_Effect.cpp" />
@@ -59,13 +60,19 @@
     <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\Monster.cpp" />
-    <ClCompile Include="..\private\Sonic_Air_State.cpp" />
+    <ClCompile Include="..\private\Sonic_Air_State.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\private\Sonic_Combat_State.cpp" />
     <ClCompile Include="..\private\Sonic_Controller.cpp" />
     <ClCompile Include="..\private\Sonic_Movement_State.cpp" />
-    <ClCompile Include="..\private\Sonic_Spin_State.cpp" />
+    <ClCompile Include="..\private\Sonic_Spin_State.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\private\Sonic_State.cpp" />
-    <ClCompile Include="..\private\Sonic_Wall_State.cpp" />
+    <ClCompile Include="..\private\Sonic_Wall_State.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\private\Spring.cpp" />
     <ClCompile Include="..\private\Statue.cpp" />
     <ClCompile Include="..\Private\Terrain.cpp" />
@@ -97,6 +104,7 @@
     <ClInclude Include="..\public\Enemy_Controller.h" />
     <ClInclude Include="..\Public\GameObjects.h" />
     <ClInclude Include="..\public\GameObject_Interact.h" />
+    <ClInclude Include="..\public\GameObject_SplineRoad.h" />
     <ClInclude Include="..\Public\GameObject_W1FallDead_Collider.h" />
     <ClInclude Include="..\public\GameObject_W6D01FallDead_Collider.h" />
     <ClInclude Include="..\public\GameObject_Effect.h" />
@@ -126,14 +134,20 @@
     <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\Monster.h" />
-    <ClInclude Include="..\public\Sonic_Air_State.h" />
+    <ClInclude Include="..\public\Sonic_Air_State.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\public\Sonic_Combat_State.h" />
     <ClInclude Include="..\public\Sonic_Controller.h" />
     <ClInclude Include="..\public\Sonic_Movement_State.h" />
-    <ClInclude Include="..\public\Sonic_Spin_State.h" />
+    <ClInclude Include="..\public\Sonic_Spin_State.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\public\Sonic_State.h" />
     <ClInclude Include="..\Public\Sonic_States.h" />
-    <ClInclude Include="..\public\Sonic_Wall_State.h" />
+    <ClInclude Include="..\public\Sonic_Wall_State.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\public\Spring.h" />
     <ClInclude Include="..\public\Statue.h" />
     <ClInclude Include="..\Public\Terrain.h" />

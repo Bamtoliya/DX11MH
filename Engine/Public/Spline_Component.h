@@ -58,6 +58,8 @@ public:
 	// 제어점이 변경되었는지 확인
 	_bool IsDirty() const { return m_bIsDirty; }
 	void SetDirty(_bool bDirty) { m_bIsDirty = bDirty; }
+
+	_float Find_Closest_Param(const _vector& vPosition);
 private:
 	// Catmull-Rom 보간 함수
 	_float3 CatmullRom(const _float3& P0, const _float3& P1, const _float3& P2, const _float3& P3, _float t);

@@ -122,7 +122,60 @@ void CSonic_Movement_State::Jump(_float fTimeDelta)
 		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::JUMP_U), 1.5f, false);
 		
 	}
+}
+
+void CSonic_Movement_State::Rider(_float fTimeDelta)
+{
+
+}
+
+void CSonic_Movement_State::Avoid(_float fTimeDelta)
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+	status.fMoveSpeed.first += status.fMoveAccelration * 2.f * fTimeDelta;
+	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
+		status.fMoveSpeed.first = status.fMoveSpeed.second;
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	_vector right = pTransform->Get_State(STATE::RIGHT);
+	_vector moveDirection = XMLoadFloat3(&status.vMoveDirection);
+	if (XMVectorGetX(XMVector4Length(moveDirection + right)) > 0)
+	{
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::IDLE_QUICKSTEP_R), status.fMoveSpeed.first);
+	}
+	else
+	{
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::IDLE_QUICKSTEP_L), status.fMoveSpeed.first);
+	}
+}
+
+void CSonic_Movement_State::QuickStep(_float fTimeDelta)
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+	status.fMoveSpeed.first += status.fMoveAccelration * 4.f * fTimeDelta;
+	if (status.fMoveSpeed.first >= status.fMaxBoostSpeed)
+		status.fMoveSpeed.first = status.fMaxBoostSpeed;
+
+	_vector right = pTransform->Get_State(STATE::RIGHT);
+	_vector moveDirection = XMLoadFloat3(&status.vMoveDirection);
 	
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	if (XMVectorGetX(XMVector4Length(moveDirection + right)) > 0)
+	{
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::RUN_QUICKSTEP_R), status.fMoveSpeed.first);
+	}
+	else
+	{
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::RUN_QUICKSTEP_L), status.fMoveSpeed.first);
+	}
+}
+
+void CSonic_Movement_State::SpringJump(_float fTimeDelta)
+{
+
 }
 
 void CSonic_Movement_State::ResolveCollisions(_vector vMovement, _float fTimeDelta)
@@ -358,13 +411,17 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		// 상태에 따른 이동 속도 처리
 		switch (m_eMovementState)
 		{
-		case CSonic_Movement_State::EMovementState::IDLE:	Idle(fTimeDelta); break;
-		case CSonic_Movement_State::EMovementState::WALK:	Walk(fTimeDelta); break;
-		case CSonic_Movement_State::EMovementState::RUN:	Run(fTimeDelta); break;
-		case CSonic_Movement_State::EMovementState::DASH:	Dash(fTimeDelta); break;
-		case CSonic_Movement_State::EMovementState::BOOST:	Boost(fTimeDelta); break;
-		case CSonic_Movement_State::EMovementState::BRAKE:	Brake(fTimeDelta); break;
-		case CSonic_Movement_State::EMovementState::JUMP:	Jump(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::IDLE:		Idle(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::WALK:		Walk(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::RUN:		Run(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::DASH:		Dash(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::BOOST:		Boost(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::BRAKE:		Brake(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::JUMP:		Jump(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::RIDER:		Rider(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::SPRINGJUMP:	SpringJump(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::AVOID:		Avoid(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::QUICKSTEP:	QuickStep(fTimeDelta); break;
 		default:
 			break;
 		}
@@ -425,17 +482,10 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 	{
 		switch (m_eMovementState)
 		{
-		case Editor::CSonic_Movement_State::EMovementState::BOOST:
-			Boost(fTimeDelta);
-			break;
-		case Editor::CSonic_Movement_State::EMovementState::POLESPIN:
-			break;
-		case Editor::CSonic_Movement_State::EMovementState::PULLEY:
-			break;
-		case Editor::CSonic_Movement_State::EMovementState::RIDER:
-			break;
-		case Editor::CSonic_Movement_State::EMovementState::WALL:
-			break;
+		case Editor::CSonic_Movement_State::EMovementState::BOOST: Boost(fTimeDelta); break;
+		case Editor::CSonic_Movement_State::EMovementState::POLESPIN: break;
+		case Editor::CSonic_Movement_State::EMovementState::PULLEY: break;
+		case Editor::CSonic_Movement_State::EMovementState::RIDER: Rider(fTimeDelta); break;
 		default:
 			Jump(fTimeDelta);
 			break;
@@ -550,6 +600,20 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 			XMStoreFloat3(&status.vMoveDirection, XMVector4Normalize(pTransform->Get_State(STATE::LOOK)));
 		else
 			XMStoreFloat3(&status.vMoveDirection, vMovementDirection);
+		return;
+	}
+
+	if (KEY_PRESSING(DIK_Q))
+	{
+		XMStoreFloat3(&status.vMoveDirection, -XMVector3Normalize(pTransform->Get_State(STATE::RIGHT)));
+		m_eMovementState = m_eMovementState == EMovementState::IDLE ? EMovementState::AVOID : EMovementState::QUICKSTEP;
+		return;
+	}
+
+	if (KEY_PRESSING(DIK_E))
+	{
+		XMStoreFloat3(&status.vMoveDirection, XMVector3Normalize(pTransform->Get_State(STATE::RIGHT)));
+		m_eMovementState = m_eMovementState == EMovementState::IDLE ? EMovementState::AVOID : EMovementState::QUICKSTEP;
 		return;
 	}
 

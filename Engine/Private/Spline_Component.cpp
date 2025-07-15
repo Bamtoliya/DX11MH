@@ -265,6 +265,11 @@ vector<_float3> CSpline_Component::GetSplinePoints()
 	return splinePoints;
 }
 
+_float CSpline_Component::Find_Closest_Param(const _vector& vPosition)
+{
+	return 0.f;
+}
+
 _float3 CSpline_Component::CatmullRom(const _float3& P0, const _float3& P1, const _float3& P2, const _float3& P3, _float t)
 {
 	_vector vP0 = XMLoadFloat3(&P0);

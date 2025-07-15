@@ -1141,7 +1141,6 @@ HRESULT CRigidBody::Create_Actor()
 					memcpy(tempIndices.data(), mappedResource.pData, pMesh->Get_NumIndices() * sizeof(_uint)); // Get_IndexStride() 필요
 					m_pContext->Unmap(pStagingIB, 0);
 					indicesPtr = tempIndices.data();
-					m_pContext->Unmap(pStagingIB, 0);
 				}
 				Safe_Release(pStagingIB);
 			}

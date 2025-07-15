@@ -367,7 +367,7 @@ HRESULT CRenderer::Render_Priority()
 
 HRESULT CRenderer::Render_Shadow()
 {
-	m_pGameInstance->Begin_MRT(TEXT("MRT_ShadowObjects"), m_pShadowDSV, true);
+	m_pGameInstance->Begin_MRT(TEXT("MRT_ShadowObjects"), m_pShadowDSV, true, true);
 
 	if (FAILED(Change_ViewportDesc(g_iMaxWidth, g_iMaxHeight)))
 		return E_FAIL;

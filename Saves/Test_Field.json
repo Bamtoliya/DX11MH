@@ -72,8 +72,8 @@
                         },
                         "CameraPitch": 0.7853981852531433,
                         "CameraYaw": 0.0,
-                        "Distance": 78369.828125,
-                        "SmoothFactor": 0.20000000298023224
+                        "Distance": 10.0,
+                        "SmoothFactor": 1.0
                     },
                     "CTransform": {
                         "EulerRotation": [

@@ -483,6 +483,9 @@
     <ClCompile Include="..\private\GameObject_Interact.cpp">
       <Filter>02.GameObject\InteractableObject</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\GameObject_SplineRoad.cpp">
+      <Filter>02.GameObject\Spline</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Editor.h">
@@ -694,6 +697,9 @@
     </ClInclude>
     <ClInclude Include="..\public\GameObject_Interact.h">
       <Filter>02.GameObject\InteractableObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\GameObject_SplineRoad.h">
+      <Filter>02.GameObject\Spline</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

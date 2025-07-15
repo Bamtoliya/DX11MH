@@ -1,5 +1,6 @@
 #include "Level_Open.h"
 #include "GameInstance.h"
+#include "Transform.h"
 
 CLevel_Open::CLevel_Open(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel{ pDevice, pContext }
@@ -18,9 +19,10 @@ HRESULT CLevel_Open::Initialize()
 	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Stage/Open/GameObjects_Open_Collider.json")))
 		return E_FAIL;
 
-
 	if (FAILED(Ready_Layer_ImGui()))
 		return E_FAIL;
+
+	//static_cast<CTransform*>(m_pGameInstance->Get_CurrentPlayer()->Get_Component(g_strTransformTag))->Set_State(STATE::POSITION, );	o
 
 	return S_OK;
 }

@@ -29,7 +29,6 @@ HRESULT CLevel_Test::Initialize()
     if (FAILED(m_pGameInstance->Ready_Light_For_Shadow(Desc)))
         return E_FAIL;
 
-
     if (FAILED(Ready_Layer_ImGui()))
         return E_FAIL;
     return S_OK;

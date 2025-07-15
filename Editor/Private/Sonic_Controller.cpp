@@ -198,6 +198,7 @@ HRESULT CSonic_Controller::RenderImGui()
 	return S_OK;
 }
 
+#pragma region Combo / Combat
 void CSonic_Controller::BufferComboInput()
 {
 	m_tInfo.bComboInputBuffered = true;
@@ -231,4 +232,25 @@ void CSonic_Controller::UpdateInputBuffer(_float fTimeDelta)
 			ClearComboInputBuffer(); // 유효 시간 초과 시 버퍼 초기화
 		}
 	}
+}
+#pragma endregion
+
+void CSonic_Controller::Begin_Rail(CSpline_Component* pSpline, _float fStartT)
+{
+	//Change_State(SONIC_STATE::RAIL);
+}
+
+void CSonic_Controller::Begin_Pulley()
+{
+
+}
+
+void CSonic_Controller::Begin_Spring()
+{
+
+}
+
+void CSonic_Controller::Begin_Dashboard()
+{
+
 }

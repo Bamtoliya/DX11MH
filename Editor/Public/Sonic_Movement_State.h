@@ -39,6 +39,10 @@ private:
 	void Boost(_float fTimeDelta);
 	void Brake(_float fTimeDelta);
 	void Jump(_float fTimeDelta);
+	void Rider(_float fTimeDelta);
+	void Avoid(_float fTimeDelta);
+	void QuickStep(_float fTimeDelta);
+	void SpringJump(_float fTimeDelta);
 
 private:
 	void ResolveCollisions(_vector vMovement, _float fTimeDelta);

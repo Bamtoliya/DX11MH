@@ -4,6 +4,7 @@
 NS_BEGIN(Engine)
 class CState;
 class CController;
+class CSpline_Component;
 NS_END
 
 NS_BEGIN(Editor)
@@ -36,6 +37,7 @@ public:
 		_float fJumpForce = { 10.f };
 		pair<_float, _float> fVerticalVelocity = { 0.f, 15.f };
 		_bool bIsAir = { false };
+		_bool bIsOnRail = { false };
 
 		//Combat
 		pair<_float, _float>	fAtkDamage = { 4.f, 6.f };
@@ -93,6 +95,17 @@ public:
 	_bool ConsumeComboInput();
 	void ClearComboInputBuffer();
 	void UpdateInputBuffer(_float fTimeDelta);
+
+#pragma region Interaction
+public:
+	void Begin_Rail(CSpline_Component* pSpline, _float fStartT);
+	void Begin_Pulley();
+	void Begin_Spring();
+	void Begin_Dashboard();
+#pragma endregion
+
+
+
 public:
 	SONIC_STATUS& Get_Status() { return m_tInfo; }
 

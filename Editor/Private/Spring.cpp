@@ -228,4 +228,13 @@ HRESULT CSpring::Render()
 
 	return S_OK;
 }
+void CSpring::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
+{
+}
+void CSpring::OnCollisionOverlapping(PxActor* pOther)
+{
+}
+void CSpring::OnCollisionExit(PxActor* pOther)
+{
+}
 #pragma endregion
