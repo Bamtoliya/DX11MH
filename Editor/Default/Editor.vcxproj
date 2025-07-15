@@ -19,15 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\private\Ashura.cpp" />
-    <ClCompile Include="..\private\Ashura_Controller.cpp" />
-    <ClCompile Include="..\private\Ashura_Movement_State.cpp" />
+    <ClCompile Include="..\private\Ashura.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\private\Ashura_Controller.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\private\Ashura_Movement_State.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\private\Asset_Browser.cpp" />
     <ClCompile Include="..\Private\BackGround.cpp" />
     <ClCompile Include="..\private\Blader.cpp" />
     <ClCompile Include="..\private\Camera_Follow.cpp" />
     <ClCompile Include="..\Private\Camera_Free.cpp" />
     <ClCompile Include="..\private\Camera_TPS.cpp" />
+    <ClCompile Include="..\private\DashBoard.cpp" />
     <ClCompile Include="..\private\Defender.cpp" />
     <ClCompile Include="..\private\Enemy_Controller.cpp" />
     <ClCompile Include="..\private\GameObject_Interact.cpp" />
@@ -87,16 +94,25 @@
     <ClCompile Include="Editor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\public\Ashura.h" />
-    <ClInclude Include="..\public\Ashura_Controller.h" />
-    <ClInclude Include="..\public\Ashura_Movement_State.h" />
-    <ClInclude Include="..\Public\Ashura_States.h" />
+    <ClInclude Include="..\public\Ashura.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\public\Ashura_Controller.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\public\Ashura_Movement_State.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\Ashura_States.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\public\Asset_Browser.h" />
     <ClInclude Include="..\Public\BackGround.h" />
     <ClInclude Include="..\public\Blader.h" />
     <ClInclude Include="..\public\Camera_Follow.h" />
     <ClInclude Include="..\Public\Camera_Free.h" />
     <ClInclude Include="..\public\Camera_TPS.h" />
+    <ClInclude Include="..\public\DashBoard.h" />
     <ClInclude Include="..\public\Defender.h" />
     <ClInclude Include="..\Public\Editor_Defines.h" />
     <ClInclude Include="..\Public\Editor_Enum.h" />

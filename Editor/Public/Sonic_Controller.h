@@ -104,6 +104,13 @@ public:
 	void Begin_Dashboard();
 #pragma endregion
 
+#pragma region Ring
+	void Add_Ring(_uint iNumber);
+	void Subtract_Ring(_uint iNumber);
+	_uint Get_Current_Ring() { return m_tInfo.iRings.first; }
+#pragma endregion
+
+
 
 
 public:

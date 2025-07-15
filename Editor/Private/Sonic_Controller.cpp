@@ -254,3 +254,21 @@ void CSonic_Controller::Begin_Dashboard()
 {
 
 }
+
+void CSonic_Controller::Add_Ring(_uint iNumber)
+{
+	m_tInfo.iRings.first += iNumber;
+	if (m_tInfo.iRings.first > m_tInfo.iRings.second)
+	{
+		m_tInfo.iRings.first = m_tInfo.iRings.second;
+	}
+}
+
+void CSonic_Controller::Subtract_Ring(_uint iNumber)
+{
+	m_tInfo.iRings.first -= iNumber;
+	if (m_tInfo.iRings.first < 0)
+	{
+		m_tInfo.iRings.first = 0;
+	}
+}

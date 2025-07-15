@@ -109,7 +109,7 @@ HRESULT CGameObject_SplineRoad::Initialize(simdjson::ondemand::object& jsonData)
 HRESULT CGameObject_SplineRoad::Ready_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_VtxSplineModel"),
+	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_VtxDebugDraw"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
@@ -216,7 +216,6 @@ HRESULT CGameObject_SplineRoad::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &m_oID, sizeof(_uint))))
 		return E_FAIL;
 
-
 	// 라인 색상 설정 (예: 빨간색)
 	_float4 vColor = _float4(1.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
@@ -236,6 +235,7 @@ HRESULT CGameObject_SplineRoad::Render()
 
 	if (FAILED(m_pShaderCom->Begin(0)))
 		return E_FAIL;
+
 	if (FAILED(m_pVIBufferCom->Render()))
 		return E_FAIL;
 

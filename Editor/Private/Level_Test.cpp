@@ -1,6 +1,7 @@
 #include "Level_Test.h"
 #include "GameInstance.h"
 #include "Tools.h"
+#include "GameObject.h"
 
 CLevel_Test::CLevel_Test(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CLevel{ pDevice, pContext }
@@ -31,6 +32,9 @@ HRESULT CLevel_Test::Initialize()
 
     if (FAILED(Ready_Layer_ImGui()))
         return E_FAIL;
+
+    static_cast<CTransform*>(m_pGameInstance->Get_CurrentPlayer()->Get_Component(g_strTransformTag))->Set_State(STATE::POSITION, XMVectorSet(-5.f, 10.f, 0.f, 1.f));
+
     return S_OK;
 }
 

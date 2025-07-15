@@ -66,7 +66,6 @@ HRESULT CMainApp::Register_Class_Types()
 {
 #pragma region Components
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CSonic_Controller", CSonic_Controller::Create))) return E_FAIL;
-	if (FAILED(m_pGameInstance->Register_Creator_Function("CAshura_Controller", CAshura_Controller::Create))) return E_FAIL;
 #pragma endregion
 
 #pragma region Gameobjects
@@ -78,18 +77,39 @@ HRESULT CMainApp::Register_Class_Types()
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CCamera_Follow", CCamera_Follow::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CCamera_TPS", CCamera_TPS::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CMonster", CMonster::Create))) return E_FAIL;
-	if (FAILED(m_pGameInstance->Register_Creator_Function("CVirtual_Space", CVirtual_Space::Create))) return E_FAIL;
-	if (FAILED(m_pGameInstance->Register_Creator_Function("CTutorial_Enemy", CTutorial_Enemy::Create))) return E_FAIL;
-	if (FAILED(m_pGameInstance->Register_Creator_Function("CTutorial_Wall", CTutorial_Wall::Create))) return E_FAIL;
-	if (FAILED(m_pGameInstance->Register_Creator_Function("CSpring", CSpring::Create))) return E_FAIL;
-	if (FAILED(m_pGameInstance->Register_Creator_Function("CAshura", CAshura::Create))) return E_FAIL;
+#pragma endregion	
+
+#pragma region Stages
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CGameObject_W6D01", CGameObject_W6D01::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CGameObject_W6D02", CGameObject_W6D02::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CGameObject_Open", CGameObject_Open::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CGameObject_W6D01FallDead_Collider", CGameObject_W6D01FallDead_Collider::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CGameObject_W6D02FallDead_Collider", CGameObject_W6D02FallDead_Collider::Create))) return E_FAIL;
-	
-#pragma endregion	
+#pragma endregion
+
+#pragma region Tutorial
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CVirtual_Space", CVirtual_Space::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CTutorial_Wall", CTutorial_Wall::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CTutorial_Enemy", CTutorial_Enemy::Create))) return E_FAIL;
+#pragma endregion
+
+#pragma region StageObjects
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CGameObject_SplineRoad", CGameObject_SplineRoad::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CRing", CRing::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CRail", CRail::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CDashBoard", CDashBoard::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CSpring", CSpring::Create))) return E_FAIL;
+#pragma endregion
+
+#pragma region Monsters
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CMan", CMan::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CWolf", CWolf::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CMotora", CMotora::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CDefender", CDefender::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CBlader", CBlader::Create))) return E_FAIL;
+#pragma endregion
+
+
 
 	return S_OK;
 }

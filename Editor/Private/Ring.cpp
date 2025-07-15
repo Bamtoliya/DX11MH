@@ -1,5 +1,6 @@
 #include "Ring.h"
 #include "GameInstance.h"
+#include "Sonic_Controller.h"
 
 #pragma region Constructor/Destructor
 CRing::CRing(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -221,5 +222,27 @@ HRESULT CRing::Render()
 	}
 
 	return S_OK;
+}
+void CRing::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
+{
+	if (m_pGameInstance->Get_CurrentPlayer() == pOther->userData)
+	{
+		CSonic_Controller* pController = dynamic_cast<CSonic_Controller*>(static_cast<CGameObject*>(pOther->userData)->Get_Component(L"Com_Controller"));
+		if (pController != nullptr)
+		{
+			m_bToDestroy = true;
+			m_bDead = true;
+			m_bActive = false;
+			m_bVisible = false;
+			pController->Add_Ring(m_iCount);
+		}
+		
+	}
+}
+void CRing::OnCollisionOverlapping(PxActor* pOther)
+{
+}
+void CRing::OnCollisionExit(PxActor* pOther)
+{
 }
 #pragma endregion

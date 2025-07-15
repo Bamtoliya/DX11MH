@@ -107,7 +107,7 @@ HRESULT CGameObject_Spline::Initialize(simdjson::ondemand::object& jsonData)
 HRESULT CGameObject_Spline::Ready_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_VtxSplineModel"),
+	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_VtxDebugDraw"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 

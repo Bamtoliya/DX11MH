@@ -61,10 +61,15 @@ public:
 
 #pragma region Collisions
 public:
-	virtual void OnCollisionEnter(PxActor* pOther, const PxContactPair& cp) {}
-	virtual void OnCollisionOverlapping(PxActor* pOther) {}
-	virtual void OnCollisionExit(PxActor* pOther) {}
+	virtual void OnCollisionEnter(PxActor* pOther, const PxContactPair& cp) override;
+	virtual void OnCollisionOverlapping(PxActor* pOther) override;
+	virtual void OnCollisionExit(PxActor* pOther) override;
 #pragma endregion
+
+#pragma region Variable
+	_uint m_iCount = { 1 };
+#pragma endregion
+
 
 
 };

@@ -9,13 +9,29 @@
 
 #include "Monster.h"
 
+#pragma region Objcets
+#include "GameObject_SplineRoad.h"
+#include "Ring.h"
+#include "Spring.h"
+#include "DashBoard.h"
+#include "Rail.h"
+#pragma endregion
+
+#pragma region Monsters
+
+#include "Man.h"
+#include "Wolf.h"
+#include "Motora.h"
+#include "Defender.h"
+#include "Blader.h"
+#pragma endregion
+
+
+
 #pragma region Tutorial
 #include "Virtual_Space.h"
 #include "Tutorial_Enemy.h"
 #include "Tutorial_Wall.h"
-#include "Spring.h"
-#include "Ashura.h"
-#include "Ashura_Controller.h"
 #pragma endregion
 
 #pragma region Stage

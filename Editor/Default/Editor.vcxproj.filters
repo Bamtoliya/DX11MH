@@ -280,9 +280,6 @@
     <Filter Include="02.GameObject\Stages\01\Exit">
       <UniqueIdentifier>{390f2c09-7c3d-4fe9-b755-08719630fe21}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\StageObjects\Boost">
-      <UniqueIdentifier>{7deaed82-cdee-44d5-9632-16ca4d3dba32}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stages\02\Collider">
       <UniqueIdentifier>{210d2363-ec4b-46c1-aa48-5784d222b8fe}</UniqueIdentifier>
     </Filter>
@@ -303,6 +300,9 @@
     </Filter>
     <Filter Include="ShaderFiles\Includes">
       <UniqueIdentifier>{335f7a3b-9b3a-4505-8342-1bfb5e0a6375}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\StageObjects\DashBoard">
+      <UniqueIdentifier>{7deaed82-cdee-44d5-9632-16ca4d3dba32}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -408,9 +408,6 @@
     <ClCompile Include="..\private\Ashura.cpp">
       <Filter>02.GameObject\03.Monster\Miniboss\Ashura</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Virtual_Space.cpp">
-      <Filter>02.GameObject\06.Virtual Space</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Tutorial_Enemy.cpp">
       <Filter>02.GameObject\03.Monster\Tutorial_Enemy</Filter>
     </ClCompile>
@@ -485,6 +482,12 @@
     </ClCompile>
     <ClCompile Include="..\private\GameObject_SplineRoad.cpp">
       <Filter>02.GameObject\Spline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Virtual_Space.cpp">
+      <Filter>02.GameObject\06.Virtual Space</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DashBoard.cpp">
+      <Filter>02.GameObject\StageObjects\DashBoard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -700,6 +703,9 @@
     </ClInclude>
     <ClInclude Include="..\public\GameObject_SplineRoad.h">
       <Filter>02.GameObject\Spline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DashBoard.h">
+      <Filter>02.GameObject\StageObjects\DashBoard</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
