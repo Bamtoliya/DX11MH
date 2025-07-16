@@ -3,6 +3,7 @@
 #include "Transform.h"
 #include "GameInstance.h"
 #include "Mesh.h"
+#include "Physics_System.h"
 
 namespace { // 익명 네임스페이스 사용
 	physx::PxTransform ToPxTransform(const _float4x4& matrix) {
@@ -811,6 +812,9 @@ _bool CRigidBody::SweepMove(const _float3& vMove, _float3& outHitNormal, _float&
 		return false;
 
 	const PxHitFlags hitFlags = PxHitFlag::ePOSITION | PxHitFlag::eNORMAL; //| PxHitFlag::ePRECISE_SWEEP;
+	//PxQueryFilterData filterData;
+	//filterData.flags |= PxQueryFlag::ePREFILTER; // 프리필터 사용
+	//CQuery_Filter_Callback filterCallback(m_pOwner); // 콜백에 오너 전달
 	PxTransform worldShapePose = m_pActors[iShapeIndex]->getGlobalPose() * m_pShapes[iShapeIndex]->getLocalPose();
 	_bool isHit = m_pGameInstance->Get_PhysicsScene()->sweep(m_pShapes[iShapeIndex]->getGeometry(), worldShapePose, ToPxVec3(moveDir), moveDistance, hit, hitFlags, PxQueryFilterData(), nullptr, nullptr, fInflation);
 	if (isHit)
@@ -988,6 +992,18 @@ void CRigidBody::Change_RigidBodyModel(CModel* pModel)
 			}
 		}
 	}
+}
+
+void CRigidBody::Set_Shape_Active(_uint iIndex, _bool bActive)
+{
+	if(iIndex >= m_pShapes.size() || !m_pShapes[iIndex])
+		return;
+
+	physx::PxShape* pShape = m_pShapes[iIndex];
+
+	// Set flags to control collision and query participation
+	pShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, bActive);
+	pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, bActive);
 }
 
 HRESULT CRigidBody::Create_Actor()

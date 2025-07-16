@@ -15,6 +15,7 @@ void CSonic_Movement_State::Idle(_float fTimeDelta)
 	status.fMoveSpeed.first = 0.f;
 	XMStoreFloat3(&status.vMoveDirection, XMVectorZero());
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
 	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::IDLE_LOOP));
 	return;
 }
@@ -27,6 +28,7 @@ void CSonic_Movement_State::Walk(_float fTimeDelta)
 	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
 		status.fMoveSpeed.first = status.fMoveSpeed.second;
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
 	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::WALK_LOOP), 1.5f);
 }
 
@@ -38,6 +40,7 @@ void CSonic_Movement_State::Run(_float fTimeDelta)
 	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
 		status.fMoveSpeed.first = status.fMoveSpeed.second;
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
 	if (status.fCurSlope >= status.fSlopeLimitAngle)
 	{
 		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::WALLRUN_U_LOOP), status.fMoveSpeed.first);
@@ -54,6 +57,7 @@ void CSonic_Movement_State::Dash(_float fTimeDelta)
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
 	status.fMoveSpeed.first += status.fMoveAccelration * 3.f * fTimeDelta;
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
 	if (status.fMoveSpeed.first > status.fMoveSpeed.second)
 	{
 		status.fMoveSpeed.first -= status.fMoveAccelration * 5.f * fTimeDelta;
@@ -70,6 +74,7 @@ void CSonic_Movement_State::Boost(_float fTimeDelta)
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
 	status.fMoveSpeed.first += status.fMoveAccelration * 5.f * fTimeDelta;
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
 	if (status.fMoveSpeed.first >= status.fMaxBoostSpeed)
 		status.fMoveSpeed.first = status.fMaxBoostSpeed;
 
@@ -90,6 +95,7 @@ void CSonic_Movement_State::Brake(_float fTimeDelta)
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
 	status.fMoveSpeed.first *= status.fFriction;
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
 	if (status.fMoveSpeed.first <= 0.f)
 		status.fMoveSpeed.first = 0.f;
 	if (status.fCurSlope >= 30.f)
@@ -115,10 +121,12 @@ void CSonic_Movement_State::Jump(_float fTimeDelta)
 	if (status.fVerticalVelocity.first <= 0.f || pAnimator->Get_AnimationProgress() >= 0.75f)
 	{
 		static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(1);
+		static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(true);
 		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::SPINSTATE::SPIN_JUMP), 1.5f, false);
 	}
 	else
 	{
+		static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
 		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::JUMP_U), 1.5f, false);
 		
 	}
@@ -126,7 +134,19 @@ void CSonic_Movement_State::Jump(_float fTimeDelta)
 
 void CSonic_Movement_State::Rider(_float fTimeDelta)
 {
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+	status.fMoveSpeed.first += status.fMoveAccelration * 3.f * fTimeDelta;
+	if (status.fMoveSpeed.first > status.fMoveSpeed.second)
+	{
+		status.fMoveSpeed.first -= status.fMoveAccelration * 5.f * fTimeDelta;
+		if (status.fMoveSpeed.first < status.fMoveSpeed.second)
+			status.fMoveSpeed.first = status.fMoveSpeed.second;
+	}
 
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
+	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::GRIND_LOOP));
 }
 
 void CSonic_Movement_State::Avoid(_float fTimeDelta)
@@ -137,13 +157,14 @@ void CSonic_Movement_State::Avoid(_float fTimeDelta)
 	status.fMoveSpeed.first += status.fMoveAccelration * 2.f * fTimeDelta;
 	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
 		status.fMoveSpeed.first = status.fMoveSpeed.second;
-	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	
 	_vector right = pTransform->Get_State(STATE::RIGHT);
 	_vector moveDirection = XMLoadFloat3(&status.vMoveDirection);
 
 	float dotProduct = XMVectorGetX(XMVector3Dot(moveDirection, right));
 
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
 	if (dotProduct > 0.f)
 	{
 		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::IDLE_QUICKSTEP_R), status.fMoveSpeed.first);
@@ -164,11 +185,13 @@ void CSonic_Movement_State::QuickStep(_float fTimeDelta)
 		status.fMoveSpeed.first = status.fMaxBoostSpeed;
 
 	_vector right = pTransform->Get_State(STATE::RIGHT);
+
 	_vector moveDirection = XMLoadFloat3(&status.vMoveDirection);
 	
 	float dotProduct = XMVectorGetX(XMVector3Dot(moveDirection, right));
 
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
 
 	if (dotProduct > 0.f)
 	{
@@ -182,7 +205,26 @@ void CSonic_Movement_State::QuickStep(_float fTimeDelta)
 
 void CSonic_Movement_State::SpringJump(_float fTimeDelta)
 {
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
 
+	status.fMoveSpeed.first += status.fMoveAccelration * fTimeDelta;
+	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
+		status.fMoveSpeed.first = status.fMoveSpeed.second;
+
+	if (status.fVerticalVelocity.first <= 0.f || pAnimator->Get_AnimationProgress() >= 0.75f)
+	{
+		static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(1);
+		static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(true);
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::SPINSTATE::SPIN_JUMP), 1.5f, false);
+	}
+	else
+	{
+		static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::SPRINGJUMP_LOOP), 1.5f, false);
+
+	}
 }
 
 void CSonic_Movement_State::ResolveCollisions(_vector vMovement, _float fTimeDelta)
@@ -257,11 +299,30 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 {
 	if (!m_pOwner) return;
 	
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
 	CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
 	if (!pTransform || !pRigidBody) return;
 
 	CSonic_Controller::SONIC_STATUS& status = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"))->Get_Status();
+
+	if (nullptr != pController->Get_CurrentSpline() && !status.bIsOnSpline)
+	{
+		Begin_Spline();
+	}
+
+	if (status.bIsOnSpline)
+	{
+		Update_SplineMovement(fTimeDelta);
+		if (m_eMovementState == EMovementState::RIDER)
+			Rider(fTimeDelta);
+		return;
+	}
+
+	if (status.bIsSpring)
+	{
+		SpringJump(fTimeDelta);
+	}
 
 	// === 1. 지면 탐지 및 정렬 (두 번째 코드 블록의 역할) ===
 	const float fRayDistance = 1.0f;
@@ -299,7 +360,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 	if (m_pGameInstance->Get_PhysicsScene()->raycast((PxVec3&)vRayOrigin, (PxVec3&)vRayDirection, fRayDistance, hitBuffer) && status.fVerticalVelocity.first <= 0)
 	{
 		_vector vGroundNormal = XMLoadFloat3((_float3*)&hitBuffer.block.normal);
-	
+
 		// 경사각 계산 (단순히 정보 제공 목적)
 		status.fCurSlope = acosf(XMVectorGetX(XMVector3Dot(XMVectorSet(0, 1, 0, 0), vGroundNormal))) * 180.f / XM_PI;
 		if (status.fCurSlope > status.fSlopeLimitAngle)
@@ -326,7 +387,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		}
 		status.bIsOnSpline = false;
 		status.bOnGround = true;
-		
+
 		// === 속도 기반 표면 접착력 계산 ===
 		// 속도가 빠를수록 더 가파른 경사로와 루프를 탈 수 있음
 		float fMinSpeedForLoop = 5.0f; // 루프를 타기 위한 최소 속도
@@ -461,7 +522,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 
 		// === 3. 최종 이동 처리 ===
 		// 최종적으로 결정된 캐릭터의 Look 방향으로 이동합니다.
-		
+
 
 		// 지면에 '자석처럼 붙어있어야 할' 정확한 목표 위치를 계산합니다.
 		_float fCharacterOffset = 1.0f; // 캐릭터의 높이/반경. 캡슐의 반높이에 해당
@@ -518,12 +579,14 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		newTransform.r[3] += vMovement; // 이동량 적용
 
 		ResolveCollisions(vMovement, fTimeDelta);
+		return;
 	}
 	else
 	{
 		switch (m_eMovementState)
 		{
 		case Editor::CSonic_Movement_State::EMovementState::BOOST: Boost(fTimeDelta); break;
+		case Editor::CSonic_Movement_State::EMovementState::SPRINGJUMP: SpringJump(fTimeDelta); break;
 		case Editor::CSonic_Movement_State::EMovementState::POLESPIN: break;
 		case Editor::CSonic_Movement_State::EMovementState::PULLEY: break;
 		case Editor::CSonic_Movement_State::EMovementState::RIDER: Rider(fTimeDelta); break;
@@ -585,127 +648,182 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
 
-	CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
-	if (nullptr == pRigidBody) return;
-
-	// 카메라의 월드 행렬 가져오기
-	_matrix camWorldMatrix = m_pGameInstance->Get_Transform_MatrixInverse(D3DTS::VIEW);
-
-	// 카메라의 월드 공간 기준 Forward 및 Right 벡터 추출
-	_vector camLookWorld = camWorldMatrix.r[2]; // 카메라의 Z축 (바라보는 방향)
-	_vector camRightWorld = camWorldMatrix.r[0]; // 카메라의 X축 (오른쪽 방향)
-	_vector camUpWorld = camWorldMatrix.r[1];    // 카메라의 Y축 (위쪽 방향)
-
-	// 캐릭터의 현재 UP 벡터 가져오기 (표면 법선 방향)
-	_vector characterUp = pTransform->Get_State(STATE::UP);
-
-	// 캐릭터 표면의 평면 구성
-	// 캐릭터의 UP 벡터에 수직인 벡터들이 이 평면을 형성
-
-	// 카메라 Look 벡터를 캐릭터의 표면 평면에 투영
-	_vector projectedCamLook = camLookWorld - XMVector3Dot(camLookWorld, characterUp) * characterUp;
-	float projectedLookLength = XMVectorGetX(XMVector3Length(projectedCamLook));
-
-	// 너무 작은 벡터(거의 수직인 경우)는 기본값으로 대체
-	if (projectedLookLength < 0.01f) {
-		// 캐릭터의 현재 Look 벡터와 카메라의 Right 벡터의 외적으로 대체 방향 계산
-		projectedCamLook = XMVector3Cross(characterUp, camRightWorld);
-		if (XMVectorGetX(XMVector3Length(projectedCamLook)) < 0.01f) {
-			// 비상 대안으로 월드 축 사용
-			projectedCamLook = XMVector3Cross(characterUp, XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f));
-		}
-	}
-	projectedCamLook = XMVector3Normalize(projectedCamLook);
-
-	// 카메라 Right 벡터도 표면 평면에 투영
-	_vector projectedCamRight = XMVector3Cross(characterUp, projectedCamLook);
-	projectedCamRight = XMVector3Normalize(projectedCamRight);
-
-	// 입력에 따른 이동 방향 계산 (이제 표면 평면에 제대로 투영된 벡터 사용)
-	_vector vMovementDirection = XMVectorZero();
-	_bool bIsMoving = false;
-
-	if (KEY_PRESSING(DIK_W)) { vMovementDirection += projectedCamLook; bIsMoving = true; }
-	if (KEY_PRESSING(DIK_S)) { vMovementDirection -= projectedCamLook; bIsMoving = true; }
-	if (KEY_PRESSING(DIK_A)) { vMovementDirection -= projectedCamRight; bIsMoving = true; }
-	if (KEY_PRESSING(DIK_D)) { vMovementDirection += projectedCamRight; bIsMoving = true; }
-
-	// 벡터의 길이가 0이 아닌 경우에만 정규화
-	if (XMVectorGetX(XMVector3LengthSq(vMovementDirection)) > 0.001f) {
-		vMovementDirection = XMVector3Normalize(vMovementDirection);
-	}
-
-	if (KEY_PRESSING(DIK_LSHIFT))
+	if (status.bIsOnSpline)
 	{
-		m_eMovementState = EMovementState::BOOST;
-		if (!bIsMoving)
-			XMStoreFloat3(&status.vMoveDirection, XMVector4Normalize(pTransform->Get_State(STATE::LOOK)));
-		else
-			XMStoreFloat3(&status.vMoveDirection, vMovementDirection);
-		return;
-	}
-
-	if (KEY_PRESSING(DIK_Q))
-	{
-		XMStoreFloat3(&status.vMoveDirection, -XMVector3Normalize(pTransform->Get_State(STATE::RIGHT)));
-		m_eMovementState = m_eMovementState == EMovementState::IDLE ? EMovementState::AVOID : EMovementState::QUICKSTEP;
-		return;
-	}
-
-	if (KEY_PRESSING(DIK_E))
-	{
-		XMStoreFloat3(&status.vMoveDirection, XMVector3Normalize(pTransform->Get_State(STATE::RIGHT)));
-		m_eMovementState = m_eMovementState == EMovementState::IDLE ? EMovementState::AVOID : EMovementState::QUICKSTEP;
-		return;
-	}
-
-	if (KEY_DOWN(DIK_SPACE))
-	{
-		if (status.bCanJump)
+		m_eMovementState = EMovementState::RIDER;
+		// 레일에서 점프
+		if (KEY_DOWN(DIK_SPACE))
 		{
+			status.bIsOnSpline = false;
+			pController->Unregister_Spline();
+
 			m_eMovementState = EMovementState::JUMP;
-			// 초기 수직 점프 속도 설정
 			status.fVerticalVelocity.first = status.fJumpForce;
-			status.bOnGround = false; // 공중 상태로 전환
+			status.bOnGround = false;
 			status.bCanJump = false;
 			status.bCanDoubleJump = true;
-			return;
+			return; // 입력 처리 완료
 		}
-	}
 
-	if (KEY_DOWN(DIK_I))
-	{
-		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::COMBAT), ENUM_CLASS(CSonic::STATE::COMBO_KICK01) + status.iCombos.first++, 1.5f, false);
-		return;
-	}
+		//// 레일에서 퀵스텝 (좌/우 점프)
+		//_bool bQuickStep = false;
+		//_vector vSideStepDir = XMVectorZero();
+		//if (KEY_DOWN(DIK_Q))
+		//{
+		//	vSideStepDir = -pTransform->Get_State(STATE::RIGHT); // 레일의 바이노멀(오른쪽) 벡터
+		//	bQuickStep = true;
+		//}
+		//else if (KEY_DOWN(DIK_E))
+		//{
+		//	vSideStepDir = pTransform->Get_State(STATE::RIGHT);
+		//	bQuickStep = true;
+		//}
 
-	if (bIsMoving)
-	{
-		XMStoreFloat3(&status.vMoveDirection, vMovementDirection);
-		if (status.fMoveSpeed.first >= 1.5f && status.fMoveSpeed.first < 8.5f)
-		{
-			m_eMovementState = EMovementState::RUN;
-		}
-		else if (status.fMoveSpeed.first >= 8.5f)
-		{
-			m_eMovementState = EMovementState::DASH;
-		}
-		else
-		{
-			m_eMovementState = EMovementState::WALK;
-		}
+		//if (bQuickStep)
+		//{
+		//	status.bIsOnSpline = false;
+		//	pController->Unregister_Spline();
+
+		//	m_eMovementState = EMovementState::JUMP; // 점프 상태 재사용
+		//	status.fVerticalVelocity.first = status.fJumpForce * 0.7f; // 일반 점프보다 낮은 점프
+
+		//	// 측면 이동 속도 및 방향 설정
+		//	XMStoreFloat3(&status.vMoveDirection, XMVector3Normalize(vSideStepDir));
+		//	status.fMoveSpeed.first = 10.f; // 퀵스텝을 위한 고정 속도
+
+		//	status.bOnGround = false;
+		//	status.bCanJump = false;
+		//	status.bCanDoubleJump = false; // 퀵스텝 후에는 더블 점프 불가
+
+		//	// 퀵스텝 애니메이션 재생 (필요에 따라 애니메이션 인덱스 조정)
+		//	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::IDLE_QUICKSTEP_R), 1.5f, false, 0.1f);
+		//	return; // 입력 처리 완료
+		//}
 	}
 	else
 	{
-		if (status.fMoveSpeed.first >= 2.f)
+		CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
+		if (nullptr == pRigidBody) return;
+
+		// 카메라의 월드 행렬 가져오기
+		_matrix camWorldMatrix = m_pGameInstance->Get_Transform_MatrixInverse(D3DTS::VIEW);
+
+		// 카메라의 월드 공간 기준 Forward 및 Right 벡터 추출
+		_vector camLookWorld = camWorldMatrix.r[2]; // 카메라의 Z축 (바라보는 방향)
+		_vector camRightWorld = camWorldMatrix.r[0]; // 카메라의 X축 (오른쪽 방향)
+		_vector camUpWorld = camWorldMatrix.r[1];    // 카메라의 Y축 (위쪽 방향)
+
+		// 캐릭터의 현재 UP 벡터 가져오기 (표면 법선 방향)
+		_vector characterUp = pTransform->Get_State(STATE::UP);
+
+		// 캐릭터 표면의 평면 구성
+		// 캐릭터의 UP 벡터에 수직인 벡터들이 이 평면을 형성
+
+		// 카메라 Look 벡터를 캐릭터의 표면 평면에 투영
+		_vector projectedCamLook = camLookWorld - XMVector3Dot(camLookWorld, characterUp) * characterUp;
+		float projectedLookLength = XMVectorGetX(XMVector3Length(projectedCamLook));
+
+		// 너무 작은 벡터(거의 수직인 경우)는 기본값으로 대체
+		if (projectedLookLength < 0.01f) {
+			// 캐릭터의 현재 Look 벡터와 카메라의 Right 벡터의 외적으로 대체 방향 계산
+			projectedCamLook = XMVector3Cross(characterUp, camRightWorld);
+			if (XMVectorGetX(XMVector3Length(projectedCamLook)) < 0.01f) {
+				// 비상 대안으로 월드 축 사용
+				projectedCamLook = XMVector3Cross(characterUp, XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f));
+			}
+		}
+		projectedCamLook = XMVector3Normalize(projectedCamLook);
+
+		// 카메라 Right 벡터도 표면 평면에 투영
+		_vector projectedCamRight = XMVector3Cross(characterUp, projectedCamLook);
+		projectedCamRight = XMVector3Normalize(projectedCamRight);
+
+		// 입력에 따른 이동 방향 계산 (이제 표면 평면에 제대로 투영된 벡터 사용)
+		_vector vMovementDirection = XMVectorZero();
+		_bool bIsMoving = false;
+
+		if (KEY_PRESSING(DIK_W)) { vMovementDirection += projectedCamLook; bIsMoving = true; }
+		if (KEY_PRESSING(DIK_S)) { vMovementDirection -= projectedCamLook; bIsMoving = true; }
+		if (KEY_PRESSING(DIK_A)) { vMovementDirection -= projectedCamRight; bIsMoving = true; }
+		if (KEY_PRESSING(DIK_D)) { vMovementDirection += projectedCamRight; bIsMoving = true; }
+
+		// 벡터의 길이가 0이 아닌 경우에만 정규화
+		if (XMVectorGetX(XMVector3LengthSq(vMovementDirection)) > 0.001f) {
+			vMovementDirection = XMVector3Normalize(vMovementDirection);
+		}
+
+		if (KEY_PRESSING(DIK_LSHIFT))
 		{
-			m_eMovementState = EMovementState::BRAKE;
+			m_eMovementState = EMovementState::BOOST;
+			if (!bIsMoving)
+				XMStoreFloat3(&status.vMoveDirection, XMVector4Normalize(pTransform->Get_State(STATE::LOOK)));
+			else
+				XMStoreFloat3(&status.vMoveDirection, vMovementDirection);
+			return;
+		}
+
+		if (KEY_PRESSING(DIK_Q))
+		{
+			XMStoreFloat3(&status.vMoveDirection, -XMVector3Normalize(pTransform->Get_State(STATE::RIGHT)));
+			m_eMovementState = m_eMovementState == EMovementState::IDLE ? EMovementState::AVOID : EMovementState::QUICKSTEP;
+			return;
+		}
+
+		if (KEY_PRESSING(DIK_E))
+		{
+			XMStoreFloat3(&status.vMoveDirection, XMVector3Normalize(pTransform->Get_State(STATE::RIGHT)));
+			m_eMovementState = m_eMovementState == EMovementState::IDLE ? EMovementState::AVOID : EMovementState::QUICKSTEP;
+			return;
+		}
+
+		if (KEY_DOWN(DIK_SPACE))
+		{
+			if (status.bCanJump)
+			{
+				m_eMovementState = EMovementState::JUMP;
+				// 초기 수직 점프 속도 설정
+				status.fVerticalVelocity.first = status.fJumpForce;
+				status.bOnGround = false; // 공중 상태로 전환
+				status.bCanJump = false;
+				status.bCanDoubleJump = true;
+				return;
+			}
+		}
+
+		if (KEY_DOWN(DIK_I))
+		{
+			pController->Change_State(ENUM_CLASS(CSonic_Controller::States::COMBAT), ENUM_CLASS(CSonic::STATE::COMBO_KICK01) + status.iCombos.first++, 1.5f, false);
+			return;
+		}
+
+		if (bIsMoving)
+		{
+			XMStoreFloat3(&status.vMoveDirection, vMovementDirection);
+			if (status.fMoveSpeed.first >= 1.5f && status.fMoveSpeed.first < 8.5f)
+			{
+				m_eMovementState = EMovementState::RUN;
+			}
+			else if (status.fMoveSpeed.first >= 8.5f)
+			{
+				m_eMovementState = EMovementState::DASH;
+			}
+			else
+			{
+				m_eMovementState = EMovementState::WALK;
+			}
 		}
 		else
 		{
-			if (pAnimator->Get_AnimationProgress() >= 0.75f || m_eMovementState == EMovementState::WALK)
+			if (status.fMoveSpeed.first >= 2.f)
 			{
-				m_eMovementState = EMovementState::IDLE;
+				m_eMovementState = EMovementState::BRAKE;
+			}
+			else
+			{
+				if (pAnimator->Get_AnimationProgress() >= 0.75f || m_eMovementState == EMovementState::WALK)
+				{
+					m_eMovementState = EMovementState::IDLE;
+				}
 			}
 		}
 	}
@@ -718,4 +836,167 @@ CSonic_Movement_State* CSonic_Movement_State::Create(CGameObject* pOwner)
 	return pInstance;
 }
 
+#pragma endregion
+
+#pragma region Interaction
+void CSonic_Movement_State::Begin_Spline()
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	if (!pController) return;
+	CSpline_Component* pSpline = pController->Get_CurrentSpline();
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+
+	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+	if (status.bIsOnSpline)
+		return;
+
+	_vector vSonicPosition = pTransform->Get_State(STATE::POSITION);
+	_float fClosestT = pSpline->Find_Closest_Param(vSonicPosition);
+
+	// 상태 설정
+	status.fSplineParameter = fClosestT;
+	status.bIsOnSpline = true;
+	m_eMovementState = EMovementState::RIDER;
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::GRIND_LOOP));
+
+	// 레일 진행 방향 설정 (방향은 플레이어의 현재 속도 방향과 레일 방향 중 더 일치하는 쪽으로)
+	Determine_SplineDirection();
+
+	// 캐릭터를 레일 위에 정확히 배치
+	Update_PositionOnSpline();
+}
+void CSonic_Movement_State::Update_SplineMovement(_float fTimeDelta)
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	if (!pController) return;
+	CSpline_Component* pSpline = pController->Get_CurrentSpline();
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+
+	if (!pSpline || !status.bIsOnSpline)
+		return;
+
+	// 레일 위에서 이동 속도 (현재 속도 유지 또는 고정값 사용)
+	_float fRailSpeed = status.fMoveSpeed.first;
+	if (fRailSpeed < 5.f) fRailSpeed = 5.f; // 최소 속도 보장
+
+	// 스플라인의 전체 길이를 기준으로 이동량 계산
+	_float fSplineLength = pSpline->GetTotalLength();
+	_float fDeltaT = fRailSpeed / fSplineLength * fTimeDelta;
+
+	// 진행 방향에 따라 파라미터 업데이트
+	if (status.bIsForward)
+	{
+		status.fSplineParameter += fDeltaT;
+	}
+	else
+	{
+		status.fSplineParameter -= fDeltaT;
+	}
+
+	// 레일 끝에 도달했는지 확인
+	if (status.fSplineParameter >= 1.f || status.fSplineParameter <= 0.f)
+	{
+		status.bIsOnSpline = false;
+		pController->Unregister_Spline();
+
+		// 초기 수직 점프 속도 설정
+		status.fVerticalVelocity.first = status.fJumpForce;
+		status.bCanJump = false;   // 레일에서 떨어지면 점프 가능
+		status.bOnGround = false; // 공중 상태로 전환
+		status.bCanDoubleJump = true;
+		m_eMovementState = EMovementState::JUMP;
+		return;
+	}
+
+	// 새 위치로 업데이트
+	Update_PositionOnSpline();
+}
+void CSonic_Movement_State::Update_PositionOnSpline()
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	if (!pController) return;
+	CSpline_Component* pSpline = pController->Get_CurrentSpline();
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+
+	if (!pSpline || !status.bIsOnSpline)
+		return;
+
+	vector<CSpline_Component::SPLINE_FRAME>& splineFrames = pSpline->Get_SplineFrames();
+	if (splineFrames.empty())
+		return;
+
+	// 스플라인 파라미터를 기반으로 정확한 위치 계산
+	_float fTotalFrames = static_cast<_float>(splineFrames.size() - 1);
+	_float fExactFramePos = status.fSplineParameter * fTotalFrames;
+
+	// 보간을 위한 두 프레임 인덱스 계산
+	_uint uIndex1 = static_cast<_uint>(fExactFramePos);
+	_uint uIndex2 = uIndex1 + 1;
+
+	// 인덱스가 범위를 벗어나지 않도록 제한
+	uIndex1 = min(uIndex1, static_cast<_uint>(splineFrames.size() - 1));
+	uIndex2 = min(uIndex2, static_cast<_uint>(splineFrames.size() - 1));
+
+	// 두 프레임 간의 보간 계수 계산
+	_float fLerpFactor = fExactFramePos - uIndex1;
+
+	// 레일 위 위치 설정
+	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+	if (!pTransform)
+		return;
+
+	// 위치, 탄젠트, 노멀 벡터를 선형 보간하여 부드러운 값 계산
+	_vector vPosition = XMVectorLerp(XMLoadFloat3(&splineFrames[uIndex1].vPosition), XMLoadFloat3(&splineFrames[uIndex2].vPosition), fLerpFactor);
+	_vector vTangent = XMVectorLerp(XMLoadFloat3(&splineFrames[uIndex1].vTangent), XMLoadFloat3(&splineFrames[uIndex2].vTangent), fLerpFactor);
+	_vector vNormal = XMVectorLerp(XMLoadFloat3(&splineFrames[uIndex1].vNormal), XMLoadFloat3(&splineFrames[uIndex2].vNormal), fLerpFactor);
+
+	// 보간된 벡터 정규화
+	vTangent = XMVector3Normalize(vTangent);
+	vNormal = XMVector3Normalize(vNormal);
+	_vector vBinormal = XMVector3Normalize(XMVector3Cross(vTangent, vNormal));
+
+	// 레일 위 위치로 이동
+	pTransform->Set_State(STATE::POSITION, XMVectorSetW(vPosition, 1.f));
+
+	// 레일 진행 방향이 반대면 탄젠트 방향 반전
+	if (!status.bIsForward) // updated to use status instead of m_tInfo
+		vTangent = XMVectorNegate(vTangent);
+
+	XMStoreFloat3(&status.vMoveDirection, vTangent);
+	// 소닉의 방향 설정 (룩 벡터를 탄젠트 방향으로)
+	pTransform->Set_State(STATE::LOOK, vTangent);
+	pTransform->Set_State(STATE::UP, vNormal);
+	pTransform->Set_State(STATE::RIGHT, vBinormal);
+}
+void CSonic_Movement_State::Determine_SplineDirection()
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	if (!pController) return;
+	CSpline_Component* pSpline = pController->Get_CurrentSpline();
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+
+	if (!pSpline || !status.bIsOnSpline)
+		return;
+
+	// 현재 위치에서의 스플라인 탄젠트 벡터 가져오기
+	vector<CSpline_Component::SPLINE_FRAME>& splineFrames = pSpline->Get_SplineFrames();
+	if (splineFrames.empty())
+		return;
+
+	// 현재 파라미터에 해당하는 프레임 인덱스 계산
+	_uint frameIdx = (_uint)(status.fSplineParameter * (splineFrames.size() - 1));
+	if (frameIdx >= splineFrames.size())
+		frameIdx = splineFrames.size() - 1;
+
+	// 플레이어의 현재 이동 방향과 레일 방향 비교
+	_vector playerDir = XMLoadFloat3(&status.vMoveDirection);
+	_vector railTangent = XMLoadFloat3(&splineFrames[frameIdx].vTangent);
+
+	// 두 방향의 내적으로 방향 일치도 확인
+	_float dotProduct = XMVectorGetX(XMVector3Dot(playerDir, railTangent));
+
+	// 내적이 음수면 레일 방향과 반대 방향으로 진행 중
+	status.bIsForward = (dotProduct >= 0.0f);
+}
 #pragma endregion

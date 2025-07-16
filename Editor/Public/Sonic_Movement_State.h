@@ -31,6 +31,8 @@ public:
 	static CSonic_Movement_State* Create(CGameObject* pOwner);
 	void Execute(_float fTimeDelta) override;
 	void HandleInput(_float fTimeDelta) override;
+
+
 private:
 	void Idle(_float fTimeDelta);
 	void Walk(_float fTimeDelta);
@@ -44,14 +46,20 @@ private:
 	void QuickStep(_float fTimeDelta);
 	void SpringJump(_float fTimeDelta);
 
+#pragma region Interact
+private:
+	void Begin_Spline();
+	void Update_SplineMovement(_float fTimeDelta);
+	void Update_PositionOnSpline();
+	void Determine_SplineDirection();
+#pragma endregion
+
 private:
 	void ResolveCollisions(_vector vMovement, _float fTimeDelta);
 private:
 	EMovementState m_eMovementState = EMovementState::IDLE;
 };
-#pragma region Interact
 
-#pragma endregion
 
 
 NS_END

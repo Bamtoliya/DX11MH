@@ -1,4 +1,73 @@
 {
+        "Prototype_Component_Model_Spring": {
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Spring.model",
+        "PreTransformedMatrix": [
+        -1.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+        ],
+        "Type": "ANIM"
+    },
+        "Prototype_Component_Model_Ring": {
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Ring.fbx",
+        "PreTransformedMatrix": [
+        -1.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+        ],
+        "Type": "NONANIM"
+    },
+    "Prototype_Component_Model_GrindRail": {
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Objects/GrindRail/GrindRail.fbx",
+        "PreTransformedMatrix": [
+        -1.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+        ],
+        "Type": "NONANIM"
+    },
     "Prototype_GameObject_Spring": {
         "Class": "CSpring"
     },

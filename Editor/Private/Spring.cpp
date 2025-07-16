@@ -1,5 +1,7 @@
 #include "Spring.h"
 #include "GameInstance.h"
+#include "Animator.h"
+#include "Sonic_Controller.h"
 
 #pragma region Constructor/Destructor
 CSpring::CSpring(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -83,6 +85,8 @@ HRESULT CSpring::Initialize(void* pArg)
 	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
+	m_pAnimatorCom->Change_Animation(0, 1.0f, false, 0.f); // 기본 애니메이션 재생
+
 	return S_OK;
 }
 
@@ -100,6 +104,8 @@ HRESULT CSpring::Initialize(simdjson::ondemand::object& jsonData)
 	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
+	m_pAnimatorCom->Change_Animation(0, 1.0f, false, 0.f); // 기본 애니메이션 재생
+
 	return S_OK;
 }
 
@@ -115,9 +121,22 @@ HRESULT CSpring::Ready_Components()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
+	/* For.Com_Animator */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Animator"),
+		TEXT("Com_Animator"), reinterpret_cast<CComponent**>(&m_pAnimatorCom))))
+		return E_FAIL;
+
+	CRigidBody::RIGIDBODY_DESC rigidBodyDesc = {};
+	rigidBodyDesc.vLocalPosition = { 0.f, 0.5f, 0.f };
+	CRigidBody::SHAPE_DESC shapeDesc = {};
+	shapeDesc.eShapeType = CRigidBody::EShapeType::SPHERE;
+	shapeDesc.vShapeSize = { 0.75f, 1.0, 1.f };
+	rigidBodyDesc.vShapeDescs.push_back(shapeDesc);
+	rigidBodyDesc.eBodyType = CRigidBody::EBodyType::STATIC;
+
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom))))
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom), &rigidBodyDesc)))
 		return E_FAIL;
 
 
@@ -130,6 +149,7 @@ void CSpring::Free()
 	Safe_Release(m_pRigidBodyCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pAnimatorCom);
 }
 
 #pragma endregion
@@ -174,7 +194,10 @@ void CSpring::Priority_Update(_float fTimeDelta)
 
 void CSpring::Update(_float fTimeDelta)
 {
-	if (m_pRigidBodyCom) m_pRigidBodyCom->Update(fTimeDelta);
+	if (m_pRigidBodyCom)
+		m_pRigidBodyCom->Update(fTimeDelta);
+	if (m_pAnimatorCom)
+		m_pAnimatorCom->Update(fTimeDelta);
 }
 
 void CSpring::Late_Update(_float fTimeDelta)
@@ -227,6 +250,18 @@ HRESULT CSpring::Render()
 }
 void CSpring::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
 {
+	// 애니메이터 컴포넌트가 없거나 애니메이션이 이미 재생 중이면 반환
+	/*if (nullptr == m_pAnimatorCom || !m_pAnimatorCom->Is_Finished())
+		return;*/
+
+
+	CGameObject* pGameObject = static_cast<CGameObject*>(pOther->userData);
+	CSonic_Controller* pController = dynamic_cast<CSonic_Controller*>(pGameObject->Get_Component(L"Com_Controller"));
+	if (pController)
+	{
+		_vector vPushDirection = m_pTransformCom->Get_State(STATE::UP);
+		pController->Spring(vPushDirection);
+	}
 }
 void CSpring::OnCollisionOverlapping(PxActor* pOther)
 {

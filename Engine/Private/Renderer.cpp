@@ -494,7 +494,7 @@ HRESULT CRenderer::Render_Blend()
 
 HRESULT CRenderer::Render_UI()
 {
-	/*m_pGameInstance->Begin_MRT(L"MRT_UI");*/
+	m_pGameInstance->Begin_MRT(L"MRT_UI");
 	for (auto& pGameObject : m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_UI)])
 	{
 		if (nullptr != pGameObject)
@@ -503,7 +503,7 @@ HRESULT CRenderer::Render_UI()
 		Safe_Release(pGameObject);
 	}
 	m_RenderObjects[ENUM_CLASS(RENDERGROUP::RG_UI)].clear();
-	/*m_pGameInstance->End_MRT();*/
+	m_pGameInstance->End_MRT();
 	return S_OK;
 }
 

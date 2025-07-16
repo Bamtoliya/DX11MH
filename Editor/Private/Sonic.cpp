@@ -355,4 +355,33 @@ void CSonic::Change_ModelIndex(_uint i)
 {
 	m_iCurModelIndex = i;
 }
+void CSonic::Set_Spin_Collider(_bool bSpin)
+{
+	if(nullptr == m_pRigidBodyCom)
+		return;
+
+	// 액터 0의 첫 번째 쉐이프(콜라이더) 정보를 가져옵니다.
+	//CRigidBody::SHAPE_DESC* pShapeDesc = m_pRigidBodyCom->Get_Shape(0);
+	//if (nullptr == pShapeDesc)
+	//	return;
+	//
+	//if (bSpin)
+	//{
+	//	// 콜라이더를 원형(Sphere)으로 변경합니다.
+	//	pShapeDesc->eShapeType = CRigidBody::EShapeType::SPHERE;
+	//	pShapeDesc->vShapeSize = _float3(0.3f, 0.f, 0.f); // 반지름 설정
+	//	pShapeDesc->vLocalPosition = _float3(0.f, -0.4f, 0.f); // 위치 변경
+	//}
+	//else
+	//{
+	//	// 콜라이더를 원래의 캡슐 형태로 되돌립니다.
+	//	pShapeDesc->eShapeType = CRigidBody::EShapeType::CAPSULE;
+	//	pShapeDesc->vShapeSize = _float3(0.25f, 0.25f, 0.f); // 반지름, 절반 높이 설정
+	//	pShapeDesc->vLocalPosition = _float3(0.f, 0.1f, 0.f); // 위치 복원
+	//}
+	//
+	//// 변경된 콜라이더 정보로 액터를 다시 생성하고 씬에 등록합니다.
+	//m_pRigidBodyCom->Late_Initialize();
+	//m_pGameInstance->AddActorToScene(m_pRigidBodyCom->Get_Actors()[0]);
+}
 #pragma endregion

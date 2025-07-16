@@ -43,6 +43,9 @@ public:
 		_bool bIsOnSpline = { false };
 		_float fSplineParameter = { 0.f };
 
+		//Spring
+		_bool bIsSpring = { false };
+
 		//Combat
 		pair<_float, _float>	fAtkDamage = { 4.f, 6.f };
 		_float	fComboDelay = { 3.0f };
@@ -104,20 +107,16 @@ public:
 
 #pragma region Interaction
 public:
-	void Begin_Rail(CSpline_Component* pSpline, _float fStartT);
+	//Spline
+	void Register_Spline(CSpline_Component* pSpline) { m_pCurrentSpline = pSpline; }
+	void Unregister_Spline() { m_pCurrentSpline = nullptr; }
+	CSpline_Component* Get_CurrentSpline() const { return m_pCurrentSpline; }
+
+	void Spring(_fvector vPushDirection);
+
 	void Begin_Pulley();
-	void Begin_Spring();
 	void Begin_Dashboard();
 #pragma endregion
-
-
-#pragma region Spline
-private:
-	void DetermineSplineDirection();
-	void UpdatePositionOnSpline();
-	void Update_RailMovement(_float fTimeDelta);
-#pragma endregion
-
 
 #pragma region Ring
 public:

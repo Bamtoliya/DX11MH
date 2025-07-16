@@ -12,6 +12,11 @@ CShader::CShader(const CShader& Prototype)
 	, m_InputLayouts{ Prototype.m_InputLayouts }
 	, m_strShaderFile{ Prototype.m_strShaderFile }
 	, m_strLayoutName { Prototype.m_strLayoutName }
+	, m_bTiling{ Prototype.m_bTiling }
+	, m_fScale{ Prototype.m_fScale }
+	, m_fOffset{ Prototype.m_fOffset }
+	, m_bUVAnimation{ Prototype.m_bUVAnimation }
+	, m_vUVAnimationSpeed{ Prototype.m_vUVAnimationSpeed }
 {
 	Safe_AddRef(m_pEffect);
 	for (auto& pInputLayout : m_InputLayouts)
@@ -110,6 +115,18 @@ void CShader::Free()
 
 	Safe_Release(m_pEffect);
 }
+void CShader::Update(_float fTimeDelta)
+{
+	if (m_bUVAnimation)
+	{
+		m_fOffset.x += m_vUVAnimationSpeed.x * fTimeDelta;
+		m_fOffset.y += m_vUVAnimationSpeed.y * fTimeDelta;
+
+		// Offset 값이 [0.0, 1.0] 범위를 벗어나면 순환하도록 처리
+		m_fOffset.x = fmod(m_fOffset.x, 1.0f);
+		m_fOffset.y = fmod(m_fOffset.y, 1.0f);
+	}
+}
 #pragma endregion
 
 
@@ -206,6 +223,8 @@ HRESULT CShader::Serialize(json& outJson)
 	data["TilingScale"] = { m_fScale.x, m_fScale.y };
 	data["TilingOffset"] = { m_fOffset.x, m_fOffset.y };
 	data["Layout"] = m_strLayoutName;
+	data["UVAnimation"] = m_bUVAnimation;
+	data["UVAnimationSpeed"] = { m_vUVAnimationSpeed.x, m_vUVAnimationSpeed.y };
 
 	outJson["CShader"] = data;
 	return S_OK;
@@ -237,6 +256,21 @@ HRESULT CShader::Deserialize(simdjson::ondemand::object & jsonData)
 			m_fOffset.x = static_cast<_float>((*iter).get_double().value_unsafe());
 			++iter;
 			m_fOffset.y = static_cast<_float>((*iter).get_double().value_unsafe());
+		}
+
+		if (shaderObject["UVAnimation"].get_bool().get(m_bUVAnimation) == simdjson::SUCCESS)
+		{
+			simdjson::ondemand::array speed_array;
+			if (shaderObject["UVAnimationSpeed"].get_array().get(speed_array) == simdjson::SUCCESS)
+			{
+				if (speed_array.count_elements().get(count) == simdjson::SUCCESS && count >= 2)
+				{
+					auto iter = speed_array.begin();
+					m_vUVAnimationSpeed.x = static_cast<_float>((*iter).get_double().value_unsafe());
+					++iter;
+					m_vUVAnimationSpeed.y = static_cast<_float>((*iter).get_double().value_unsafe());
+				}
+			}
 		}
 	}
 
@@ -298,6 +332,13 @@ HRESULT CShader::RenderImGui()
 		ImGui::Checkbox("Tiling", &m_bTiling);
 		ImGui::DragFloat2("Tiling Scale", &m_fScale.x, 0.1f, 0.0f, 100.0f);
 		ImGui::SliderFloat2("Tiling Offset", &m_fOffset.x, -1.0f, 1.0f);
+
+		ImGui::Separator();
+		ImGui::Checkbox("UV Animation", &m_bUVAnimation);
+		if (m_bUVAnimation)
+		{
+			ImGui::DragFloat2("UV Animation Speed", &m_vUVAnimationSpeed.x, 0.01f, -10.f, 10.f);
+		}
 	}
 	return S_OK;
 }

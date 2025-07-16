@@ -8,8 +8,6 @@
 #include "../../External Libraries/physx/include/OmniPvdFileWriteStream.h"  
 #pragma endregion
 
-
-
 #pragma region Constructor/Destructor
 CPhysics_System::CPhysics_System(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : m_pGameInstance { CGameInstance::Get_Instance() }

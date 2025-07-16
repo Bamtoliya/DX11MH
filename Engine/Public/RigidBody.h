@@ -118,6 +118,8 @@ public:
 
     void Change_RigidBodyModel(class CModel* pModel);
 
+    public:
+        void Set_Shape_Active(_uint iIndex, _bool bActive);
 private:
     HRESULT Create_Actor();        // PhysX 액터 생성 로직
     void Release_Actor();       // PhysX 액터 해제 로직

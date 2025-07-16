@@ -163,7 +163,8 @@ void CRing::Priority_Update(_float fTimeDelta)
 
 void CRing::Update(_float fTimeDelta)
 {
-
+	if(m_pTransformCom)
+		m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::UP), fTimeDelta);
 }
 
 void CRing::Late_Update(_float fTimeDelta)

@@ -70,6 +70,9 @@ public:
 	const vector<SPLINE_FRAME>& GetSplineFrames() const { return m_SplineFrames; }
 	_float GetTotalLength() const { return m_fTotalLength; }
 	void UpdateSplineFrames(); // 프레임 계산을 위한 함수
+public:
+	void Set_IsRail(_bool bIsRail) { m_bIsRail = bIsRail; }
+	_bool Get_IsRail() const { return m_bIsRail; }
 private:
 	vector<_float3>			m_ControlPoints;
 	vector<SPLINE_FRAME>	m_SplineFrames;
@@ -77,6 +80,7 @@ private:
 	_float			m_fTotalLength = { 0.f };
 	SPLINE_DESC     m_tSplineDesc;
 	_bool           m_bIsDirty = { true };
+	_bool			m_bIsRail = { false };
 
 private:
 	ID3D11Buffer* m_pBuffer = { nullptr };

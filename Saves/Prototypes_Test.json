@@ -1,27 +1,5 @@
 {
-  "Prototype_Component_Model_Spring": {
-    "Class": "CModel",
-    "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Spring.fbx",
-    "PreTransformedMatrix": [
-      -1.0,
-      0.0,
-      -0.0,
-      0.0,
-      0.0,
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      -1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ],
-    "Type": "ANIM"
-  },
+  
   "Prototype_Component_Model_Tutorial_Enemy": {
     "Class": "CModel",
     "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Tutorial Enemy.fbx",
@@ -71,29 +49,6 @@
   "Prototype_Component_Model_Virtual_Space": {
     "Class": "CModel",
     "ModelFilePath": "G:/My Drive/Assets/Models/Virtual Space.model",
-    "PreTransformedMatrix": [
-      -1.0,
-      0.0,
-      -0.0,
-      0.0,
-      0.0,
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      -1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ],
-    "Type": "NONANIM"
-  },
-  "Prototype_Component_Model_Ring": {
-    "Class": "CModel",
-    "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Ring.fbx",
     "PreTransformedMatrix": [
       -1.0,
       0.0,

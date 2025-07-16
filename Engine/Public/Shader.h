@@ -22,6 +22,11 @@ public:
 	virtual void Free() override;
 #pragma endregion
 
+#pragma region Loops
+	virtual void Update(_float fTimeDelta) override;
+#pragma endregion
+
+
 #pragma region Variables
 private:
 	ID3DX11Effect*				m_pEffect = { nullptr };
@@ -35,6 +40,10 @@ private:
 	_bool						m_bTiling;
 	_float2						m_fOffset = {};
 	_float2						m_fScale = { 1.f, 1.f };
+
+private:
+	_bool						m_bUVAnimation = false;
+	_float2						m_vUVAnimationSpeed = { 0.f, 0.f };
 #pragma endregion
 
 #pragma region Rendering
@@ -43,7 +52,6 @@ public:
 #pragma endregion
 
 #pragma region Bind Resources
-
 	HRESULT Bind_RawValue(const _char* pConstantName, const void* pValue, _uint iLength);
 	HRESULT Bind_Matrix(const _char* pConstantName, const _float4x4* pMatrix);
 	HRESULT Bind_Matrices(const _char* pConstantName, const _float4x4* pMatrix, _uint iNumMatrices);

@@ -1,5 +1,6 @@
 #include "Rail.h"
 #include "GameInstance.h"
+#include "Spline_Component.h"
 #include "Sonic.h"
 #include "Sonic_Controller.h"
 
@@ -87,6 +88,8 @@ HRESULT CRail::Initialize(void* pArg)
 	m_pSplineCom->AddControlPoint(_float3(30.f, 2.f, 0.f));
 	m_pSplineCom->AddControlPoint(_float3(30.f, 0.f, 0.f));
 
+	m_pSplineCom->Set_IsRail(true);
+
 	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
@@ -106,6 +109,8 @@ HRESULT CRail::Initialize(simdjson::ondemand::object& jsonData)
 
 	if (FAILED(Late_Initialize()))
 		return E_FAIL;
+
+	m_pSplineCom->Set_IsRail(true);
 
 	return S_OK;
 }
@@ -265,7 +270,8 @@ void CRail::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
 				_float fClosestT = m_pSplineCom->Find_Closest_Param(vSonicPosition);
 
 				// 컨트롤러에 스플라인 타기 시작을 알림
-				pController->Begin_Rail(m_pSplineCom, fClosestT);
+				pController->Register_Spline(m_pSplineCom);
+				//pController->Begin_Rail(m_pSplineCom, fClosestT);
 			}
 		}
 	}

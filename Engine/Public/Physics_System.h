@@ -92,4 +92,22 @@ private:
 	
 };
 
+class CQuery_Filter_Callback : public PxQueryFilterCallback
+{
+public:
+	CQuery_Filter_Callback(CGameObject* pOwner) : m_pOwner(pOwner) {}
+	virtual ~CQuery_Filter_Callback() = default;
+	PxQueryHitType::Enum preFilter(const PxFilterData& filterData, const PxShape* shape, const PxRigidActor* actor, PxHitFlags& queryFlags) override
+	{
+		if (actor->userData == m_pOwner)
+			return PxQueryHitType::eNONE; // 자기 자신은 제외
+		return PxQueryHitType::eBLOCK; // 나머지는 충돌 처리
+	}
+	PxQueryHitType::Enum postFilter(const PxFilterData& filterData, const PxQueryHit& hit, const PxShape* shape, const PxRigidActor* actor) override
+	{
+		return PxQueryHitType::eBLOCK; // 기본적으로 블록 처리
+	}
+private:
+	CGameObject* m_pOwner = nullptr; // 오너 객체
+};
 NS_END

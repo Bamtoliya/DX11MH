@@ -59,12 +59,6 @@ private:
 	CTexture* m_pTextureCom = { nullptr };
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 #pragma endregion
-
-
-
-
-
-
 };
 
 NS_END

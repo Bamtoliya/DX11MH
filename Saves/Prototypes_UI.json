@@ -59,6 +59,17 @@
     "NumTexture": 1,
     "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_cockpitindicator5.dds"
   },
+  "Prototype_Component_Texture_Hologram3": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_hologram3.dds"
+  },
+  "Prototype_Component_Texture_BackgroundDummy": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_BGdummy3.dds"
+  },
+
   "Prototype_GameObject_BackGround": {
     "Class": "CBackGround"
   },

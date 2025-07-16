@@ -643,6 +643,7 @@ public:
 #pragma endregion
 public:
 	void Change_ModelIndex(_uint i);
+	void Set_Spin_Collider(_bool bSpin);
 
 #pragma region Components
 private:

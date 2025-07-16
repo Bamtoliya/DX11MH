@@ -33,9 +33,10 @@ public:
 
 #pragma region Variables
 private:
-	CShader*	m_pShaderCom = { nullptr };
-	CModel*		m_pModelCom = { nullptr };
+	CShader*	m_pShaderCom	= { nullptr };
+	CModel*		m_pModelCom		= { nullptr };
 	CRigidBody* m_pRigidBodyCom = { nullptr };
+	CAnimator*	m_pAnimatorCom	= { nullptr };
 #pragma endregion
 
 #pragma region Save&Load

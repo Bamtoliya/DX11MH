@@ -1,6 +1,6 @@
 ﻿#include "BackGround.h"
-
 #include "GameInstance.h"
+#include "Shader.h"
 #pragma region Constructor/Destructor
 CBackGround::CBackGround(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUIObject{ pDevice, pContext }
@@ -131,6 +131,7 @@ HRESULT CBackGround::Deserialize(simdjson::ondemand::object& jsonData)
 {
 	if(FAILED(__super::Deserialize(jsonData)))
 		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -155,7 +156,8 @@ void CBackGround::Priority_Update(_float fTimeDelta)
 
 void CBackGround::Update(_float fTimeDelta)
 {
-
+	if(m_pShaderCom)
+		m_pShaderCom->Update(fTimeDelta);
 }
 
 void CBackGround::Late_Update(_float fTimeDelta)
