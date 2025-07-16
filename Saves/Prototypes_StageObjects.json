@@ -1,0 +1,17 @@
+{
+    "Prototype_GameObject_Spring": {
+        "Class": "CSpring"
+    },
+    "Prototype_GameObject_Ring": {
+        "Class": "CRing"
+    },
+    "Prototype_GameObject_Rail": {
+        "Class": "CRail"
+    },
+    "Prototype_GameObject_SplineRoad": {
+        "Class": "CGameObject_SplineRoad"
+    },
+    "Prototype_GameObject_DashBoard": {
+        "Class": "CDashBoard"
+    }
+}

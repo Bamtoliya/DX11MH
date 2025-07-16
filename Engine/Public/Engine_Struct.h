@@ -166,6 +166,17 @@ namespace Engine
 		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
 	} VTXSPLINEMODEL;
 
+	typedef struct ENGINE_DLL tagVertexSplinePoint
+	{
+		XMFLOAT3	vPosition;
+		XMFLOAT3	vNormal;
+		XMFLOAT3	vTangent;
+		XMFLOAT3	vBinormal;
+
+		static const unsigned int					iNumElements = { 4 };
+		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];
+	} VTXSPLINEPOINT;
+
 	typedef struct ENGINE_DLL tagVertexSplineModelInstance
 	{
 		XMFLOAT4		vRight;
@@ -221,7 +232,6 @@ namespace Engine
 		XMFLOAT4		vLook;
 		XMFLOAT4		vTranslation;
 		XMFLOAT2		vLifeTime;
-
 
 		static const unsigned int					iNumElements = { 6 };
 		static const D3D11_INPUT_ELEMENT_DESC		Elements[iNumElements];

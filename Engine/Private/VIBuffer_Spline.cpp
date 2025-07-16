@@ -1,4 +1,6 @@
 #include "VIBuffer_Spline.h"
+#include "Spline_Component.h"
+
 #pragma region Constructor/Destructor
 CVIBuffer_Spline::CVIBuffer_Spline(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CVIBuffer{ pDevice, pContext }
@@ -126,6 +128,42 @@ HRESULT CVIBuffer_Spline::Update_Spline(const vector<_float3>& vPoints)
 	for (_uint i = 0; i < m_iNumVertices; ++i)
 	{
 		vertices[i].vPosition = vPoints[i];
+	}
+
+	ZeroMemory(&m_SubResourceData, sizeof(D3D11_SUBRESOURCE_DATA));
+	m_SubResourceData.pSysMem = vertices.data();
+
+	if (FAILED(Create_VertexBuffer()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CVIBuffer_Spline::Update_Spline(const vector<CSpline_Component::SPLINE_FRAME>& vSplineFrames)
+{
+	if (vSplineFrames.size() < 2)
+	{
+		m_iNumVertices = 0;
+		return S_OK; // 점이 2개 미만이면 선을 그릴 수 없음
+	}
+
+	// 기존 버퍼 해제
+	Safe_Release(m_pVB);
+
+	m_iNumVertices = static_cast<_uint>(vSplineFrames.size());
+
+	// 정점 버퍼 생성
+	m_BufferDesc.ByteWidth = m_iNumVertices * m_iVertexStride;
+	m_BufferDesc.Usage = D3D11_USAGE_DYNAMIC; // 업데이트가 가능하도록 DYNAMIC으로 설정
+	m_BufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	m_BufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; // CPU에서 쓸 수 있도록 설정
+	m_BufferDesc.MiscFlags = 0;
+	m_BufferDesc.StructureByteStride = m_iVertexStride;
+
+	vector<VTXPOS> vertices(m_iNumVertices);
+	for (_uint i = 0; i < m_iNumVertices; ++i)
+	{
+		vertices[i].vPosition = vSplineFrames[i].vPosition;
 	}
 
 	ZeroMemory(&m_SubResourceData, sizeof(D3D11_SUBRESOURCE_DATA));

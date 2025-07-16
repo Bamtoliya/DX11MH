@@ -59,6 +59,11 @@
     "Layout": "VTXMESHINSTANCE",
     "ShaderPath": "G:/My Drive/Assets/ShaderFiles/Shader_VtxMeshInstance.hlsl"
   },
+  "Prototype_Component_Shader_Spline": {
+    "Class": "CShader",
+    "Layout": "VTXPOS",
+    "ShaderPath": "G:/My Drive/Assets/ShaderFiles/Shader_Spline.hlsl"
+  },
   "Prototype_Component_Texture_BackGround": {
     "Class": "CTexture",
     "NumTexture": 2,

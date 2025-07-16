@@ -23,6 +23,7 @@
 #include "Wolf.h"
 #include "Motora.h"
 #include "Defender.h"
+#include "Bommer.h"
 #include "Blader.h"
 #pragma endregion
 

@@ -140,7 +140,11 @@ void CSonic_Movement_State::Avoid(_float fTimeDelta)
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
 	_vector right = pTransform->Get_State(STATE::RIGHT);
 	_vector moveDirection = XMLoadFloat3(&status.vMoveDirection);
-	if (XMVectorGetX(XMVector4Length(moveDirection + right)) > 0)
+
+	float dotProduct = XMVectorGetX(XMVector3Dot(moveDirection, right));
+
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	if (dotProduct > 0.f)
 	{
 		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::IDLE_QUICKSTEP_R), status.fMoveSpeed.first);
 	}
@@ -162,8 +166,11 @@ void CSonic_Movement_State::QuickStep(_float fTimeDelta)
 	_vector right = pTransform->Get_State(STATE::RIGHT);
 	_vector moveDirection = XMLoadFloat3(&status.vMoveDirection);
 	
+	float dotProduct = XMVectorGetX(XMVector3Dot(moveDirection, right));
+
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
-	if (XMVectorGetX(XMVector4Length(moveDirection + right)) > 0)
+
+	if (dotProduct > 0.f)
 	{
 		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::RUN_QUICKSTEP_R), status.fMoveSpeed.first);
 	}
@@ -250,7 +257,6 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 {
 	if (!m_pOwner) return;
 	
-
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
 	CRigidBody* pRigidBody = static_cast<CRigidBody*>(m_pOwner->Get_Component(L"Com_RigidBody"));
 	if (!pTransform || !pRigidBody) return;
@@ -262,7 +268,33 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 	_vector vRayOrigin = pTransform->Get_State(STATE::POSITION) + pTransform->Get_State(STATE::UP) * 0.5f;
 	_vector vRayDirection = -pTransform->Get_State(STATE::UP);
 
+	_vector vGlobalRayDirection = XMVectorSet(0.f, -1.f, 0.f, 0.f);
+	_vector vWorldUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+
 	PxRaycastBuffer hitBuffer;
+
+	if (m_pGameInstance->Get_PhysicsScene()->raycast((PxVec3&)vRayOrigin, (PxVec3&)vGlobalRayDirection, fRayDistance, hitBuffer) && status.fVerticalVelocity.first <= 0)
+	{
+		_vector vCurrentUp = pTransform->Get_State(STATE::UP);
+		// 캐릭터의 UP 벡터와 월드 UP 벡터의 내적이 0.1보다 작으면 (거의 90도 차이), 누워있는 것으로 간주
+		if (XMVectorGetX(XMVector3Dot(vCurrentUp, vWorldUp)) < 0.1f)
+		{
+			_vector vCurrentLook = pTransform->Get_State(STATE::LOOK);
+
+			// 현재 Look 방향을 수평면에 투영하여 새로운 Look 방향으로 설정
+			_vector vNewLook = vCurrentLook - XMVector3Dot(vCurrentLook, vWorldUp) * vWorldUp;
+			vNewLook = XMVector3Normalize(vNewLook);
+
+			// 새로운 Right 벡터 계산
+			_vector vNewRight = XMVector3Cross(vWorldUp, vNewLook);
+			vNewRight = XMVector3Normalize(vNewRight);
+
+			// 변환 적용
+			pTransform->Set_State(STATE::RIGHT, vNewRight);
+			pTransform->Set_State(STATE::UP, vWorldUp);
+			pTransform->Set_State(STATE::LOOK, vNewLook);
+		}
+	}
 	
 	if (m_pGameInstance->Get_PhysicsScene()->raycast((PxVec3&)vRayOrigin, (PxVec3&)vRayDirection, fRayDistance, hitBuffer) && status.fVerticalVelocity.first <= 0)
 	{
@@ -292,6 +324,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 				m_eMovementState = EMovementState::IDLE; // IDLE로 초기화, HandleInput에서 이동 상태로 변경
 			}
 		}
+		status.bIsOnSpline = false;
 		status.bOnGround = true;
 		
 		// === 속도 기반 표면 접착력 계산 ===
@@ -470,7 +503,15 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 			//pTransform->Set_State(STATE::POSITION, pTransform->Get_State(STATE::POSITION) + XMLoadFloat3(&depenetrationVector));
 		}
 
-		_vector vMovement = pTransform->Get_State(STATE::LOOK) * status.fMoveSpeed.first * fTimeDelta;
+		_vector vMovement;
+		if (m_eMovementState == EMovementState::AVOID || m_eMovementState == EMovementState::QUICKSTEP)
+		{
+			vMovement = XMLoadFloat3(&status.vMoveDirection) * status.fMoveSpeed.first * fTimeDelta;
+		}
+		else
+		{
+			vMovement = pTransform->Get_State(STATE::LOOK) * status.fMoveSpeed.first * fTimeDelta;
+		}
 
 		// 이제, 완벽하게 지면에 붙은 현재 위치에서 이번 프레임의 이동량을 더해줍니다.
 		_matrix newTransform = pTransform->Get_WorldMatrix(); // Set_State로 위치가 보정된 최신 월드 행렬을 가져옵니다.
@@ -491,6 +532,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 			break;
 		}
 		
+		status.bIsOnSpline = false;
 		status.bOnGround = false;
 		const float fGravity = -9.8f;
 		status.fVerticalVelocity.first += fGravity * fTimeDelta;

@@ -87,6 +87,9 @@ HRESULT CGameObject_Spline::Initialize(void* pArg)
 	m_pSplineCom->AddControlPoint(_float3(15.f, 5.f, 0.f));
 	m_pSplineCom->AddControlPoint(_float3(20.f, 0.f, 5.f));
 
+	if (FAILED(Late_Initialize()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -101,13 +104,16 @@ HRESULT CGameObject_Spline::Initialize(simdjson::ondemand::object& jsonData)
 	if (FAILED(Deserialize(jsonData)))
 		return E_FAIL;
 
+	if (FAILED(Late_Initialize()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
 HRESULT CGameObject_Spline::Ready_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_VtxDebugDraw"),
+	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_Spline"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
@@ -184,10 +190,14 @@ void CGameObject_Spline::Priority_Update(_float fTimeDelta)
 
 void CGameObject_Spline::Update(_float fTimeDelta)
 {
+	if (m_pRigidBodyCom) m_pRigidBodyCom->Update(fTimeDelta);
+
 	if (m_pSplineCom && m_pVIBufferCom && m_pSplineCom->IsDirty())
 	{
-		vector<_float3> vPoints = m_pSplineCom->GetSplinePoints();
-		m_pVIBufferCom->Update_Spline(vPoints);
+		vector<_float3>& vPoints = m_pSplineCom->GetSplinePoints();
+		vector<CSpline_Component::SPLINE_FRAME>& vSplineFrames = m_pSplineCom->Get_SplineFrames();
+		//m_pVIBufferCom->Update_Spline(vPoints);
+		m_pVIBufferCom->Update_Spline(vSplineFrames);
 
 		if (m_pRigidBodyCom)
 		{
@@ -214,8 +224,6 @@ HRESULT CGameObject_Spline::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &m_oID, sizeof(_uint))))
 		return E_FAIL;
 
-
-	// 라인 색상 설정 (예: 빨간색)
 	_float4 vColor = _float4(1.f, 0.f, 0.f, 1.f);
 	if (FAILED(m_pShaderCom->Bind_RawValue("g_vColor", &vColor, sizeof(_float4))))
 		return E_FAIL;
@@ -228,7 +236,6 @@ HRESULT CGameObject_Spline::Render()
 {
 	if (!m_bVisible)
 		return S_OK;
-	//Bind_ShaderResources();
 
 	if (FAILED(Bind_ShaderResources()))
 		return E_FAIL;

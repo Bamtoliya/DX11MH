@@ -6,6 +6,7 @@
 NS_BEGIN(Engine)
 class CShader;
 class CModel;
+class CRigidBody;
 class CVIBuffer_Spline;
 class CSpline_Component;
 NS_END
@@ -37,6 +38,7 @@ public:
 private:
 	CShader*			m_pShaderCom = { nullptr };
 	CModel*				m_pModelCom = { nullptr };
+	CRigidBody*			m_pRigidBodyCom = { nullptr };
 	CSpline_Component*	m_pSplineCom = { nullptr };
 	CVIBuffer_Spline*	m_pVIBufferCom = { nullptr };
 #pragma endregion

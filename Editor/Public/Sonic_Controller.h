@@ -37,7 +37,11 @@ public:
 		_float fJumpForce = { 10.f };
 		pair<_float, _float> fVerticalVelocity = { 0.f, 15.f };
 		_bool bIsAir = { false };
-		_bool bIsOnRail = { false };
+
+		//Rail
+		_bool bIsForward = { false };
+		_bool bIsOnSpline = { false };
+		_float fSplineParameter = { 0.f };
 
 		//Combat
 		pair<_float, _float>	fAtkDamage = { 4.f, 6.f };
@@ -75,6 +79,8 @@ public:
 #pragma region Variables
 private:
 	SONIC_STATUS m_tInfo;
+	CSpline_Component* m_pCurrentSpline = { nullptr };
+
 #pragma endregion
 
 #pragma region Loops
@@ -104,14 +110,21 @@ public:
 	void Begin_Dashboard();
 #pragma endregion
 
+
+#pragma region Spline
+private:
+	void DetermineSplineDirection();
+	void UpdatePositionOnSpline();
+	void Update_RailMovement(_float fTimeDelta);
+#pragma endregion
+
+
 #pragma region Ring
+public:
 	void Add_Ring(_uint iNumber);
 	void Subtract_Ring(_uint iNumber);
 	_uint Get_Current_Ring() { return m_tInfo.iRings.first; }
 #pragma endregion
-
-
-
 
 public:
 	SONIC_STATUS& Get_Status() { return m_tInfo; }

@@ -29,6 +29,7 @@ public:
 public:
 	// 스플라인 점들이 변경되었을 때 버퍼를 업데이트하는 함수
 	HRESULT Update_Spline(const vector<_float3>& vPoints);
+	HRESULT Update_Spline(const vector<CSpline_Component::SPLINE_FRAME>& vSplineFrames);
 	virtual HRESULT Render() override;
 
 #pragma endregion

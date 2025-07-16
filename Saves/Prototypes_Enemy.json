@@ -1,0 +1,44 @@
+{
+    "Prototype_Component_Model_Man":{
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Enemy/man/man01.model"
+    },
+    "Prototype_Component_Model_Wolf":{
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Enemy/wolf01/wolf.model"
+    },
+    "Prototype_Component_Model_Mortora":{
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Enemy/mortora/mortora.model"
+    },
+    "Prototype_Component_Model_Defender":{
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Enemy/defender01/defender01.model"
+    },
+    "Prototype_Component_Model_Blader":{
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Miniboss/blade/blade01.model"
+    },
+    "Prototype_Component_Model_Bommer":{
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Enemy/bommer01/bommer01.model"
+    },
+    "Prototype_GameObject_Man": {
+        "Class": "CMan"
+    },
+    "Prototype_GameObject_Wolf": {
+        "Class": "CWolf"
+    },
+    "Prototype_GameObject_Motora": {
+        "Class": "CMotora"
+    },
+    "Prototype_GameObject_Defender": {
+        "Class": "CDefender"
+    },
+    "Prototype_GameObject_Bommer": {
+        "Class": "CBommer"
+    },
+    "Prototype_GameObject_Blader": {
+        "Class": "CBalder"
+    }
+}

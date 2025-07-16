@@ -36,7 +36,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(CreateImGui()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::LOGO)))
+	if (FAILED(Start_Level(LEVEL::TEST)))
 		return E_FAIL;
 
 	return S_OK;
@@ -106,6 +106,7 @@ HRESULT CMainApp::Register_Class_Types()
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CWolf", CWolf::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CMotora", CMotora::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CDefender", CDefender::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CBommer", CBommer::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CBlader", CBlader::Create))) return E_FAIL;
 #pragma endregion
 

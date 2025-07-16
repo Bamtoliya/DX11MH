@@ -53,7 +53,8 @@ public:
 	void ClearControlPoints();
 
 	// 스플라인 곡선 위의 점들을 계산
-	vector<_float3> GetSplinePoints();
+	vector<_float3>& GetSplinePoints();
+	vector<SPLINE_FRAME>& Get_SplineFrames();
 
 	// 제어점이 변경되었는지 확인
 	_bool IsDirty() const { return m_bIsDirty; }
@@ -70,8 +71,9 @@ public:
 	_float GetTotalLength() const { return m_fTotalLength; }
 	void UpdateSplineFrames(); // 프레임 계산을 위한 함수
 private:
-	vector<_float3> m_ControlPoints;
-	vector<SPLINE_FRAME> m_SplineFrames;
+	vector<_float3>			m_ControlPoints;
+	vector<SPLINE_FRAME>	m_SplineFrames;
+	vector<_float3>			m_SplinePoints;
 	_float			m_fTotalLength = { 0.f };
 	SPLINE_DESC     m_tSplineDesc;
 	_bool           m_bIsDirty = { true };

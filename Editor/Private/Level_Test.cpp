@@ -33,7 +33,8 @@ HRESULT CLevel_Test::Initialize()
     if (FAILED(Ready_Layer_ImGui()))
         return E_FAIL;
 
-    static_cast<CTransform*>(m_pGameInstance->Get_CurrentPlayer()->Get_Component(g_strTransformTag))->Set_State(STATE::POSITION, XMVectorSet(-5.f, 10.f, 0.f, 1.f));
+    CGameObject* pPlayer = m_pGameInstance->Get_CurrentPlayer();
+    static_cast<CTransform*>(pPlayer->Get_Component(g_strTransformTag))->Set_State(STATE::POSITION, XMVectorSet(-5.f, 20.f, 0.f, 1.f));
 
     return S_OK;
 }

@@ -237,16 +237,16 @@ void CSpline_Component::ClearControlPoints()
 	m_bIsDirty = true;
 }
 
-vector<_float3> CSpline_Component::GetSplinePoints()
+vector<_float3>& CSpline_Component::GetSplinePoints()
 {
-	vector<_float3> splinePoints;
+	m_SplinePoints.clear();
 	if (m_ControlPoints.size() < 4)
 	{
 		// Catmull-Rom 스플라인은 최소 4개의 제어점이 필요합니다.
-		return splinePoints;
+		return m_SplinePoints;
 	}
 
-	splinePoints.reserve((m_ControlPoints.size() - 3) * m_tSplineDesc.iNumPointsPerSegment);
+	m_SplinePoints.reserve((m_ControlPoints.size() - 3) * m_tSplineDesc.iNumPointsPerSegment);
 
 	for (size_t i = 0; i < m_ControlPoints.size() - 3; ++i)
 	{
@@ -258,16 +258,77 @@ vector<_float3> CSpline_Component::GetSplinePoints()
 		for (_uint j = 0; j < m_tSplineDesc.iNumPointsPerSegment; ++j)
 		{
 			float t = static_cast<float>(j) / (m_tSplineDesc.iNumPointsPerSegment - 1);
-			splinePoints.push_back(CatmullRom(p0, p1, p2, p3, t));
+			m_SplinePoints.push_back(CatmullRom(p0, p1, p2, p3, t));
 		}
 	}
 
-	return splinePoints;
+	return m_SplinePoints;
+}
+
+vector<CSpline_Component::SPLINE_FRAME>& CSpline_Component::Get_SplineFrames()
+{
+	if (m_bIsDirty)
+	{
+		UpdateSplineFrames();
+		m_bIsDirty = false;
+	}
+	return m_SplineFrames;
 }
 
 _float CSpline_Component::Find_Closest_Param(const _vector& vPosition)
 {
-	return 0.f;
+	// 스플라인 데이터가 유효한지 확인합니다.
+	const auto& frames = Get_SplineFrames();
+	if (frames.size() < 2)
+		return 0.f;
+
+	_float fMinDistanceSq = FLT_MAX;
+	_float fClosestParam = 0.f;
+
+	// 각 스플라인 선분을 순회하며 가장 가까운 점을 찾습니다.
+	for (size_t i = 0; i < frames.size() - 1; ++i)
+	{
+		_vector vStartPoint = XMLoadFloat3(&frames[i].vPosition);
+		_vector vEndPoint = XMLoadFloat3(&frames[i + 1].vPosition);
+
+		_vector vSegment = vEndPoint - vStartPoint;
+		_vector vToPosition = vPosition - vStartPoint;
+
+		// 현재 위치를 선분에 투영하여 선분 상의 t 값을 계산합니다. (0.0 ~ 1.0)
+		_float fSegmentLengthSq = XMVectorGetX(XMVector3LengthSq(vSegment));
+		_float t = 0.f;
+		if (fSegmentLengthSq > 1e-6f) // 선분 길이가 0에 가까운 경우 방지
+		{
+			t = XMVectorGetX(XMVector3Dot(vToPosition, vSegment)) / fSegmentLengthSq;
+			t = max(0.f, min(1.f, t)); // t 값을 0과 1 사이로 제한하여 선분 내에 있도록 함
+		}
+
+		// 선분 상에서 가장 가까운 점을 계산합니다.
+		_vector vClosestPointOnSegment = vStartPoint + t * vSegment;
+
+		// 주어진 위치와 가장 가까운 점 사이의 거리를 계산합니다.
+		_float fDistanceSq = XMVectorGetX(XMVector3LengthSq(vPosition - vClosestPointOnSegment));
+
+		// 최소 거리를 갱신합니다.
+		if (fDistanceSq < fMinDistanceSq)
+		{
+			fMinDistanceSq = fDistanceSq;
+
+			// 가장 가까운 점에 해당하는 전체 스플라인의 파라미터(T)를 계산합니다.
+			// 현재 선분의 시작점까지의 누적 길이에, 선분 내에서의 진행 거리를 더합니다.
+			_float fLengthAtStart = frames[i].fTotalLength;
+			_float fSegmentLength = frames[i + 1].fTotalLength - fLengthAtStart;
+			_float fLengthToClosestPoint = fLengthAtStart + t * fSegmentLength;
+
+			// 전체 길이에 대한 비율로 정규화하여 최종 파라미터를 구합니다.
+			if (m_fTotalLength > 1e-6f)
+				fClosestParam = fLengthToClosestPoint / m_fTotalLength;
+			else
+				fClosestParam = 0.f;
+		}
+	}
+
+	return fClosestParam;
 }
 
 _float3 CSpline_Component::CatmullRom(const _float3& P0, const _float3& P1, const _float3& P2, const _float3& P3, _float t)
@@ -292,27 +353,26 @@ void CSpline_Component::UpdateSplineFrames()
 	if (m_ControlPoints.size() < 4)
 		return;
 
-	vector<_float3> vFrames = GetSplinePoints();
-	if (vFrames.size() < 2)
+	if (m_SplinePoints.size() < 2)
 		return;
 
-	m_SplineFrames.resize(vFrames.size());
+	m_SplineFrames.resize(m_SplinePoints.size());
 
 	// 1. Tangent 계산
-	for (size_t i = 0; i < vFrames.size() - 1; ++i)
+	for (size_t i = 0; i < m_SplinePoints.size() - 1; ++i)
 	{
-		m_SplineFrames[i].vPosition = vFrames[i];
-		XMStoreFloat3(&m_SplineFrames[i].vTangent, XMVector3Normalize(XMLoadFloat3(&vFrames[i + 1]) - XMLoadFloat3(&vFrames[i])));
+		m_SplineFrames[i].vPosition = m_SplinePoints[i];
+		XMStoreFloat3(&m_SplineFrames[i].vTangent, XMVector3Normalize(XMLoadFloat3(&m_SplinePoints[i + 1]) - XMLoadFloat3(&m_SplinePoints[i])));
 	}
 	// 마지막 점의 Tangent는 그 전의 Tangent를 그대로 사용
-	m_SplineFrames.back().vPosition = vFrames.back();
-	m_SplineFrames.back().vTangent = m_SplineFrames[vFrames.size() - 2].vTangent;
+	m_SplineFrames.back().vPosition = m_SplinePoints.back();
+	m_SplineFrames.back().vTangent = m_SplineFrames[m_SplinePoints.size() - 2].vTangent;
 
 	// 2. Normal, Binormal 계산 (간단한 버전: "Up" 벡터 사용)
 	_vector vUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
 	_vector vLastNormal = vUp;
 
-	for (size_t i = 0; i < vFrames.size(); ++i)
+	for (size_t i = 0; i < m_SplinePoints.size(); ++i)
 	{
 		_vector T = XMLoadFloat3(&m_SplineFrames[i].vTangent);
 		_vector B = XMVector3Normalize(XMVector3Cross(T, vLastNormal)); // Binormal
@@ -325,9 +385,9 @@ void CSpline_Component::UpdateSplineFrames()
 
 	// 3. 누적 길이 계산
 	m_SplineFrames[0].fTotalLength = 0.f;
-	for (size_t i = 1; i < vFrames.size(); ++i)
+	for (size_t i = 1; i < m_SplinePoints.size(); ++i)
 	{
-		_float fDistance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&vFrames[i]) - XMLoadFloat3(&vFrames[i - 1])));
+		_float fDistance = XMVectorGetX(XMVector3Length(XMLoadFloat3(&m_SplinePoints[i]) - XMLoadFloat3(&m_SplinePoints[i - 1])));
 		m_SplineFrames[i].fTotalLength = m_SplineFrames[i - 1].fTotalLength + fDistance;
 	}
 	m_fTotalLength = m_SplineFrames.back().fTotalLength;

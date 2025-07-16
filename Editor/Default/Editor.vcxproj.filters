@@ -304,6 +304,9 @@
     <Filter Include="02.GameObject\StageObjects\DashBoard">
       <UniqueIdentifier>{7deaed82-cdee-44d5-9632-16ca4d3dba32}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\03.Monster\Enemy\Bommer">
+      <UniqueIdentifier>{a51a0b17-a81a-4386-b46d-4e9faabf1c70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -488,6 +491,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DashBoard.cpp">
       <Filter>02.GameObject\StageObjects\DashBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Bommer.cpp">
+      <Filter>02.GameObject\03.Monster\Enemy\Bommer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -707,6 +713,9 @@
     <ClInclude Include="..\public\DashBoard.h">
       <Filter>02.GameObject\StageObjects\DashBoard</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Bommer.h">
+      <Filter>02.GameObject\03.Monster\Enemy\Bommer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Editor.ico">
@@ -783,6 +792,9 @@
       <Filter>ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_Eye.hlsl">
+      <Filter>ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="G:\My Drive\Assets\ShaderFiles\Shader_Spline.hlsl">
       <Filter>ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

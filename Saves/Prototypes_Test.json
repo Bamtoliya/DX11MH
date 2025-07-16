@@ -234,12 +234,6 @@
   "Prototype_GameObject_Skybox": {
     "Class": "CGameObject_Skybox"
   },
-  "Prototype_GameObject_Spring": {
-    "Class": "CSpring"
-  },
-  "Prototype_GameObject_Ring": {
-    "Class": "CRing"
-  },
   "Prototype_GameObject_Sonic": {
     "Class": "CSonic"
   },

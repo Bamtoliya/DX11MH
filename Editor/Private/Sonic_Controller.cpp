@@ -2,7 +2,9 @@
 #include "Sonic.h"
 #include "State.h"
 #include "Sonic_States.h"
+#include "Spline_Component.h"
 #include "Animator.h"
+#include "Sonic.h"
 
 CSonic_Controller::CSonic_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CController{ pDevice, pContext }
@@ -78,7 +80,6 @@ void CSonic_Controller::Priority_Update(_float fTimeDelta)
 void CSonic_Controller::Update(_float fTimeDelta)
 {
 	UpdateInputBuffer(fTimeDelta);
-
 	if (m_States[m_iCurStateIndex])
 	{
 		m_States[m_iCurStateIndex]->Execute(fTimeDelta);
@@ -237,7 +238,23 @@ void CSonic_Controller::UpdateInputBuffer(_float fTimeDelta)
 
 void CSonic_Controller::Begin_Rail(CSpline_Component* pSpline, _float fStartT)
 {
-	//Change_State(SONIC_STATE::RAIL);
+	if (m_tInfo.bIsOnSpline)
+		return;
+
+	// 스플라인 컴포넌트 저장 및 파라미터 초기화
+ 	m_pCurrentSpline = pSpline;
+	m_tInfo.fSplineParameter = fStartT;
+	m_tInfo.bIsOnSpline = true;
+
+	// 레일 진행 방향 설정 (방향은 플레이어의 현재 속도 방향과 레일 방향 중 더 일치하는 쪽으로)
+	DetermineSplineDirection();
+
+	// 레일 상태로 전환 (예: 그라인드 애니메이션)
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	Change_State(ENUM_CLASS(States::MOVE), ENUM_CLASS(CSonic::STATE::GRIND_LOOP), m_tInfo.fMoveSpeed.first);
+
+	// 캐릭터를 레일 위에 정확히 배치
+	UpdatePositionOnSpline();
 }
 
 void CSonic_Controller::Begin_Pulley()
@@ -255,6 +272,127 @@ void CSonic_Controller::Begin_Dashboard()
 
 }
 
+void CSonic_Controller::DetermineSplineDirection()
+{
+	if (!m_pCurrentSpline || !m_tInfo.bIsOnSpline)
+		return;
+
+	// 현재 위치에서의 스플라인 탄젠트 벡터 가져오기
+	vector<CSpline_Component::SPLINE_FRAME>& splineFrames = m_pCurrentSpline->Get_SplineFrames();
+	if (splineFrames.empty())
+		return;
+
+	// 현재 파라미터에 해당하는 프레임 인덱스 계산
+	_uint frameIdx = (_uint)(m_tInfo.fSplineParameter * (splineFrames.size() - 1));
+	if (frameIdx >= splineFrames.size())
+		frameIdx = splineFrames.size() - 1;
+
+	// 플레이어의 현재 이동 방향과 레일 방향 비교
+	_vector playerDir = XMLoadFloat3(&m_tInfo.vMoveDirection);
+	_vector railTangent = XMLoadFloat3(&splineFrames[frameIdx].vTangent);
+
+	// 두 방향의 내적으로 방향 일치도 확인
+	_float dotProduct = XMVectorGetX(XMVector3Dot(playerDir, railTangent));
+
+	// 내적이 음수면 레일 방향과 반대 방향으로 진행 중
+	m_tInfo.bIsForward = (dotProduct >= 0.0f);
+}
+
+void CSonic_Controller::Update_RailMovement(_float fTimeDelta)
+{
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	Change_State(ENUM_CLASS(States::MOVE), ENUM_CLASS(CSonic::STATE::GRIND_LOOP), m_tInfo.fMoveSpeed.first);
+	if (!m_pCurrentSpline || !m_tInfo.bIsOnSpline)
+		return;
+
+	// 레일 위에서 이동 속도 (현재 속도 유지 또는 고정값 사용)
+	_float fRailSpeed = m_tInfo.fMoveSpeed.first;
+	if (fRailSpeed < 5.f) fRailSpeed = 5.f; // 최소 속도 보장
+
+	// 스플라인의 전체 길이를 기준으로 이동량 계산
+	_float fSplineLength = m_pCurrentSpline->GetTotalLength();
+	_float fDeltaT = fRailSpeed / fSplineLength * fTimeDelta;
+
+	// 진행 방향에 따라 파라미터 업데이트
+	if (m_tInfo.bIsForward)
+	{
+		m_tInfo.fSplineParameter += fDeltaT;
+	}
+	else
+	{
+		m_tInfo.fSplineParameter -= fDeltaT;
+	}
+
+	// 레일 끝에 도달했는지 확인
+	if (m_tInfo.fSplineParameter >= 1.f || m_tInfo.fSplineParameter <= 0.f)
+	{
+		m_tInfo.bIsOnSpline = false;
+		m_pCurrentSpline = nullptr;
+		m_tInfo.bOnGround = false; // 공중 상태로 전환
+		m_tInfo.bCanJump = true;   // 레일에서 떨어지면 점프 가능
+
+		// 레일에서 떨어진 후의 상태 전환 (예: 점프/낙하)
+		Change_State(ENUM_CLASS(States::MOVE), ENUM_CLASS(CSonic::SPINSTATE::SPIN_JUMP), 1.5f, false);
+		return;
+	}
+
+	// 새 위치로 업데이트
+	UpdatePositionOnSpline();
+}
+
+void CSonic_Controller::UpdatePositionOnSpline()
+{
+	if (!m_pCurrentSpline || !m_tInfo.bIsOnSpline)
+		return;
+
+	vector<CSpline_Component::SPLINE_FRAME>& splineFrames = m_pCurrentSpline->Get_SplineFrames();
+	if (splineFrames.empty())
+		return;
+
+	// 스플라인 파라미터를 기반으로 정확한 위치 계산
+	_float fTotalFrames = static_cast<_float>(splineFrames.size() - 1);
+	_float fExactFramePos = m_tInfo.fSplineParameter * fTotalFrames;
+
+	// 보간을 위한 두 프레임 인덱스 계산
+	_uint uIndex1 = static_cast<_uint>(fExactFramePos);
+	_uint uIndex2 = uIndex1 + 1;
+
+	// 인덱스가 범위를 벗어나지 않도록 제한
+	uIndex1 = min(uIndex1, static_cast<_uint>(splineFrames.size() - 1));
+	uIndex2 = min(uIndex2, static_cast<_uint>(splineFrames.size() - 1));
+
+	// 두 프레임 간의 보간 계수 계산
+	_float fLerpFactor = fExactFramePos - uIndex1;
+
+	// 레일 위 위치 설정
+	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+	if (!pTransform)
+		return;
+
+	// 위치, 탄젠트, 노멀 벡터를 선형 보간하여 부드러운 값 계산
+	_vector vPosition = XMVectorLerp(XMLoadFloat3(&splineFrames[uIndex1].vPosition), XMLoadFloat3(&splineFrames[uIndex2].vPosition), fLerpFactor);
+	_vector vTangent = XMVectorLerp(XMLoadFloat3(&splineFrames[uIndex1].vTangent), XMLoadFloat3(&splineFrames[uIndex2].vTangent), fLerpFactor);
+	_vector vNormal = XMVectorLerp(XMLoadFloat3(&splineFrames[uIndex1].vNormal), XMLoadFloat3(&splineFrames[uIndex2].vNormal), fLerpFactor);
+
+	// 보간된 벡터 정규화
+	vTangent = XMVector3Normalize(vTangent);
+	vNormal = XMVector3Normalize(vNormal);
+	_vector vBinormal = XMVector3Normalize(XMVector3Cross(vTangent, vNormal));
+
+	// 레일 위 위치로 이동
+	pTransform->Set_State(STATE::POSITION, vPosition);
+
+	// 레일 진행 방향이 반대면 탄젠트 방향 반전
+	if (!m_tInfo.bIsForward)
+		vTangent = XMVectorNegate(vTangent);
+
+	// 소닉의 방향 설정 (룩 벡터를 탄젠트 방향으로)
+	pTransform->Set_State(STATE::LOOK, vTangent);
+	pTransform->Set_State(STATE::UP, vNormal);
+	pTransform->Set_State(STATE::RIGHT, vBinormal);
+}
+
+#pragma region Ring
 void CSonic_Controller::Add_Ring(_uint iNumber)
 {
 	m_tInfo.iRings.first += iNumber;
@@ -272,3 +410,4 @@ void CSonic_Controller::Subtract_Ring(_uint iNumber)
 		m_tInfo.iRings.first = 0;
 	}
 }
+#pragma endregion
