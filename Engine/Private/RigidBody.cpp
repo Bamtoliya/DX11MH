@@ -1098,10 +1098,7 @@ HRESULT CRigidBody::Create_Actor()
 		}
 
 
-		physx::PxMaterial* pMaterial = pPhysics->createMaterial(
-			m_tRigidBodyDesc.fStaticFriction,
-			m_tRigidBodyDesc.fDynamicFriction,
-			m_tRigidBodyDesc.fRestitution);
+		physx::PxMaterial* pMaterial = m_pGameInstance->Get_DefaultMaterial();
 
 		if (!pMaterial)
 			continue;

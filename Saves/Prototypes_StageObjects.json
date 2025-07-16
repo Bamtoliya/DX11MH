@@ -80,7 +80,7 @@
     "Prototype_GameObject_SplineRoad": {
         "Class": "CGameObject_SplineRoad"
     },
-    "Prototype_GameObject_DashBoard": {
-        "Class": "CDashBoard"
+    "Prototype_GameObject_DashPanel": {
+        "Class": "CDashPanel"
     }
 }

@@ -44,7 +44,8 @@ void CPhysics_System::Free()
         PX_RELEASE(m_pCudaContextManager);
     PX_RELEASE(m_pPhysics); // 6. Physics 객체 해제
     PX_RELEASE(m_pPvd); // 7. PVD 해제 (연결했다면)
-    PX_RELEASE(m_pFoundation) // 8. Foundation 해제 (가장 마지막)
+    PX_RELEASE(m_pFoundation); // 8. Foundation 해제 (가장 마지막)
+    PX_RELEASE(m_pDefaultMaterial);
 
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
@@ -94,6 +95,12 @@ HRESULT CPhysics_System::Initialize()
     if (!m_pPhysics)
         return E_FAIL;
 
+    m_pDefaultMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.6f);
+    if (!m_pDefaultMaterial)
+    {
+        MSG_BOX("createMaterial failed!");
+        return E_FAIL;
+    }
 
     if (!PxInitExtensions(*m_pPhysics, m_pPvd)) // PVD는 디버그 빌드에서만 유효할 수 있음
     {

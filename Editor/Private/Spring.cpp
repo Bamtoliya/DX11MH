@@ -253,7 +253,7 @@ void CSpring::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
 	// 애니메이터 컴포넌트가 없거나 애니메이션이 이미 재생 중이면 반환
 	/*if (nullptr == m_pAnimatorCom || !m_pAnimatorCom->Is_Finished())
 		return;*/
-
+	m_pAnimatorCom->Change_Animation(0, 1.0f, false, 0.f); // 기본 애니메이션 재생
 
 	CGameObject* pGameObject = static_cast<CGameObject*>(pOther->userData);
 	CSonic_Controller* pController = dynamic_cast<CSonic_Controller*>(pGameObject->Get_Component(L"Com_Controller"));

@@ -45,6 +45,7 @@ public:
 	const _bool	Get_IsDebugDraw();
 	void AddActorToScene(PxActor* pActor);
 	void RemoveActorFromScene(PxActor* pActor);
+	PxMaterial* Get_DefaultMaterial() const;
 #pragma endregion
 
 #pragma region INPUT_DEVICE

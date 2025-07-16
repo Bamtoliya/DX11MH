@@ -51,6 +51,7 @@ public:
 	void SetControlPoint(_uint iIndex, const _float3& vPoint);
 	const vector<_float3>& GetControlPoints() const { return m_ControlPoints; }
 	void ClearControlPoints();
+	void Create_CirclePath(const _vector& vCenter, _float fRadius, _uint iNumPoints);
 
 	// 스플라인 곡선 위의 점들을 계산
 	vector<_float3>& GetSplinePoints();

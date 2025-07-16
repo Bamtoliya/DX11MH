@@ -239,7 +239,28 @@ void CSonic_Controller::UpdateInputBuffer(_float fTimeDelta)
 void CSonic_Controller::Spring(_fvector vPushDirection)
 {
 	m_tInfo.bIsSpring = true;
-	XMStoreFloat3(&m_tInfo.vMoveDirection, vPushDirection);
+	m_tInfo.bOnGround = false;
+	m_tInfo.bCanJump = false;
+	m_tInfo.bCanDoubleJump = true;
+	const float fSpringPower = 15.f; // 튕겨나가는 힘의 크기 (조절 가능)
+	_vector vInitialVelocity = XMVector3Normalize(vPushDirection) * fSpringPower;
+
+	// 속도를 수직/수평 성분으로 분해
+	_vector vWorldUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	_vector vVerticalComponent = XMVector3Dot(vInitialVelocity, vWorldUp) * vWorldUp;
+	_vector vHorizontalComponent = vInitialVelocity - vVerticalComponent;
+
+	// 수직 속도 설정
+	m_tInfo.fVerticalVelocity.first = XMVectorGetX(XMVector3Length(vVerticalComponent));
+	// 만약 밀어내는 방향의 y값이 음수이면, 수직 속도도 음수로 설정
+	if (XMVectorGetY(vPushDirection) < 0.f)
+	{
+		m_tInfo.fVerticalVelocity.first *= -1.f;
+	}
+
+	// 수평 속도 및 방향 설정
+	m_tInfo.fMoveSpeed.first = XMVectorGetX(XMVector3Length(vHorizontalComponent));
+	XMStoreFloat3(&m_tInfo.vMoveDirection, XMVector3Normalize(vHorizontalComponent));
 }
 
 void CSonic_Controller::Begin_Pulley()

@@ -263,6 +263,11 @@ void CGameInstance::RemoveActorFromScene(PxActor* pActor)
 {
 	m_pPhysics_System->RemoveActorFromScene(pActor);
 }
+
+PxMaterial* CGameInstance::Get_DefaultMaterial() const
+{
+	return m_pPhysics_System->Get_DefaultMaterial();
+}
 #pragma endregion
 
 #pragma region LEVEL_MANAGER

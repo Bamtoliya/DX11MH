@@ -213,7 +213,7 @@ void CSonic_Movement_State::SpringJump(_float fTimeDelta)
 	if (status.fMoveSpeed.first >= status.fMoveSpeed.second)
 		status.fMoveSpeed.first = status.fMoveSpeed.second;
 
-	if (status.fVerticalVelocity.first <= 0.f || pAnimator->Get_AnimationProgress() >= 0.75f)
+	if (status.fVerticalVelocity.first < 0.f || status.vMoveDirection.y < 0.f)
 	{
 		static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(1);
 		static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(true);
@@ -376,6 +376,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 			status.fVerticalVelocity.first = 0.f;
 			status.bCanJump = true;
 			status.bCanDoubleJump = false;
+			status.bIsSpring = false;
 			if (status.fMoveSpeed.first > 0.f)
 			{
 				m_eMovementState = EMovementState::WALK;
@@ -647,6 +648,11 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 
 	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+
+	if (status.bIsSpring)
+	{
+		m_eMovementState = EMovementState::SPRINGJUMP;
+	}
 
 	if (status.bIsOnSpline)
 	{
@@ -923,6 +929,7 @@ void CSonic_Movement_State::Update_PositionOnSpline()
 		return;
 
 	vector<CSpline_Component::SPLINE_FRAME>& splineFrames = pSpline->Get_SplineFrames();
+	CTransform* pSplineTransform = static_cast<CTransform*>(pSpline->Get_OwnerGameObject()->Get_Component(g_strTransformTag));
 	if (splineFrames.empty())
 		return;
 
@@ -946,28 +953,57 @@ void CSonic_Movement_State::Update_PositionOnSpline()
 	if (!pTransform)
 		return;
 
-	// 위치, 탄젠트, 노멀 벡터를 선형 보간하여 부드러운 값 계산
-	_vector vPosition = XMVectorLerp(XMLoadFloat3(&splineFrames[uIndex1].vPosition), XMLoadFloat3(&splineFrames[uIndex2].vPosition), fLerpFactor);
-	_vector vTangent = XMVectorLerp(XMLoadFloat3(&splineFrames[uIndex1].vTangent), XMLoadFloat3(&splineFrames[uIndex2].vTangent), fLerpFactor);
-	_vector vNormal = XMVectorLerp(XMLoadFloat3(&splineFrames[uIndex1].vNormal), XMLoadFloat3(&splineFrames[uIndex2].vNormal), fLerpFactor);
+	// 스플라인 오브젝트의 월드 행렬을 가져옵니다.
+	_matrix railTransform = pSplineTransform->Get_WorldMatrix();
 
-	// 보간된 벡터 정규화
-	vTangent = XMVector3Normalize(vTangent);
-	vNormal = XMVector3Normalize(vNormal);
-	_vector vBinormal = XMVector3Normalize(XMVector3Cross(vTangent, vNormal));
+	// 로컬 공간에서 위치, 탄젠트, 노멀 벡터를 선형 보간합니다.
+	_vector vLocalPosition = XMVectorLerp(XMLoadFloat3(&splineFrames[uIndex1].vPosition), XMLoadFloat3(&splineFrames[uIndex2].vPosition), fLerpFactor);
+	_vector vLocalTangent = XMVectorLerp(XMLoadFloat3(&splineFrames[uIndex1].vTangent), XMLoadFloat3(&splineFrames[uIndex2].vTangent), fLerpFactor);
+	_vector vLocalNormal = XMVectorLerp(XMLoadFloat3(&splineFrames[uIndex1].vNormal), XMLoadFloat3(&splineFrames[uIndex2].vNormal), fLerpFactor);
 
-	// 레일 위 위치로 이동
-	pTransform->Set_State(STATE::POSITION, XMVectorSetW(vPosition, 1.f));
+	// 보간된 로컬 벡터들을 월드 공간으로 변환합니다.
+	_vector vWorldPosition = XMVector3TransformCoord(vLocalPosition, railTransform);
+	_vector vWorldTangent = XMVector3Normalize(XMVector3TransformNormal(vLocalTangent, railTransform));
+	_vector vWorldNormal = XMVector3Normalize(XMVector3TransformNormal(vLocalNormal, railTransform));
 
-	// 레일 진행 방향이 반대면 탄젠트 방향 반전
-	if (!status.bIsForward) // updated to use status instead of m_tInfo
-		vTangent = XMVectorNegate(vTangent);
+	// 캐릭터의 위치를 월드 좌표로 설정합니다.
+	pTransform->Set_State(STATE::POSITION, vWorldPosition);
 
-	XMStoreFloat3(&status.vMoveDirection, vTangent);
-	// 소닉의 방향 설정 (룩 벡터를 탄젠트 방향으로)
-	pTransform->Set_State(STATE::LOOK, vTangent);
-	pTransform->Set_State(STATE::UP, vNormal);
-	pTransform->Set_State(STATE::RIGHT, vBinormal);
+	// 1. 최종 진행 방향(Look)을 월드 탄젠트로 결정합니다.
+	_vector vFinalLook = vWorldTangent;
+	if (!status.bIsForward)
+	{
+		vFinalLook = XMVectorNegate(vFinalLook);
+	}
+
+	// 2. 스플라인의 노멀을 사용하되, 불안정한 경우를 대비하여 안정적인 Up 벡터를 계산합니다.
+	_vector vFinalUp;
+	_vector vFinalRight;
+
+	// 스플라인의 노멀 벡터와 Look 벡터가 거의 평행한지 확인합니다.
+	// 내적의 절댓값이 0.99 이상이면 거의 평행하다고 간주합니다.
+	if (abs(XMVectorGetX(XMVector3Dot(vFinalLook, vWorldNormal))) > 0.99f)
+	{
+		// 평행한 경우: 월드 Up 벡터를 기준으로 새로운 직교 기저를 생성합니다.
+		// 이는 주로 수직 루프의 최상단/최하단에서 발생할 수 있는 문제를 방지합니다.
+		_vector vWorldUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+		vFinalRight = XMVector3Normalize(XMVector3Cross(vWorldUp, vFinalLook));
+		vFinalUp = XMVector3Normalize(XMVector3Cross(vFinalLook, vFinalRight));
+	}
+	else
+	{
+		// 일반적인 경우: 스플라인의 노멀을 기준으로 직교 기저를 생성합니다.
+		vFinalRight = XMVector3Normalize(XMVector3Cross(vWorldNormal, vFinalLook));
+		vFinalUp = XMVector3Normalize(XMVector3Cross(vFinalLook, vFinalRight));
+	}
+
+	// 상태 정보 업데이트
+	XMStoreFloat3(&status.vMoveDirection, vFinalLook);
+
+	// 소닉의 최종 방향 설정
+	pTransform->Set_State(STATE::LOOK, vFinalLook);
+	pTransform->Set_State(STATE::UP, vFinalUp);
+	pTransform->Set_State(STATE::RIGHT, vFinalRight);
 }
 void CSonic_Movement_State::Determine_SplineDirection()
 {

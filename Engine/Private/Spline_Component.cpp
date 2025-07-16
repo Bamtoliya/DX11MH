@@ -237,6 +237,31 @@ void CSpline_Component::ClearControlPoints()
 	m_bIsDirty = true;
 }
 
+void CSpline_Component::Create_CirclePath(const _vector& vCenter, _float fRadius, _uint iNumPoints)
+{
+	if (iNumPoints < 4) return; // 최소 4개의 점이 필요합니다.
+
+	m_ControlPoints.clear();
+
+	const _float fAngleStep = XM_2PI / iNumPoints;
+	// 캣멀롬 스플라인이 원에 더 가깝게 생성되도록 제어점을 원보다 약간 더 큰 반경에 배치합니다.
+	// 이 값(1.155f)은 경험적으로 얻어진 값이며, 필요에 따라 조정할 수 있습니다.
+	const _float fControlRadius = fRadius * 1.155f;
+
+	for (_uint i = 0; i < iNumPoints; ++i)
+	{
+		_float fAngle = i * fAngleStep;
+		_vector vPoint = vCenter + XMVectorSet(cosf(fAngle) * fControlRadius, 0.f, sinf(fAngle) * fControlRadius, 0.f);
+
+		_float3 vPos;
+		XMStoreFloat3(&vPos, vPoint);
+		m_ControlPoints.push_back(vPos);
+	}
+
+	// 스플라인 프레임을 다시 계산합니다.
+	UpdateSplineFrames();
+}
+
 vector<_float3>& CSpline_Component::GetSplinePoints()
 {
 	m_SplinePoints.clear();

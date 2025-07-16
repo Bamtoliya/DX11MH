@@ -252,14 +252,7 @@ void CGameObject_SplineRoad::OnCollisionEnter(PxActor* pOther, const PxContactPa
 			CSonic_Controller* pController = static_cast<CSonic_Controller*>(pSonic->Get_Component(L"Com_Controller"));
 			if (pController)
 			{
-				CTransform* pSonicTransform = static_cast<CTransform*>(pSonic->Get_Component(g_strTransformTag));
-				_vector vSonicPosition = pSonicTransform->Get_State(STATE::POSITION);
-
-				// 스플라인에서 가장 가까운 지점의 파라미터(t) 찾기
-				_float fClosestT = m_pSplineCom->Find_Closest_Param(vSonicPosition);
-
-				// 컨트롤러에 스플라인 타기 시작을 알림
-				pController->Begin_Rail(m_pSplineCom, fClosestT);
+				pController->Register_Spline(m_pSplineCom);
 			}
 		}
 	}

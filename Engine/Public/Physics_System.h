@@ -42,6 +42,7 @@ public:
 	PxPhysics*	Get_Physics() const { return m_pPhysics; }
 	PxScene*	Get_PhysicsScene(_uint iIndex = 0) const { return m_pScene; }
 	PxScene*	Create_Scene(); // 씬 생성 함수 (예시)
+	PxMaterial* Get_DefaultMaterial() const { return m_pDefaultMaterial; }
 #pragma endregion
 
 private:
@@ -62,6 +63,9 @@ private:
 	PxControllerManager*	m_pControllerManager = nullptr;
 	PxPvd* m_pPvd = nullptr;
 
+
+private:
+	PxMaterial* m_pDefaultMaterial = { nullptr }; // 기본 재질
 	list<PxActor*> m_ActorsInScene; // 물리 객체 리스트
 
 public:

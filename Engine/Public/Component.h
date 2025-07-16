@@ -25,6 +25,7 @@ public:
 	virtual CComponent* Clone(class CGameObject* pGameObject, void* pArg);
 	virtual void Free();
 public:
+	class CGameObject* Get_OwnerGameObject() const { return m_pOwner; }
 	void Set_OwnerGameObject(class CGameObject* pGameObject); 
 #pragma endregion
 public:

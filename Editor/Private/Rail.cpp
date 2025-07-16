@@ -83,10 +83,18 @@ HRESULT CRail::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pSplineCom->AddControlPoint(_float3(0.f, 0.f, 0.f));
+	CTransform* pTransform = static_cast<CTransform*>(Get_Component(g_strTransformTag));
+	if (pTransform)
+	{
+		_vector vCenter = pTransform->Get_State(STATE::POSITION);
+		_float fRadius = 10.f; // 원하는 반지름
+		m_pSplineCom->Create_CirclePath(vCenter, fRadius, 16); // 8개의 제어점으로 원 생성
+	}
+
+	/*m_pSplineCom->AddControlPoint(_float3(0.f, 0.f, 0.f));
 	m_pSplineCom->AddControlPoint(_float3(0.f, 2.f, 0.f));
 	m_pSplineCom->AddControlPoint(_float3(30.f, 2.f, 0.f));
-	m_pSplineCom->AddControlPoint(_float3(30.f, 0.f, 0.f));
+	m_pSplineCom->AddControlPoint(_float3(30.f, 0.f, 0.f));*/
 
 	m_pSplineCom->Set_IsRail(true);
 
