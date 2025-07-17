@@ -19,10 +19,22 @@ HRESULT CLevel_Open::Initialize()
 	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Stage/Open/GameObjects_Open_Collider.json")))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"UI/UI_BottomLeft.json")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"UI/UI_BottomRight.json")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"UI/UI_TopLeft.json")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"UI/UI_TopMiddle.json")))
+		return E_FAIL;
+
 	if (FAILED(Ready_Layer_ImGui()))
 		return E_FAIL;
 
-	//static_cast<CTransform*>(m_pGameInstance->Get_CurrentPlayer()->Get_Component(g_strTransformTag))->Set_State(STATE::POSITION, );	o
+	static_cast<CTransform*>(m_pGameInstance->Get_CurrentPlayer()->Get_Component(g_strTransformTag))->Set_State(STATE::POSITION, XMVectorSet(1850.f, 100.f, -1250.f, 1.f));
 
 	return S_OK;
 }

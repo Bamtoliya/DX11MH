@@ -58,6 +58,10 @@ HRESULT CGameInstance::Initialize_Engine(const ENGINE_DESC& EngineDesc, _Out_ ID
 	if (nullptr == m_pPrototype_Manager)
 		return E_FAIL;
 
+	m_pFont_Manager = CFont_Manager::Create(*ppDeviceOut, *ppContextOut);
+	if (nullptr == m_pFont_Manager)
+		return E_FAIL;
+
 	m_pObject_Manager = CObject_Manager::Create(EngineDesc.iNumLevels);
 	if (nullptr == m_pObject_Manager)
 		return E_FAIL;

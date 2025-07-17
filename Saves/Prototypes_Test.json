@@ -69,29 +69,7 @@
     ],
     "Type": "NONANIM"
   },
-  "Prototype_Component_Model_GrindRail": {
-    "Class": "CModel",
-    "ModelFilePath": "G:/My Drive/Assets/Models/Objects/GrindRail/GrindRail.fbx",
-    "PreTransformedMatrix": [
-      -1.0,
-      0.0,
-      -0.0,
-      0.0,
-      0.0,
-      1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      -1.0,
-      0.0,
-      0.0,
-      0.0,
-      0.0,
-      1.0
-    ],
-    "Type": "NONANIM"
-  },
+  
   "Prototype_Component_Spline": {
     "Class": "CSpline_Component"
   },
@@ -108,9 +86,6 @@
   },
   "Prototype_Component_Sonic_Controller": {
     "Class": "CSonic_Controller"
-  },
-  "Prototype_Component_Ashura_Controller": {
-    "Class": "CAshura_Controller"
   },
   "Prototype_Component_Texture_Terrain": {
     "Class": "CTexture",

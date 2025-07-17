@@ -13,8 +13,9 @@
 #include "GameObject_SplineRoad.h"
 #include "Ring.h"
 #include "Spring.h"
-#include "DashBoard.h"
+#include "DashPanel.h"
 #include "Rail.h"
+#include "DashRing.h"
 #pragma endregion
 
 #pragma region Monsters

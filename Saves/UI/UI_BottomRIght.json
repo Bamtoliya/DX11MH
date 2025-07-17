@@ -1,0 +1,146 @@
+{
+    "Layer_Background": {
+        "GameObjects": [
+            {
+                "CBackGround": {
+                    "Active": true,
+                    "CShader": {
+                        "Layout": "VTXPOSTEX",
+                        "Tiling": true,
+                        "TilingOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "TilingScale": [
+                            1.0,
+                            1.0
+                        ],
+                        "UVAnimation": false,
+                        "UVAnimationSpeed": [
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "CTransform": {
+                        "EulerRotation": [
+                            -0.0,
+                            0.0,
+                            -0.0
+                        ],
+                        "IsRelativePosition": false,
+                        "IsRelativeRotation": false,
+                        "IsRelativeScale": false,
+                        "Orientation": [
+                            -0.0,
+                            0.0,
+                            -0.0,
+                            1.0
+                        ],
+                        "Position": [
+                            787.0,
+                            -373.0,
+                            0.0
+                        ],
+                        "RotationPerSec": 0.0,
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpeedPerSec": 0.0
+                    },
+                    "CVIBuffer_Rect": {
+                        "Size": [
+                            288.0,
+                            248.0
+                        ]
+                    },
+                    "Childs": [
+                        {
+                            "CBackGround": {
+                                "Active": true,
+                                "CShader": {
+                                    "Layout": "VTXPOSTEX",
+                                    "Tiling": true,
+                                    "TilingOffset": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "TilingScale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "UVAnimation": false,
+                                    "UVAnimationSpeed": [
+                                        0.0,
+                                        0.0
+                                    ]
+                                },
+                                "CTransform": {
+                                    "EulerRotation": [
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "IsRelativePosition": true,
+                                    "IsRelativeRotation": false,
+                                    "IsRelativeScale": false,
+                                    "Orientation": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ],
+                                    "Position": [
+                                        0.0,
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "RotationPerSec": 0.0,
+                                    "Scale": [
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "SpeedPerSec": 0.0
+                                },
+                                "CVIBuffer_Rect": {
+                                    "Size": [
+                                        256.0,
+                                        218.0
+                                    ]
+                                },
+                                "LayerTag": "Layer_Background",
+                                "Name": "Dashboard",
+                                "NumTextures": 1,
+                                "PrototypeTag": "Prototype_GameObject_BackGround",
+                                "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_ci_cmn1.dds",
+                                "TextureRegion": [
+                                    0.75,
+                                    0.46875,
+                                    1.0,
+                                    0.681640625
+                                ],
+                                "UseTextureRegion": true,
+                                "Visible": true
+                            }
+                        }
+                    ],
+                    "LayerTag": "Layer_Background",
+                    "Name": "Background",
+                    "NumTextures": 1,
+                    "PrototypeTag": "Prototype_GameObject_BackGround",
+                    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_ci_cmn1.dds",
+                    "TextureRegion": [
+                        0.720703125,
+                        0.716796875,
+                        1.0,
+                        0.97265625
+                    ],
+                    "UseTextureRegion": true,
+                    "Visible": true
+                }
+            }
+        ]
+    }
+}

@@ -532,9 +532,9 @@ void CPhysics_System::onContact(const PxContactPairHeader& pairHeader, const PxC
 
         if (cp.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
         {
-            if (user0)
+            if (!user0->Get_IsDestroy())
                 user0->OnCollisionExit(actor1); // 상대 액터와 ContactPair 정보 전달
-            if (user1)
+            if (!user1->Get_IsDestroy())
                 user1->OnCollisionExit(actor0);
         }
     }

@@ -72,7 +72,12 @@
   "Prototype_Component_Texture_Sky": {
     "Class": "CTexture",
     "NumTexture": 1,
-    "TextureFilePath": "../../Assets/Textures/Skybox/XYZ.dds"
+    "TextureFilePath": "G/My Drive/Assets/Textures/Skybox/Skybox.dds"
+  },
+  "Prototype_Component_Texture_SkyTest": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G/My Drive/Assets/Textures/Skybox/XYZ.dds"
   },
   "Prototype_Component_VIBuffer_Rect": {
     "Class": "CVIBuffer_Rect"

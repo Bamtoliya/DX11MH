@@ -5,6 +5,7 @@
 NS_BEGIN(Engine)
 class CShader;
 class CModel;
+class CAnimator;
 class CRigidBody;
 NS_END
 

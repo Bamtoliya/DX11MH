@@ -113,6 +113,8 @@ public:
 	CSpline_Component* Get_CurrentSpline() const { return m_pCurrentSpline; }
 
 	void Spring(_fvector vPushDirection);
+	void DashPanel(_fvector vDashDirection);
+	void DashRing(_fvector vDashDirection);
 
 	void Begin_Pulley();
 	void Begin_Dashboard();

@@ -24,7 +24,99 @@
     },
         "Prototype_Component_Model_Ring": {
         "Class": "CModel",
-        "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Ring.fbx",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Ring.model",
+        "PreTransformedMatrix": [
+        -1.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+        ],
+        "Type": "NONANIM"
+    },
+    "Prototype_Component_Model_DashPanel": {
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/DashPanel.model",
+        "PreTransformedMatrix": [
+        -1.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+        ],
+        "Type": "NONANIM"
+    },
+    "Prototype_Component_Model_DashRing": {
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/DashRing.model",
+        "PreTransformedMatrix": [
+        -1.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+        ],
+        "Type": "NONANIM"
+    },
+    "Prototype_Component_Model_Destination": {
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/Destination.model",
+        "PreTransformedMatrix": [
+        -1.0,
+        0.0,
+        -0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        -1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+        ],
+        "Type": "NONANIM"
+    },
+    "Prototype_Component_Model_HackingConsole": {
+        "Class": "CModel",
+        "ModelFilePath": "G:/My Drive/Assets/Models/Objects/CommonObject/HackingConsole.model",
         "PreTransformedMatrix": [
         -1.0,
         0.0,
@@ -68,6 +160,9 @@
         ],
         "Type": "NONANIM"
     },
+    "Prototype_Component_Spline": {
+        "Class": "CSpline_Component"
+    },
     "Prototype_GameObject_Spring": {
         "Class": "CSpring"
     },
@@ -76,6 +171,15 @@
     },
     "Prototype_GameObject_Rail": {
         "Class": "CRail"
+    },
+    "Prototype_GameObject_DashRing": {
+        "Class": "CDashRing"
+    },
+    "Prototype_GameObject_Destination": {
+        "Class": "CDestination"
+    },
+    "Prototype_GameObject_HackingConsole": {
+        "Class": "CHackingConsole"
     },
     "Prototype_GameObject_SplineRoad": {
         "Class": "CGameObject_SplineRoad"

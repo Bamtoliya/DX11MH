@@ -320,7 +320,7 @@
                     "Name": "Skybox",
                     "NumTextures": 1,
                     "PrototypeTag": "Prototype_GameObject_Skybox",
-                    "TextureFilePath": "../../Assets/Textures/Skybox/XYZ.dds",
+                    "TextureFilePath": "G:/My Drive/Assets/Textures/Skybox/Skybox.dds",
                     "UseTextureRegion": false,
                     "Visible": true
                 }

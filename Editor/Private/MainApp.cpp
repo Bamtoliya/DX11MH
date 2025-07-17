@@ -36,7 +36,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(CreateImGui()))
 		return E_FAIL;
 
-	if (FAILED(Start_Level(LEVEL::UI)))
+	if (FAILED(Start_Level(LEVEL::LOGO)))
 		return E_FAIL;
 
 	return S_OK;
@@ -97,8 +97,9 @@ HRESULT CMainApp::Register_Class_Types()
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CGameObject_SplineRoad", CGameObject_SplineRoad::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CRing", CRing::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CRail", CRail::Create))) return E_FAIL;
-	if (FAILED(m_pGameInstance->Register_Creator_Function("CDashBoard", CDashBoard::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CDashPanel", CDashPanel::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CSpring", CSpring::Create))) return E_FAIL;
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CDashRing", CDashRing::Create))) return E_FAIL;
 #pragma endregion
 
 #pragma region Monsters
@@ -127,6 +128,14 @@ HRESULT CMainApp::Ready_Prototype_Components()
 {
 	m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STATIC), SAVEPATH L"Prototypes_Static.json");
 
+	m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STATIC), SAVEPATH L"Prototypes_UI.json");
+
+	if (FAILED(m_pGameInstance->Add_Font(TEXT("Default_Font"), ASSETPATH L"Fonts/sonic.spritefont")))
+		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Add_Font(TEXT("Ex_Font"), ASSETPATH L"Fonts/sonicex.spritefont")))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -138,6 +147,7 @@ HRESULT CMainApp::CreateImGui()
 	if (FAILED(m_pGameInstance->Add_ImGui(L"Asset Browser", CAsset_Browser::Create(m_pDevice, m_pContext)))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_ImGui(L"Viewport2D", CViewport_2D::Create(m_pDevice, m_pContext)))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Add_ImGui(L"Viewport3D", CViewport_3D::Create(m_pDevice, m_pContext)))) return E_FAIL;
+	m_pGameInstance->HideAll();
 	return S_OK;
 }
 

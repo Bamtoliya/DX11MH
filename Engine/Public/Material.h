@@ -4,7 +4,7 @@
 
 NS_BEGIN(Engine)
 
-class CMaterial final : public CBase
+class ENGINE_DLL CMaterial final : public CBase
 {
 #pragma region Structs/Enum
 public:

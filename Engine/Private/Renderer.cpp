@@ -263,18 +263,6 @@ HRESULT CRenderer::Initialize()
 		MSG_BOX("CRenderer::Initialize - Failed to create m_pVB_DebugLine");
 		return E_FAIL;
 	}
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("RT_Diffuse"), 100.0f, 100.0f, 200.0f, 200.0f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("RT_Normal"), 100.0f, 300.0f, 200.0f, 200.0f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("RT_Depth"), 100.0f, 500.0f, 200.0f, 200.0f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("RT_Shade"), 300.f, 100.0f, 200.0f, 200.0f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("RT_Specular"), 300.f, 300.0f, 200.0f, 200.0f)))
-		return E_FAIL;
-	if (FAILED(m_pGameInstance->Ready_RT_Debug(TEXT("RT_Shadow"), ViewportDesc.Width - 150.f, 150.0f, 300.0f, 300.0f)))
-		return E_FAIL;
 #endif
 	return S_OK;
 }

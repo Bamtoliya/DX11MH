@@ -7,7 +7,6 @@ NS_BEGIN(Engine)
 class CShader;
 class CModel;
 class CRigidBody;
-class CHeightField;
 NS_END
 
 NS_BEGIN(Editor)

@@ -15,6 +15,10 @@ HRESULT CLevel_Stage01::Initialize()
 	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Stage/W6D01/GameObjects_W6D01.json")))
    		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Stage/W6D01/W6D01StageObjects.json")))
+		return E_FAIL;
+
+
 	if(FAILED(Ready_Layer_ImGui()))
 		return E_FAIL;
 
@@ -27,6 +31,12 @@ HRESULT CLevel_Stage01::Initialize()
 
 	if (FAILED(m_pGameInstance->Ready_Light_For_Shadow(Desc)))
 		return E_FAIL;
+
+	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"UI/UI_BottomRight.json")))
+		return E_FAIL;
+
+	static_cast<CTransform*>(m_pGameInstance->Get_CurrentPlayer()->Get_Component(g_strTransformTag))->Set_State(STATE::POSITION, XMVectorSet(600.f, 160.f, 380.f, 1.f));
+	m_pGameInstance->Set_Camera(1);
 
 	return S_OK;
 }

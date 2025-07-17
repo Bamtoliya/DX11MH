@@ -227,6 +227,25 @@ void CSonic_Movement_State::SpringJump(_float fTimeDelta)
 	}
 }
 
+void CSonic_Movement_State::DashRing(_float fTimeDelta)
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+
+	status.fMoveSpeed.first += status.fMoveAccelration * fTimeDelta;
+	if (status.fMoveSpeed.first > status.fMoveSpeed.second)
+	{
+		status.fMoveSpeed.first -= status.fMoveAccelration * 5.f * fTimeDelta;
+		if (status.fMoveSpeed.first < status.fMoveSpeed.second)
+			status.fMoveSpeed.first = status.fMoveSpeed.second;
+	}
+
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
+	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
+	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::DASHRING), 1.5f, false);
+}
+
 void CSonic_Movement_State::ResolveCollisions(_vector vMovement, _float fTimeDelta)
 {
 	CTransform* pTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
@@ -517,6 +536,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		case CSonic_Movement_State::EMovementState::SPRINGJUMP:	SpringJump(fTimeDelta); break;
 		case CSonic_Movement_State::EMovementState::AVOID:		Avoid(fTimeDelta); break;
 		case CSonic_Movement_State::EMovementState::QUICKSTEP:	QuickStep(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::DASHRING:	DashRing(fTimeDelta); break;
 		default:
 			break;
 		}
@@ -591,6 +611,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		case Editor::CSonic_Movement_State::EMovementState::POLESPIN: break;
 		case Editor::CSonic_Movement_State::EMovementState::PULLEY: break;
 		case Editor::CSonic_Movement_State::EMovementState::RIDER: Rider(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::DASHRING:		DashRing(fTimeDelta); break;
 		default:
 			Jump(fTimeDelta);
 			break;

@@ -5,6 +5,8 @@
 NS_BEGIN(Engine)
 class CShader;
 class CModel;
+class CAnimator;
+class CController;
 class CRigidBody;
 NS_END
 
@@ -36,6 +38,8 @@ private:
 	CShader* m_pShaderCom = { nullptr };
 	CModel* m_pModelCom = { nullptr };
 	CRigidBody* m_pRigidBodyCom = { nullptr };
+	CAnimator* m_pAnimatorCom = { nullptr };
+	CController* m_pControllerCom = { nullptr };
 #pragma endregion
 
 #pragma region Save&Load

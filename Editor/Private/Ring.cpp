@@ -64,8 +64,8 @@ HRESULT CRing::Initialize(void* pArg)
 	GAMEOBJECT_DESC			Desc{};
 	if (pArg != nullptr)
 		memcpy(&Desc, pArg, sizeof(GAMEOBJECT_DESC));
-	Desc.fRotationPerSec = 0.f;
-	Desc.fSpeedPerSec = 0.f;
+	Desc.fRotationPerSec = 2.5f;
+	Desc.fSpeedPerSec = 5.f;
 	if (nullptr == pArg)
 	{
 		lstrcpy(Desc.szName, TEXT("Ring"));
@@ -81,6 +81,9 @@ HRESULT CRing::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
+	if (FAILED(Late_Initialize()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -93,6 +96,9 @@ HRESULT CRing::Initialize(simdjson::ondemand::object& jsonData)
 		return E_FAIL;
 
 	if (FAILED(Deserialize(jsonData)))
+		return E_FAIL;
+
+	if (FAILED(Late_Initialize()))
 		return E_FAIL;
 
 	return S_OK;
@@ -110,6 +116,19 @@ HRESULT CRing::Ready_Components()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
+	CRigidBody::RIGIDBODY_DESC rigidBodyDesc = {};
+	rigidBodyDesc.vLocalPosition = { 0.f, 0.5f, 0.f };
+	CRigidBody::SHAPE_DESC shapeDesc = {};
+	shapeDesc.eShapeType = CRigidBody::EShapeType::SPHERE;
+	shapeDesc.vShapeSize = { 0.75f, 1.0, 1.f };
+	rigidBodyDesc.vShapeDescs.push_back(shapeDesc);
+	rigidBodyDesc.eBodyType = CRigidBody::EBodyType::STATIC;
+
+	/* For.Com_Model */
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom), &rigidBodyDesc)))
+		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -117,6 +136,7 @@ HRESULT CRing::Ready_Components()
 void CRing::Free()
 {
 	__super::Free();
+	Safe_Release(m_pRigidBodyCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
 }
@@ -163,6 +183,8 @@ void CRing::Priority_Update(_float fTimeDelta)
 
 void CRing::Update(_float fTimeDelta)
 {
+	if (m_pRigidBodyCom)
+		m_pRigidBodyCom->Update(fTimeDelta);
 	if(m_pTransformCom)
 		m_pTransformCom->Turn(m_pTransformCom->Get_State(STATE::UP), fTimeDelta);
 }
@@ -181,19 +203,6 @@ HRESULT CRing::Bind_ShaderResources()
 	if (FAILED(m_pShaderCom->Bind_Matrix("g_ProjMatrix", m_pGameInstance->Get_Transform_Float4x4(D3DTS::PROJ))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Bind_RawValue("objectId", &m_oID, sizeof(_uint))))
-		return E_FAIL;
-
-	const LIGHT_DESC* pLightDesc = m_pGameInstance->Get_Light(0);
-	if (pLightDesc == nullptr)
-		return S_OK;
-
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDir", &pLightDesc->vDirection, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightDiffuse", &pLightDesc->vDiffuse, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightAmbient", &pLightDesc->vAmbient, sizeof(_float4))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Bind_RawValue("g_vLightSpecular", &pLightDesc->vSpecular, sizeof(_float4))))
 		return E_FAIL;
 
 	return S_OK;

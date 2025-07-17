@@ -5,7 +5,7 @@
 NS_BEGIN(Editor)
 class CSonic_Movement_State : public CSonic_State
 {
-private:
+public:
 	enum class EMovementState
 	{
 		IDLE,
@@ -22,6 +22,7 @@ private:
 		RIDER,
 		WALL,
 		JUMP,
+		DASHRING,
 		END
 	};
 protected:
@@ -45,6 +46,7 @@ private:
 	void Avoid(_float fTimeDelta);
 	void QuickStep(_float fTimeDelta);
 	void SpringJump(_float fTimeDelta);
+	void DashRing(_float fTimeDelta);
 
 #pragma region Interact
 private:
@@ -53,6 +55,9 @@ private:
 	void Update_PositionOnSpline();
 	void Determine_SplineDirection();
 #pragma endregion
+
+public:
+	void Set_MovementState(EMovementState eMovementState) { m_eMovementState = eMovementState; }
 
 private:
 	void ResolveCollisions(_vector vMovement, _float fTimeDelta);

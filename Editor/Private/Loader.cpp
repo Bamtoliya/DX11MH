@@ -68,9 +68,9 @@ HRESULT CLoader::Loading()
 	case LEVEL::LOGO:
 		hr = Loading_For_Logo();
 		break;
-	/*case LEVEL::LOADING:
+	case LEVEL::LOADING:
 		hr = Loading_For_Loading();
-		break;*/
+		break;
 	case LEVEL::UI:
 		hr = Loading_For_UI();
 		break;
@@ -237,7 +237,12 @@ HRESULT CLoader::Loading_For_Open()
 		return E_FAIL;
 	}
 
-	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::TEST), SAVEPATH L"Prototypes_StageObjects.json", CLoader::JsonLoadCallback, this)))
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::OPEN), SAVEPATH L"Prototypes_StageObjects.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::OPEN), SAVEPATH L"Prototypes_UI.json", CLoader::JsonLoadCallback, this)))
 	{
 		return E_FAIL;
 	}
@@ -265,7 +270,12 @@ HRESULT CLoader::Loading_For_Stage01()
 		return E_FAIL;
 	}
 
-	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::TEST), SAVEPATH L"Prototypes_StageObjects.json", CLoader::JsonLoadCallback, this)))
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STAGE01), SAVEPATH L"Prototypes_StageObjects.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STAGE01), SAVEPATH L"Prototypes_UI.json", CLoader::JsonLoadCallback, this)))
 	{
 		return E_FAIL;
 	}
@@ -293,7 +303,12 @@ HRESULT CLoader::Loading_For_Stage02()
 		return E_FAIL;
 	}
 
-	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::TEST), SAVEPATH L"Prototypes_StageObjects.json", CLoader::JsonLoadCallback, this)))
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STAGE02), SAVEPATH L"Prototypes_StageObjects.json", CLoader::JsonLoadCallback, this)))
+	{
+		return E_FAIL;
+	}
+
+	if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::STAGE02), SAVEPATH L"Prototypes_UI.json", CLoader::JsonLoadCallback, this)))
 	{
 		return E_FAIL;
 	}

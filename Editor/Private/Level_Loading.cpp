@@ -14,11 +14,10 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 
 	/* 로딩레벨 자체에 필요한 객체를 생성한다. */
 	/* 배경, 로딩바, 버튼, font */
-	/*if (FAILED(m_pGameInstance->Load_Prototypes(ENUM_CLASS(LEVEL::LOADING), SAVEPATH L"Prototypes_UI.json", CLoader::JsonLoadCallback, this)))
-	{
-		return E_FAIL;
-	}
-	if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Logo.json")))
+
+
+
+	/*if (FAILED(m_pGameInstance->Load_GameObjects(m_iLevel, SAVEPATH L"Logo.json")))
 		return E_FAIL;*/
 
 	/* 로딩의 역할(다음레벨에 필요한 자원(Resource)(텍스쳐, 모델, 사운드 등등등 )을 생성하는)을 
@@ -26,7 +25,7 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 	m_pLoader = CLoader::Create(m_pDevice, m_pContext, m_eNextLevelID);
 	if (nullptr == m_pLoader)
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 
@@ -62,15 +61,12 @@ void CLevel_Loading::Update(_float fTimeDelta)
 			case LEVEL::TEST:
 				pLevel = CLevel_Test::Create(m_pDevice, m_pContext);
 				break;
-
 			case LEVEL::OPEN:
 				pLevel = CLevel_Open::Create(m_pDevice, m_pContext);
 				break;
-
 			case LEVEL::STAGE01:
 				pLevel = CLevel_Stage01::Create(m_pDevice, m_pContext);
 				break;
-
 			case LEVEL::STAGE02:
 				pLevel = CLevel_Stage02::Create(m_pDevice, m_pContext);
 				break;
@@ -98,6 +94,11 @@ HRESULT CLevel_Loading::Render()
 		wsprintf(m_szLoadingText, L"로딩중 (%d%%)", progressPercnetage);
 		SetWindowText(g_hWnd, m_szLoadingText);
 	}
+	return S_OK;
+}
+
+HRESULT CLevel_Loading::Ready_Layer_LoadingScreen(const _wstring& strLayerTag)
+{
 	return S_OK;
 }
 

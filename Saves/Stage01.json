@@ -148,7 +148,7 @@
                             {
                                 "EulerRotationX": 0.0,
                                 "EulerRotationY": 0.0,
-                                "EulerRotationZ": 0.0,
+                                "EulerRotationZ": 1.5707963705062866,
                                 "FilterData0": 1,
                                 "FilterData1": 1,
                                 "FilterData2": 0,
@@ -157,15 +157,15 @@
                                 "IsQueryShape": false,
                                 "LocalPosition": [
                                     0.0,
-                                    0.0,
+                                    0.1,
                                     0.0
                                 ],
                                 "MeshIndex": 4294967295,
                                 "RotationQuat": [
                                     0.0,
                                     0.0,
-                                    0.0,
-                                    1.0
+                                    0.7071068286895752,
+                                    0.7071067690849304
                                 ],
                                 "ShapeSize": [
                                     0.25,
@@ -371,7 +371,7 @@
                     "Name": "Skybox",
                     "NumTextures": 1,
                     "PrototypeTag": "Prototype_GameObject_Skybox",
-                    "TextureFilePath": "../../Assets/Textures/Skybox/XYZ.dds",
+                    "TextureFilePath": "G:/My Drive/Assets/Textures/Skybox/Skybox.dds",
                     "UseTextureRegion": false,
                     "Visible": true
                 }

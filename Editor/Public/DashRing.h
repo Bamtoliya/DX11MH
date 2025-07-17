@@ -7,20 +7,19 @@ NS_BEGIN(Engine)
 class CShader;
 class CModel;
 class CRigidBody;
-class CHeightField;
 NS_END
 
 NS_BEGIN(Editor)
 
-class CDashBoard final : public CGameObject
+class CDashRing final : public CGameObject
 {
 #pragma region Constructor/Destructor
 private:
-	CDashBoard(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CDashBoard(const CDashBoard& Prototype);
-	virtual ~CDashBoard() = default;
+	CDashRing(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CDashRing(const CDashRing& Prototype);
+	virtual ~CDashRing() = default;
 public:
-	static CDashBoard* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static CDashRing* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CGameObject* Clone(void* pArg) override;
 	virtual CGameObject* Clone(simdjson::ondemand::object& jsonData) override;
 public:
@@ -65,13 +64,6 @@ public:
 	virtual void OnCollisionOverlapping(PxActor* pOther) override;
 	virtual void OnCollisionExit(PxActor* pOther) override;
 #pragma endregion
-
-#pragma region Variable
-	_uint m_iCount = { 1 };
-#pragma endregion
-
-
-
 };
 
 NS_END

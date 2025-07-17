@@ -1,10 +1,12 @@
-﻿#include "Sonic_Controller.h"
+﻿#pragma once
+#include "Sonic_Controller.h"
 #include "Sonic.h"
 #include "State.h"
 #include "Sonic_States.h"
 #include "Spline_Component.h"
 #include "Animator.h"
 #include "Sonic.h"
+#include "Sonic_Movement_State.h"
 
 CSonic_Controller::CSonic_Controller(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CController{ pDevice, pContext }
@@ -254,6 +256,40 @@ void CSonic_Controller::Spring(_fvector vPushDirection)
 	m_tInfo.fVerticalVelocity.first = XMVectorGetX(XMVector3Length(vVerticalComponent));
 	// 만약 밀어내는 방향의 y값이 음수이면, 수직 속도도 음수로 설정
 	if (XMVectorGetY(vPushDirection) < 0.f)
+	{
+		m_tInfo.fVerticalVelocity.first *= -1.f;
+	}
+
+	// 수평 속도 및 방향 설정
+	m_tInfo.fMoveSpeed.first = XMVectorGetX(XMVector3Length(vHorizontalComponent));
+	XMStoreFloat3(&m_tInfo.vMoveDirection, XMVector3Normalize(vHorizontalComponent));
+}
+
+void CSonic_Controller::DashPanel(_fvector vDashDirection)
+{
+	m_tInfo.fMoveSpeed.first = m_tInfo.fMaxBoostSpeed * 3.f;
+	XMStoreFloat3(&m_tInfo.vMoveDirection, XMVector3Normalize(vDashDirection));
+}
+
+void CSonic_Controller::DashRing(_fvector vDashDirection)
+{
+	static_cast<CSonic_Movement_State*>(m_States[m_iCurStateIndex])->Set_MovementState(CSonic_Movement_State::EMovementState::DASHRING);
+	m_tInfo.bIsSpring = false;
+	m_tInfo.bOnGround = false;
+	m_tInfo.bCanJump = false;
+	m_tInfo.bCanDoubleJump = false;
+	const float fSpringPower = 50.f; // 튕겨나가는 힘의 크기 (조절 가능)
+	_vector vInitialVelocity = XMVector3Normalize(vDashDirection) * fSpringPower;
+
+	// 속도를 수직/수평 성분으로 분해
+	_vector vWorldUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	_vector vVerticalComponent = XMVector3Dot(vInitialVelocity, vWorldUp) * vWorldUp;
+	_vector vHorizontalComponent = vInitialVelocity - vVerticalComponent;
+
+	// 수직 속도 설정
+	m_tInfo.fVerticalVelocity.first = XMVectorGetX(XMVector3Length(vVerticalComponent)) * 3.f;
+	// 만약 밀어내는 방향의 y값이 음수이면, 수직 속도도 음수로 설정
+	if (XMVectorGetY(vDashDirection) < 0.f)
 	{
 		m_tInfo.fVerticalVelocity.first *= -1.f;
 	}

@@ -1,0 +1,75 @@
+{
+    "Layer_Background": {
+        "GameObjects": [
+            {
+                "CBackGround": {
+                    "Active": true,
+                    "CShader": {
+                        "Layout": "VTXPOSTEX",
+                        "Tiling": true,
+                        "TilingOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "TilingScale": [
+                            1.0,
+                            1.0
+                        ],
+                        "UVAnimation": false,
+                        "UVAnimationSpeed": [
+                            -0.07000000029802322,
+                            0.0
+                        ]
+                    },
+                    "CTransform": {
+                        "EulerRotation": [
+                            -0.0,
+                            0.0,
+                            -0.0
+                        ],
+                        "IsRelativePosition": false,
+                        "IsRelativeRotation": false,
+                        "IsRelativeScale": false,
+                        "Orientation": [
+                            -0.0,
+                            0.0,
+                            -0.0,
+                            1.0
+                        ],
+                        "Position": [
+                            0.0,
+                            520.0,
+                            0.0
+                        ],
+                        "RotationPerSec": 0.0,
+                        "Scale": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "SpeedPerSec": 0.0
+                    },
+                    "CVIBuffer_Rect": {
+                        "Size": [
+                            600.0,
+                            100.0
+                        ]
+                    },
+                    "LayerTag": "Layer_Background",
+                    "Name": "TopMiddle",
+                    "NumTextures": 1,
+                    "PrototypeTag": "Prototype_GameObject_BackGround",
+                    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_cockpitindicator4.dds",
+                    "TextureRegion": [
+                        0.0,
+                        0.0,
+                        0.64453125,
+                        0.17578125
+                    ],
+                    "UseTextureRegion": true,
+                    "Visible": true
+                }
+            }
+        ]
+    }
+}

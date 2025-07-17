@@ -202,7 +202,12 @@ HRESULT CGameObject_W6D01FallDead_Collider::Render()
 }
 void CGameObject_W6D01FallDead_Collider::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
 {
-	cout << "Sonic CollidingEnter with Fall Dead\n";
+	if (pOther->userData == m_pGameInstance->Get_CurrentPlayer())
+	{
+		static_cast<CTransform*>(m_pGameInstance->Get_CurrentPlayer()->Get_Component(g_strTransformTag))->Set_State(STATE::POSITION, XMVectorSet(600.f, 160.f, 380.f, 1.f));
+		cout << "Sonic CollidingEnter with Fall Dead\n";
+	}
+	
 }
 void CGameObject_W6D01FallDead_Collider::OnCollisionOverlapping(PxActor* pOther)
 {

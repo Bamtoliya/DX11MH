@@ -307,6 +307,9 @@
     <Filter Include="02.GameObject\03.Monster\Enemy\Bommer">
       <UniqueIdentifier>{a51a0b17-a81a-4386-b46d-4e9faabf1c70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\StageObjects\DashRing">
+      <UniqueIdentifier>{cf25a819-c7cf-4bb0-944b-58bb349c18c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -489,11 +492,14 @@
     <ClCompile Include="..\private\Virtual_Space.cpp">
       <Filter>02.GameObject\06.Virtual Space</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\DashBoard.cpp">
+    <ClCompile Include="..\private\DashPanel.cpp">
       <Filter>02.GameObject\StageObjects\DashBoard</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Bommer.cpp">
       <Filter>02.GameObject\03.Monster\Enemy\Bommer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DashRing.cpp">
+      <Filter>02.GameObject\StageObjects\DashRing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -710,11 +716,14 @@
     <ClInclude Include="..\public\GameObject_SplineRoad.h">
       <Filter>02.GameObject\Spline</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\DashBoard.h">
+    <ClInclude Include="..\public\DashPanel.h">
       <Filter>02.GameObject\StageObjects\DashBoard</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Bommer.h">
       <Filter>02.GameObject\03.Monster\Enemy\Bommer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DashRing.h">
+      <Filter>02.GameObject\StageObjects\DashRing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

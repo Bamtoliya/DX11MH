@@ -171,7 +171,7 @@ HRESULT CRail::Serialize(json& outJson)
 	if (FAILED(__super::Serialize(data)))
 		return E_FAIL;
 	outJson["CRail"] = data;
-	outJson["CRail"]["PrototypeTag"] = "Prototype_GameObject_GameObject_Spline";
+	outJson["CRail"]["PrototypeTag"] = "Prototype_GameObject_Rail";
 	return S_OK;
 }
 

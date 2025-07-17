@@ -126,6 +126,7 @@ CGameObject* CGameObject::Clone(CGameObject* pGameObject, void* pArg)
 	{
 		pInstance->m_pParent = pGameObject;
 		pInstance->m_pParent->Add_Child(pInstance->m_szName, pInstance);
+		pInstance->Late_Initialize();
 	}
 	return pInstance;
 }
@@ -137,6 +138,7 @@ CGameObject* CGameObject::Clone(CGameObject* pGameObject, simdjson::ondemand::ob
 	{
 		pInstance->m_pParent = pGameObject;
 		pInstance->m_pParent->Add_Child(pInstance->m_szName, pInstance);
+		pInstance->Late_Initialize();
 	}
 	return pInstance;
 }
