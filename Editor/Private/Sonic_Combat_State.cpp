@@ -4,6 +4,7 @@
 #include "Sonic.h"
 #include "Sonic_Controller.h"
 #include "Animator.h"
+#include "Sound_Event.h"
 
 
 using namespace Editor;
@@ -24,6 +25,7 @@ CSonic_Combat_State* CSonic_Combat_State::Create(CGameObject* pOwner)
 
 void CSonic_Combat_State::Execute(_float fTimeDelta)
 {
+    static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
     CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
 	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
     CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
@@ -76,6 +78,7 @@ void CSonic_Combo_Kick01_State::Enter()
 
 void CSonic_Combo_Kick01_State::Execute(_float fTimeDelta)
 {
+    static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
     CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
     CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
     CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
@@ -121,6 +124,7 @@ void CSonic_Combo_Kick02_State::Enter()
 
 void CSonic_Combo_Kick02_State::Execute(_float fTimeDelta)
 {
+    static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
     CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
     CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
     CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
@@ -166,6 +170,7 @@ void CSonic_Combo_OneTwo_State::Enter()
 
 void CSonic_Combo_OneTwo_State::Execute(_float fTimeDelta)
 {
+    static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
     CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
     CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
     CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
@@ -211,6 +216,7 @@ void CSonic_Combo_Punch01_State::Enter()
 
 void CSonic_Combo_Punch01_State::Execute(_float fTimeDelta)
 {
+    static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
     CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
     CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
     CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
@@ -256,6 +262,7 @@ void CSonic_Combo_Punch02_State::Enter()
 
 void CSonic_Combo_Punch02_State::Execute(_float fTimeDelta)
 {
+    static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
     CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
     CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
     CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));

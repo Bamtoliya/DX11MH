@@ -288,47 +288,47 @@
 
     void CTexture::Set_TextureRegionPixels(_float fLeft, _float fTop, _float fRight, _float fBottom, _uint iTextureIndex)
     {
-    if (iTextureIndex >= m_iNumTextures)
-        return;
+        if (iTextureIndex >= m_iNumTextures)
+            return;
 
-    // 픽셀 좌표를 _float4로 변환
-    _float4 pixelCoords = { fLeft, fTop, fRight, fBottom };
+        // 픽셀 좌표를 _float4로 변환
+        _float4 pixelCoords = { fLeft, fTop, fRight, fBottom };
 
-    // 픽셀 좌표를 UV 좌표로 변환
-    m_vTextureRegion = PixelsToUV(pixelCoords, iTextureIndex);
-    }
+        // 픽셀 좌표를 UV 좌표로 변환
+        m_vTextureRegion = PixelsToUV(pixelCoords, iTextureIndex);
+        }
 
-    void CTexture::Set_TextureRegionUV(_float fLeft, _float fTop, _float fRight, _float fBottom)
-    {
-    m_vTextureRegion = _float4(fLeft, fTop, fRight, fBottom);
-    }
+        void CTexture::Set_TextureRegionUV(_float fLeft, _float fTop, _float fRight, _float fBottom)
+        {
+        m_vTextureRegion = _float4(fLeft, fTop, fRight, fBottom);
+        }
 
-    _float4 CTexture::PixelsToUV(_float4 pixelCoords, _uint iTextureIndex)
-    {
-    if (iTextureIndex >= m_iNumTextures)
+        _float4 CTexture::PixelsToUV(_float4 pixelCoords, _uint iTextureIndex)
+        {
+        if (iTextureIndex >= m_iNumTextures)
+            return _float4(0.0f, 0.0f, 1.0f, 1.0f);
+
+        // 텍스처 크기 얻기
+        D3D11_TEXTURE2D_DESC textureDesc;
+        ID3D11Texture2D* pTexture2D = nullptr;
+
+        m_SRVs[iTextureIndex]->GetResource((ID3D11Resource**)&pTexture2D);
+        if (pTexture2D)
+        {
+            pTexture2D->GetDesc(&textureDesc);
+            pTexture2D->Release();
+
+            // 픽셀 좌표를 UV 좌표(0~1)로 변환
+            _float4 uvCoords;
+            uvCoords.x = max(0.0f, min(1.0f, (float)pixelCoords.x / textureDesc.Width));
+            uvCoords.y = max(0.0f, min(1.0f, (float)pixelCoords.y / textureDesc.Height));
+            uvCoords.z = max(0.0f, min(1.0f, (float)pixelCoords.z / textureDesc.Width));
+            uvCoords.w = max(0.0f, min(1.0f, (float)pixelCoords.w / textureDesc.Height));
+
+            return uvCoords;
+        }
+        // 실패 시 전체 텍스처 영역 반환
         return _float4(0.0f, 0.0f, 1.0f, 1.0f);
-
-    // 텍스처 크기 얻기
-    D3D11_TEXTURE2D_DESC textureDesc;
-    ID3D11Texture2D* pTexture2D = nullptr;
-
-    m_SRVs[iTextureIndex]->GetResource((ID3D11Resource**)&pTexture2D);
-    if (pTexture2D)
-    {
-        pTexture2D->GetDesc(&textureDesc);
-        pTexture2D->Release();
-
-        // 픽셀 좌표를 UV 좌표(0~1)로 변환
-        _float4 uvCoords;
-        uvCoords.x = max(0.0f, min(1.0f, (float)pixelCoords.x / textureDesc.Width));
-        uvCoords.y = max(0.0f, min(1.0f, (float)pixelCoords.y / textureDesc.Height));
-        uvCoords.z = max(0.0f, min(1.0f, (float)pixelCoords.z / textureDesc.Width));
-        uvCoords.w = max(0.0f, min(1.0f, (float)pixelCoords.w / textureDesc.Height));
-
-        return uvCoords;
-    }
-    // 실패 시 전체 텍스처 영역 반환
-    return _float4(0.0f, 0.0f, 1.0f, 1.0f);
     }
 
     _float2 CTexture::Get_TextureSize(_uint iTextureIndex)

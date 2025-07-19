@@ -79,6 +79,11 @@ HRESULT CMainApp::Register_Class_Types()
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CMonster", CMonster::Create))) return E_FAIL;
 #pragma endregion	
 
+#pragma region UI
+	if (FAILED(m_pGameInstance->Register_Creator_Function("CLockOnCursor", CLockOnCursor::Create))) return E_FAIL;
+#pragma endregion
+
+
 #pragma region Stages
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CGameObject_W6D01", CGameObject_W6D01::Create))) return E_FAIL;
 	if (FAILED(m_pGameInstance->Register_Creator_Function("CGameObject_W6D02", CGameObject_W6D02::Create))) return E_FAIL;
@@ -135,6 +140,8 @@ HRESULT CMainApp::Ready_Prototype_Components()
 
 	if (FAILED(m_pGameInstance->Add_Font(TEXT("Ex_Font"), ASSETPATH L"Fonts/sonicex.spritefont")))
 		return E_FAIL;
+
+	
 
 	return S_OK;
 }

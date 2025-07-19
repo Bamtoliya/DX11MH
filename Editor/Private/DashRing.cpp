@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Sonic_Controller.h"
 #include "Material.h"
+#include "Sound_Event.h"
 
 #pragma region Constructor/Destructor
 CDashRing::CDashRing(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -292,6 +293,7 @@ void CDashRing::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
 				pController->DashRing(vDashDirection);
 			}
 		}
+		m_pGameInstance->Play_Event(L"event:/00002")->SetVolume(0.4f);
 	}
 }
 void CDashRing::OnCollisionOverlapping(PxActor* pOther)

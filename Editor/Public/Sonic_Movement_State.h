@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "State.h"
 #include "Sonic_State.h"
+#include "Sound_Event.h"
 
 NS_BEGIN(Editor)
 class CSonic_Movement_State : public CSonic_State
@@ -23,6 +24,7 @@ public:
 		WALL,
 		JUMP,
 		DASHRING,
+		HOMING_ATTACK,
 		END
 	};
 protected:
@@ -47,6 +49,7 @@ private:
 	void QuickStep(_float fTimeDelta);
 	void SpringJump(_float fTimeDelta);
 	void DashRing(_float fTimeDelta);
+	void HomingAttack(_float fTimeDelta);
 
 #pragma region Interact
 private:
@@ -57,6 +60,7 @@ private:
 #pragma endregion
 
 public:
+	EMovementState Get_MovementState() const { return m_eMovementState; }
 	void Set_MovementState(EMovementState eMovementState) { m_eMovementState = eMovementState; }
 
 private:

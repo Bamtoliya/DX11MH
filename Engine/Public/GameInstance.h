@@ -46,6 +46,7 @@ public:
 	void AddActorToScene(PxActor* pActor);
 	void RemoveActorFromScene(PxActor* pActor);
 	PxMaterial* Get_DefaultMaterial() const;
+	vector<PxOverlapHit> Get_OverlapHits(const PxGeometry& geometry, const PxTransform& pose, PxQueryFilterData fd);
 #pragma endregion
 
 #pragma region INPUT_DEVICE
@@ -84,6 +85,14 @@ public:
 	HRESULT Render_PrototypeManagerImGui(_uint iLevelIndex, const _wstring& PrototypeType, _wstring& strSelectedTag);
 #pragma endregion
 
+#pragma region SOUND_MANAGER
+	void Load_Bank(const _wstring& strBankPath);
+	class CSound_Event*		Play_Background(const _wstring& strEventPath, void* pArg = nullptr);
+	class CSound_Event*		Play_Event(const _wstring& strEventPath, void* pArg = nullptr);
+	void					Stop_All_Event(_bool allowFadeOut = false);
+#pragma endregion
+
+
 #pragma region TARGET_MANAGER
 	//Render Target
 	HRESULT Add_RenderTarget(const _wstring& strTargetTag, _uint iWidth, _uint iHeight, DXGI_FORMAT eFormat, _float4 vClearColor);
@@ -110,6 +119,8 @@ public:
 #pragma endregion
 
 #pragma region CAMERA_MANAGER
+	class CCamera* Get_Camera(_uint iIndex = 0);
+	class CCamera* Get_Current_Camera();
 	void Add_Camera(class CCamera* pCamera);
 	void Remove_Camera(class CCamera* pCamera);
 	void Remove_Camera(_uint iIndex);

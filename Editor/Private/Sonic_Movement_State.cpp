@@ -30,6 +30,7 @@ void CSonic_Movement_State::Walk(_float fTimeDelta)
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
 	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
 	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::WALK_LOOP), 1.5f);
+	m_pGameInstance->Play_Event(L"event:/walk")->SetVolume(0.4f);
 }
 
 void CSonic_Movement_State::Run(_float fTimeDelta)
@@ -49,6 +50,7 @@ void CSonic_Movement_State::Run(_float fTimeDelta)
 	{
 		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::RUN_LOOP), status.fMoveSpeed.first);
 	}
+	m_pGameInstance->Play_Event(L"event:/run")->SetVolume(0.4f);
 }
 
 void CSonic_Movement_State::Dash(_float fTimeDelta)
@@ -147,6 +149,7 @@ void CSonic_Movement_State::Rider(_float fTimeDelta)
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
 	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
 	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::GRIND_LOOP));
+	m_pGameInstance->Play_Event(L"event:/sn_rail_glind")->SetVolume(0.3f);
 }
 
 void CSonic_Movement_State::Avoid(_float fTimeDelta)
@@ -244,6 +247,56 @@ void CSonic_Movement_State::DashRing(_float fTimeDelta)
 	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(0);
 	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(false);
 	pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::STATE::DASHRING), 1.5f, false);
+}
+
+void CSonic_Movement_State::HomingAttack(_float fTimeDelta)
+{
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pOwner->Get_Component(L"Com_Controller"));
+	if (!pController)
+		return;
+
+	CAnimator* pAnimator = static_cast<CAnimator*>(m_pOwner->Get_Component(L"Com_Animator"));
+	CGameObject* pTarget = pController->Get_LockOnTarget();
+	if (!pTarget)
+	{
+		// 타겟이 없으면 일반 점프 상태로 전환
+		Set_MovementState(EMovementState::JUMP);
+		return;
+	}
+
+	CTransform* pPlayerTransform = static_cast<CTransform*>(m_pOwner->Get_Component(g_strTransformTag));
+	CTransform* pTargetTransform = static_cast<CTransform*>(pTarget->Get_Component(g_strTransformTag));
+
+	_vector vPlayerPos = pPlayerTransform->Get_State(STATE::POSITION);
+	_vector vTargetPos = pTargetTransform->Get_State(STATE::POSITION);
+
+	// 타겟을 향하는 방향 벡터 계산
+	_vector vDirToTarget = XMVector3Normalize(vTargetPos - vPlayerPos);
+
+	CSonic_Controller::SONIC_STATUS& status = pController->Get_Status();
+
+	// 호밍 어택 속도 설정
+	status.fMoveSpeed.first = 30.f; // 호밍 어택 속도 (조절 가능)
+	XMStoreFloat3(&status.vMoveDirection, vDirToTarget);
+
+	// 공격 중에는 중력 무시
+	status.fVerticalVelocity.first = 0.f;
+
+	// 플레이어가 타겟을 바라보도록 회전
+	//pPlayerTransform->LookAt(vTargetPos);
+
+	// 애니메이션 설정
+	static_cast<CSonic*>(m_pOwner)->Change_ModelIndex(1); // 스핀 모델로 변경
+	static_cast<CSonic*>(m_pOwner)->Set_Spin_Collider(true);
+	status.bIsHomingAttackStarted = true;
+	if (status.bIsHomingAttackStarted && pAnimator->Get_AnimationProgress() >= 0.75f)
+	{
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::SPINSTATE::SPIN_SPECIAL_ATK), 1.f, false);
+	}
+	else
+	{
+		pController->Change_State(ENUM_CLASS(CSonic_Controller::States::MOVE), ENUM_CLASS(CSonic::SPINSTATE::SPIN_SPECIAL_ATK_START), 1.f, false);
+	}
 }
 
 void CSonic_Movement_State::ResolveCollisions(_vector vMovement, _float fTimeDelta)
@@ -537,6 +590,7 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 		case CSonic_Movement_State::EMovementState::AVOID:		Avoid(fTimeDelta); break;
 		case CSonic_Movement_State::EMovementState::QUICKSTEP:	QuickStep(fTimeDelta); break;
 		case CSonic_Movement_State::EMovementState::DASHRING:	DashRing(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::HOMING_ATTACK:	HomingAttack(fTimeDelta); break;
 		default:
 			break;
 		}
@@ -606,12 +660,13 @@ void CSonic_Movement_State::Execute(_float fTimeDelta)
 	{
 		switch (m_eMovementState)
 		{
-		case Editor::CSonic_Movement_State::EMovementState::BOOST: Boost(fTimeDelta); break;
-		case Editor::CSonic_Movement_State::EMovementState::SPRINGJUMP: SpringJump(fTimeDelta); break;
-		case Editor::CSonic_Movement_State::EMovementState::POLESPIN: break;
-		case Editor::CSonic_Movement_State::EMovementState::PULLEY: break;
-		case Editor::CSonic_Movement_State::EMovementState::RIDER: Rider(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::BOOST: Boost(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::SPRINGJUMP: SpringJump(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::POLESPIN: break;
+		case CSonic_Movement_State::EMovementState::PULLEY: break;
+		case CSonic_Movement_State::EMovementState::RIDER: Rider(fTimeDelta); break;
 		case CSonic_Movement_State::EMovementState::DASHRING:		DashRing(fTimeDelta); break;
+		case CSonic_Movement_State::EMovementState::HOMING_ATTACK:	HomingAttack(fTimeDelta); break;
 		default:
 			Jump(fTimeDelta);
 			break;
@@ -689,6 +744,7 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 			status.bOnGround = false;
 			status.bCanJump = false;
 			status.bCanDoubleJump = true;
+			m_pGameInstance->Play_Event(L"event:/sn_jump")->SetVolume(0.4f);
 			return; // 입력 처리 완료
 		}
 
@@ -813,6 +869,7 @@ void CSonic_Movement_State::HandleInput(_float fTimeDelta)
 				status.bOnGround = false; // 공중 상태로 전환
 				status.bCanJump = false;
 				status.bCanDoubleJump = true;
+				m_pGameInstance->Play_Event(L"event:/sn_jump")->SetVolume(0.4f);
 				return;
 			}
 		}
@@ -933,6 +990,7 @@ void CSonic_Movement_State::Update_SplineMovement(_float fTimeDelta)
 		status.bOnGround = false; // 공중 상태로 전환
 		status.bCanDoubleJump = true;
 		m_eMovementState = EMovementState::JUMP;
+		m_pGameInstance->Play_Event(L"event:/sn_jump")->SetVolume(0.4f);
 		return;
 	}
 

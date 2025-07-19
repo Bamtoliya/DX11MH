@@ -115,9 +115,15 @@ HRESULT CTutorial_Enemy::Ready_Components()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
+	CRigidBody::RIGIDBODY_DESC rigidBodyDesc = {};
+	CRigidBody::SHAPE_DESC shapeDesc = {};
+	shapeDesc.eShapeType = CRigidBody::EShapeType::BOX;
+	shapeDesc.bIsQueryShape = true;
+	shapeDesc.filterData3 = 2;
+
 	/* For.Com_RigidBody */
 	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom))))
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom), &rigidBodyDesc)))
 		return E_FAIL;
 
 

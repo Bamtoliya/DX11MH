@@ -1,5 +1,6 @@
 #include "GameObject_SplineRoad.h"
 #include "GameInstance.h"
+#include "Spline_Component.h"
 #include "Sonic.h"
 #include "Sonic_Controller.h"
 
@@ -82,12 +83,18 @@ HRESULT CGameObject_SplineRoad::Initialize(void* pArg)
 	if (FAILED(Ready_Components()))
 		return E_FAIL;
 
-	m_pSplineCom->AddControlPoint(_float3(-10.f, 0.f, 10.f));
-	m_pSplineCom->AddControlPoint(_float3(-5.f, 5.f, -5.f));
-	m_pSplineCom->AddControlPoint(_float3(5.f, -5.f, 5.f));
-	m_pSplineCom->AddControlPoint(_float3(10.f, 0.f, -10.f));
-	m_pSplineCom->AddControlPoint(_float3(15.f, 5.f, 0.f));
-	m_pSplineCom->AddControlPoint(_float3(20.f, 0.f, 5.f));
+	CTransform* pTransform = static_cast<CTransform*>(Get_Component(g_strTransformTag));
+	if (pTransform)
+	{
+		_vector vCenter = pTransform->Get_State(STATE::POSITION);
+		_float fRadius = 10.f; // 원하는 반지름
+		m_pSplineCom->Create_CirclePath(vCenter, fRadius, 16); // 8개의 제어점으로 원 생성
+	}
+
+	m_pSplineCom->Set_IsRail(false);
+
+	if (FAILED(Late_Initialize()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -103,13 +110,18 @@ HRESULT CGameObject_SplineRoad::Initialize(simdjson::ondemand::object& jsonData)
 	if (FAILED(Deserialize(jsonData)))
 		return E_FAIL;
 
+	if (FAILED(Late_Initialize()))
+		return E_FAIL;
+
+	m_pSplineCom->Set_IsRail(false);
+
 	return S_OK;
 }
 
 HRESULT CGameObject_SplineRoad::Ready_Components()
 {
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_VtxDebugDraw"),
+	if (FAILED(__super::Add_Component(0, TEXT("Prototype_Component_Shader_Spline"),
 		TEXT("Com_Shader"), reinterpret_cast<CComponent**>(&m_pShaderCom))))
 		return E_FAIL;
 
@@ -188,8 +200,10 @@ void CGameObject_SplineRoad::Update(_float fTimeDelta)
 {
 	if (m_pSplineCom && m_pVIBufferCom && m_pSplineCom->IsDirty())
 	{
-		vector<_float3> vPoints = m_pSplineCom->GetSplinePoints();
-		m_pVIBufferCom->Update_Spline(vPoints);
+		vector<_float3>& vPoints = m_pSplineCom->GetSplinePoints();
+		vector<CSpline_Component::SPLINE_FRAME>& vSplineFrames = m_pSplineCom->Get_SplineFrames();
+		//m_pVIBufferCom->Update_Spline(vPoints);
+		m_pVIBufferCom->Update_Spline(vSplineFrames);
 
 		if (m_pRigidBodyCom)
 		{

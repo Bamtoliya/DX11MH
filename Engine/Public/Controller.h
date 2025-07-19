@@ -46,5 +46,6 @@ public:
 	virtual void Add_State(CState* pState); 
 	virtual void Add_State(_uint iIndex, CState* pState) { if (iIndex >= m_States.size() || nullptr == pState) return; m_States[iIndex] = pState; }
 	virtual void Change_State(_uint iIndex) {}
+	CState* Get_CurrentState() const { return (m_iCurStateIndex < m_States.size()) ? m_States[m_iCurStateIndex] : nullptr; }
 };
 NS_END

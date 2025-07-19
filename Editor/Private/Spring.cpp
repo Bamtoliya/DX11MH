@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "Animator.h"
 #include "Sonic_Controller.h"
+#include "Sound_Event.h"
 
 #pragma region Constructor/Destructor
 CSpring::CSpring(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -131,8 +132,11 @@ HRESULT CSpring::Ready_Components()
 	CRigidBody::SHAPE_DESC shapeDesc = {};
 	shapeDesc.eShapeType = CRigidBody::EShapeType::SPHERE;
 	shapeDesc.vShapeSize = { 0.75f, 1.0, 1.f };
+	shapeDesc.bIsQueryShape = true;
+	shapeDesc.filterData3 = 2;
 	rigidBodyDesc.vShapeDescs.push_back(shapeDesc);
 	rigidBodyDesc.eBodyType = CRigidBody::EBodyType::STATIC;
+	
 
 	/* For.Com_Model */
 	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
@@ -198,6 +202,9 @@ void CSpring::Update(_float fTimeDelta)
 		m_pRigidBodyCom->Update(fTimeDelta);
 	if (m_pAnimatorCom)
 		m_pAnimatorCom->Update(fTimeDelta);
+
+	if(m_pAnimatorCom->Get_AnimationProgress() > 0.9f)
+		m_pAnimatorCom->Change_Animation(0, 1.0f, false, 0.f);
 }
 
 void CSpring::Late_Update(_float fTimeDelta)
@@ -253,7 +260,6 @@ void CSpring::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
 	// 애니메이터 컴포넌트가 없거나 애니메이션이 이미 재생 중이면 반환
 	/*if (nullptr == m_pAnimatorCom || !m_pAnimatorCom->Is_Finished())
 		return;*/
-	m_pAnimatorCom->Change_Animation(0, 1.0f, false, 0.f); // 기본 애니메이션 재생
 
 	CGameObject* pGameObject = static_cast<CGameObject*>(pOther->userData);
 	CSonic_Controller* pController = dynamic_cast<CSonic_Controller*>(pGameObject->Get_Component(L"Com_Controller"));
@@ -261,6 +267,8 @@ void CSpring::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
 	{
 		_vector vPushDirection = m_pTransformCom->Get_State(STATE::UP);
 		pController->Spring(vPushDirection);
+		m_pAnimatorCom->Change_Animation(0, 1.0f, true, 0.f); // 기본 애니메이션 재생
+		m_pGameInstance->Play_Event(L"event:/00036")->SetVolume(0.4f);
 	}
 }
 void CSpring::OnCollisionOverlapping(PxActor* pOther)

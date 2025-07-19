@@ -200,6 +200,32 @@ HRESULT CSpline_Component::RenderImGui()
 			ImGui::TreePop();
 		}
 
+		ImGui::Separator();
+
+		// Arc Path 생성 UI
+		if (ImGui::TreeNode("Arc Path Creator"))
+		{
+			static _float3 vStart{ 0.f, 0.f, 0.f };
+			static _float3 vMid{ 10.f, 10.f, 0.f };
+			static _float3 vEnd{ 20.f, 0.f, 0.f };
+			static int iNumPoints = 16;
+
+			ImGui::DragFloat3("Start Point", &vStart.x, 0.1f);
+			ImGui::DragFloat3("Mid Point", &vMid.x, 0.1f);
+			ImGui::DragFloat3("End Point", &vEnd.x, 0.1f);
+			ImGui::SliderInt("Num Points", &iNumPoints, 4, 100);
+
+			if (ImGui::Button("Create Arc Path"))
+			{
+				Create_ArcPath(XMLoadFloat3(&vStart), XMLoadFloat3(&vEnd), XMLoadFloat3(&vMid), iNumPoints);
+				isDirty = true; // Set dirty flag
+			}
+			ImGui::TreePop();
+		}
+
+		ImGui::Separator();
+
+
 		if (ImGui::Button("Clear All Points"))
 		{
 			m_ControlPoints.clear();
@@ -260,6 +286,94 @@ void CSpline_Component::Create_CirclePath(const _vector& vCenter, _float fRadius
 
 	// 스플라인 프레임을 다시 계산합니다.
 	UpdateSplineFrames();
+}
+
+void CSpline_Component::Create_ArcPath(const _vector& vStart, const _vector& vEnd, const _vector& vMidPoint, _uint iNumPoints)
+{
+	m_ControlPoints.clear();
+	m_bIsDirty = true;
+
+	// 세 점을 지나는 원의 중심과 반지름 계산
+	_vector vCenter;
+	_float fRadius;
+
+	// vA와 vB는 vStart에서 vMidPoint와 vEnd로 향하는 벡터
+	_vector vA = vMidPoint - vStart;
+	_vector vB = vEnd - vStart;
+
+	// 두 벡터의 외적을 통해 원의 법선 벡터 계산
+	_vector vNormal = XMVector3Normalize(XMVector3Cross(vA, vB));
+
+	// 세 점이 거의 일직선 상에 있는지 확인
+	if (XMVectorGetX(XMVector3LengthSq(vNormal)) < 1e-6f)
+	{
+		// 일직선일 경우, 직선 경로 생성
+		for (_uint i = 0; i <= iNumPoints; ++i)
+		{
+			_float t = static_cast<_float>(i) / iNumPoints;
+			_float3 temp;
+			XMStoreFloat3(&temp, XMVectorLerp(vStart, vEnd, t));
+			AddControlPoint(temp);
+		}
+		return;
+	}
+
+	// 수직 이등분선의 교점을 찾아 원의 중심 계산
+	_vector vMidA = (vStart + vMidPoint) * 0.5f;
+	_vector vMidB = (vStart + vEnd) * 0.5f;
+
+	_vector vDirA = XMVector3Normalize(XMVector3Cross(vA, vNormal));
+	_vector vDirB = XMVector3Normalize(XMVector3Cross(vB, vNormal));
+
+	_vector vC = vMidB - vMidA;
+
+	_float fDotA = XMVectorGetX(XMVector3Dot(vDirA, vDirB));
+	_float fDotC = XMVectorGetX(XMVector3Dot(vDirA, vC));
+
+	// 분모가 0에 가까우면 평행선으로 간주 (이론상 발생하면 안 됨)
+	_float fDenom = 1.f - fDotA * fDotA;
+	if (abs(fDenom) < 1e-6f)
+	{
+		// 일직선일 경우, 직선 경로 생성
+		for (_uint i = 0; i <= iNumPoints; ++i)
+		{
+			_float t = static_cast<_float>(i) / iNumPoints;
+			_float3 temp;
+			XMStoreFloat3(&temp, XMVectorLerp(vStart, vEnd, t));
+			AddControlPoint(temp);
+		}
+		return;
+	}
+
+	_float t = (fDotC - fDotA * XMVectorGetX(XMVector3Dot(vDirB, vC))) / fDenom;
+	vCenter = vMidA + vDirA * t;
+
+	fRadius = XMVectorGetX(XMVector3Length(vStart - vCenter));
+
+	// 시작점과 끝점 사이의 각도 계산
+	_vector vStartDir = XMVector3Normalize(vStart - vCenter);
+	_vector vEndDir = XMVector3Normalize(vEnd - vCenter);
+
+	_float fDot = XMVectorGetX(XMVector3Dot(vStartDir, vEndDir));
+	_float fTotalAngle = acosf(fDot);
+
+	// 중간점이 만드는 호가 더 큰 호인지 확인
+	_vector vMidDir = XMVector3Normalize(vMidPoint - vCenter);
+	if (XMVectorGetX(XMVector3Dot(XMVector3Cross(vStartDir, vMidDir), vNormal)) < 0.f)
+	{
+		fTotalAngle = XM_2PI - fTotalAngle;
+	}
+
+	// 원호를 따라 제어점 생성
+	for (_uint i = 0; i <= iNumPoints; ++i)
+	{
+		_float fAngle = fTotalAngle * (static_cast<_float>(i) / iNumPoints);
+		_matrix matRotation = XMMatrixRotationAxis(vNormal, fAngle);
+		_vector vPoint = XMVector3Transform(vStartDir, matRotation) * fRadius + vCenter;
+		_float3 temp;
+		XMStoreFloat3(&temp, vPoint);
+		AddControlPoint(temp);
+	}
 }
 
 vector<_float3>& CSpline_Component::GetSplinePoints()

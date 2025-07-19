@@ -22,6 +22,7 @@ public:
 #pragma endregion
 public:
 	CCamera* Get_CurrentCamera();
+	CCamera* Get_Camera(_uint iIndex = 0);
 	void Add_Camera(CCamera* pCamera);
 	void Remove_Camera(CCamera* pCamera);
 	void Remove_Camera(_uint iIndex);

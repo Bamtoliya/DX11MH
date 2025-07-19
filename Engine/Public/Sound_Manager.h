@@ -6,7 +6,7 @@ NS_BEGIN(Engine)
 class CSound_Manager final : public CBase
 {
 public:
-	enum CHANNELID { SND_BACKGROUND = 0, SND_SFX, SND_END};
+	enum CHANNELID { SND_BACKGROUND = 0, SND_ENV, SND_SFX, SND_END};
 #pragma region Constructor/Destructor
 private:
 	CSound_Manager();
@@ -30,11 +30,11 @@ public:
 #pragma endregion
 #pragma region Play/Stop
 public:
-	class CSound_Event		Play_Background(const _wstring& strEventPath, void* pArg = nullptr);
+	class CSound_Event*		Play_Background(const _wstring& strEventPath, void* pArg = nullptr);
 	class CSound_Event*		Play_Event(const _wstring& strEventPath, void* pArg = nullptr);
+	void					Play_Sound(const wstring& strSoundPath, CHANNELID eChannel, _float fVolume);
 public:
-	void					Stop_All_Event();
-	void					Stop();
+	void					Stop_All_Event(_bool allowFadeOut);
 #pragma endregion
 
 public:
@@ -82,6 +82,8 @@ private:
 	// key: Bus의 이름
 	// value: Bus의 포인터
 	unordered_map<_wstring, FMOD::Studio::Bus*> mBuses;
+
+	list<CSound_Event*> m_SoundEvents;
 #pragma endregion
 };
 

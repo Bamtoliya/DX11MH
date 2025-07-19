@@ -53,6 +53,7 @@
     <ClCompile Include="..\private\Level_Stage01.cpp" />
     <ClCompile Include="..\private\Level_Stage02.cpp" />
     <ClCompile Include="..\private\Level_Test.cpp" />
+    <ClCompile Include="..\private\LockOnCursor.cpp" />
     <ClCompile Include="..\private\Man.cpp" />
     <ClCompile Include="..\private\Motora.cpp" />
     <ClCompile Include="..\private\Rail.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="..\public\Level_Stage01.h" />
     <ClInclude Include="..\public\Level_Stage02.h" />
     <ClInclude Include="..\public\Level_Test.h" />
+    <ClInclude Include="..\public\LockOnCursor.h" />
     <ClInclude Include="..\public\Man.h" />
     <ClInclude Include="..\public\Motora.h" />
     <ClInclude Include="..\public\Rail.h" />

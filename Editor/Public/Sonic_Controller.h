@@ -47,6 +47,7 @@ public:
 		_bool bIsSpring = { false };
 
 		//Combat
+		_bool bIsHomingAttackStarted = { false };
 		pair<_float, _float>	fAtkDamage = { 4.f, 6.f };
 		_float	fComboDelay = { 3.0f };
 		_float	fHitDelay = { 0.5f };
@@ -58,6 +59,9 @@ public:
 
 		//Status
 		pair<_uint, _uint> iRings = { 0, 400 };
+
+		//Detection
+		_float fDetectionRange = { 10.f };
 	}SONIC_STATUS;
 #pragma endregion
 
@@ -83,6 +87,7 @@ public:
 private:
 	SONIC_STATUS m_tInfo;
 	CSpline_Component* m_pCurrentSpline = { nullptr };
+	CGameObject* m_pTarget = nullptr; // 새로운 멤버 변수 추가
 
 #pragma endregion
 
@@ -94,6 +99,10 @@ public:
 	virtual HRESULT Render() override;
 	virtual void Change_State(_uint iIndex) override;
 	virtual void Change_State(_uint iStateIndex, _uint iAnimIndex, _float fPlaybackSpeed = 1.f, _bool bIsLoop = true, _float fBlendDuration = 0.5f);
+	CGameObject* Get_LockOnTarget() const { return m_pTarget; }
+private:
+	void Update_Targeting(_float fTimeDelta);
+	CGameObject* FindBestTarget();	
 #pragma endregion
 public:
 	virtual HRESULT RenderImGui() override;
@@ -107,6 +116,8 @@ public:
 
 #pragma region Interaction
 public:
+	void HomingAttack();
+	void ReboundFromAttack();
 	//Spline
 	void Register_Spline(CSpline_Component* pSpline) { m_pCurrentSpline = pSpline; }
 	void Unregister_Spline() { m_pCurrentSpline = nullptr; }

@@ -47,6 +47,7 @@ private:
 #pragma endregion
 
 public:
+	void Set_TextureRegion(_bool bTextureRegion) { m_bUseRegion = bTextureRegion; }
 	void Set_TextureRegionPixels(_float iLeft, _float iTop, _float iRight, _float iBottom, _uint iTextureIndex = 0);
 	void Set_TextureRegionUV(_float fLeft, _float fTop, _float fRight, _float fBottom);
 	HRESULT Bind_ShaderResourceWithRegion(class CShader* pShader, const _char* pConstantName, const _char* pRegionConstantName, _uint iTextureIndex = 0);

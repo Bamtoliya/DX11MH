@@ -44,8 +44,8 @@ void CPhysics_System::Free()
         PX_RELEASE(m_pCudaContextManager);
     PX_RELEASE(m_pPhysics); // 6. Physics 객체 해제
     PX_RELEASE(m_pPvd); // 7. PVD 해제 (연결했다면)
-    PX_RELEASE(m_pFoundation); // 8. Foundation 해제 (가장 마지막)
-    PX_RELEASE(m_pDefaultMaterial);
+    PX_RELEASE(m_pFoundation); // 8. Foundation 해제 (가장 마지막)// 기본 재질 해제
+
 
     Safe_Release(m_pDevice);
     Safe_Release(m_pContext);
@@ -485,6 +485,35 @@ void CPhysics_System::RemoveActorFromScene(PxActor* pActor)
 
 
 #pragma region Collision Event
+
+PxRaycastBuffer CPhysics_System::Raycast(const _float3& vOrigin, const _float3& vDir, PxReal fMaxDistance, PxQueryFilterData fd)
+{
+	PxRaycastBuffer hitBuffer;
+	m_pScene->raycast(
+		PxVec3(vOrigin.x, vOrigin.y, vOrigin.z),
+		PxVec3(vDir.x, vDir.y, vDir.z),
+		fMaxDistance,
+		hitBuffer,
+		PxHitFlag::eDEFAULT,
+		fd
+	);
+
+	return hitBuffer;
+}
+
+vector<PxOverlapHit> CPhysics_System::Overlap(const PxGeometry& geometry, const PxTransform& pose, PxQueryFilterData fd)
+{
+	const PxU32 maxHits = 256; // 최대 후보군 수
+	PxOverlapHit hits[maxHits];
+	PxOverlapBuffer hitBuffer(hits, maxHits);
+
+	if (m_pScene->overlap(geometry, pose, hitBuffer, fd))
+	{
+		return std::vector<PxOverlapHit>(hitBuffer.touches, hitBuffer.touches + hitBuffer.nbTouches);
+	}
+
+	return {};
+}
 
 void CPhysics_System::onConstraintBreak(PxConstraintInfo* constraints, PxU32 count)
 {

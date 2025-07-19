@@ -52,6 +52,7 @@ public:
 	const vector<_float3>& GetControlPoints() const { return m_ControlPoints; }
 	void ClearControlPoints();
 	void Create_CirclePath(const _vector& vCenter, _float fRadius, _uint iNumPoints);
+	void Create_ArcPath(const _vector& vStart, const _vector& vEnd, const _vector& vMidPoint, _uint iNumPoints);
 
 	// 스플라인 곡선 위의 점들을 계산
 	vector<_float3>& GetSplinePoints();

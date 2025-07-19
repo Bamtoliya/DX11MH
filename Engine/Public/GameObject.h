@@ -106,6 +106,11 @@ public:
 #pragma endregion
 
 
+#pragma region LockOn
+	_bool Get_CanLockOn() { return m_bCanLockOn; }
+#pragma endregion
+
+
 
 #pragma endregion
 
@@ -133,6 +138,9 @@ protected:
 	_bool									m_bActive = { true };
 	_bool									m_bDead = { false };
 	_bool									m_bToDestroy = { false };
+
+protected:
+	_bool									m_bCanLockOn = { false }; // Lock-On 가능 여부
 
 protected:
 	_bool									m_bLateInitialized = { false };

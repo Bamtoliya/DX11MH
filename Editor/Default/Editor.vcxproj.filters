@@ -310,6 +310,9 @@
     <Filter Include="02.GameObject\StageObjects\DashRing">
       <UniqueIdentifier>{cf25a819-c7cf-4bb0-944b-58bb349c18c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\LockOnCursor">
+      <UniqueIdentifier>{99738da1-104d-407e-a7cf-34b4c2ec639a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Editor.cpp">
@@ -500,6 +503,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DashRing.cpp">
       <Filter>02.GameObject\StageObjects\DashRing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\LockOnCursor.cpp">
+      <Filter>02.GameObject\LockOnCursor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -724,6 +730,9 @@
     </ClInclude>
     <ClInclude Include="..\public\DashRing.h">
       <Filter>02.GameObject\StageObjects\DashRing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\LockOnCursor.h">
+      <Filter>02.GameObject\LockOnCursor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

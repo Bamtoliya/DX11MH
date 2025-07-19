@@ -108,6 +108,11 @@ namespace Engine
 		return oss.str();
 	}
 
+	static float lerp(float a, float b, float t)
+	{
+		return a + t * (b - a);
+	}
+
 	// 파일 존재 여부 확인 함수 (헬퍼 함수)
 	static bool DoesFileExist(const wchar_t* filePath) {
 		ifstream file(filePath);

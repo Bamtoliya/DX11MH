@@ -26,6 +26,10 @@ public:
 #pragma region Variables
 private:
 	CGameObject*	m_pTarget = { nullptr };
+	CGameObject*	m_pLockOnObject = { nullptr }; // 실제 타겟 오브젝트
+	CGameObject*	m_pLockOnCursor = { nullptr }; // 락온 커서 오브젝트
+
+	_float			m_fBaseDistance = { 12.f }; // 기본 카메라 거리
 	_float			m_fDistance = { 100.f };
 	_float			m_fSmoothFactor = { 0.1f };
 	_float m_fCameraYaw = { 0.f };   // Y축 기준 수평 회전
@@ -42,6 +46,11 @@ public:
 	CGameObject* Get_Target() { return m_pTarget; }
 	void Set_Target(CGameObject* pTarget) { if (m_pTarget) Safe_Release(m_pTarget); m_pTarget = pTarget; Safe_AddRef(m_pTarget); }
 
+	CGameObject* Get_LockOn_Target() { return m_pLockOnObject; }
+	void Set_LockOn_Target(CGameObject* pTarget);
+
+	void Set_LockOnCursor(CGameObject* pLockOnCursor) { m_pLockOnCursor = pLockOnCursor; }
+
 
 	HRESULT Find_Target();
 	void Follow(class CTransform* pTransformCom, _vector vTargetPosition, _float fTimeDelta);
@@ -57,7 +66,7 @@ public:
 	// Smooth Factor
 	void SetSmoothFactor(_float fFactor) { m_fSmoothFactor = fFactor; }
 	_float GetSmoothFactor() const { return m_fSmoothFactor; }
-	void Clear_Target() { Safe_Release(m_pTarget); }
+	void Clear_Target() { Safe_Release(m_pTarget); Safe_Release(m_pLockOnObject); }
 #pragma endregion
 
 

@@ -28,5 +28,7 @@ public:
 
 private:
 	CGame_Manager* m_pGame_Manager = { nullptr };
+	_bool			m_bChangeToLogo = { false };
+	_bool			m_bChangeToOpen = { false };
 };
 NS_END

@@ -68,6 +68,7 @@ void CFollow_Camera::Free()
 {
 	__super::Free();
 	Safe_Release(m_pTarget);
+	Safe_Release(m_pLockOnObject);
 }
 #pragma endregion
 
@@ -164,11 +165,67 @@ void CFollow_Camera::Late_Update(_float fTimeDelta)
 
 	Follow(pCameraTransform, vTargetPosition, fTimeDelta);
 
+	if (m_pLockOnObject && m_pLockOnCursor)
+	{
+		CTransform* pLockOnTargetTransform = static_cast<CTransform*>(m_pLockOnObject->Get_Component(g_strTransformTag));
+		CTransform* pCursorTransform = static_cast<CTransform*>(m_pLockOnCursor->Get_Component(g_strTransformTag));
+
+		if (pLockOnTargetTransform && pCursorTransform)
+		{
+			_vector vTargetPos = pLockOnTargetTransform->Get_State(STATE::POSITION);
+
+			// 1. 타겟의 월드 좌표를 클립 공간으로 변환
+			_matrix matView = m_pGameInstance->Get_Transform_Matrix(D3DTS::VIEW);
+			_matrix matProj = m_pGameInstance->Get_Transform_Matrix(D3DTS::PROJ);
+			_vector vPosInClip = XMVector3TransformCoord(vTargetPos, matView * matProj);
+
+			// 2. 클립 공간 좌표를 통해 화면 안에 있는지 확인
+			// x, y가 -w ~ w 사이에, z가 0 ~ w 사이에 있으면 화면 안으로 간주
+			_float fW = XMVectorGetW(vPosInClip);
+			if (XMVectorGetX(vPosInClip) >= -fW && XMVectorGetX(vPosInClip) <= fW &&
+				XMVectorGetY(vPosInClip) >= -fW && XMVectorGetY(vPosInClip) <= fW &&
+				XMVectorGetZ(vPosInClip) >= 0.f && XMVectorGetZ(vPosInClip) <= fW)
+			{
+				// 화면 안에 있을 때: 커서 위치 업데이트 및 보이기
+				pCursorTransform->Set_State(STATE::POSITION, vTargetPos + XMVectorSet(0.f, 1.5f, 0.f, 0.f));
+				m_pLockOnCursor->Set_Visible(true);
+			}
+			else
+			{
+				// 화면 밖에 있을 때: 커서 숨기기
+				m_pLockOnCursor->Set_Visible(false);
+			}
+		}
+	}
+
 	__super::Late_Update(fTimeDelta);
 }
 HRESULT CFollow_Camera::Render()
 {
 	return S_OK;
+}
+
+void CFollow_Camera::Set_LockOn_Target(CGameObject* pTarget)
+{
+	if (m_pLockOnObject)
+		Safe_Release(m_pLockOnObject);
+	m_pLockOnObject = pTarget;	
+	if (m_pLockOnObject)
+	{
+		Safe_AddRef(m_pLockOnObject);
+
+		// 커서가 없다면 새로 생성
+		if (m_pLockOnCursor)
+			m_pLockOnCursor->Set_Visible(true);
+	}
+	else // 락온 해제
+	{
+		// 커서가 있다면 비활성화 (삭제 대신 비활성화하여 재사용)
+		if (m_pLockOnCursor)
+		{
+			m_pLockOnCursor->Set_Visible(false);
+		}
+	}
 }
 
 HRESULT CFollow_Camera::Find_Target()
@@ -194,42 +251,50 @@ HRESULT CFollow_Camera::Find_Target()
 void CFollow_Camera::Follow(CTransform* pTransformCom, _vector vTargetPosition, _float fTimeDelta)
 {
 
+	_vector vLookAtPoint = vTargetPosition; // 기본 초점은 플레이어
+	_float fDesiredDistance = m_fBaseDistance;
+
+	// 락온 타겟이 있을 경우, 초점과 거리 동적 조정
+	if (m_pLockOnObject)
+	{
+		CTransform* pLockOnTargetTransform = static_cast<CTransform*>(m_pLockOnObject->Get_Component(g_strTransformTag));
+		if (pLockOnTargetTransform)
+		{
+			_vector vLockOnPos = pLockOnTargetTransform->Get_State(STATE::POSITION);
+
+			// 1. 초점을 플레이어와 락온 타겟의 중간 지점으로 설정
+			vLookAtPoint = (vTargetPosition + vLockOnPos) * 0.5f;
+
+			// 2. 두 대상 사이의 거리에 따라 카메라 줌 아웃
+			_float fDistanceBetween = XMVectorGetX(XMVector3Length(vTargetPosition - vLockOnPos));
+			fDesiredDistance = m_fBaseDistance + fDistanceBetween * 0.6f; // 거리가 멀수록 카메라도 멀어짐
+		}
+	}
+
+	// 현재 거리에서 목표 거리로 부드럽게 보간
+	m_fDistance = lerp(m_fDistance, fDesiredDistance, m_fSmoothFactor * fTimeDelta);
+
+
 	// 1. 구면 좌표계로 카메라 방향 벡터 계산
-	// Yaw는 수평 회전 (Y축 기준), Pitch는 수직 회전 (X축 기준)
 	_float fSinPitch = sinf(m_fCameraPitch);
 	_float fCosPitch = cosf(m_fCameraPitch);
 	_float fSinYaw = sinf(m_fCameraYaw);
 	_float fCosYaw = cosf(m_fCameraYaw);
 
-	_vector vDirection = XMVectorSet(
-		fCosPitch * fSinYaw,
-		fSinPitch,
-		fCosPitch * fCosYaw,
-		0.0f
-	);
+	_vector vDirection = XMVectorSet(fCosPitch * fSinYaw, fSinPitch, fCosPitch * fCosYaw, 0.0f);
 
-	// 2. 방향 벡터에 거리를 곱하여 오프셋 계산
-	_vector vOffset = XMVectorScale(vDirection, -m_fDistance); // 음수는 카메라가 타겟 뒤에 위치하게 함
-
-	// 3. 타겟 위치에 오프셋을 더하여 카메라의 이상적 위치 계산
+	// 2. 카메라의 이상적 위치 계산 (플레이어 기준)
+	_vector vOffset = XMVectorScale(vDirection, -m_fDistance);
 	_vector vIdealPosition = XMVectorAdd(vTargetPosition, vOffset);
 
-	// 추가 높이 오프셋 (선택적, 타겟의 머리 위를 보게 하는 용도)
-	// 이미 Pitch로 높이가 조절되므로 작은 값이나 0으로 설정 가능
-	_float fExtraHeightOffset = 1.0f;
-	vIdealPosition = XMVectorAdd(vIdealPosition, XMVectorSet(0.0f, fExtraHeightOffset, 0.0f, 0.0f));
-
+	// 3. 현재 위치에서 이상적 위치로 부드럽게 이동
 	_vector vCurrentPosition = pTransformCom->Get_State(STATE::POSITION);
 	_vector vNewPosition = XMVectorLerp(vCurrentPosition, vIdealPosition, m_fSmoothFactor * fTimeDelta);
 
-	// 5. 카메라 위치 및 시선 방향 업데이트
 	pTransformCom->Set_State(STATE::POSITION, vNewPosition);
 
-	// 시선은 항상 타겟을 향하도록 (약간 위쪽을 보도록 오프셋 적용 가능)
-	_vector vLookAt = XMVectorAdd(vTargetPosition, XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	pTransformCom->LookAt(vLookAt);
-
-	return;
+	// 4. 최종적으로 계산된 초점을 바라보도록 설정
+	pTransformCom->LookAt(vLookAtPoint + XMVectorSet(0.f, 1.f, 0.f, 0.f)); // 약간 위를 보도록 오프셋
 }
 #pragma endregion
 HRESULT CFollow_Camera::RenderImGui()

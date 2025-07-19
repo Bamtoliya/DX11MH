@@ -81,6 +81,8 @@ public:
 	void RemoveActorFromScene(PxActor* pActor);
 
 public:
+	PxRaycastBuffer Raycast(const _float3& vOrigin, const _float3& vDir, PxReal fMaxDistance, PxQueryFilterData fd);
+	vector<PxOverlapHit> Overlap(const PxGeometry& geometry, const PxTransform& pose, PxQueryFilterData fd);
 	void onConstraintBreak(PxConstraintInfo* constraints, PxU32 count) override;
 	void onWake(PxActor** actors, PxU32 count) override;
 	void onSleep(PxActor** actors, PxU32 count) override;

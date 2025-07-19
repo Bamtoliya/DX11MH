@@ -49,7 +49,7 @@ unsigned int ClassName::Destroy_Instance()				\
 	return iRefCnt;										\
 }
 
-#define BANKPATH ""
+#define BANKPATH "G:/My Drive/Assets/Audio/Sonic_Frontier/Build/Desktop/"
 
 #define SOLUTIONPATH "../../"
 #define ASSETPATH "G:/My Drive/Assets/"

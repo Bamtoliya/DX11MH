@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Sonic_States.h"
 #include "RigidBody.h"
+#include "Monster.h"
 
 #pragma region Constructor / Destructor
 CSonic::CSonic(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -335,8 +336,45 @@ HRESULT CSonic::Render_Shadow()
 }
 void CSonic::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
 {
+
 	if(pOther->userData)
 		cout << "Sonic Collide Entered with " + WideToUtf8(reinterpret_cast<CGameObject*>(pOther->userData)->Get_Name().c_str()) << "\n";
+
+	CGameObject* pOtherObject = reinterpret_cast<CGameObject*>(pOther->userData);
+	if (!pOtherObject)
+		return;
+
+	CSonic_Controller* pController = static_cast<CSonic_Controller*>(m_pControllerCom);
+	if (!pController)
+		return;
+
+	CSonic_Movement_State* pMovementState = dynamic_cast<CSonic_Movement_State*>(pController->Get_CurrentState());
+	if (!pMovementState)
+		return;
+
+	// 호밍 어택 충돌 처리
+	if (pMovementState->Get_MovementState() == CSonic_Movement_State::EMovementState::HOMING_ATTACK)
+	{
+		// 충돌한 객체가 현재 락온 타겟인지 확인
+		if (pOtherObject == pController->Get_LockOnTarget())
+		{
+			// 몬스터인 경우 데미지를 주고, 죽었는지 확인
+			CMonster* pMonster = dynamic_cast<CMonster*>(pOtherObject);
+			if (pMonster)
+			{
+				pMonster->Set_IsDestroy(true); // 몬스터 즉시 파괴
+				// 리바운드 처리
+				
+			}
+			else
+			{
+				// 몬스터가 아닌 다른 오브젝트(예: 스프링)와 충돌한 경우
+				// 해당 오브젝트의 상호작용을 호출할 수 있음
+				// pOtherObject->Interact(); 
+			}
+			pController->ReboundFromAttack();
+		}
+	}
 	//pOther.get
 	//reinterpret_cast<CGameObject*>(pOther->userData);
 	return;
@@ -357,26 +395,22 @@ void CSonic::Change_ModelIndex(_uint i)
 }
 void CSonic::Set_Spin_Collider(_bool bSpin)
 {
-	if(nullptr == m_pRigidBodyCom)
-		return;
+	//if(nullptr == m_pRigidBodyCom)
+	//	return;
 
-	// 액터 0의 첫 번째 쉐이프(콜라이더) 정보를 가져옵니다.
+	//// 액터 0의 첫 번째 쉐이프(콜라이더) 정보를 가져옵니다.
 	//CRigidBody::SHAPE_DESC* pShapeDesc = m_pRigidBodyCom->Get_Shape(0);
 	//if (nullptr == pShapeDesc)
 	//	return;
 	//
 	//if (bSpin)
 	//{
-	//	// 콜라이더를 원형(Sphere)으로 변경합니다.
-	//	pShapeDesc->eShapeType = CRigidBody::EShapeType::SPHERE;
-	//	pShapeDesc->vShapeSize = _float3(0.3f, 0.f, 0.f); // 반지름 설정
-	//	pShapeDesc->vLocalPosition = _float3(0.f, -0.4f, 0.f); // 위치 변경
+	//	pShapeDesc->vShapeSize = { 0.3f, 0.25f, 1.f };
+	//	pShapeDesc->vLocalPosition = _float3(0.f, -0.35f, 0.f); // 위치 변경
 	//}
 	//else
 	//{
-	//	// 콜라이더를 원래의 캡슐 형태로 되돌립니다.
-	//	pShapeDesc->eShapeType = CRigidBody::EShapeType::CAPSULE;
-	//	pShapeDesc->vShapeSize = _float3(0.25f, 0.25f, 0.f); // 반지름, 절반 높이 설정
+	//	pShapeDesc->vShapeSize = { 0.25f, 0.25f, 1.f };
 	//	pShapeDesc->vLocalPosition = _float3(0.f, 0.1f, 0.f); // 위치 복원
 	//}
 	//

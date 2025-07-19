@@ -31,6 +31,28 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 
 void CLevel_Loading::Update(_float fTimeDelta)
 {
+	if (m_eNextLevelID == LEVEL::LOGO || m_eNextLevelID == LEVEL::STAGE01 || m_eNextLevelID == LEVEL::OPEN)
+	{
+		if (true == m_pLoader->isFinished())
+		{
+			CLevel* pLevel = { nullptr };
+			switch (m_eNextLevelID)
+			{
+			case LEVEL::LOGO:
+				pLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
+				break;
+			case LEVEL::OPEN:
+				pLevel = CLevel_Open::Create(m_pDevice, m_pContext);
+				break;
+			case LEVEL::STAGE01:
+				pLevel = CLevel_Stage01::Create(m_pDevice, m_pContext);
+				break;
+			}
+
+			if (FAILED(m_pGameInstance->Change_Level(static_cast<_uint>(m_eNextLevelID), pLevel)))
+				return;
+		}
+	}
 
 	if (GetKeyState(VK_SPACE) & 0x8000)
 	{

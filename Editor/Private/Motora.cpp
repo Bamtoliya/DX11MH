@@ -115,11 +115,27 @@ HRESULT CMotora::Ready_Components()
 		TEXT("Com_Model"), reinterpret_cast<CComponent**>(&m_pModelCom))))
 		return E_FAIL;
 
+	CRigidBody::RIGIDBODY_DESC rigidBodyDesc = {};
+	rigidBodyDesc.eBodyType = CRigidBody::EBodyType::KINEMATIC;
+	CRigidBody::SHAPE_DESC shapeDesc = {};
+	shapeDesc.eShapeType = CRigidBody::EShapeType::SPHERE;
+	shapeDesc.bIsQueryShape = true;
+	shapeDesc.filterData3 = 2;
+
 	/* For.Com_RigidBody */
 	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_RigidBody"),
-		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom))))
+		TEXT("Com_RigidBody"), reinterpret_cast<CComponent**>(&m_pRigidBodyCom), &rigidBodyDesc)))
 		return E_FAIL;
 
+	/* For.Com_Animator */
+	if (FAILED(__super::Add_Component(ENUM_CLASS(LEVEL::STATIC), TEXT("Prototype_Component_Animator"),
+		TEXT("Com_Animator"), reinterpret_cast<CComponent**>(&m_pAnimatorCom))))
+		return E_FAIL;
+
+	/* For.Com_Contorller */
+	if (FAILED(__super::Add_Component(m_pGameInstance->Get_CurrentLevelIndex(), TEXT("Prototype_Component_Enemy_Controller"),
+		TEXT("Com_Contorller"), reinterpret_cast<CComponent**>(&m_pControllerCom))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -130,6 +146,7 @@ void CMotora::Free()
 	Safe_Release(m_pRigidBodyCom);
 	Safe_Release(m_pModelCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pAnimatorCom);
 }
 
 #pragma endregion
@@ -174,7 +191,8 @@ void CMotora::Priority_Update(_float fTimeDelta)
 
 void CMotora::Update(_float fTimeDelta)
 {
-
+	if(m_pAnimatorCom)
+		m_pAnimatorCom->Update(fTimeDelta);
 }
 
 void CMotora::Late_Update(_float fTimeDelta)

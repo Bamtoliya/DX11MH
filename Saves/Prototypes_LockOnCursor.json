@@ -1,0 +1,35 @@
+{
+  "Prototype_Component_Texture_LockOnCursor1": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodestage/uiRANGE_img_lockoncursor.dds"
+  },
+  "Prototype_Component_Texture_LockOnCursor2": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_gamemodestage/uiRANGE_img_lockoncursor2.dds"
+  },
+  "Prototype_Component_Texture_Cockpit_Indicator0": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_cockpitindicator.dds"
+  },
+  "Prototype_Component_Texture_Cockpit_Indicator1": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_ci_cmn1.dds"
+  },
+  "Prototype_Component_Texture_Cockpit_Indicator4": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_cockpitindicator4.dds"
+  },
+  "Prototype_Component_Texture_Cockpit_Indicator5": {
+    "Class": "CTexture",
+    "NumTexture": 1,
+    "TextureFilePath": "G:/My Drive/Assets/Textures/ui_common/uiRANGE_img_cockpitindicator5.dds"
+  },
+  "Prototype_GameObject_LockOnCursor": {
+    "Class": "CLockOnCursor"
+  }
+}

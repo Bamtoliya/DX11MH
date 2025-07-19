@@ -88,11 +88,27 @@ CCamera* CCamera_Manager::Get_CurrentCamera()
 {
 	if (m_Cameras.empty() || m_iCurIndex >= m_Cameras.size())
 	{
-		return S_OK;
+		return nullptr;
 	}
 
 	auto iter = m_Cameras.begin();
 	std::advance(iter, m_iCurIndex);
+
+	if (iter != m_Cameras.end() && (*iter) != nullptr)
+		return *iter;
+	else
+		return nullptr;
+}
+
+CCamera* CCamera_Manager::Get_Camera(_uint iIndex)
+{
+	if (m_Cameras.empty() || iIndex >= m_Cameras.size())
+	{
+		return nullptr;
+	}
+
+	auto iter = m_Cameras.begin();
+	std::advance(iter, iIndex);
 
 	if (iter != m_Cameras.end() && (*iter) != nullptr)
 		return *iter;

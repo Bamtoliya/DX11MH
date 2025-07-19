@@ -185,7 +185,7 @@ void CGameInstance::Clear(_uint iLevelIndex)
 	/* 특정 레벨의 객체을 삭제한다. */
 	m_pPicking_System->Clear();
 	m_pObject_Manager->Clear(iLevelIndex);
-	m_pSound_Manager->Stop_All_Event();
+	m_pSound_Manager->Stop_All_Event(false);
 	/* 특정 레벨의 원형객을 삭제한다. */
 	m_pPrototype_Manager->Clear(iLevelIndex);
 }
@@ -271,6 +271,10 @@ void CGameInstance::RemoveActorFromScene(PxActor* pActor)
 PxMaterial* CGameInstance::Get_DefaultMaterial() const
 {
 	return m_pPhysics_System->Get_DefaultMaterial();
+}
+vector<PxOverlapHit> CGameInstance::Get_OverlapHits(const PxGeometry& geometry, const PxTransform& pose, PxQueryFilterData fd)
+{
+	return m_pPhysics_System->Overlap(geometry, pose, fd);
 }
 #pragma endregion
 
@@ -425,6 +429,14 @@ HRESULT CGameInstance::Render_MRT_Debug(const _wstring& strMRTTag, CShader* pSha
 #pragma endregion
 
 #pragma region CAMERA_MANAGER
+CCamera* CGameInstance::Get_Camera(_uint iIndex)
+{
+	return m_pCamera_Manager->Get_Camera(iIndex);
+}
+CCamera* CGameInstance::Get_Current_Camera()
+{
+	return m_pCamera_Manager->Get_CurrentCamera();
+}
 void CGameInstance::Add_Camera(CCamera* pCamera)
 {
 	if (m_pCamera_Manager)
@@ -472,6 +484,32 @@ void CGameInstance::Clear_CameraManager()
 		m_pCamera_Manager->Clear();
 }
 #pragma endregion
+
+#pragma region SOUND_MANAGER
+void  CGameInstance::Load_Bank(const _wstring& strBankPath)
+{
+	if (m_pSound_Manager)
+		m_pSound_Manager->Load_Bank(strBankPath);
+}
+CSound_Event* CGameInstance::Play_Background(const _wstring& strEventPath, void* pArg)
+{
+	if (m_pSound_Manager)
+		return m_pSound_Manager->Play_Background(strEventPath, pArg);
+	return nullptr;
+}
+CSound_Event* CGameInstance::Play_Event(const _wstring& strEventPath, void* pArg)
+{
+	if (m_pSound_Manager)
+		return m_pSound_Manager->Play_Event(strEventPath, pArg);
+	return nullptr;
+}
+void CGameInstance::Stop_All_Event(_bool allowFadeOut)
+{
+	if (m_pSound_Manager)
+		m_pSound_Manager->Stop_All_Event(allowFadeOut);
+}
+#pragma endregion
+
 
 
 

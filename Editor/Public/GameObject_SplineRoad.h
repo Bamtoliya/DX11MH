@@ -1,13 +1,15 @@
 #pragma once
+#include "Editor_Defines.h"
 #include "GameObject.h"
+
 NS_BEGIN(Engine)
 class CShader;
 class CModel;
 class CRigidBody;
 class CVIBuffer_Spline;
 class CSpline_Component;
-class CVIBuffer_Mesh_Instance;
 NS_END
+
 NS_BEGIN(Editor)
 class CGameObject_SplineRoad : public CGameObject
 {

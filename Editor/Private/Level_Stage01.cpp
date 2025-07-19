@@ -1,5 +1,7 @@
 #include "Level_Stage01.h"
 #include "GameInstance.h"
+#include "Sound_Event.h"
+#include "Level_Loading.h"
 
 CLevel_Stage01::CLevel_Stage01(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel{ pDevice, pContext }
@@ -43,6 +45,43 @@ HRESULT CLevel_Stage01::Initialize()
 
 void CLevel_Stage01::Update(_float fTimeDelta)
 {
+	if (KEY_DOWN(DIK_F7))
+	{
+		static_cast<CTransform*>(m_pGameInstance->Get_CurrentPlayer()->Get_Component(g_strTransformTag))->Set_State(STATE::POSITION, XMVectorSet(600.f, 160.f, 380.f, 1.f));
+		m_pGameInstance->Set_Camera(1);
+	}
+
+	/*if (KEY_DOWN(DIK_F1))
+	{
+		m_pGameInstance->Set_Camera(_uint(0));
+		static_cast<CTransform*>(m_pGameInstance->Get_Camera(0)->Get_OwnerGameObject()->Get_Component(g_strTransformTag))->Set_State(STATE::POSITION, XMVectorSet())
+	}*/
+
+	if (KEY_DOWN(DIK_F2))
+	{
+		m_pGameInstance->Set_Camera(1);
+	}
+
+	if (KEY_DOWN(DIK_K))
+	{
+		m_pGameInstance->Play_Background(L"event:/00034_streaming", nullptr)->SetVolume(0.25f);
+		m_pGameInstance->Play_Event(L"event:/New Event 3", nullptr)->SetVolume(0.3f);
+		m_pGameInstance->Play_Event(L"event:/_obj_w1_trees; obj_w1_trees", nullptr)->SetVolume(0.3f);
+	}
+
+	/*if (KEY_DOWN(DIK_HOME))
+	{
+		if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::LOGO))))
+			return;
+		return;
+	}
+
+	if (KEY_DOWN(DIK_F12))
+	{
+		if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::OPEN))))
+			return;
+		return;
+	}*/
 }
 
 HRESULT CLevel_Stage01::Render()

@@ -1,6 +1,7 @@
 ﻿#include "Sound_Manager.h"
 #include "Sound_Event.h"
 #include "Transform.h"
+#include "GameInstance.h"
 
 _uint CSound_Manager::sNextID = { 0 };
 
@@ -20,6 +21,9 @@ HRESULT CSound_Manager::Initialize(_int iNumChannels, FMOD_STUDIO_INITFLAGS stud
     m_pStudioSystem->initialize(iNumChannels, studioFlags, flags, pArg);
 
     Load_Bank(L"Master");
+    Load_Bank(L"SoundEffect");
+    Load_Bank(L"env");
+    Load_Bank(L"bgm");
 
     return S_OK;
 }
@@ -200,6 +204,20 @@ void CSound_Manager::Update(_float fTimeDelta)
         mEventInstances.erase(id);
     }
 
+    auto iter = m_SoundEvents.begin();
+    while (iter != m_SoundEvents.end())
+    {
+        if (!(*iter)->IsValid())
+        {
+            Safe_Delete(*iter);
+            iter = m_SoundEvents.erase(iter);
+        }
+        else
+        {
+            ++iter;
+        }
+    }
+
     // FMOD 업데이트
  	m_pStudioSystem->update();
 	m_pCoreSystem->update();
@@ -213,7 +231,7 @@ void CSound_Manager::Late_Update(_float fTimeDelta)
 		return;
 }
 
-CSound_Event CSound_Manager::Play_Background(const _wstring& strEventPath, void* pArg)
+CSound_Event* CSound_Manager::Play_Background(const _wstring& strEventPath, void* pArg)
 {
     unsigned int retID = 0;
     // 이벤트가 존재하는지 확인
@@ -237,7 +255,9 @@ CSound_Event CSound_Manager::Play_Background(const _wstring& strEventPath, void*
             event->release();
         }
     }
-    return CSound_Event(this, retID);
+    CSound_Event* pSoundEvent = new CSound_Event(this, retID);
+    m_SoundEvents.emplace_back(pSoundEvent);
+    return pSoundEvent;
 }
 
 CSound_Event* CSound_Manager::Play_Event(const _wstring& strEventPath, void* pArg)
@@ -267,6 +287,7 @@ CSound_Event* CSound_Manager::Play_Event(const _wstring& strEventPath, void* pAr
         }
     }
     CSound_Event* e = new CSound_Event(this, retID); 
+    m_SoundEvents.emplace_back(e);
     return e;
 }
 
@@ -281,8 +302,13 @@ Studio::EventInstance* CSound_Manager::Get_EventInstance(_uint iID)
     return event;
 }
 
-void CSound_Manager::Stop_All_Event()
+void CSound_Manager::Stop_All_Event(_bool allowFadeOut)
 {
+    for (auto& pEvent : m_SoundEvents)
+    {
+        pEvent->Stop(allowFadeOut);
+    }
+    m_SoundEvents.clear();
 	Studio::Bus* m_pBus = nullptr;
 	m_pStudioSystem->getBus("bus:/", &m_pBus);
 	m_pBus->stopAllEvents(FMOD_STUDIO_STOP_IMMEDIATE);
@@ -375,6 +401,11 @@ void CSound_Manager::Free()
 {
 	__super::Free();
     //if (m_iRefCnt)
+    for (auto& pEvent : m_SoundEvents)
+    {
+        Safe_Delete(pEvent);
+    }
+    m_SoundEvents.clear();
     Unload_AllBank();
 	//대소문자 구별로 인한 매크로 함수 호출 불가능
     

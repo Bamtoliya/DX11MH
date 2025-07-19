@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Sonic_Controller.h"
 #include "Material.h"
+#include "Sound_Event.h"
 
 #pragma region Constructor/Destructor
 CDashPanel::CDashPanel(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -268,6 +269,7 @@ void CDashPanel::OnCollisionEnter(PxActor* pOther, const PxContactPair& cp)
 		{
 			_vector vPushDirection = -m_pTransformCom->Get_State(STATE::LOOK);
 			pController->DashPanel(vPushDirection);
+			m_pGameInstance->Play_Event(L"event:/00052")->SetVolume(0.4f);
 		}
 
 	}

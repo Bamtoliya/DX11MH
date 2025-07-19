@@ -1,8 +1,10 @@
-﻿#include "Level_Logo.h"
+﻿#pragma once
+#include "Level_Logo.h"
 
 #include "GameInstance.h"
 #include "Level_Loading.h"
 #include "Level_Open.h"
+#include "Sound_Event.h"
 
 CLevel_Logo::CLevel_Logo(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 		: CLevel { pDevice, pContext }
@@ -16,6 +18,7 @@ HRESULT CLevel_Logo::Initialize()
 		return E_FAIL;
 
 	m_pGameInstance->HideAll();
+	m_pGameInstance->Play_Background(L"event:/00007_streaming", nullptr)->SetVolume(0.5f);
 	return S_OK;
 }
 
@@ -23,10 +26,14 @@ void CLevel_Logo::Update(_float fTimeDelta)
 {
 	if (GetKeyState(VK_RETURN) & 0x8000)
 	{
-		if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::OPEN))))
+		if (FAILED(m_pGameInstance->Change_Level(ENUM_CLASS(LEVEL::LOADING), CLevel_Loading::Create(m_pDevice, m_pContext, LEVEL::STAGE01))))
 			return;
 	}
 
+	if (GetKeyState('K') & 0x8000)
+	{
+		m_pGameInstance->Play_Background(L"event:/00007_streaming", nullptr)->SetVolume(0.5f);
+	}
 }
 
 HRESULT CLevel_Logo::Render()
